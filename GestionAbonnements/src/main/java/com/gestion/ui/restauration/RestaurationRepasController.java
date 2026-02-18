@@ -15,89 +15,143 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import javafx.scene.layout.*;
+import javafx.geometry.Pos;
+import javafx.scene.text.Text;
+import javafx.scene.text.Font;
 
 public class RestaurationRepasController {
 
-    @FXML private TableView<Restauration> repasTable;
-    @FXML private TableColumn<Restauration, Long> colRepasId;
-    @FXML private TableColumn<Restauration, String> colNomRepas;
-    @FXML private TableColumn<Restauration, String> colPrix;
-    @FXML private TableColumn<Restauration, String> colDate;
-    @FXML private TableColumn<Restauration, Long> colParticipantId;
-    
-    @FXML private TextField filterParticipantField;
-    @FXML private DatePicker filterDatePicker;
-    @FXML private TextField searchField;
-    @FXML private ComboBox<String> sortPrixCombo;
-    
-    @FXML private TextField inputNomRepas;
-    @FXML private TextField inputPrix;
-    @FXML private DatePicker inputDate;
-    @FXML private TextField inputParticipantId;
-    
-    @FXML private Button btnModifier;
-    @FXML private Button btnSupprimer;
-    @FXML private Button btnEnregistrer;
-    @FXML private Button btnModifierForm;
-    @FXML private Label statusInfoLabel;
-    @FXML private Label countLabel;
-    @FXML private Label validationMessage;
+    @FXML
+    private ListView<Restauration> listView;
+
+    @FXML
+    private TextField filterParticipantField;
+    @FXML
+    private DatePicker filterDatePicker;
+    @FXML
+    private TextField searchField;
+    @FXML
+    private ComboBox<String> sortPrixCombo;
+
+    @FXML
+    private TextField inputNomRepas;
+    @FXML
+    private TextField inputPrix;
+    @FXML
+    private DatePicker inputDate;
+    @FXML
+    private TextField inputParticipantId;
+
+    @FXML
+    private Button btnModifier;
+    @FXML
+    private Button btnSupprimer;
+    @FXML
+    private Button btnEnregistrer;
+    @FXML
+    private Button btnModifierForm;
+    @FXML
+    private Label statusInfoLabel;
+    @FXML
+    private Label countLabel;
+    @FXML
+    private Label validationMessage;
 
     private final RestaurationController controller = new RestaurationController();
     private final ObservableList<Restauration> repasData = FXCollections.observableArrayList();
     private FilteredList<Restauration> filteredData;
     private Restauration selectedRepas = null;
     private boolean isEditMode = false;
+    private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+    private void setupListView() {
+        listView.setCellFactory(param -> new ListCell<Restauration>() {
+            @Override
+            protected void updateItem(Restauration item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setGraphic(null);
+                    setStyle("-fx-background-color: transparent;");
+                } else {
+                    setGraphic(createRepasCard(item));
+                    setStyle("-fx-background-color: transparent; -fx-padding: 5 10 5 10;");
+                }
+            }
+        });
+    }
+
+    private javafx.scene.Node createRepasCard(Restauration item) {
+        HBox card = new HBox(15);
+        card.getStyleClass().add("modern-card");
+        card.setAlignment(Pos.CENTER_LEFT);
+
+        // Icon
+        Text icon = new Text("🍱");
+        icon.setFont(Font.font("Segoe UI Emoji", 24));
+
+        VBox content = new VBox(5);
+        HBox.setHgrow(content, Priority.ALWAYS);
+
+        HBox header = new HBox(10);
+        header.setAlignment(Pos.CENTER_LEFT);
+        Label title = new Label(item.getNomRepas() != null ? item.getNomRepas() : "Sans nom");
+        title.getStyleClass().add("card-title");
+
+        BigDecimal prix = item.getPrix() != null ? item.getPrix() : BigDecimal.ZERO;
+        Label priceBadge = new Label(String.format("%.2f €", prix));
+        priceBadge.getStyleClass().add("status-badge");
+        priceBadge.setStyle("-fx-background-color: #e3f2fd; -fx-text-fill: #1976d2;");
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        header.getChildren().addAll(title, spacer, priceBadge);
+
+        GridPane details = new GridPane();
+        details.setHgap(20);
+        details.setVgap(5);
+
+        Label dateLabel = new Label("Date: " + (item.getDate() != null ? item.getDate().format(dateFormatter) : "N/A"));
+        dateLabel.getStyleClass().add("card-label");
+
+        Label partLabel = new Label("Participant: " + item.getParticipantId());
+        partLabel.getStyleClass().add("card-value");
+
+        details.add(dateLabel, 0, 0);
+        details.add(partLabel, 1, 0);
+
+        content.getChildren().addAll(header, details);
+        card.getChildren().addAll(icon, content);
+
+        return card;
+    }
 
     @FXML
     public void initialize() {
         try {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            
-            colRepasId.setCellValueFactory(cellData -> 
-                new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().getId()));
-            
-            colNomRepas.setCellValueFactory(cellData -> {
-                String nom = cellData.getValue().getNomRepas();
-                return new javafx.beans.property.SimpleStringProperty(nom != null ? nom : "");
-            });
-            
-            colPrix.setCellValueFactory(cellData -> {
-                BigDecimal prix = cellData.getValue().getPrix();
-                return new javafx.beans.property.SimpleStringProperty(
-                    prix != null ? String.format("%.2f", prix) : "0.00");
-            });
-            
-            colDate.setCellValueFactory(cellData -> {
-                LocalDate date = cellData.getValue().getDate();
-                return new javafx.beans.property.SimpleStringProperty(
-                    date != null ? date.format(formatter) : "");
-            });
-            
-            colParticipantId.setCellValueFactory(cellData -> 
-                new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().getParticipantId()));
-            
-            repasTable.setItems(repasData);
-            repasTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-            repasTable.setVisible(true);
-            repasTable.setManaged(true);
-            
+            setupListView();
+
+            listView.setItems(repasData);
+            listView.setVisible(true);
+            listView.setManaged(true);
+
             filteredData = new FilteredList<>(repasData, p -> true);
-            repasTable.setItems(filteredData);
+            listView.setItems(filteredData);
 
             if (sortPrixCombo != null) {
                 sortPrixCombo.getItems().setAll(
                         "Aucun",
                         "Prix ↑",
-                        "Prix ↓"
-                );
+                        "Prix ↓");
                 sortPrixCombo.getSelectionModel().selectFirst();
             }
-            
+
             inputDate.setValue(LocalDate.now());
             inputNomRepas.textProperty().addListener((obs, oldVal, newVal) -> validateForm());
             inputPrix.textProperty().addListener((obs, oldVal, newVal) -> validateForm());
-            
+
             onActualiser();
             updateCount();
             updateButtons();
@@ -144,7 +198,8 @@ public class RestaurationRepasController {
                 repasData.addAll(finalList);
                 applyFilters();
                 updateCount();
-                repasTable.refresh();
+                updateCount();
+                listView.refresh();
             });
         } catch (Exception e) {
             showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur lors du filtrage: " + e.getMessage());
@@ -166,37 +221,49 @@ public class RestaurationRepasController {
 
     @FXML
     void onTrierPrix() {
-        if (sortPrixCombo == null) return;
+        if (sortPrixCombo == null)
+            return;
         String value = sortPrixCombo.getValue();
         if (value == null || value.equals("Aucun")) {
-            repasTable.getSortOrder().clear();
+            // listView doesn't support automatic column sorting like TableView,
+            // but we can sort the underlying data list
+            repasData.sort((r1, r2) -> r1.getId().compareTo(r2.getId()));
             return;
         }
         if (value.equals("Prix ↑")) {
-            colPrix.setSortType(TableColumn.SortType.ASCENDING);
+            repasData.sort((r1, r2) -> {
+                BigDecimal p1 = r1.getPrix() != null ? r1.getPrix() : BigDecimal.ZERO;
+                BigDecimal p2 = r2.getPrix() != null ? r2.getPrix() : BigDecimal.ZERO;
+                return p1.compareTo(p2);
+            });
         } else if (value.equals("Prix ↓")) {
-            colPrix.setSortType(TableColumn.SortType.DESCENDING);
+            repasData.sort((r1, r2) -> {
+                BigDecimal p1 = r1.getPrix() != null ? r1.getPrix() : BigDecimal.ZERO;
+                BigDecimal p2 = r2.getPrix() != null ? r2.getPrix() : BigDecimal.ZERO;
+                return p2.compareTo(p1);
+            });
         }
-        repasTable.getSortOrder().setAll(colPrix);
+        // repasTable.getSortOrder().setAll(colPrix);
     }
 
     private void applyFilters() {
         String searchText = searchField.getText().toLowerCase();
-        
+
         filteredData.setPredicate(repas -> {
-            if (searchText == null || searchText.isEmpty()) return true;
-            String searchable = repas.getId() + " " + 
-                              (repas.getNomRepas() != null ? repas.getNomRepas() : "") + " " +
-                              repas.getParticipantId();
+            if (searchText == null || searchText.isEmpty())
+                return true;
+            String searchable = repas.getId() + " " +
+                    (repas.getNomRepas() != null ? repas.getNomRepas() : "") + " " +
+                    repas.getParticipantId();
             return searchable.toLowerCase().contains(searchText);
         });
-        
+
         updateCount();
     }
 
     @FXML
-    void onTableClick(MouseEvent event) {
-        selectedRepas = repasTable.getSelectionModel().getSelectedItem();
+    void onListClick(MouseEvent event) {
+        selectedRepas = listView.getSelectionModel().getSelectedItem();
         if (selectedRepas != null) {
             loadRepasInForm(selectedRepas);
             updateButtons();
@@ -205,16 +272,18 @@ public class RestaurationRepasController {
 
     @FXML
     void onEnregistrer() {
-        if (!validateForm()) return;
+        if (!validateForm())
+            return;
 
         try {
             String nom = inputNomRepas.getText();
             BigDecimal prix = parseBigDecimal(inputPrix.getText());
             LocalDate date = inputDate.getValue() != null ? inputDate.getValue() : LocalDate.now();
             Long partId = parseLong(inputParticipantId.getText());
-            
-            if (partId == null) partId = 1L;
-            
+
+            if (partId == null)
+                partId = 1L;
+
             if (isEditMode && selectedRepas != null) {
                 selectedRepas.setNomRepas(nom);
                 selectedRepas.setPrix(prix);
@@ -226,7 +295,7 @@ public class RestaurationRepasController {
                 controller.createRepas(nom, prix, date, partId);
                 showAlert(Alert.AlertType.INFORMATION, "Succès", "Repas créé avec succès");
             }
-            
+
             onActualiser();
             onNouveauRepas();
         } catch (Exception e) {
@@ -280,13 +349,14 @@ public class RestaurationRepasController {
         try {
             int total = repasData.size();
             BigDecimal totalPrix = repasData.stream()
-                .map(r -> r.getPrix() != null ? r.getPrix() : BigDecimal.ZERO)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-            
+                    .map(r -> r.getPrix() != null ? r.getPrix() : BigDecimal.ZERO)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
             Alert statsAlert = new Alert(Alert.AlertType.INFORMATION);
             statsAlert.setTitle("Statistiques");
             statsAlert.setHeaderText(null);
-            statsAlert.setContentText("📊 Statistiques des Repas\n\nTotal: " + total + "\nTotal prix: " + String.format("%.2f", totalPrix) + " €");
+            statsAlert.setContentText("📊 Statistiques des Repas\n\nTotal: " + total + "\nTotal prix: "
+                    + String.format("%.2f", totalPrix) + " €");
             statsAlert.showAndWait();
         } catch (Exception e) {
             showAlert(Alert.AlertType.ERROR, "Erreur", e.getMessage());
@@ -366,7 +436,8 @@ public class RestaurationRepasController {
     }
 
     private Long parseLong(String s) {
-        if (s == null || s.isBlank()) return null;
+        if (s == null || s.isBlank())
+            return null;
         try {
             return Long.parseLong(s.trim());
         } catch (NumberFormatException e) {
@@ -375,7 +446,8 @@ public class RestaurationRepasController {
     }
 
     private BigDecimal parseBigDecimal(String s) {
-        if (s == null || s.isBlank()) return BigDecimal.ZERO;
+        if (s == null || s.isBlank())
+            return BigDecimal.ZERO;
         try {
             return new BigDecimal(s.trim());
         } catch (NumberFormatException e) {

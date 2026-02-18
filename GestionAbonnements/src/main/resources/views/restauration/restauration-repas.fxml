@@ -7,7 +7,8 @@
 <ScrollPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.gestion.ui.restauration.RestaurationRepasController"
             fitToWidth="true" fitToHeight="true" styleClass="modern-scroll-pane"
-            vbarPolicy="AS_NEEDED" hbarPolicy="NEVER">
+            vbarPolicy="AS_NEEDED" hbarPolicy="NEVER"
+            stylesheets="@../../styles/card-view.css">
 
     <VBox spacing="20" styleClass="modern-panel" prefWidth="1000">
         <padding>
@@ -66,21 +67,14 @@
                 <Region HBox.hgrow="ALWAYS"/>
                 <Label fx:id="countLabel" text="0 repas" styleClass="count-label"/>
             </HBox>
-            <TableView fx:id="repasTable" VBox.vgrow="ALWAYS" minHeight="350" prefHeight="400"
-                       styleClass="modern-table" onMouseClicked="#onTableClick">
+            <ListView fx:id="listView" VBox.vgrow="ALWAYS" minHeight="350" prefHeight="400" 
+                       styleClass="modern-list-view" onMouseClicked="#onListClick">
                 <placeholder>
                     <VBox alignment="CENTER" spacing="12">
                         <Label text="📭 Aucune donnée disponible" styleClass="placeholder-text"/>
                     </VBox>
                 </placeholder>
-                <columns>
-                    <TableColumn fx:id="colRepasId" text="ID" prefWidth="60" minWidth="50" sortable="true"/>
-                    <TableColumn fx:id="colNomRepas" text="Nom" prefWidth="250" minWidth="200" sortable="true"/>
-                    <TableColumn fx:id="colPrix" text="Prix (€)" prefWidth="120" minWidth="100" sortable="true"/>
-                    <TableColumn fx:id="colDate" text="Date" prefWidth="150" minWidth="150" sortable="true"/>
-                    <TableColumn fx:id="colParticipantId" text="Participant ID" prefWidth="130" minWidth="110" sortable="true"/>
-                </columns>
-            </TableView>
+            </ListView>
         </VBox>
 
         <VBox spacing="12" styleClass="form-section">

@@ -7,7 +7,8 @@
 <ScrollPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.gestion.ui.restauration.RestaurationRestrictionsController"
             fitToWidth="true" fitToHeight="true" styleClass="modern-scroll-pane"
-            vbarPolicy="AS_NEEDED" hbarPolicy="NEVER">
+            vbarPolicy="AS_NEEDED" hbarPolicy="NEVER"
+            stylesheets="@../../styles/card-view.css">
     
     <VBox spacing="20" styleClass="modern-panel" prefWidth="1000">
         <padding>
