@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<ScrollPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.gestion.ui.utilisateur.AbonnementChoixController"
+            fitToWidth="true" fitToHeight="true" styleClass="modern-scroll-pane"
+            vbarPolicy="AS_NEEDED" hbarPolicy="NEVER">
+
+    <VBox spacing="20" styleClass="modern-panel" prefWidth="1000">
+        <padding>
+            <Insets top="24" right="24" bottom="24" left="24"/>
+        </padding>
+
+        <!-- Header -->
+        <HBox spacing="16" alignment="CENTER_LEFT">
+            <Label text="📋 Mon Abonnement" styleClass="modern-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="statusLabel" text="Prêt" styleClass="status-info"/>
+        </HBox>
+
+        <Label text="Choisissez ou consultez vos abonnements LAMMA."
+               style="-fx-text-fill: #666; -fx-font-size: 13px;" wrapText="true"/>
+
+        <!-- Tableau des abonnements de l'utilisateur -->
+        <VBox spacing="8" VBox.vgrow="ALWAYS">
+            <Label text="Mes abonnements" styleClass="section-title"/>
+            <TableView fx:id="table" VBox.vgrow="ALWAYS" styleClass="modern-table">
+                <columns>
+                    <TableColumn fx:id="colId" text="ID" prefWidth="60"/>
+                    <TableColumn fx:id="colType" text="Type" prefWidth="120"/>
+                    <TableColumn fx:id="colDateDebut" text="Date début" prefWidth="110"/>
+                    <TableColumn fx:id="colDateFin" text="Date fin" prefWidth="110"/>
+                    <TableColumn fx:id="colPrix" text="Prix (€)" prefWidth="90"/>
+                    <TableColumn fx:id="colStatut" text="Statut" prefWidth="110"/>
+                    <TableColumn fx:id="colAutoRenew" text="Renouvellement" prefWidth="120"/>
+                </columns>
+                <placeholder>
+                    <VBox alignment="CENTER" spacing="8">
+                        <Label text="Aucun abonnement trouvé" styleClass="placeholder-text"/>
+                        <Label text="Contactez un administrateur pour souscrire un abonnement."
+                               style="-fx-text-fill: #888; -fx-font-size: 11px;"/>
+                    </VBox>
+                </placeholder>
+            </TableView>
+        </VBox>
+    </VBox>
+</ScrollPane>
+

@@ -1,0 +1,393 @@
+/* Elegant Modern UI Styles for Restaurant, Menu, and Repas Modules */
+
+/* ========== Root Variables ========== */
+:root {
+    -primary-color: #3498db;
+    -primary-dark: #2980b9;
+    -secondary-color: #2c3e50;
+    -success-color: #27ae60;
+    -warning-color: #f39c12;
+    -danger-color: #e74c3c;
+    -info-color: #17a2b8;
+    -light-color: #f8f9fa;
+    -dark-color: #343a40;
+    -white: #ffffff;
+    -gray-100: #f8f9fa;
+    -gray-200: #e9ecef;
+    -gray-300: #dee2e6;
+    -gray-400: #ced4da;
+    -gray-500: #adb5bd;
+    -gray-600: #6c757d;
+    -gray-700: #495057;
+    -gray-800: #343a40;
+    -gray-900: #212529;
+    -border-radius: 12px;
+    -border-radius-sm: 8px;
+    -border-radius-lg: 16px;
+    -box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    -box-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    -transition: all 0.3s ease;
+}
+
+/* ========== Global Styles ========== */
+.root {
+    -fx-font-family: 'Segoe UI', 'System', sans-serif;
+    -fx-background-color: linear-gradient(to bottom, #f8f9fa, #e9ecef);
+}
+
+/* ========== Header Styles ========== */
+.module-header {
+    -fx-background-color: linear-gradient(to right, #2c3e50, #3498db);
+    -fx-padding: 24 32;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 4);
+}
+
+.module-title {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.module-subtitle {
+    -fx-font-size: 14px;
+    -fx-text-fill: rgba(255,255,255,0.8);
+}
+
+/* ========== Card Styles ========== */
+.modern-card {
+    -fx-background-color: white;
+    -fx-background-radius: 16px;
+    -fx-padding: 24;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 16, 0, 0, 4);
+    -fx-transition: -fx-translate-y 0.3s ease;
+}
+
+.modern-card:hover {
+    -fx-translate-y: -4px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 20, 0, 0, 8);
+}
+
+/* ========== Button Styles ========== */
+.btn-primary {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 12 24;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+    -fx-transition: -fx-background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+    -fx-background-color: #2980b9;
+    -fx-effect: dropshadow(gaussian, rgba(52,152,219,0.4), 8, 0, 0, 2);
+}
+
+.btn-success {
+    -fx-background-color: #27ae60;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 12 24;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+}
+
+.btn-success:hover {
+    -fx-background-color: #229954;
+    -fx-effect: dropshadow(gaussian, rgba(39,174,96,0.4), 8, 0, 0, 2);
+}
+
+.btn-warning {
+    -fx-background-color: #f39c12;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 12 24;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+}
+
+.btn-warning:hover {
+    -fx-background-color: #d68910;
+}
+
+.btn-danger {
+    -fx-background-color: #e74c3c;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 12 24;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+}
+
+.btn-danger:hover {
+    -fx-background-color: #c0392b;
+    -fx-effect: dropshadow(gaussian, rgba(231,76,60,0.4), 8, 0, 0, 2);
+}
+
+.btn-secondary {
+    -fx-background-color: #95a5a6;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 12 24;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+}
+
+.btn-secondary:hover {
+    -fx-background-color: #7f8c8d;
+}
+
+/* ========== Input Styles ========== */
+.modern-input {
+    -fx-background-color: white;
+    -fx-border-color: #ddd;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-padding: 12 16;
+    -fx-font-size: 14px;
+}
+
+.modern-input:focused {
+    -fx-border-color: #3498db;
+    -fx-effect: dropshadow(gaussian, rgba(52,152,219,0.3), 4, 0, 0, 0);
+}
+
+.modern-textarea {
+    -fx-background-color: white;
+    -fx-border-color: #ddd;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-padding: 12 16;
+    -fx-font-size: 14px;
+}
+
+.modern-combo {
+    -fx-background-color: white;
+    -fx-border-color: #ddd;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-padding: 4 8;
+    -fx-font-size: 14px;
+}
+
+/* ========== Table Styles ========== */
+.modern-table {
+    -fx-background-color: transparent;
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 8px;
+    -fx-table-cell-border-color: transparent;
+}
+
+.modern-table .column-header {
+    -fx-background-color: #f8f9fa;
+    -fx-padding: 12 16;
+    -fx-font-weight: bold;
+    -fx-border-color: transparent transparent #e0e0e0 transparent;
+}
+
+.modern-table .table-cell {
+    -fx-padding: 12 16;
+    -fx-border-color: transparent;
+}
+
+.modern-table .table-row-cell:even {
+    -fx-background-color: #fafbfc;
+}
+
+.modern-table .table-row-cell:hover {
+    -fx-background-color: #e3f2fd;
+}
+
+.modern-table .table-row-cell:selected {
+    -fx-background-color: #bbdefb;
+}
+
+/* ========== Form Section Styles ========== */
+.form-section-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+.form-section-icon {
+    -fx-font-size: 20px;
+}
+
+/* ========== Error Message Styles ========== */
+.error-container {
+    -fx-background-color: #fdf2f2;
+    -fx-border-color: #fecaca;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-padding: 16;
+}
+
+.error-text {
+    -fx-text-fill: #dc2626;
+    -fx-font-size: 13px;
+}
+
+.field-error {
+    -fx-text-fill: #e74c3c;
+    -fx-font-size: 12px;
+}
+
+/* ========== Status Bar Styles ========== */
+.status-bar {
+    -fx-background-color: #2c3e50;
+    -fx-padding: 14 32;
+}
+
+.status-text {
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+}
+
+/* ========== Filter Section Styles ========== */
+.filter-section {
+    -fx-background-color: white;
+    -fx-background-radius: 12px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2);
+    -fx-padding: 16 20;
+}
+
+.filter-label {
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-text-fill: #2c3e50;
+}
+
+/* ========== Action Bar Styles ========== */
+.action-bar {
+    -fx-background-color: white;
+    -fx-background-radius: 12px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2);
+    -fx-padding: 16 20;
+}
+
+/* ========== ScrollPane Styles ========== */
+.modern-scroll {
+    -fx-background: transparent;
+    -fx-background-color: transparent;
+}
+
+.modern-scroll .viewport {
+    -fx-background-color: transparent;
+}
+
+.modern-scroll .scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-pref-width: 12;
+}
+
+.modern-scroll .scroll-bar:vertical .thumb {
+    -fx-background-color: #bdc3c7;
+    -fx-background-radius: 6;
+}
+
+.modern-scroll .scroll-bar:vertical .thumb:hover {
+    -fx-background-color: #95a5a6;
+}
+
+/* ========== Separator Styles ========== */
+.modern-separator {
+    -fx-padding: 8 0;
+}
+
+.modern-separator .line {
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 1 0 0 0;
+}
+
+/* ========== Label Styles ========== */
+.label-title {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+.label-subtitle {
+    -fx-font-size: 14px;
+    -fx-text-fill: #7f8c8d;
+}
+
+.label-section {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+/* ========== CheckBox Styles ========== */
+.modern-checkbox {
+    -fx-font-size: 14px;
+}
+
+.modern-checkbox .box {
+    -fx-background-color: white;
+    -fx-border-color: #ddd;
+    -fx-border-radius: 4px;
+}
+
+.modern-checkbox:selected .box {
+    -fx-background-color: #3498db;
+    -fx-border-color: #3498db;
+}
+
+/* ========== DatePicker Styles ========== */
+.modern-datepicker {
+    -fx-background-color: white;
+    -fx-border-color: #ddd;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+}
+
+/* ========== Placeholder Styles ========== */
+.placeholder-container {
+    -fx-padding: 40;
+}
+
+.placeholder-icon {
+    -fx-font-size: 48px;
+}
+
+.placeholder-text {
+    -fx-font-size: 16px;
+    -fx-text-fill: #888;
+}
+
+.placeholder-subtext {
+    -fx-font-size: 13px;
+    -fx-text-fill: #aaa;
+}
+
+/* ========== Count Label Styles ========== */
+.count-label {
+    -fx-font-size: 13px;
+    -fx-text-fill: #666;
+}
+
+/* ========== Animation Keyframes ========== */
+@keyframes fadeIn {
+    from { -fx-opacity: 0; }
+    to { -fx-opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { -fx-translate-y: 20; -fx-opacity: 0; }
+    to { -fx-translate-y: 0; -fx-opacity: 1; }
+}
+
+/* ========== Responsive Utilities ========== */
+@media (max-width: 768px) {
+    .modern-card {
+        -fx-pref-width: 100%;
+    }
+
+    .module-header {
+        -fx-padding: 16 20;
+    }
+
+    .module-title {
+        -fx-font-size: 22px;
+    }
+}

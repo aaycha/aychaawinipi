@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<ScrollPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.gestion.ui.utilisateur.EspaceUtilisateurController"
+            fitToWidth="true" styleClass="voyage-dashboard"
+            vbarPolicy="AS_NEEDED" hbarPolicy="NEVER">
+
+    <VBox fx:id="mainBox" spacing="24" styleClass="voyage-dashboard-inner">
+        <padding>
+            <Insets top="32" right="48" bottom="48" left="48"/>
+        </padding>
+        <Label text="Mon espace LAMMA" styleClass="voyage-dashboard-title"/>
+        <Label text="Choisissez une section pour accéder à vos données" styleClass="voyage-dashboard-subtitle"/>
+
+        <!-- Boutons de navigation rapide -->
+        <HBox spacing="12" alignment="CENTER_LEFT">
+            <Button text="🏠 Accueil" onAction="#onRetourAccueil" styleClass="voyage-card-btn"/>
+            <Label text="|" style="-fx-text-fill: #95a5a6;"/>
+            <Label fx:id="sectionLabel" text="Sélectionnez une section ci-dessous" style="-fx-font-size: 13px; -fx-text-fill: #7f8c8d;"/>
+        </HBox>
+
+        <!-- Liste scrollable des sections (interfaces légères) -->
+        <FlowPane fx:id="cardsContainer" hgap="24" vgap="24" prefWrapLength="900"/>
+    </VBox>
+</ScrollPane>

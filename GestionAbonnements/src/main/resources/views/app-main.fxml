@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.gestion.ui.AppMainController"
+            prefWidth="1000" prefHeight="700">
+
+    <top>
+        <VBox styleClass="resto-header">
+            <padding>
+                <Insets top="20" right="24" bottom="20" left="24"/>
+            </padding>
+            <HBox alignment="CENTER_LEFT" spacing="16">
+                <ImageView fitHeight="32" preserveRatio="true">
+                    <image>
+                        <Image url="@images/lamma-logo.png" />
+                    </image>
+                </ImageView>
+                <Label text="LAMMA - Gestion Abonnements et Participations" styleClass="resto-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="statusLabel" text="Pret" styleClass="resto-status"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <center>
+        <TabPane fx:id="mainTabPane" tabClosingPolicy="UNAVAILABLE" styleClass="resto-tab-pane">
+            <Tab text="Restauration">
+                <fx:include source="restauration/restauration-main.fxml"/>
+            </Tab>
+            <Tab text="Participation">
+                <fx:include source="participation/participation.fxml"/>
+            </Tab>
+            <Tab text="Abonnement">
+                <fx:include source="abonnement/abonnement.fxml"/>
+            </Tab>
+        </TabPane>
+    </center>
+
+    <padding>
+        <Insets top="0" right="16" bottom="16" left="16"/>
+    </padding>
+</BorderPane>

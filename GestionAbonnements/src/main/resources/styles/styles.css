@@ -1,0 +1,19 @@
+.modern-panel { -fx-background-color: linear-gradient(to bottom, #e6f7ff, #ffffff); -fx-border-radius: 12; -fx-background-radius: 12; -fx-padding: 16; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5); }
+.modern-title { -fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #1890ff; }
+.btn-primary { -fx-background-color: #1890ff; -fx-text-fill: white; -fx-background-radius: 8; }
+.btn-secondary { -fx-background-color: #f0f2f5; -fx-text-fill: #595959; -fx-background-radius: 8; }
+.btn-warning { -fx-background-color: #faad14; -fx-text-fill: white; -fx-background-radius: 8; }
+.btn-danger { -fx-background-color: #ff4d4f; -fx-text-fill: white; -fx-background-radius: 8; }
+.btn-success { -fx-background-color: #52c41a; -fx-text-fill: white; -fx-background-radius: 8; }
+.modern-table { -fx-background-color: white; -fx-border-color: #d9d9d9; -fx-border-radius: 8; -fx-background-radius: 8; }
+.validation-error { -fx-text-fill: #ff4d4f; -fx-font-size: 12px; }
+.validation-success { -fx-text-fill: #52c41a; -fx-font-size: 12px; }
+.filter-section { -fx-background-color: #f0f2f5; -fx-padding: 12; -fx-border-radius: 8; }
+.form-section { -fx-background-color: #f0f2f5; -fx-padding: 12; -fx-border-radius: 8; }
+.placeholder-text { -fx-font-size: 16px; -fx-text-fill: #595959; }
+.count-label { -fx-text-fill: #595959; -fx-font-size: 14px; }
+/* Fade transition */
+.fade-in { -fx-opacity: 0; }
+.fade-in .show { -fx-opacity: 1; -fx-transition: opacity 0.3s ease-in; }
+/* Cute travel theme */
+.root { -fx-background-color: #e6f7ff; }  /* Light blue for travel vibe */

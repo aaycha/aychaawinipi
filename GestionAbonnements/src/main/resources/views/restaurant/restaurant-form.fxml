@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<ScrollPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.gestion.ui.restaurant.RestaurantFormController"
+            fitToWidth="true" fitToHeight="true"
+            style="-fx-background: linear-gradient(to bottom, #f8f9fa, #e9ecef);">
+
+    <VBox spacing="24" style="-fx-background-color: transparent;" prefWidth="900" maxWidth="900">
+        <padding>
+            <Insets top="32" right="48" bottom="32" left="48"/>
+        </padding>
+
+        <!-- Header -->
+        <HBox spacing="16" alignment="CENTER_LEFT">
+            <Label text="🍽️" style="-fx-font-size: 28px;"/>
+            <VBox spacing="4">
+                <Label fx:id="formTitle" text="Nouveau Restaurant" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                <Label text="Remplissez les informations du restaurant" style="-fx-font-size: 14px; -fx-text-fill: #7f8c8d;"/>
+            </VBox>
+            <Region HBox.hgrow="ALWAYS"/>
+        </HBox>
+
+        <!-- Form Card -->
+        <VBox spacing="20"
+              style="-fx-background-color: white; -fx-background-radius: 16;
+                     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 16, 0, 0, 4);">
+            <padding>
+                <Insets top="32" right="40" bottom="32" left="40"/>
+            </padding>
+
+            <!-- Section: Informations Générales -->
+            <VBox spacing="16">
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <Label text="📋" style="-fx-font-size: 20px;"/>
+                    <Label text="Informations Générales" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                </HBox>
+
+                <GridPane hgap="20" vgap="16">
+                    <columnConstraints>
+                        <ColumnConstraints minWidth="140" prefWidth="160" halignment="RIGHT"/>
+                        <ColumnConstraints hgrow="ALWAYS" minWidth="300"/>
+                    </columnConstraints>
+
+                    <!-- Nom (obligatoire) -->
+                    <Label text="Nom * :" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-font-weight: bold;"/>
+                    <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <TextField fx:id="inputNom" promptText="Nom du restaurant"
+                                   style="-fx-padding: 12 16; -fx-background-radius: 8; -fx-border-radius: 8;
+                                          -fx-border-color: #ddd; -fx-font-size: 14px;"/>
+                        <Label fx:id="hintNom" text="0 / 100 car. — Obligatoire" style="-fx-text-fill: #7f8c8d; -fx-font-size: 11px;"/>
+                        <Label fx:id="errorNom" text="" visible="false" managed="false"
+                               style="-fx-text-fill: #e74c3c; -fx-font-size: 12px;"/>
+                    </VBox>
+
+                    <!-- Téléphone -->
+                    <Label text="Téléphone :" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                    <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <TextField fx:id="inputTelephone" promptText="+33 1 23 45 67 89"
+                                   style="-fx-padding: 12 16; -fx-background-radius: 8; -fx-border-radius: 8;
+                                          -fx-border-color: #ddd; -fx-font-size: 14px;"/>
+                        <Label fx:id="errorTelephone" text="" visible="false" managed="false"
+                               style="-fx-text-fill: #e74c3c; -fx-font-size: 12px;"/>
+                    </VBox>
+
+                    <!-- Email -->
+                    <Label text="Email :" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                    <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <TextField fx:id="inputEmail" promptText="contact@restaurant.com"
+                                   style="-fx-padding: 12 16; -fx-background-radius: 8; -fx-border-radius: 8;
+                                          -fx-border-color: #ddd; -fx-font-size: 14px;"/>
+                        <Label fx:id="errorEmail" text="" visible="false" managed="false"
+                               style="-fx-text-fill: #e74c3c; -fx-font-size: 12px;"/>
+                    </VBox>
+                </GridPane>
+            </VBox>
+
+            <Separator style="-fx-opacity: 0.3;"/>
+
+            <!-- Section: Adresse -->
+            <VBox spacing="16">
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <Label text="📍" style="-fx-font-size: 20px;"/>
+                    <Label text="Adresse" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                </HBox>
+
+                <GridPane hgap="20" vgap="16">
+                    <columnConstraints>
+                        <ColumnConstraints minWidth="140" prefWidth="160" halignment="RIGHT"/>
+                        <ColumnConstraints hgrow="ALWAYS" minWidth="300"/>
+                    </columnConstraints>
+
+                    <Label text="Adresse :" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                    <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <TextArea fx:id="inputAdresse" promptText="123 Rue de la Gastronomie, 75001 Paris"
+                                  wrapText="true" prefRowCount="2"
+                                  style="-fx-padding: 12 16; -fx-background-radius: 8; -fx-border-radius: 8;
+                                         -fx-border-color: #ddd; -fx-font-size: 14px;"/>
+                        <Label fx:id="errorAdresse" text="" visible="false" managed="false"
+                               style="-fx-text-fill: #e74c3c; -fx-font-size: 12px;"/>
+                    </VBox>
+                </GridPane>
+            </VBox>
+
+            <Separator style="-fx-opacity: 0.3;"/>
+
+            <!-- Section: Description & Image -->
+            <VBox spacing="16">
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <Label text="📝" style="-fx-font-size: 20px;"/>
+                    <Label text="Description  Image" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                </HBox>
+
+                <GridPane hgap="20" vgap="16">
+                    <columnConstraints>
+                        <ColumnConstraints minWidth="140" prefWidth="160" halignment="RIGHT"/>
+                        <ColumnConstraints hgrow="ALWAYS" minWidth="300"/>
+                    </columnConstraints>
+
+                    <Label text="Description :" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.valignment="TOP">
+                        <padding>
+                            <Insets top="12"/>
+                        </padding>
+                    </Label>
+                    <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <TextArea fx:id="inputDescription" promptText="Décrivez votre restaurant, sa cuisine, son ambiance..."
+                                  wrapText="true" prefRowCount="4"
+                                  style="-fx-padding: 12 16; -fx-background-radius: 8; -fx-border-radius: 8;
+                                         -fx-border-color: #ddd; -fx-font-size: 14px;"/>
+                        <Label fx:id="errorDescription" text="" visible="false" managed="false"
+                               style="-fx-text-fill: #e74c3c; -fx-font-size: 12px;"/>
+                    </VBox>
+
+                    <Label text="URL Image :" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                    <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <TextField fx:id="inputImageUrl" promptText="https://exemple.com/image.jpg"
+                                   style="-fx-padding: 12 16; -fx-background-radius: 8; -fx-border-radius: 8;
+                                          -fx-border-color: #ddd; -fx-font-size: 14px;"/>
+                        <Label fx:id="errorImageUrl" text="" visible="false" managed="false"
+                               style="-fx-text-fill: #e74c3c; -fx-font-size: 12px;"/>
+                    </VBox>
+                </GridPane>
+            </VBox>
+
+            <Separator style="-fx-opacity: 0.3;"/>
+
+            <!-- Section: Statut -->
+            <VBox spacing="16">
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <Label text="⚙️" style="-fx-font-size: 20px;"/>
+                    <Label text="Statut" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                </HBox>
+
+                <HBox spacing="20">
+                    <CheckBox fx:id="checkActif" text="Restaurant actif (visible aux clients)" selected="true"
+                              style="-fx-font-size: 14px;"/>
+                </HBox>
+            </VBox>
+
+            <!-- Error Messages -->
+            <VBox fx:id="errorContainer" spacing="8" visible="false" managed="false"
+                  style="-fx-background-color: #fdf2f2; -fx-border-color: #fecaca; -fx-border-radius: 8;
+                         -fx-background-radius: 8; -fx-padding: 16;">
+                <Label fx:id="globalErrorMessage" text="" style="-fx-text-fill: #dc2626; -fx-font-size: 14px;"/>
+            </VBox>
+
+            <!-- Buttons -->
+            <HBox spacing="12" alignment="CENTER_LEFT">
+                <Button text="💾 Enregistrer" onAction="#onEnregistrer"
+                        style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold;
+                               -fx-background-radius: 8; -fx-padding: 14 28; -fx-cursor: hand;
+                               -fx-font-size: 14px;"/>
+                <Button text="❌ Annuler" onAction="#onAnnuler"
+                        style="-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-font-weight: bold;
+                               -fx-background-radius: 8; -fx-padding: 14 28; -fx-cursor: hand;
+                               -fx-font-size: 14px;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label text="* Champs obligatoires" style="-fx-text-fill: #95a5a6; -fx-font-size: 12px;"/>
+            </HBox>
+        </VBox>
+    </VBox>
+</ScrollPane>

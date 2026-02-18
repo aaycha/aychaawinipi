@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<ScrollPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.gestion.ui.restauration.RestaurationRestrictionsController"
+            fitToWidth="true" fitToHeight="true" styleClass="modern-scroll-pane"
+            vbarPolicy="AS_NEEDED" hbarPolicy="NEVER">
+    
+    <VBox spacing="20" styleClass="modern-panel" prefWidth="1000">
+        <padding>
+            <Insets top="24" right="24" bottom="24" left="24"/>
+        </padding>
+
+        <HBox spacing="16" alignment="CENTER_LEFT">
+            <Label text="🚫 Restrictions Alimentaires" styleClass="modern-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="statusInfoLabel" text="Prêt" styleClass="status-info"/>
+        </HBox>
+
+        <HBox spacing="12" alignment="CENTER_LEFT" styleClass="action-bar">
+            <Button text="➕ Nouvelle" onAction="#onNouvelleRestriction" styleClass="btn-primary"/>
+            <Button text="🔄 Actualiser" onAction="#onActualiser" styleClass="btn-secondary"/>
+            <Button text="✏️ Modifier" onAction="#onModifier" styleClass="btn-warning" disable="true" fx:id="btnModifier"/>
+            <Button text="🗑️ Supprimer" onAction="#onSupprimer" styleClass="btn-danger" disable="true" fx:id="btnSupprimer"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <TextField fx:id="searchField" promptText="Rechercher..." prefWidth="200" onKeyReleased="#onRechercher"/>
+            <Button text="🔍 Rechercher" onAction="#onRechercher" styleClass="btn-secondary"/>
+        </HBox>
+
+        <VBox spacing="8" VBox.vgrow="ALWAYS">
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <Label text="📊 Liste des Restrictions" styleClass="section-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="countLabel" text="0 restrictions" styleClass="count-label"/>
+            </HBox>
+            <TableView fx:id="restrictionsTable" VBox.vgrow="ALWAYS" minHeight="350" prefHeight="400" 
+                       styleClass="modern-table" onMouseClicked="#onTableClick">
+                <placeholder>
+                    <VBox alignment="CENTER" spacing="12">
+                        <Label text="📭 Aucune donnée disponible" styleClass="placeholder-text"/>
+                    </VBox>
+                </placeholder>
+                <columns>
+                    <TableColumn fx:id="colRestId" text="ID" prefWidth="60" minWidth="50" sortable="true"/>
+                    <TableColumn fx:id="colRestLibelle" text="Libellé" prefWidth="250" minWidth="200" sortable="true"/>
+                    <TableColumn fx:id="colRestDescription" text="Description" prefWidth="400" minWidth="300" sortable="true"/>
+                    <TableColumn fx:id="colRestActif" text="Actif" prefWidth="100" minWidth="80" sortable="true"/>
+                </columns>
+            </TableView>
+        </VBox>
+
+        <VBox spacing="12" styleClass="form-section">
+            <Label text="✏️ Formulaire" styleClass="section-title"/>
+            <GridPane hgap="12" vgap="12">
+                <columnConstraints>
+                    <ColumnConstraints minWidth="100" prefWidth="120"/>
+                    <ColumnConstraints minWidth="200" prefWidth="400" hgrow="ALWAYS"/>
+                    <ColumnConstraints minWidth="100" prefWidth="120"/>
+                    <ColumnConstraints minWidth="150" prefWidth="200" hgrow="ALWAYS"/>
+                </columnConstraints>
+                
+                <Label text="Libellé *:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                <TextField fx:id="inputLibelle" promptText="Ex: Sans gluten" 
+                           styleClass="input-field" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                
+                <Label text="Actif:" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                <CheckBox fx:id="inputActif" text="Restriction active" selected="true" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+                
+                <Label text="Description:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                <TextField fx:id="inputDescription" promptText="Description détaillée" 
+                           styleClass="input-field" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.columnSpan="3"/>
+            </GridPane>
+            
+            <Label fx:id="validationMessage" text="" styleClass="validation-message" visible="false" managed="false"/>
+            
+            <HBox spacing="12" alignment="CENTER_LEFT">
+                <Button text="💾 Enregistrer" onAction="#onEnregistrer" styleClass="btn-success" fx:id="btnEnregistrer"/>
+                <Button text="✏️ Modifier" onAction="#onModifier" styleClass="btn-warning" fx:id="btnModifierForm" disable="true"/>
+                <Button text="❌ Annuler" onAction="#onAnnuler" styleClass="btn-secondary"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="🔄 Réinitialiser" onAction="#onNouvelleRestriction" styleClass="btn-secondary"/>
+            </HBox>
+        </VBox>
+    </VBox>
+</ScrollPane>

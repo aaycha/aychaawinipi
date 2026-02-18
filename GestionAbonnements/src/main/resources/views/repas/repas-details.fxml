@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<ScrollPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.gestion.ui.repas.RepasDetailsController"
+            fitToWidth="true" fitToHeight="true"
+            style="-fx-background: #f5f6fa; -fx-background-color: #f5f6fa;">
+
+    <VBox spacing="0" style="-fx-background-color: #f5f6fa;" prefWidth="560">
+        <padding>
+            <Insets top="32" right="40" bottom="32" left="40"/>
+        </padding>
+
+        <HBox spacing="16" alignment="CENTER_LEFT" style="-fx-padding: 0 0 24 0;">
+            <Label text="🍽️" style="-fx-font-size: 32px;"/>
+            <VBox spacing="4">
+                <Label text="Détail du plat" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                <Label text="Informations complètes" style="-fx-font-size: 13px; -fx-text-fill: #7f8c8d;"/>
+            </VBox>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="Fermer" onAction="#onFermer"
+                    style="-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-padding: 10 20; -fx-cursor: hand; -fx-background-radius: 8;"/>
+        </HBox>
+
+        <VBox spacing="20"
+              style="-fx-background-color: white; -fx-background-radius: 12;
+                     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 12, 0, 0, 4);">
+            <padding>
+                <Insets top="28" right="32" bottom="28" left="32"/>
+            </padding>
+
+            <Label fx:id="detailNom" text="" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #2c3e50; -fx-wrap-text: true;"/>
+
+            <Separator style="-fx-opacity: 0.25;"/>
+
+            <GridPane hgap="16" vgap="14">
+                <columnConstraints>
+                    <ColumnConstraints minWidth="140" prefWidth="160" halignment="RIGHT"/>
+                    <ColumnConstraints minWidth="280" hgrow="ALWAYS"/>
+                </columnConstraints>
+
+                <Label text="Restaurant :" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-text-fill: #7f8c8d;"/>
+                <Label fx:id="detailRestaurant" text="" GridPane.columnIndex="1" GridPane.rowIndex="0" style="-fx-font-size: 14px;"/>
+
+                <Label text="Menu :" GridPane.columnIndex="0" GridPane.rowIndex="1" style="-fx-text-fill: #7f8c8d;"/>
+                <Label fx:id="detailMenu" text="" GridPane.columnIndex="1" GridPane.rowIndex="1" style="-fx-font-size: 14px;"/>
+
+                <Label text="Catégorie :" GridPane.columnIndex="0" GridPane.rowIndex="2" style="-fx-text-fill: #7f8c8d;"/>
+                <Label fx:id="detailCategorie" text="" GridPane.columnIndex="1" GridPane.rowIndex="2" style="-fx-font-size: 14px;"/>
+
+                <Label text="Type de plat :" GridPane.columnIndex="0" GridPane.rowIndex="3" style="-fx-text-fill: #7f8c8d;"/>
+                <Label fx:id="detailTypePlat" text="" GridPane.columnIndex="1" GridPane.rowIndex="3" style="-fx-font-size: 14px;"/>
+
+                <Label text="Prix :" GridPane.columnIndex="0" GridPane.rowIndex="4" style="-fx-text-fill: #7f8c8d;"/>
+                <Label fx:id="detailPrix" text="" GridPane.columnIndex="1" GridPane.rowIndex="4" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+
+                <Label text="Temps prép. :" GridPane.columnIndex="0" GridPane.rowIndex="5" style="-fx-text-fill: #7f8c8d;"/>
+                <Label fx:id="detailTempsPreparation" text="" GridPane.columnIndex="1" GridPane.rowIndex="5" style="-fx-font-size: 14px;"/>
+
+                <Label text="Disponible :" GridPane.columnIndex="0" GridPane.rowIndex="6" style="-fx-text-fill: #7f8c8d;"/>
+                <Label fx:id="detailDisponible" text="" GridPane.columnIndex="1" GridPane.rowIndex="6" style="-fx-font-size: 14px;"/>
+
+                <Label text="URL image :" GridPane.columnIndex="0" GridPane.rowIndex="7" style="-fx-text-fill: #7f8c8d;"/>
+                <Label fx:id="detailImageUrl" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="7" style="-fx-font-size: 13px; -fx-text-fill: #3498db;"/>
+            </GridPane>
+
+            <Label text="Description" style="-fx-font-weight: bold; -fx-text-fill: #2c3e50; -fx-padding: 8 0 4 0;"/>
+            <Label fx:id="detailDescription" wrapText="true" style="-fx-font-size: 14px; -fx-text-fill: #34495e;"/>
+        </VBox>
+    </VBox>
+</ScrollPane>

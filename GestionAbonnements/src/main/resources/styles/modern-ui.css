@@ -1,0 +1,62 @@
+/* ============================================
+   LAMMA - Modern UI (complément)
+   Utilise des couleurs pleines pour éviter les conflits avec le thème JavaFX.
+   ============================================ */
+
+/* Champs de formulaire modernes */
+.input-field {
+    -fx-padding: 10 14;
+    -fx-background-radius: 8;
+    -fx-font-size: 14px;
+}
+
+/* Messages de validation */
+.validation-error {
+    -fx-text-fill: #c0392b;
+    -fx-font-size: 12px;
+}
+
+.validation-success {
+    -fx-text-fill: #27ae60;
+    -fx-font-size: 12px;
+}
+
+.validation-info {
+    -fx-text-fill: #2980b9;
+    -fx-font-size: 12px;
+}
+
+.validation-message {
+    -fx-font-size: 12px;
+}
+
+/* Boutons secondaires */
+.btn-secondary {
+    -fx-background-color: #95a5a6;
+    -fx-text-fill: white;
+}
+
+.btn-primary {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+}
+
+.btn-success {
+    -fx-background-color: #27ae60;
+    -fx-text-fill: white;
+}
+
+.btn-danger {
+    -fx-background-color: #e74c3c;
+    -fx-text-fill: white;
+}
+
+.btn-warning {
+    -fx-background-color: #f39c12;
+    -fx-text-fill: white;
+}
+
+.btn-info {
+    -fx-background-color: #16a085;
+    -fx-text-fill: white;
+}

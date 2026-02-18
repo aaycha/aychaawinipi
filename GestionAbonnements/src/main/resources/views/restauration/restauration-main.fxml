@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.gestion.ui.restauration.RestaurationMainController"
+            prefWidth="1000" prefHeight="700">
+
+    <top>
+        <VBox styleClass="resto-header">
+            <padding>
+                <Insets top="20" right="24" bottom="20" left="24"/>
+            </padding>
+            <HBox alignment="CENTER_LEFT" spacing="16">
+                <ImageView fitHeight="28" preserveRatio="true">
+                    <image>
+                        <Image url="@/images/lamma-logo.png" />
+                    </image>
+                </ImageView>
+                <Label text="Gestion Restauration" styleClass="resto-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="statusLabel" text="Pret" styleClass="resto-status"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <center>
+        <TabPane fx:id="mainTabPane" tabClosingPolicy="UNAVAILABLE" styleClass="resto-tab-pane">
+            <Tab text="Options">
+                <fx:include source="restauration-options-liste.fxml"/>
+            </Tab>
+            <Tab text="Menus">
+                <fx:include source="restauration-menus.fxml"/>
+            </Tab>
+            <Tab text="Repas">
+                <fx:include source="restauration-repas.fxml"/>
+            </Tab>
+            <Tab text="Restrictions">
+                <fx:include source="restauration-restrictions.fxml"/>
+            </Tab>
+            <Tab text="Presences">
+                <fx:include source="restauration-presence.fxml"/>
+            </Tab>
+            <Tab text="Besoins Participant">
+                <fx:include source="restauration-besoins.fxml"/>
+            </Tab>
+        </TabPane>
+    </center>
+
+    <padding>
+        <Insets top="0" right="16" bottom="16" left="16"/>
+    </padding>
+</BorderPane>

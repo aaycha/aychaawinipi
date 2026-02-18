@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<ScrollPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.gestion.ui.repas.RepasFormController"
+            fitToWidth="true" fitToHeight="true"
+            style="-fx-background: linear-gradient(to bottom, #f8f9fa, #e9ecef);">
+
+    <VBox spacing="24" style="-fx-background-color: transparent;" prefWidth="900" maxWidth="900">
+        <padding>
+            <Insets top="32" right="48" bottom="32" left="48"/>
+        </padding>
+
+        <!-- Header -->
+        <HBox spacing="16" alignment="CENTER_LEFT">
+            <Label text="🍽️" style="-fx-font-size: 28px;"/>
+            <VBox spacing="4">
+                <Label fx:id="formTitle" text="Nouveau Plat" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                <Label text="Définissez les informations du plat" style="-fx-font-size: 14px; -fx-text-fill: #7f8c8d;"/>
+            </VBox>
+            <Region HBox.hgrow="ALWAYS"/>
+        </HBox>
+
+        <!-- Form Card -->
+        <VBox spacing="20"
+              style="-fx-background-color: white; -fx-background-radius: 16;
+                     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 16, 0, 0, 4);">
+            <padding>
+                <Insets top="32" right="40" bottom="32" left="40"/>
+            </padding>
+
+            <!-- Section: Informations du Plat -->
+            <VBox spacing="16">
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <Label text="🍽️" style="-fx-font-size: 20px;"/>
+                    <Label text="Informations du Plat" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                </HBox>
+
+                <GridPane hgap="20" vgap="16">
+                    <columnConstraints>
+                        <ColumnConstraints minWidth="140" prefWidth="160" halignment="RIGHT"/>
+                        <ColumnConstraints hgrow="ALWAYS" minWidth="300"/>
+                    </columnConstraints>
+
+                    <!-- Nom (obligatoire) -->
+                    <Label text="Nom * :" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-font-weight: bold;"/>
+                    <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <TextField fx:id="inputNom" promptText="Ex: Mloukhia au poulet, Pizza 4 fromages..."
+                                   style="-fx-padding: 12 16; -fx-background-radius: 8; -fx-border-radius: 8;
+                                          -fx-border-color: #ddd; -fx-font-size: 14px;"/>
+                        <HBox spacing="8" alignment="CENTER_LEFT">
+                            <Label fx:id="hintNom" text="0 / 120 car. — Obligatoire" style="-fx-text-fill: #7f8c8d; -fx-font-size: 11px;"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                        </HBox>
+                        <Label fx:id="errorNom" text="" visible="false" managed="false"
+                               style="-fx-text-fill: #e74c3c; -fx-font-size: 12px;"/>
+                    </VBox>
+
+                    <!-- Restaurant -->
+                    <Label text="Restaurant :" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                    <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <ComboBox fx:id="comboRestaurant" promptText="Sélectionnez un restaurant (optionnel)"
+                                  style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #ddd;
+                                         -fx-padding: 4 8; -fx-font-size: 14px;" maxWidth="Infinity"/>
+                    </VBox>
+
+                    <!-- Menu -->
+                    <Label text="Menu :" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                    <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <ComboBox fx:id="comboMenu" promptText="Sélectionnez un menu (optionnel)"
+                                  style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #ddd;
+                                         -fx-padding: 4 8; -fx-font-size: 14px;" maxWidth="Infinity"/>
+                        <Label fx:id="errorRestaurantMenu" text="" visible="false" managed="false"
+                               style="-fx-text-fill: #e74c3c; -fx-font-size: 12px;"/>
+                    </VBox>
+
+                    <!-- Prix -->
+                    <Label text="Prix (€) :" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                    <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                        <TextField fx:id="inputPrix" promptText="Ex: 12.50 ou 10"
+                                   style="-fx-padding: 12 16; -fx-background-radius: 8; -fx-border-radius: 8;
+                                          -fx-border-color: #ddd; -fx-font-size: 14px;"/>
+                        <Label fx:id="hintPrix" text="Nombre décimal (ex. 12.50). Optionnel." style="-fx-text-fill: #7f8c8d; -fx-font-size: 11px;"/>
+                        <Label fx:id="errorPrix" text="" visible="false" managed="false"
+                               style="-fx-text-fill: #e74c3c; -fx-font-size: 12px;"/>
+                    </VBox>
+                </GridPane>
+            </VBox>
+
+            <Separator style="-fx-opacity: 0.3;"/>
+
+            <!-- Section: Classification -->
+            <VBox spacing="16">
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <Label text="🏷️" style="-fx-font-size: 20px;"/>
+                    <Label text="Classification" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                </HBox>
+
+                <GridPane hgap="20" vgap="16">
+                    <columnConstraints>
+                        <ColumnConstraints minWidth="140" prefWidth="160" halignment="RIGHT"/>
+                        <ColumnConstraints hgrow="ALWAYS" minWidth="300"/>
+                    </columnConstraints>
+
+                    <!-- Catégorie -->
+                    <Label text="Catégorie :" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                    <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <ComboBox fx:id="comboCategorie" promptText="Sélectionnez une catégorie (obligatoire)"
+                                  style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #ddd;
+                                         -fx-padding: 4 8; -fx-font-size: 14px;" maxWidth="Infinity"/>
+                        <Label fx:id="errorCategorie" text="" visible="false" managed="false"
+                               style="-fx-text-fill: #e74c3c; -fx-font-size: 12px;"/>
+                    </VBox>
+
+                    <!-- Type de Plat -->
+                    <Label text="Type de plat :" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                    <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <ComboBox fx:id="comboTypePlat" promptText="Sélectionnez un type (obligatoire)"
+                                  style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #ddd;
+                                         -fx-padding: 4 8; -fx-font-size: 14px;" maxWidth="Infinity"/>
+                        <Label fx:id="errorTypePlat" text="" visible="false" managed="false"
+                               style="-fx-text-fill: #e74c3c; -fx-font-size: 12px;"/>
+                    </VBox>
+
+                    <!-- Temps de préparation -->
+                    <Label text="Temps de prépa (min) :" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                    <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <TextField fx:id="inputTempsPreparation" promptText="Ex: 15 (minutes, 0-1440)"
+                                   style="-fx-padding: 12 16; -fx-background-radius: 8; -fx-border-radius: 8;
+                                          -fx-border-color: #ddd; -fx-font-size: 14px;"/>
+                        <Label fx:id="hintTempsPrep" text="Minutes (0 à 1440). Optionnel." style="-fx-text-fill: #7f8c8d; -fx-font-size: 11px;"/>
+                        <Label fx:id="errorTempsPreparation" text="" visible="false" managed="false"
+                               style="-fx-text-fill: #e74c3c; -fx-font-size: 12px;"/>
+                    </VBox>
+                </GridPane>
+            </VBox>
+
+            <Separator style="-fx-opacity: 0.3;"/>
+
+            <!-- Section: Description & Image -->
+            <VBox spacing="16">
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <Label text="📝" style="-fx-font-size: 20px;"/>
+                    <Label text="Description  Image" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                </HBox>
+
+                <GridPane hgap="20" vgap="16">
+                    <columnConstraints>
+                        <ColumnConstraints minWidth="140" prefWidth="160" halignment="RIGHT">
+
+                        </ColumnConstraints>
+                        <ColumnConstraints hgrow="ALWAYS" minWidth="300"/>
+                    </columnConstraints>
+
+                    <Label text="Description :" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                    <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <TextArea fx:id="inputDescription" promptText="Décrivez le plat, ses ingrédients, sa préparation..."
+                                  wrapText="true" prefRowCount="4"
+                                  style="-fx-padding: 12 16; -fx-background-radius: 8; -fx-border-radius: 8;
+                                         -fx-border-color: #ddd; -fx-font-size: 14px;"/>
+                        <Label fx:id="hintDescription" text="0 / 1000 car. max" style="-fx-text-fill: #7f8c8d; -fx-font-size: 11px;"/>
+                        <Label fx:id="errorDescription" text="" visible="false" managed="false"
+                               style="-fx-text-fill: #e74c3c; -fx-font-size: 12px;"/>
+                    </VBox>
+
+                    <Label text="URL Image :" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                    <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <TextField fx:id="inputImageUrl" promptText="https://exemple.com/plat.jpg"
+                                   style="-fx-padding: 12 16; -fx-background-radius: 8; -fx-border-radius: 8;
+                                          -fx-border-color: #ddd; -fx-font-size: 14px;"/>
+                        <Label fx:id="hintImageUrl" text="0 / 255 car. max. Optionnel." style="-fx-text-fill: #7f8c8d; -fx-font-size: 11px;"/>
+                        <Label fx:id="errorImageUrl" text="" visible="false" managed="false"
+                               style="-fx-text-fill: #e74c3c; -fx-font-size: 12px;"/>
+                    </VBox>
+                </GridPane>
+            </VBox>
+
+            <Separator style="-fx-opacity: 0.3;"/>
+
+            <!-- Section: Disponibilité -->
+            <VBox spacing="16">
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <Label text="⚙️" style="-fx-font-size: 20px;"/>
+                    <Label text="Disponibilité" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                </HBox>
+
+                <HBox spacing="20">
+                    <CheckBox fx:id="checkDisponible" text="Plat disponible (visible aux clients)" selected="true"
+                              style="-fx-font-size: 14px;"/>
+                </HBox>
+            </VBox>
+
+            <!-- Error Messages -->
+            <VBox fx:id="errorContainer" spacing="8" visible="false" managed="false"
+                  style="-fx-background-color: #fdf2f2; -fx-border-color: #fecaca; -fx-border-radius: 8;
+                         -fx-background-radius: 8; -fx-padding: 16;">
+                <Label fx:id="globalErrorMessage" text="" style="-fx-text-fill: #dc2626; -fx-font-size: 14px;"/>
+            </VBox>
+
+            <!-- Buttons -->
+            <HBox spacing="12" alignment="CENTER_LEFT">
+                <Button text="💾 Enregistrer" onAction="#onEnregistrer"
+                        style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold;
+                               -fx-background-radius: 8; -fx-padding: 14 28; -fx-cursor: hand;
+                               -fx-font-size: 14px;"/>
+                <Button text="❌ Annuler" onAction="#onAnnuler"
+                        style="-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-font-weight: bold;
+                               -fx-background-radius: 8; -fx-padding: 14 28; -fx-cursor: hand;
+                               -fx-font-size: 14px;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label text="* Champs obligatoires" style="-fx-text-fill: #95a5a6; -fx-font-size: 12px;"/>
+            </HBox>
+        </VBox>
+    </VBox>
+</ScrollPane>

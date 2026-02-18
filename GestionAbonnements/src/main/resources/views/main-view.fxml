@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.gestion.controllers.MainController"
+            prefWidth="1100" prefHeight="750">
+
+    <top>
+        <VBox styleClass="voyage-header">
+            <padding>
+                <Insets top="24" right="32" bottom="24" left="32"/>
+            </padding>
+            <HBox alignment="CENTER_LEFT" spacing="20">
+                <ImageView fitHeight="40" preserveRatio="true">
+                    <image>
+                        <Image url="@/images/lamma-logo.png" />
+                    </image>
+                </ImageView>
+                <Label text="LAMMA Voyage" styleClass="voyage-brand"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label text="Espace :" styleClass="voyage-user"/>
+                <ComboBox fx:id="roleCombo" prefWidth="150">
+                    <items>
+                        <FXCollections fx:factory="observableArrayList">
+                            <String fx:value="Admin"/>
+                            <String fx:value="Utilisateur"/>
+                        </FXCollections>
+                    </items>
+                </ComboBox>
+                <Region minWidth="20"/>
+                <Label fx:id="userLabel" text="Bienvenue, Explorateur" styleClass="voyage-user"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <center>
+        <StackPane fx:id="contentPane">
+            <!-- Dashboard Admin - Liste des gestions -->
+            <ScrollPane fx:id="dashboardScroll" fitToWidth="true" styleClass="voyage-dashboard">
+                <VBox fx:id="dashboardBox" spacing="24" styleClass="voyage-dashboard-inner">
+                    <padding>
+                        <Insets top="32" right="48" bottom="48" left="48"/>
+                    </padding>
+                    <Label text="Choisissez votre gestion" styleClass="voyage-dashboard-title"/>
+                    <Label text="Cliquez sur un module pour y acceder" styleClass="voyage-dashboard-subtitle"/>
+                    <FlowPane fx:id="cardsContainer" hgap="24" vgap="24" prefWrapLength="1000"/>
+                </VBox>
+            </ScrollPane>
+            <!-- Espace Utilisateur - Liste scrollable (Mes Participations, Mes Repas, Restauration, Abonnement) -->
+            <ScrollPane fx:id="userDashboardScroll" fitToWidth="true" styleClass="voyage-dashboard" visible="false" managed="false">
+                <fx:include source="utilisateur/espace-utilisateur.fxml" fx:id="espaceUtilisateurInclude"/>
+            </ScrollPane>
+            <!-- Zone de contenu dynamique (FXML charges) -->
+            <BorderPane fx:id="moduleContentPane" visible="false" managed="false">
+                <top>
+                    <HBox spacing="12" alignment="CENTER_LEFT" styleClass="voyage-module-bar">
+                        <padding>
+                            <Insets top="12" right="20" bottom="12" left="20"/>
+                        </padding>
+                        <Button fx:id="backButton" text="Retour au dashboard" onAction="#retourDashboard" styleClass="voyage-btn-back"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="moduleTitleLabel" text="" styleClass="voyage-module-title"/>
+                    </HBox>
+                </top>
+                <center>
+                    <StackPane fx:id="moduleStackPane" styleClass="voyage-module-content"/>
+                </center>
+            </BorderPane>
+        </StackPane>
+    </center>
+
+    <bottom>
+        <HBox spacing="12" alignment="CENTER_LEFT" styleClass="voyage-footer">
+            <padding>
+                <Insets top="10" right="24" bottom="10" left="24"/>
+            </padding>
+            <Label fx:id="statusLabel" text="Pret - Selectionnez un module" styleClass="voyage-status"/>
+        </HBox>
+    </bottom>
+</BorderPane>

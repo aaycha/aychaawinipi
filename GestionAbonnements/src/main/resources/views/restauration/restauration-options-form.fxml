@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<!-- Formulaire seul : contrôles de saisie avec messages de validation riches -->
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.gestion.ui.restauration.RestaurationOptionsFormController"
+      spacing="20" style="-fx-background-color: white; -fx-padding: 24;">
+    <padding>
+        <Insets top="24" right="24" bottom="24" left="24"/>
+    </padding>
+
+    <Label fx:id="formTitle" text="Nouvelle option de restauration" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+
+    <GridPane hgap="16" vgap="12">
+        <columnConstraints>
+            <ColumnConstraints minWidth="120" prefWidth="140" halignment="RIGHT"/>
+            <ColumnConstraints minWidth="220" prefWidth="300" hgrow="ALWAYS"/>
+        </columnConstraints>
+
+        <Label text="Libellé *" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-font-weight: bold;"/>
+        <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="0">
+            <TextField fx:id="inputLibelle" promptText="Ex: Petit-déjeuner, Déjeuner buffet..."
+                       style="-fx-padding: 10 14; -fx-background-radius: 8; -fx-font-size: 14px;"/>
+            <Label fx:id="errorLibelle" text="" visible="false" managed="false"
+                   style="-fx-text-fill: #e74c3c; -fx-font-size: 12px;"/>
+        </VBox>
+
+        <Label text="Type Événement" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="1">
+            <TextField fx:id="inputTypeEvenement" promptText="SOIREE, RANDONNEE, SEMINAIRE..."
+                       style="-fx-padding: 10 14; -fx-background-radius: 8; -fx-font-size: 14px;"/>
+            <Label fx:id="errorTypeEvenement" text="" visible="false" managed="false"
+                   style="-fx-text-fill: #e74c3c; -fx-font-size: 12px;"/>
+        </VBox>
+
+        <Label text="Actif" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+        <CheckBox fx:id="inputActif" text="Option active et visible" selected="true"
+                  GridPane.columnIndex="1" GridPane.rowIndex="2" style="-fx-font-size: 14px;"/>
+    </GridPane>
+
+    <VBox fx:id="errorContainer" spacing="8" visible="false" managed="false"
+          style="-fx-background-color: #fdf2f2; -fx-border-color: #fecaca; -fx-border-radius: 8;
+                 -fx-background-radius: 8; -fx-padding: 12;">
+        <Label fx:id="globalErrorMessage" text="" style="-fx-text-fill: #dc2626; -fx-font-size: 13px;" wrapText="true"/>
+    </VBox>
+
+    <HBox spacing="12" alignment="CENTER_LEFT">
+        <Button text="💾 Enregistrer" onAction="#onEnregistrer"
+                style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold;
+                       -fx-background-radius: 8; -fx-padding: 12 24; -fx-cursor: hand;"/>
+        <Button text="❌ Annuler" onAction="#onAnnuler"
+                style="-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-font-weight: bold;
+                       -fx-background-radius: 8; -fx-padding: 12 24; -fx-cursor: hand;"/>
+    </HBox>
+</VBox>

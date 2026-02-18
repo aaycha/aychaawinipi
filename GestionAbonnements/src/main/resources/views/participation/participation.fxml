@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+
+<ScrollPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.gestion.ui.participation.ParticipationViewController"
+            fitToWidth="true" fitToHeight="true"
+            vbarPolicy="AS_NEEDED" hbarPolicy="NEVER">
+
+    <VBox spacing="20" prefWidth="1000">
+        <padding>
+            <Insets top="24" right="24" bottom="24" left="24"/>
+        </padding>
+
+        <!-- ══ Header ══════════════════════════════════════════════════ -->
+        <HBox spacing="16" alignment="CENTER_LEFT"
+              style="-fx-background-color: #1a3c5e; -fx-padding: 16 20; -fx-background-radius: 8;">
+            <ImageView fitHeight="32" preserveRatio="true">
+                <image>
+                    <Image url="@/images/lamma-logo.png"/>
+                </image>
+            </ImageView>
+            <Label text="👥 Gestion des Participations"
+                   style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="statusInfoLabel" text="Prêt"
+                   style="-fx-text-fill: #aad4f5; -fx-font-size: 12px;"/>
+        </HBox>
+
+        <!-- ══ Barre d'actions ══════════════════════════════════════════ -->
+        <HBox spacing="10" alignment="CENTER_LEFT"
+              style="-fx-background-color: #f8f9fa; -fx-padding: 12; -fx-background-radius: 6; -fx-border-color: #dee2e6; -fx-border-radius: 6;">
+            <Button text="➕ Nouvelle" onAction="#onNouvelle"
+                    style="-fx-background-color: #1890ff; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand; -fx-padding: 8 16;"/>
+            <Button text="🔄 Actualiser" onAction="#onActualiser"
+                    style="-fx-background-color: #6c757d; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 8 16;"/>
+            <Button fx:id="btnModifier" text="✏️ Modifier" onAction="#onModifier"
+                    disable="true"
+                    style="-fx-background-color: #fd7e14; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 8 16;"/>
+            <Button fx:id="btnSupprimer" text="🗑️ Supprimer" onAction="#onSupprimer"
+                    disable="true"
+                    style="-fx-background-color: #dc3545; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 8 16;"/>
+            <Button fx:id="btnConfirmer" text="✅ Confirmer" onAction="#onConfirmer"
+                    disable="true"
+                    style="-fx-background-color: #28a745; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 8 16;"/>
+            <Button fx:id="btnAnnulerPart" text="❌ Annuler Part." onAction="#onAnnulerParticipation"
+                    disable="true"
+                    style="-fx-background-color: #dc3545; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 8 16;"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="📊 Statistiques" onAction="#onStatistiques"
+                    style="-fx-background-color: #17a2b8; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 8 16;"/>
+        </HBox>
+
+        <!-- ══ Filtres ══════════════════════════════════════════════════ -->
+        <VBox spacing="10"
+              style="-fx-background-color: #fff; -fx-padding: 16; -fx-background-radius: 6; -fx-border-color: #dee2e6; -fx-border-radius: 6;">
+            <Label text="🔍 Recherche et Filtres"
+                   style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1a3c5e;"/>
+            <GridPane hgap="12" vgap="10">
+                <columnConstraints>
+                    <ColumnConstraints minWidth="90" prefWidth="100"/>
+                    <ColumnConstraints minWidth="150" prefWidth="200" hgrow="ALWAYS"/>
+                    <ColumnConstraints minWidth="90" prefWidth="110"/>
+                    <ColumnConstraints minWidth="150" prefWidth="200" hgrow="ALWAYS"/>
+                </columnConstraints>
+
+                <Label text="Statut:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                <ComboBox fx:id="filterStatut" prefWidth="200" promptText="Tous les statuts"
+                          onAction="#onFiltrer"
+                          GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                <Label text="Type:" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                <ComboBox fx:id="filterType" prefWidth="200" promptText="Tous les types"
+                          onAction="#onFiltrer"
+                          GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+
+                <Label text="User ID:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                <TextField fx:id="filterUserId" promptText="ID utilisateur"
+                           onKeyReleased="#onFiltrer"
+                           GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                <Label text="Événement ID:" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                <TextField fx:id="filterEvenementId" promptText="ID événement"
+                           onKeyReleased="#onFiltrer"
+                           GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+
+                <Label text="Recherche:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                <TextField fx:id="searchField" promptText="Rechercher..."
+                           onKeyReleased="#onRechercher"
+                           GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.columnSpan="3"/>
+            </GridPane>
+            <HBox spacing="8">
+                <Button text="🔍 Rechercher" onAction="#onRechercher"
+                        style="-fx-background-color: #1890ff; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 6 14;"/>
+                <Button text="❌ Réinitialiser" onAction="#onReinitialiserFiltres"
+                        style="-fx-background-color: #6c757d; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 6 14;"/>
+            </HBox>
+        </VBox>
+
+        <!-- ══ TableView ════════════════════════════════════════════════ -->
+        <VBox spacing="8" VBox.vgrow="ALWAYS">
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <Label text="📊 Liste des Participations"
+                       style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1a3c5e;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="countLabel" text="0 participation(s)"
+                       style="-fx-font-size: 12px; -fx-text-fill: #6c757d;"/>
+            </HBox>
+
+            <TableView fx:id="table" VBox.vgrow="ALWAYS" minHeight="380" prefHeight="420"
+                       onMouseClicked="#onTableClick">
+                <placeholder>
+                    <VBox alignment="CENTER" spacing="12">
+                        <Label text="📭 Aucune donnée disponible"
+                               style="-fx-font-size: 14px; -fx-text-fill: #6c757d;"/>
+                        <Label text="Cliquez sur 'Actualiser' pour charger les données"
+                               style="-fx-font-size: 11px; -fx-text-fill: #aaa;"/>
+                    </VBox>
+                </placeholder>
+                <columns>
+                    <TableColumn fx:id="colId" text="ID" prefWidth="60" minWidth="50" sortable="true"/>
+                    <TableColumn fx:id="colUserId" text="User ID" prefWidth="90" minWidth="70" sortable="true"/>
+                    <TableColumn fx:id="colEvenementId" text="Événement ID" prefWidth="110" minWidth="90" sortable="true"/>
+                    <TableColumn fx:id="colType" text="Type" prefWidth="120" minWidth="100" sortable="true"/>
+                    <TableColumn fx:id="colStatut" text="Statut" prefWidth="130" minWidth="110" sortable="true"/>
+                    <TableColumn fx:id="colContexte" text="Contexte" prefWidth="120" minWidth="100" sortable="true"/>
+                    <TableColumn fx:id="colHebergement" text="Nuits" prefWidth="70" minWidth="60" sortable="true"/>
+                    <TableColumn fx:id="colBadge" text="Badge" prefWidth="140" minWidth="110" sortable="true"/>
+                </columns>
+            </TableView>
+        </VBox>
+
+        <!-- ══ Champs cachés requis par ParticipationViewController ════
+             (utilisés par loadParticipationInForm / buildParticipationFromForm)
+             Ils sont masqués visuellement mais présents dans le graphe de scène -->
+        <VBox visible="false" managed="false">
+            <TextField fx:id="inputUserId"/>
+            <TextField fx:id="inputEvenementId"/>
+            <ComboBox fx:id="inputType"/>
+            <ComboBox fx:id="inputContexte"/>
+            <CheckBox fx:id="inputHebergement"/>
+            <TextField fx:id="inputHebergementNuits"/>
+            <Button fx:id="btnEnregistrer" onAction="#onEnregistrer"/>
+            <Button fx:id="btnModifierForm" onAction="#onModifier"/>
+            <Label fx:id="validationMessage"/>
+        </VBox>
+
+    </VBox>
+</ScrollPane>

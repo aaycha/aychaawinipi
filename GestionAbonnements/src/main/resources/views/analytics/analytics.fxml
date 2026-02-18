@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      spacing="16" styleClass="resto-panel" alignment="CENTER">
+    <padding><Insets top="40" right="40" bottom="40" left="40"/></padding>
+    <Label text="Analytics" styleClass="resto-panel-title"/>
+    <Label text="Module en cours de developpement" style="-fx-text-fill: #5a7d9a;"/>
+</VBox>

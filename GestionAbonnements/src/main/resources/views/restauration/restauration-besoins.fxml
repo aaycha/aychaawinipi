@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.gestion.ui.restauration.RestaurationBesoinsController"
+      spacing="16" styleClass="resto-panel">
+
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <Label text="Besoins Spécifiques des Participants" styleClass="resto-panel-title"/>
+
+    <HBox spacing="12" alignment="CENTER_LEFT">
+        <Button text=" Nouveau Besoin" onAction="#onNouveauBesoin" styleClass="resto-btn-primary"/>
+        <Button text=" Actualiser" onAction="#onActualiser" styleClass="resto-btn-secondary"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label text="Participant ID:"/>
+        <TextField fx:id="filterParticipantField" promptText="ID participant" prefWidth="100"/>
+        <Button text="Filtrer" onAction="#onFiltrer" styleClass="resto-btn-secondary"/>
+    </HBox>
+
+    <TableView fx:id="besoinsTable" VBox.vgrow="ALWAYS" styleClass="resto-table">
+        <columns>
+            <TableColumn fx:id="colBesoinId" text="ID" prefWidth="60"/>
+            <TableColumn fx:id="colParticipantId" text="Participant ID" prefWidth="100"/>
+            <TableColumn fx:id="colEvenementId" text="Événement ID" prefWidth="100"/>
+            <TableColumn fx:id="colBesoinLibelle" text="Besoin" prefWidth="150"/>
+            <TableColumn fx:id="colRestrictionLibelle" text="Restriction" prefWidth="150"/>
+            <TableColumn fx:id="colNiveauGravite" text="Gravité" prefWidth="100"/>
+            <TableColumn fx:id="colAnnule" text="Annulé" prefWidth="80"/>
+        </columns>
+    </TableView>
+
+    <HBox spacing="12" alignment="CENTER_LEFT" >
+        <TextField fx:id="inputParticipantId" promptText="ID Participant" prefWidth="90"/>
+        <TextField fx:id="inputEvenementId" promptText="ID Événement" prefWidth="90"/>
+        <TextField fx:id="inputBesoinLibelle" promptText="Besoin (ex: PMR)" prefWidth="120"/>
+        <TextField fx:id="inputRestrictionLibelle" promptText="Restriction" prefWidth="120"/>
+        <TextField fx:id="inputNiveauGravite" promptText="LEGERE/MODEREE" prefWidth="100"/>
+        <Button text="Ajouter" onAction="#onAjouterBesoin" styleClass="resto-btn-primary"/>
+    </HBox>
+</VBox>

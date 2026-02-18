@@ -1,0 +1,273 @@
+/* ============================================
+   LAMMA VOYAGE - Theme Voyage et Aventure
+   Design moderne et attractif - VERSION CORRIGÉE
+   ============================================ */
+
+.root {
+    -fx-font-family: "Segoe UI", "Roboto", "Helvetica Neue", sans-serif;
+    -fx-font-size: 14px;
+    -fx-background-color: #f8f9fc;          /* Gris très clair, valide */
+}
+
+/* ========== HEADER ========== */
+.voyage-header {
+    -fx-background-color: linear-gradient(to bottom right, #0f4c75, #3282b8);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 12, 0, 0, 4);
+}
+
+.voyage-brand {
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;                   /* Couleur valide */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 4, 0, 0, 1);
+}
+
+.voyage-user {
+    -fx-text-fill: rgba(255,255,255,0.95);
+    -fx-font-size: 14px;
+}
+
+/* ========== DASHBOARD ========== */
+.voyage-dashboard {
+    -fx-background-color: transparent;
+    -fx-fit-to-width: true;
+}
+
+.voyage-dashboard-inner {
+    -fx-background-color: linear-gradient(to bottom, #e8f4f8, #f0f7fa);
+}
+
+.voyage-dashboard-title {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #0f4c75;
+}
+
+.voyage-dashboard-subtitle {
+    -fx-font-size: 14px;
+    -fx-text-fill: #5a7d9a;
+}
+
+/* ========== CARDS ========== */
+.voyage-card {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-effect: dropshadow(gaussian, rgba(15,76,117,0.15), 12, 0, 0, 4);
+    -fx-border-color: rgba(26,108,168,0.2);
+    -fx-border-width: 1;
+    -fx-border-radius: 12;
+    -fx-cursor: hand;
+}
+
+.voyage-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(15,76,117,0.25), 16, 0, 0, 6);
+    -fx-border-color: #1b6ca8;
+    -fx-background-color: #fafcff;          /* Très clair, valide */
+}
+
+.voyage-card-icon {
+    -fx-text-fill: #1b6ca8;
+}
+
+.voyage-card-titre {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #0f4c75;
+}
+
+.voyage-card-desc {
+    -fx-font-size: 12px;
+    -fx-text-fill: #5a7d9a;
+}
+
+.voyage-card-btn {
+    -fx-background-color: linear-gradient(to bottom right, #1b6ca8, #3282b8);
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+    -fx-padding: 8 20 8 20;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.voyage-card-btn:hover {
+    -fx-background-color: linear-gradient(to bottom right, #0f4c75, #1b6ca8);
+    -fx-effect: dropshadow(gaussian, rgba(26,108,168,0.4), 6, 0, 0, 2);
+}
+
+/* ========== MODULE BAR ========== */
+.voyage-module-bar {
+    -fx-background-color: white;
+    -fx-border-color: #dee8ef;
+    -fx-border-width: 0 0 1 0;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 4, 0, 0, 1);
+}
+
+.voyage-btn-back {
+    -fx-background-color: #5a7d9a;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+    -fx-padding: 8 16 8 16;
+    -fx-cursor: hand;
+}
+
+.voyage-btn-back:hover {
+    -fx-background-color: #1b6ca8;
+}
+
+.voyage-module-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #0f4c75;
+}
+
+/* ========== FOOTER ========== */
+.voyage-footer {
+    -fx-background-color: #0f4c75;
+}
+
+.voyage-status {
+    -fx-text-fill: rgba(255,255,255,0.9);
+    -fx-font-size: 12px;
+}
+
+/* ========== RESTAURATION PANELS ========== */
+.resto-panel {
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+}
+
+.resto-panel-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #0f4c75;
+}
+
+.resto-btn-primary {
+    -fx-background-color: linear-gradient(to bottom right, #1b6ca8, #3282b8);
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-padding: 8 16 8 16;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.resto-btn-primary:hover {
+    -fx-background-color: linear-gradient(to bottom right, #0f4c75, #1b6ca8);
+}
+
+.resto-btn-secondary {
+    -fx-background-color: #5a7d9a;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-padding: 8 16 8 16;
+    -fx-cursor: hand;
+}
+
+.resto-btn-secondary:hover {
+    -fx-background-color: #1b6ca8;
+}
+
+.resto-table {
+    -fx-background-color: white;
+}
+
+.resto-header {
+    -fx-background-color: linear-gradient(to bottom right, #0f4c75, #1b6ca8);
+}
+
+.resto-title {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.resto-status {
+    -fx-text-fill: rgba(255,255,255,0.9);
+}
+
+.resto-tab-pane .tab:selected .tab-label {
+    -fx-text-fill: #0f4c75;
+}
+
+/* ========== STYLES GLOBAUX ========== */
+.table-view {
+    -fx-background-color: white;
+    -fx-border-color: #dee8ef;
+    -fx-border-radius: 8;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: linear-gradient(to bottom, #e8f4f8, #d4e8f0);
+}
+
+.table-view .column-header {
+    -fx-font-weight: bold;
+    -fx-text-fill: #0f4c75;
+    -fx-padding: 12 10 12 10;
+}
+
+.table-view .table-row-cell:even {
+    -fx-background-color: #f8fbfd;
+}
+
+.table-view .table-row-cell:odd {
+    -fx-background-color: white;
+}
+
+.table-view .table-row-cell:selected {
+    -fx-background-color: #cce5f5;
+}
+
+.table-view .table-row-cell:hover {
+    -fx-background-color: #e8f4f8;
+}
+
+.text-field {
+    -fx-background-color: white;
+    -fx-border-color: #b8d4e8;
+    -fx-border-radius: 6;
+    -fx-padding: 8 12 8 12;
+}
+
+.text-field:focused {
+    -fx-border-color: #1b6ca8;
+}
+
+.combo-box {
+    -fx-background-color: white;
+    -fx-border-color: #b8d4e8;
+    -fx-border-radius: 6;
+}
+
+.combo-box:focused {
+    -fx-border-color: #1b6ca8;
+}
+
+.date-picker {
+    -fx-background-color: white;
+}
+
+.date-picker .text-field {
+    -fx-border-color: #b8d4e8;
+}
+
+.check-box {
+    -fx-text-fill: #0f4c75;
+}
+
+.check-box .box {
+    -fx-background-color: white;
+    -fx-border-color: #b8d4e8;
+}
+
+.check-box:selected .box {
+    -fx-background-color: #1b6ca8;
+    -fx-border-color: #1b6ca8;
+}
+
+/* Zone contenu module */
+.voyage-module-content {
+    -fx-background-color: #f0f7fa;
+    -fx-padding: 16;
+}
