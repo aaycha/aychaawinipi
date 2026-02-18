@@ -37,20 +37,14 @@
                 <Region HBox.hgrow="ALWAYS"/>
                 <Label fx:id="countLabel" text="0 présences" styleClass="count-label"/>
             </HBox>
-            <TableView fx:id="presenceTable" VBox.vgrow="ALWAYS" minHeight="350" prefHeight="400" 
-                       styleClass="modern-table" onMouseClicked="#onTableClick">
+            <ListView fx:id="listView" VBox.vgrow="ALWAYS" minHeight="350" prefHeight="400" 
+                       styleClass="modern-list-view" onMouseClicked="#onListClick">
                 <placeholder>
                     <VBox alignment="CENTER" spacing="12">
                         <Label text="📭 Aucune donnée disponible" styleClass="placeholder-text"/>
                     </VBox>
                 </placeholder>
-                <columns>
-                    <TableColumn fx:id="colPresId" text="ID" prefWidth="60" minWidth="50" sortable="true"/>
-                    <TableColumn fx:id="colPresParticipantId" text="Participant ID" prefWidth="150" minWidth="120" sortable="true"/>
-                    <TableColumn fx:id="colPresDate" text="Date" prefWidth="180" minWidth="150" sortable="true"/>
-                    <TableColumn fx:id="colPresAbonnementActif" text="Abonnement Actif" prefWidth="180" minWidth="150" sortable="true"/>
-                </columns>
-            </TableView>
+            </ListView>
         </VBox>
 
         <VBox spacing="12" styleClass="form-section">
