@@ -7,7 +7,8 @@
 <ScrollPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.gestion.ui.restauration.RestaurationMenusController"
             fitToWidth="true" fitToHeight="true" styleClass="modern-scroll-pane"
-            vbarPolicy="AS_NEEDED" hbarPolicy="NEVER">
+            vbarPolicy="AS_NEEDED" hbarPolicy="NEVER"
+            stylesheets="@../../styles/card-view.css">
     
     <VBox spacing="20" styleClass="modern-panel" prefWidth="1000">
         <padding>
@@ -36,20 +37,14 @@
                 <Region HBox.hgrow="ALWAYS"/>
                 <Label fx:id="countLabel" text="0 menus" styleClass="count-label"/>
             </HBox>
-            <TableView fx:id="menusTable" VBox.vgrow="ALWAYS" minHeight="350" prefHeight="400" 
-                       styleClass="modern-table" onMouseClicked="#onTableClick">
+            <ListView fx:id="listView" VBox.vgrow="ALWAYS" minHeight="350" prefHeight="400" 
+                       styleClass="modern-list-view" onMouseClicked="#onListClick">
                 <placeholder>
                     <VBox alignment="CENTER" spacing="12">
                         <Label text="📭 Aucune donnée disponible" styleClass="placeholder-text"/>
                     </VBox>
                 </placeholder>
-                <columns>
-                    <TableColumn fx:id="colMenuId" text="ID" prefWidth="60" minWidth="50" sortable="true"/>
-                    <TableColumn fx:id="colMenuNom" text="Nom" prefWidth="300" minWidth="250" sortable="true"/>
-                    <TableColumn fx:id="colOptionId" text="Option ID" prefWidth="100" minWidth="80" sortable="true"/>
-                    <TableColumn fx:id="colMenuActif" text="Actif" prefWidth="100" minWidth="80" sortable="true"/>
-                </columns>
-            </TableView>
+            </ListView>
         </VBox>
 
         <VBox spacing="12" styleClass="form-section">

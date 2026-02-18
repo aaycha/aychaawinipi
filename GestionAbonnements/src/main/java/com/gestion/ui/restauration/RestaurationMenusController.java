@@ -10,32 +10,45 @@ import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.*;
+import javafx.geometry.Pos;
+import javafx.scene.text.Text;
+import javafx.scene.text.Font;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class RestaurationMenusController {
 
-    @FXML private TableView<Restauration> menusTable;
-    @FXML private TableColumn<Restauration, Long> colMenuId;
-    @FXML private TableColumn<Restauration, String> colMenuNom;
-    @FXML private TableColumn<Restauration, Long> colOptionId;
-    @FXML private TableColumn<Restauration, Boolean> colMenuActif;
-    
-    @FXML private ComboBox<Long> filterOptionCombo;
-    @FXML private TextField searchField;
-    
-    @FXML private TextField inputNom;
-    @FXML private TextField inputOptionId;
-    @FXML private CheckBox inputActif;
-    
-    @FXML private Button btnModifier;
-    @FXML private Button btnSupprimer;
-    @FXML private Button btnEnregistrer;
-    @FXML private Button btnModifierForm;
-    @FXML private Label statusInfoLabel;
-    @FXML private Label countLabel;
-    @FXML private Label validationMessage;
+    @FXML
+    private ListView<Restauration> listView;
+
+    @FXML
+    private ComboBox<Long> filterOptionCombo;
+    @FXML
+    private TextField searchField;
+
+    @FXML
+    private TextField inputNom;
+    @FXML
+    private TextField inputOptionId;
+    @FXML
+    private CheckBox inputActif;
+
+    @FXML
+    private Button btnModifier;
+    @FXML
+    private Button btnSupprimer;
+    @FXML
+    private Button btnEnregistrer;
+    @FXML
+    private Button btnModifierForm;
+    @FXML
+    private Label statusInfoLabel;
+    @FXML
+    private Label countLabel;
+    @FXML
+    private Label validationMessage;
 
     private final RestaurationController controller = new RestaurationController();
     private final ObservableList<Restauration> menusData = FXCollections.observableArrayList();
@@ -43,33 +56,80 @@ public class RestaurationMenusController {
     private Restauration selectedMenu = null;
     private boolean isEditMode = false;
 
+    private void setupListView() {
+        listView.setCellFactory(param -> new ListCell<Restauration>() {
+            @Override
+            protected void updateItem(Restauration item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setGraphic(null);
+                    setStyle("-fx-background-color: transparent;");
+                } else {
+                    setGraphic(createMenuCard(item));
+                    setStyle("-fx-background-color: transparent; -fx-padding: 5 10 5 10;");
+                }
+            }
+        });
+    }
+
+    private javafx.scene.Node createMenuCard(Restauration item) {
+        HBox card = new HBox(15);
+        card.getStyleClass().add("modern-card");
+        card.setAlignment(Pos.CENTER_LEFT);
+
+        // Icon based on activity
+        Text icon = new Text(item.isActif() ? "🍽️" : "🌑");
+        icon.setFont(Font.font("Segoe UI Emoji", 24));
+
+        VBox content = new VBox(5);
+        HBox.setHgrow(content, Priority.ALWAYS);
+
+        HBox header = new HBox(10);
+        header.setAlignment(Pos.CENTER_LEFT);
+        Label nameLabel = new Label(item.getNom() != null ? item.getNom() : "Sans nom");
+        nameLabel.getStyleClass().add("card-title");
+
+        Label statusBadge = new Label(item.isActif() ? "ACTIF" : "INACTIF");
+        statusBadge.getStyleClass().addAll("status-badge", item.isActif() ? "ACTIF" : "ANNULE"); // ACTIF/ANNULE mapping
+                                                                                                 // to existing CSS
+                                                                                                 // styles
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        header.getChildren().addAll(nameLabel, spacer, statusBadge);
+
+        HBox details = new HBox(15);
+        Label idLabel = new Label("ID: " + item.getId());
+        idLabel.getStyleClass().add("card-label");
+
+        Label optLabel = new Label(
+                "Option ID: " + (item.getOptionRestaurationId() != null ? item.getOptionRestaurationId() : "N/A"));
+        optLabel.getStyleClass().add("card-value");
+
+        details.getChildren().addAll(idLabel, optLabel);
+
+        content.getChildren().addAll(header, details);
+        card.getChildren().addAll(icon, content);
+
+        return card;
+    }
+
     @FXML
     public void initialize() {
         try {
-            colMenuId.setCellValueFactory(cellData -> 
-                new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().getId()));
-            
-            colMenuNom.setCellValueFactory(cellData -> {
-                String nom = cellData.getValue().getNom();
-                return new javafx.beans.property.SimpleStringProperty(nom != null ? nom : "");
-            });
-            
-            colOptionId.setCellValueFactory(cellData -> 
-                new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().getOptionRestaurationId()));
-            
-            colMenuActif.setCellValueFactory(cellData -> 
-                new javafx.beans.property.SimpleBooleanProperty(cellData.getValue().isActif()));
-            
-            menusTable.setItems(menusData);
-            menusTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-            menusTable.setVisible(true);
-            menusTable.setManaged(true);
-            
+            setupListView();
+
+            listView.setItems(menusData);
+            listView.setVisible(true);
+            listView.setManaged(true);
+
             filteredData = new FilteredList<>(menusData, p -> true);
-            menusTable.setItems(filteredData);
-            
+            listView.setItems(filteredData);
+
             inputNom.textProperty().addListener((obs, oldVal, newVal) -> validateForm());
-            
+
             onActualiser();
             updateCount();
             updateButtons();
@@ -95,17 +155,18 @@ public class RestaurationMenusController {
             Platform.runLater(() -> {
                 menusData.clear();
                 menusData.addAll(menus);
-                
+
                 filterOptionCombo.getItems().clear();
                 filterOptionCombo.getItems().addAll(menus.stream()
                         .map(Restauration::getOptionRestaurationId)
                         .filter(id -> id != null && id > 0)
                         .distinct()
                         .collect(Collectors.toList()));
-                
+
                 applyFilters();
                 updateCount();
-                menusTable.refresh();
+                updateCount();
+                listView.refresh();
             });
         } catch (Exception e) {
             showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur lors du chargement: " + e.getMessage());
@@ -124,30 +185,31 @@ public class RestaurationMenusController {
 
     private void applyFilters() {
         Long optId = filterOptionCombo.getValue();
-        String searchText = searchField != null && searchField.getText() != null ? searchField.getText().toLowerCase() : "";
-        
+        String searchText = searchField != null && searchField.getText() != null ? searchField.getText().toLowerCase()
+                : "";
+
         filteredData.setPredicate(menu -> {
             boolean match = true;
-            
+
             if (optId != null) {
                 match = match && optId.equals(menu.getOptionRestaurationId());
             }
-            
+
             if (!searchText.isEmpty()) {
-                String searchable = menu.getId() + " " + 
-                                  (menu.getNom() != null ? menu.getNom() : "");
+                String searchable = menu.getId() + " " +
+                        (menu.getNom() != null ? menu.getNom() : "");
                 match = match && searchable.toLowerCase().contains(searchText);
             }
-            
+
             return match;
         });
-        
+
         updateCount();
     }
 
     @FXML
-    void onTableClick(MouseEvent event) {
-        selectedMenu = menusTable.getSelectionModel().getSelectedItem();
+    void onListClick(MouseEvent event) {
+        selectedMenu = listView.getSelectionModel().getSelectedItem();
         if (selectedMenu != null) {
             loadMenuInForm(selectedMenu);
             updateButtons();
@@ -156,13 +218,14 @@ public class RestaurationMenusController {
 
     @FXML
     void onEnregistrer() {
-        if (!validateForm()) return;
+        if (!validateForm())
+            return;
 
         try {
             String nom = inputNom.getText();
             Long optId = parseLong(inputOptionId.getText());
             boolean actif = inputActif.isSelected();
-            
+
             if (isEditMode && selectedMenu != null) {
                 selectedMenu.setNom(nom);
                 selectedMenu.setOptionRestaurationId(optId);
@@ -173,7 +236,7 @@ public class RestaurationMenusController {
                 controller.createMenu(nom, optId, actif);
                 showAlert(Alert.AlertType.INFORMATION, "Succès", "Menu créé avec succès");
             }
-            
+
             onActualiser();
             onNouveauMenu();
         } catch (Exception e) {
@@ -224,7 +287,8 @@ public class RestaurationMenusController {
 
     private void loadMenuInForm(Restauration menu) {
         inputNom.setText(menu.getNom() != null ? menu.getNom() : "");
-        inputOptionId.setText(menu.getOptionRestaurationId() != null ? String.valueOf(menu.getOptionRestaurationId()) : "");
+        inputOptionId
+                .setText(menu.getOptionRestaurationId() != null ? String.valueOf(menu.getOptionRestaurationId()) : "");
         inputActif.setSelected(menu.isActif());
     }
 
@@ -282,7 +346,8 @@ public class RestaurationMenusController {
     }
 
     private Long parseLong(String s) {
-        if (s == null || s.isBlank()) return null;
+        if (s == null || s.isBlank())
+            return null;
         try {
             return Long.parseLong(s.trim());
         } catch (NumberFormatException e) {
