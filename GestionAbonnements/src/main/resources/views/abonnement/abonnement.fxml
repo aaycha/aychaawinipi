@@ -10,7 +10,8 @@
 <ScrollPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.gestion.ui.abonnement.AbonnementViewController"
             fitToWidth="true" fitToHeight="true" styleClass="modern-scroll-pane"
-            vbarPolicy="AS_NEEDED" hbarPolicy="NEVER">
+            vbarPolicy="AS_NEEDED" hbarPolicy="NEVER"
+            stylesheets="@../../styles/card-view.css">
 
     <VBox spacing="20" styleClass="modern-panel" prefWidth="1000">
         <padding>
@@ -72,33 +73,22 @@
             </HBox>
         </VBox>
 
-        <!-- TableView avec scroll -->
+        <!-- ListView avec Cards -->
         <VBox spacing="8" VBox.vgrow="ALWAYS">
             <HBox spacing="8" alignment="CENTER_LEFT">
                 <Label text="📊 Liste des Abonnements" styleClass="section-title"/>
                 <Region HBox.hgrow="ALWAYS"/>
                 <Label fx:id="countLabel" text="0 abonnements" styleClass="count-label"/>
             </HBox>
-            <TableView fx:id="table" VBox.vgrow="ALWAYS" minHeight="350" prefHeight="400"
-                       styleClass="modern-table" onMouseClicked="#onTableClick">
+            <ListView fx:id="listView" VBox.vgrow="ALWAYS" minHeight="350" prefHeight="400"
+                       styleClass="modern-list-view" onMouseClicked="#onListClick">
                 <placeholder>
                     <VBox alignment="CENTER" spacing="12">
                         <Label text="📭 Aucune donnée disponible" styleClass="placeholder-text"/>
                         <Label text="Cliquez sur 'Actualiser' pour charger les données" styleClass="placeholder-hint"/>
                     </VBox>
                 </placeholder>
-                <columns>
-                    <TableColumn fx:id="colId" text="ID" prefWidth="60" minWidth="50" sortable="true"/>
-                    <TableColumn fx:id="colUserId" text="User ID" prefWidth="90" minWidth="80" sortable="true"/>
-                    <TableColumn fx:id="colType" text="Type" prefWidth="120" minWidth="100" sortable="true"/>
-                    <TableColumn fx:id="colDateDebut" text="Date Début" prefWidth="130" minWidth="110" sortable="true"/>
-                    <TableColumn fx:id="colDateFin" text="Date Fin" prefWidth="130" minWidth="110" sortable="true"/>
-                    <TableColumn fx:id="colPrix" text="Prix (€)" prefWidth="100" minWidth="90" sortable="true"/>
-                    <TableColumn fx:id="colStatut" text="Statut" prefWidth="120" minWidth="100" sortable="true"/>
-                    <TableColumn fx:id="colPoints" text="Points" prefWidth="80" minWidth="70" sortable="true"/>
-                    <TableColumn fx:id="colAutoRenew" text="AutoRenew" prefWidth="100" minWidth="80" sortable="true"/>
-                </columns>
-            </TableView>
+            </ListView>
         </VBox>
 
         <!-- Section Formulaire -->

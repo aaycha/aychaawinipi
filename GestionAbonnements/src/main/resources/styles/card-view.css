@@ -1,0 +1,115 @@
+/* ============================================
+   GESTION RESTAURATION - Card View & List View
+   ============================================ */
+
+/* ListView */
+.modern-list-view {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-selection-bar: transparent;
+}
+
+.modern-list-view .list-cell {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 8px 16px 8px 16px;
+    -fx-text-fill: #212529;
+}
+
+.modern-list-view .list-cell:empty {
+    -fx-background-color: transparent;
+}
+
+/* Card */
+.modern-card {
+    -fx-background-color: white;
+    -fx-background-radius: 12px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2);
+    -fx-padding: 16px;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+}
+
+.modern-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 12, 0, 0, 4);
+    -fx-translate-y: -2px;
+}
+
+/* Selected Card */
+.list-cell:selected .modern-card {
+    -fx-background-color: #f0f8ff; /* AliceBlue/Light Blue */
+    -fx-border-color: #007bff;
+    -fx-border-width: 2px;
+    -fx-border-radius: 12px;
+    -fx-effect: dropshadow(gaussian, rgba(0,123,255,0.3), 10, 0, 0, 2);
+}
+
+/* Card Header */
+.card-header {
+    -fx-alignment: center-left;
+    -fx-spacing: 12px;
+    -fx-padding: 0 0 12px 0;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 0 0 1px 0;
+}
+
+.card-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1e3a5f;
+}
+
+.card-subtitle {
+    -fx-font-size: 13px;
+    -fx-text-fill: #6c757d;
+}
+
+/* Status Badges */
+.status-badge {
+    -fx-background-radius: 12px;
+    -fx-padding: 4px 10px;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.status-badge.ACTIF { -fx-background-color: #28a745; }
+.status-badge.EXPIRE { -fx-background-color: #dc3545; }
+.status-badge.SUSPENDU { -fx-background-color: #ffc107; -fx-text-fill: #212529; }
+.status-badge.EN_ATTENTE { -fx-background-color: #17a2b8; }
+.status-badge.ANNULE { -fx-background-color: #6c757d; }
+
+/* Card Content Grid */
+.card-grid {
+    -fx-hgap: 16px;
+    -fx-vgap: 8px;
+    -fx-padding: 12px 0 0 0;
+}
+
+.card-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #6c757d;
+    -fx-font-weight: bold;
+}
+
+.card-value {
+    -fx-font-size: 13px;
+    -fx-text-fill: #212529;
+}
+
+.card-price {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #28a745;
+}
+
+/* Icon Placeholders */
+.card-icon {
+    -fx-font-size: 24px;
+    -fx-text-fill: #007bff;
+    -fx-alignment: center;
+    -fx-background-color: #e7f1ff;
+    -fx-background-radius: 50%;
+    -fx-min-width: 40px;
+    -fx-min-height: 40px;
+}

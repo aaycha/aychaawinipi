@@ -15,49 +15,70 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.scene.layout.*;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.text.Text;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 
 import java.io.IOException;
 import java.util.List;
 
 public class ParticipationViewController {
 
-    @FXML private TableView<Participation> table;
-    @FXML private TableColumn<Participation, Long> colId;
-    @FXML private TableColumn<Participation, Long> colUserId;
-    @FXML private TableColumn<Participation, Long> colEvenementId;
-    @FXML private TableColumn<Participation, String> colType;
-    @FXML private TableColumn<Participation, String> colStatut;
-    @FXML private TableColumn<Participation, String> colContexte;
-    @FXML private TableColumn<Participation, Number> colHebergement;
-    @FXML private TableColumn<Participation, String> colBadge;
-    
+    @FXML
+    private ListView<Participation> listView;
+
     // Filtres et recherche
-    @FXML private ComboBox<String> filterStatut;
-    @FXML private ComboBox<String> filterType;
-    @FXML private TextField filterUserId;
-    @FXML private TextField filterEvenementId;
-    @FXML private TextField searchField;
-    
+    @FXML
+    private ComboBox<String> filterStatut;
+    @FXML
+    private ComboBox<String> filterType;
+    @FXML
+    private TextField filterUserId;
+    @FXML
+    private TextField filterEvenementId;
+    @FXML
+    private TextField searchField;
+
     // Formulaire
-    @FXML private TextField inputUserId;
-    @FXML private TextField inputEvenementId;
-    @FXML private ComboBox<Participation.TypeParticipation> inputType;
-    @FXML private ComboBox<Participation.ContexteSocial> inputContexte;
-    @FXML private CheckBox inputHebergement;
-    @FXML private TextField inputHebergementNuits;
-    
+    @FXML
+    private TextField inputUserId;
+    @FXML
+    private TextField inputEvenementId;
+    @FXML
+    private ComboBox<Participation.TypeParticipation> inputType;
+    @FXML
+    private ComboBox<Participation.ContexteSocial> inputContexte;
+    @FXML
+    private CheckBox inputHebergement;
+    @FXML
+    private TextField inputHebergementNuits;
+
     // Boutons
-    @FXML private Button btnModifier;
-    @FXML private Button btnSupprimer;
-    @FXML private Button btnConfirmer;
-    @FXML private Button btnAnnulerPart;
-    @FXML private Button btnEnregistrer;
-    @FXML private Button btnModifierForm;
-    
+    @FXML
+    private Button btnModifier;
+    @FXML
+    private Button btnSupprimer;
+    @FXML
+    private Button btnConfirmer;
+    @FXML
+    private Button btnAnnulerPart;
+    @FXML
+    private Button btnEnregistrer;
+    @FXML
+    private Button btnModifierForm;
+
     // Labels
-    @FXML private Label statusInfoLabel;
-    @FXML private Label countLabel;
-    @FXML private Label validationMessage;
+    @FXML
+    private Label statusInfoLabel;
+    @FXML
+    private Label countLabel;
+    @FXML
+    private Label validationMessage;
 
     private final ParticipationController controller = new ParticipationController();
     private final ObservableList<Participation> data = FXCollections.observableArrayList();
@@ -68,21 +89,20 @@ public class ParticipationViewController {
     @FXML
     public void initialize() {
         try {
-            setupTableColumns();
+            setupListView();
             setupFilters();
             setupForm();
-            
-            table.setItems(data);
-            table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-            table.setVisible(true);
-            table.setManaged(true);
-            
+
+            listView.setItems(data);
+            listView.setVisible(true);
+            listView.setManaged(true);
+
             filteredData = new FilteredList<>(data, p -> true);
-            table.setItems(filteredData);
-            
+            listView.setItems(filteredData);
+
             onActualiser();
             updateCount();
-            
+
             System.out.println("ParticipationViewController initialisé avec succès");
 
             applyRolePermissions();
@@ -92,38 +112,96 @@ public class ParticipationViewController {
         }
     }
 
-    private void setupTableColumns() {
-        colId.setCellValueFactory(cellData -> 
-            new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().getId()));
-        
-        colUserId.setCellValueFactory(cellData -> 
-            new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().getUserId()));
-        
-        colEvenementId.setCellValueFactory(cellData -> 
-            new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().getEvenementId()));
-        
-        colType.setCellValueFactory(cellData -> {
-            Participation.TypeParticipation type = cellData.getValue().getType();
-            return new javafx.beans.property.SimpleStringProperty(type != null ? type.name() : "");
+    private void setupListView() {
+        listView.setCellFactory(param -> new ListCell<Participation>() {
+            @Override
+            protected void updateItem(Participation item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setGraphic(null);
+                    setStyle("-fx-background-color: transparent;");
+                } else {
+                    setGraphic(createCard(item));
+                    setStyle("-fx-background-color: transparent; -fx-padding: 5 10 5 10;");
+                }
+            }
         });
-        
-        colStatut.setCellValueFactory(cellData -> {
-            Participation.StatutParticipation statut = cellData.getValue().getStatut();
-            return new javafx.beans.property.SimpleStringProperty(statut != null ? statut.name() : "");
-        });
-        
-        colContexte.setCellValueFactory(cellData -> {
-            Participation.ContexteSocial contexte = cellData.getValue().getContexteSocial();
-            return new javafx.beans.property.SimpleStringProperty(contexte != null ? contexte.name() : "");
-        });
-        
-        colHebergement.setCellValueFactory(cellData -> 
-            new javafx.beans.property.SimpleIntegerProperty(cellData.getValue().getHebergementNuits()));
-        
-        colBadge.setCellValueFactory(cellData -> {
-            String badge = cellData.getValue().getBadgeAssocie();
-            return new javafx.beans.property.SimpleStringProperty(badge != null ? badge : "");
-        });
+    }
+
+    private javafx.scene.Node createCard(Participation item) {
+        // Main Card Container
+        HBox card = new HBox(15);
+        card.getStyleClass().add("modern-card");
+        card.setAlignment(Pos.CENTER_LEFT);
+
+        // Icon
+        StackPane iconPane = new StackPane();
+        Circle bg = new Circle(20, Color.web("#fff0f6"));
+        Text icon = new Text(getItemIcon(item.getType()));
+        icon.setFont(Font.font("Segoe UI Emoji", 20));
+        iconPane.getChildren().addAll(bg, icon);
+
+        // Content Area
+        VBox content = new VBox(5);
+        HBox.setHgrow(content, Priority.ALWAYS);
+
+        // Header
+        HBox header = new HBox(10);
+        header.setAlignment(Pos.CENTER_LEFT);
+        Label title = new Label("User #" + item.getUserId() + " • Événement #" + item.getEvenementId());
+        title.getStyleClass().add("card-title");
+
+        Label statusBadge = new Label(item.getStatut().name());
+        statusBadge.getStyleClass().addAll("status-badge", item.getStatut().name());
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        header.getChildren().addAll(title, spacer, statusBadge);
+
+        // Details Grid
+        GridPane details = new GridPane();
+        details.setHgap(20);
+        details.setVgap(5);
+
+        // Info
+        details.add(createDetailLabel("🎭 Type:", item.getType().name()), 0, 0);
+        details.add(createDetailLabel("🤝 Contexte:", item.getContexteSocial().name()), 1, 0);
+
+        if (item.getHebergementNuits() > 0) {
+            details.add(createDetailLabel("🏨 Hébergement:", item.getHebergementNuits() + " nuits"), 0, 1);
+        }
+        if (item.getBadgeAssocie() != null && !item.getBadgeAssocie().isEmpty()) {
+            details.add(createDetailLabel("🏷️ Badge:", item.getBadgeAssocie()), 1, 1);
+        }
+
+        content.getChildren().addAll(header, details);
+
+        card.getChildren().addAll(iconPane, content);
+        return card;
+    }
+
+    private String getItemIcon(Participation.TypeParticipation type) {
+        if (type == null)
+            return "🎫";
+        return switch (type) {
+            case GROUPE -> "👥";
+            case HEBERGEMENT -> "🏨";
+            case SIMPLE -> "👤";
+            default -> "🎫";
+        };
+    }
+
+    private HBox createDetailLabel(String labelText, String valueText) {
+        HBox box = new HBox(5);
+        box.setAlignment(Pos.CENTER_LEFT);
+        Label label = new Label(labelText);
+        label.getStyleClass().add("card-label");
+        Label value = new Label(valueText);
+        value.getStyleClass().add("card-value");
+        box.getChildren().addAll(label, value);
+        return box;
     }
 
     private void setupFilters() {
@@ -134,7 +212,7 @@ public class ParticipationViewController {
     private void setupForm() {
         inputType.getItems().addAll(Participation.TypeParticipation.values());
         inputContexte.getItems().addAll(Participation.ContexteSocial.values());
-        
+
         inputUserId.textProperty().addListener((obs, oldVal, newVal) -> validateForm());
         inputEvenementId.textProperty().addListener((obs, oldVal, newVal) -> validateForm());
     }
@@ -158,7 +236,7 @@ public class ParticipationViewController {
                 data.addAll(list);
                 updateCount();
                 updateStatusInfo("Données actualisées avec succès");
-                table.refresh();
+                listView.refresh();
             });
         } catch (Exception e) {
             showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur lors du chargement: " + e.getMessage());
@@ -194,46 +272,47 @@ public class ParticipationViewController {
 
         filteredData.setPredicate(participation -> {
             boolean match = true;
-            
+
             if (searchText != null && !searchText.isEmpty()) {
-                String searchable = participation.getId() + " " + 
-                                  participation.getUserId() + " " +
-                                  participation.getEvenementId() + " " +
-                                  participation.getType().name() + " " +
-                                  participation.getStatut().name();
+                String searchable = participation.getId() + " " +
+                        participation.getUserId() + " " +
+                        participation.getEvenementId() + " " +
+                        participation.getType().name() + " " +
+                        participation.getStatut().name();
                 match = match && searchable.toLowerCase().contains(searchText);
             }
-            
+
             if (statut != null && !statut.isEmpty()) {
                 match = match && participation.getStatut().name().equals(statut);
             }
-            
+
             if (type != null && !type.isEmpty()) {
                 match = match && participation.getType().name().equals(type);
             }
-            
+
             if (userId != null) {
                 match = match && participation.getUserId().equals(userId);
             }
-            
+
             if (evenementId != null) {
                 match = match && participation.getEvenementId().equals(evenementId);
             }
-            
+
             return match;
         });
-        
+
         updateCount();
     }
 
     @FXML
-    void onTableClick(MouseEvent event) {
-        selectedParticipation = table.getSelectionModel().getSelectedItem();
+    void onListClick(MouseEvent event) {
+        selectedParticipation = listView.getSelectionModel().getSelectedItem();
         if (selectedParticipation != null) {
             loadParticipationInForm(selectedParticipation);
             updateButtons();
 
-            // Double‑clic : ouverture d'une "page" de détails dans une boîte de dialogue moderne
+            // Double‑clic : ouverture d'une "page" de détails dans une boîte de dialogue
+            // moderne
             if (event.getClickCount() == 2) {
                 showDetailsDialog(selectedParticipation);
             }
@@ -248,7 +327,7 @@ public class ParticipationViewController {
 
         try {
             Participation participation = buildParticipationFromForm();
-            
+
             if (isEditMode && selectedParticipation != null) {
                 participation.setId(selectedParticipation.getId());
                 controller.update(participation);
@@ -257,7 +336,7 @@ public class ParticipationViewController {
                 controller.create(participation);
                 showAlert(Alert.AlertType.INFORMATION, "Succès", "Participation créée avec succès");
             }
-            
+
             onActualiser();
             onNouvelle();
         } catch (Exception e) {
@@ -268,7 +347,8 @@ public class ParticipationViewController {
     @FXML
     void onModifier() {
         if (selectedParticipation == null) {
-            showAlert(Alert.AlertType.WARNING, "Sélection requise", "Veuillez sélectionner une participation à modifier");
+            showAlert(Alert.AlertType.WARNING, "Sélection requise",
+                    "Veuillez sélectionner une participation à modifier");
             return;
         }
         openForm(selectedParticipation);
@@ -277,17 +357,18 @@ public class ParticipationViewController {
     @FXML
     void onSupprimer() {
         if (selectedParticipation == null) {
-            showAlert(Alert.AlertType.WARNING, "Sélection requise", "Veuillez sélectionner une participation à supprimer");
+            showAlert(Alert.AlertType.WARNING, "Sélection requise",
+                    "Veuillez sélectionner une participation à supprimer");
             return;
         }
 
         Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
         confirmAlert.setTitle("Confirmation de suppression");
         confirmAlert.setHeaderText("Supprimer la participation ?");
-        confirmAlert.setContentText("ID: " + selectedParticipation.getId() + 
-                                   "\nUser ID: " + selectedParticipation.getUserId() +
-                                   "\nÉvénement ID: " + selectedParticipation.getEvenementId());
-        
+        confirmAlert.setContentText("ID: " + selectedParticipation.getId() +
+                "\nUser ID: " + selectedParticipation.getUserId() +
+                "\nÉvénement ID: " + selectedParticipation.getEvenementId());
+
         confirmAlert.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
                 try {
@@ -309,10 +390,11 @@ public class ParticipationViewController {
     @FXML
     void onConfirmer() {
         if (selectedParticipation == null) {
-            showAlert(Alert.AlertType.WARNING, "Sélection requise", "Veuillez sélectionner une participation à confirmer");
+            showAlert(Alert.AlertType.WARNING, "Sélection requise",
+                    "Veuillez sélectionner une participation à confirmer");
             return;
         }
-        
+
         try {
             controller.confirmer(selectedParticipation.getId());
             showAlert(Alert.AlertType.INFORMATION, "Succès", "Participation confirmée avec succès");
@@ -325,10 +407,11 @@ public class ParticipationViewController {
     @FXML
     void onAnnulerParticipation() {
         if (selectedParticipation == null) {
-            showAlert(Alert.AlertType.WARNING, "Sélection requise", "Veuillez sélectionner une participation à annuler");
+            showAlert(Alert.AlertType.WARNING, "Sélection requise",
+                    "Veuillez sélectionner une participation à annuler");
             return;
         }
-        
+
         try {
             controller.annuler(selectedParticipation.getId(), "Annulation manuelle");
             showAlert(Alert.AlertType.INFORMATION, "Succès", "Participation annulée avec succès");
@@ -347,15 +430,17 @@ public class ParticipationViewController {
     void onStatistiques() {
         try {
             int total = data.size();
-            long confirmes = data.stream().filter(p -> p.getStatut() == Participation.StatutParticipation.CONFIRME).count();
-            long enAttente = data.stream().filter(p -> p.getStatut() == Participation.StatutParticipation.EN_ATTENTE).count();
-            
+            long confirmes = data.stream().filter(p -> p.getStatut() == Participation.StatutParticipation.CONFIRME)
+                    .count();
+            long enAttente = data.stream().filter(p -> p.getStatut() == Participation.StatutParticipation.EN_ATTENTE)
+                    .count();
+
             StringBuilder stats = new StringBuilder();
             stats.append("📊 Statistiques des Participations\n\n");
             stats.append("Total des participations: ").append(total).append("\n");
             stats.append("Confirmées: ").append(confirmes).append("\n");
             stats.append("En attente: ").append(enAttente);
-            
+
             Alert statsAlert = new Alert(Alert.AlertType.INFORMATION);
             statsAlert.setTitle("Statistiques");
             statsAlert.setHeaderText(null);
@@ -381,20 +466,20 @@ public class ParticipationViewController {
         Participation.TypeParticipation type = inputType.getValue();
         Participation.ContexteSocial contexte = inputContexte.getValue();
         int nuits = parseInt(inputHebergementNuits.getText());
-        
+
         if (inputHebergement.isSelected() && nuits <= 0) {
             nuits = 1;
         }
 
         Participation participation = new Participation(userId, evtId, type, contexte);
         participation.setHebergementNuits(nuits);
-        
+
         return participation;
     }
 
     private boolean validateForm() {
         StringBuilder errors = new StringBuilder();
-        
+
         if (inputUserId.getText() == null || inputUserId.getText().trim().isEmpty()) {
             errors.append("• User ID est requis\n");
         } else {
@@ -404,7 +489,7 @@ public class ParticipationViewController {
                 errors.append("• User ID doit être un nombre valide\n");
             }
         }
-        
+
         if (inputEvenementId.getText() == null || inputEvenementId.getText().trim().isEmpty()) {
             errors.append("• Événement ID est requis\n");
         } else {
@@ -414,22 +499,22 @@ public class ParticipationViewController {
                 errors.append("• Événement ID doit être un nombre valide\n");
             }
         }
-        
+
         if (inputType.getValue() == null) {
             errors.append("• Type est requis\n");
         }
-        
+
         if (inputContexte.getValue() == null) {
             errors.append("• Contexte est requis\n");
         }
-        
+
         if (inputHebergement.isSelected()) {
             int nuits = parseInt(inputHebergementNuits.getText());
             if (nuits <= 0) {
                 errors.append("• Le nombre de nuits doit être supérieur à 0 si hébergement est sélectionné\n");
             }
         }
-        
+
         if (errors.length() > 0) {
             showValidationMessage(errors.toString(), "error");
             return false;
@@ -456,7 +541,8 @@ public class ParticipationViewController {
         btnConfirmer.setDisable(!admin || !hasSelection);
         btnAnnulerPart.setDisable(!admin || !hasSelection);
         btnModifierForm.setDisable(!admin || !hasSelection);
-        // en mode utilisateur, on autorise uniquement la création de nouvelles participations
+        // en mode utilisateur, on autorise uniquement la création de nouvelles
+        // participations
         btnEnregistrer.setDisable(!admin && isEditMode);
     }
 
@@ -518,7 +604,8 @@ public class ParticipationViewController {
     }
 
     private Long parseLong(String s) {
-        if (s == null || s.isBlank()) return null;
+        if (s == null || s.isBlank())
+            return null;
         try {
             return Long.parseLong(s.trim());
         } catch (NumberFormatException e) {
@@ -527,7 +614,8 @@ public class ParticipationViewController {
     }
 
     private int parseInt(String s) {
-        if (s == null || s.isBlank()) return 0;
+        if (s == null || s.isBlank())
+            return 0;
         try {
             return Integer.parseInt(s.trim());
         } catch (NumberFormatException e) {
