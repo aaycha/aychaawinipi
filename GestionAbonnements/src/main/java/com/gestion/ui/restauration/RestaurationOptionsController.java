@@ -11,29 +11,42 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 
 import java.util.List;
+import javafx.scene.layout.*;
+import javafx.geometry.Pos;
+import javafx.scene.text.Text;
+import javafx.scene.text.Font;
 
 public class RestaurationOptionsController {
 
-    @FXML private TableView<Restauration> optionsTable;
-    @FXML private TableColumn<Restauration, Long> colOptId;
-    @FXML private TableColumn<Restauration, String> colOptLibelle;
-    @FXML private TableColumn<Restauration, String> colOptType;
-    @FXML private TableColumn<Restauration, Boolean> colOptActif;
-    
-    @FXML private TextField filterTypeField;
-    @FXML private TextField searchField;
-    
-    @FXML private TextField inputLibelle;
-    @FXML private TextField inputTypeEvenement;
-    @FXML private CheckBox inputActif;
-    
-    @FXML private Button btnModifier;
-    @FXML private Button btnSupprimer;
-    @FXML private Button btnEnregistrer;
-    @FXML private Button btnModifierForm;
-    @FXML private Label statusInfoLabel;
-    @FXML private Label countLabel;
-    @FXML private Label validationMessage;
+    @FXML
+    private ListView<Restauration> listView;
+
+    @FXML
+    private TextField filterTypeField;
+    @FXML
+    private TextField searchField;
+
+    @FXML
+    private TextField inputLibelle;
+    @FXML
+    private TextField inputTypeEvenement;
+    @FXML
+    private CheckBox inputActif;
+
+    @FXML
+    private Button btnModifier;
+    @FXML
+    private Button btnSupprimer;
+    @FXML
+    private Button btnEnregistrer;
+    @FXML
+    private Button btnModifierForm;
+    @FXML
+    private Label statusInfoLabel;
+    @FXML
+    private Label countLabel;
+    @FXML
+    private Label validationMessage;
 
     private final RestaurationController controller = new RestaurationController();
     private final ObservableList<Restauration> optionsData = FXCollections.observableArrayList();
@@ -44,38 +57,81 @@ public class RestaurationOptionsController {
     @FXML
     public void initialize() {
         try {
-            colOptId.setCellValueFactory(cellData -> 
-                new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().getId()));
-            
-            colOptLibelle.setCellValueFactory(cellData -> {
-                String libelle = cellData.getValue().getLibelle();
-                return new javafx.beans.property.SimpleStringProperty(libelle != null ? libelle : "");
-            });
-            
-            colOptType.setCellValueFactory(cellData -> {
-                String type = cellData.getValue().getTypeEvenement();
-                return new javafx.beans.property.SimpleStringProperty(type != null ? type : "");
-            });
-            
-            colOptActif.setCellValueFactory(cellData -> 
-                new javafx.beans.property.SimpleBooleanProperty(cellData.getValue().isActif()));
-            
-            optionsTable.setItems(optionsData);
-            optionsTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-            optionsTable.setVisible(true);
-            optionsTable.setManaged(true);
-            
+            setupListView();
+
+            listView.setItems(optionsData);
+            listView.setVisible(true);
+            listView.setManaged(true);
+
             filteredData = new FilteredList<>(optionsData, p -> true);
-            optionsTable.setItems(filteredData);
-            
+            listView.setItems(filteredData);
+
             inputLibelle.textProperty().addListener((obs, oldVal, newVal) -> validateForm());
-            
+
             onActualiser();
             updateCount();
         } catch (Exception e) {
             System.err.println("Erreur initialisation RestaurationOptionsController: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    private void setupListView() {
+        listView.setCellFactory(param -> new ListCell<Restauration>() {
+            @Override
+            protected void updateItem(Restauration item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setGraphic(null);
+                    setStyle("-fx-background-color: transparent;");
+                } else {
+                    setGraphic(createOptionCard(item));
+                    setStyle("-fx-background-color: transparent; -fx-padding: 5 10 5 10;");
+                }
+            }
+        });
+    }
+
+    private javafx.scene.Node createOptionCard(Restauration item) {
+        HBox card = new HBox(15);
+        card.getStyleClass().add("modern-card");
+        card.setAlignment(Pos.CENTER_LEFT);
+
+        Text icon = new Text("⚙️");
+        icon.setFont(Font.font("Segoe UI Emoji", 24));
+
+        VBox content = new VBox(5);
+        HBox.setHgrow(content, Priority.ALWAYS);
+
+        HBox header = new HBox(10);
+        header.setAlignment(Pos.CENTER_LEFT);
+        Label title = new Label(item.getLibelle() != null ? item.getLibelle() : "Option sans nom");
+        title.getStyleClass().add("card-title");
+
+        Label statusBadge = new Label(item.isActif() ? "ACTIF" : "INACTIF");
+        statusBadge.getStyleClass().add("status-badge");
+        if (item.isActif()) {
+            statusBadge.setStyle("-fx-background-color: #e8f5e9; -fx-text-fill: #2e7d32;");
+        } else {
+            statusBadge.setStyle("-fx-background-color: #ffebee; -fx-text-fill: #c62828;");
+        }
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        header.getChildren().addAll(title, spacer, statusBadge);
+
+        HBox details = new HBox(15);
+        Label typeLabel = new Label("Type: " + (item.getTypeEvenement() != null ? item.getTypeEvenement() : "N/A"));
+        typeLabel.getStyleClass().add("card-label");
+
+        details.getChildren().add(typeLabel);
+
+        content.getChildren().addAll(header, details);
+        card.getChildren().addAll(icon, content);
+
+        return card;
     }
 
     @FXML
@@ -113,7 +169,10 @@ public class RestaurationOptionsController {
                 optionsData.addAll(finalList);
                 applyFilters();
                 updateCount();
-                optionsTable.refresh();
+                optionsData.addAll(finalList);
+                applyFilters();
+                updateCount();
+                listView.refresh();
             });
         } catch (Exception e) {
             showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur lors du filtrage: " + e.getMessage());
@@ -126,33 +185,34 @@ public class RestaurationOptionsController {
     }
 
     private void applyFilters() {
-        String searchText = searchField != null && searchField.getText() != null ? searchField.getText().toLowerCase() : "";
+        String searchText = searchField != null && searchField.getText() != null ? searchField.getText().toLowerCase()
+                : "";
         String typeFilter = filterTypeField.getText().toLowerCase();
-        
+
         filteredData.setPredicate(option -> {
             boolean match = true;
-            
+
             if (!typeFilter.isEmpty()) {
                 String optionType = option.getTypeEvenement() != null ? option.getTypeEvenement().toLowerCase() : "";
                 match = match && optionType.contains(typeFilter);
             }
-            
+
             if (!searchText.isEmpty()) {
-                String searchable = option.getId() + " " + 
-                                  (option.getLibelle() != null ? option.getLibelle() : "") + " " +
-                                  (option.getTypeEvenement() != null ? option.getTypeEvenement() : "");
+                String searchable = option.getId() + " " +
+                        (option.getLibelle() != null ? option.getLibelle() : "") + " " +
+                        (option.getTypeEvenement() != null ? option.getTypeEvenement() : "");
                 match = match && searchable.toLowerCase().contains(searchText);
             }
-            
+
             return match;
         });
-        
+
         updateCount();
     }
 
     @FXML
-    void onTableClick(MouseEvent event) {
-        selectedOption = optionsTable.getSelectionModel().getSelectedItem();
+    void onListClick(MouseEvent event) {
+        selectedOption = listView.getSelectionModel().getSelectedItem();
         if (selectedOption != null) {
             loadOptionInForm(selectedOption);
             updateButtons();
@@ -161,20 +221,23 @@ public class RestaurationOptionsController {
 
     @FXML
     void onEnregistrer() {
-        if (!validateForm()) return;
+        if (!validateForm())
+            return;
 
         try {
             String libelle = inputLibelle.getText();
             String typeEvt = inputTypeEvenement.getText();
-            if (typeEvt == null || typeEvt.isBlank()) typeEvt = "SOIREE";
-            
+            if (typeEvt == null || typeEvt.isBlank())
+                typeEvt = "SOIREE";
+
             if (isEditMode && selectedOption != null) {
-                showAlert(Alert.AlertType.INFORMATION, "Info", "La modification nécessite une implémentation dans le service");
+                showAlert(Alert.AlertType.INFORMATION, "Info",
+                        "La modification nécessite une implémentation dans le service");
             } else {
                 controller.createOption(libelle, typeEvt.toUpperCase(), inputActif.isSelected());
                 showAlert(Alert.AlertType.INFORMATION, "Succès", "Option créée avec succès");
             }
-            
+
             onActualiser();
             onNouvelleOption();
         } catch (Exception e) {
@@ -206,7 +269,8 @@ public class RestaurationOptionsController {
         confirmAlert.setContentText("ID: " + selectedOption.getId() + "\nLibellé: " + selectedOption.getLibelle());
         confirmAlert.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
-                showAlert(Alert.AlertType.INFORMATION, "Info", "La suppression nécessite une implémentation dans le service");
+                showAlert(Alert.AlertType.INFORMATION, "Info",
+                        "La suppression nécessite une implémentation dans le service");
                 onActualiser();
                 onNouvelleOption();
             }

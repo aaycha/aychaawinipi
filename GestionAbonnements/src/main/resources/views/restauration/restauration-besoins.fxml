@@ -6,7 +6,7 @@
 
 <VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.gestion.ui.restauration.RestaurationBesoinsController"
-      spacing="16" styleClass="resto-panel">
+      spacing="16" styleClass="resto-panel" stylesheets="@../../styles/card-view.css">
 
     <padding>
         <Insets top="20" right="20" bottom="20" left="20"/>
@@ -23,17 +23,7 @@
         <Button text="Filtrer" onAction="#onFiltrer" styleClass="resto-btn-secondary"/>
     </HBox>
 
-    <TableView fx:id="besoinsTable" VBox.vgrow="ALWAYS" styleClass="resto-table">
-        <columns>
-            <TableColumn fx:id="colBesoinId" text="ID" prefWidth="60"/>
-            <TableColumn fx:id="colParticipantId" text="Participant ID" prefWidth="100"/>
-            <TableColumn fx:id="colEvenementId" text="Événement ID" prefWidth="100"/>
-            <TableColumn fx:id="colBesoinLibelle" text="Besoin" prefWidth="150"/>
-            <TableColumn fx:id="colRestrictionLibelle" text="Restriction" prefWidth="150"/>
-            <TableColumn fx:id="colNiveauGravite" text="Gravité" prefWidth="100"/>
-            <TableColumn fx:id="colAnnule" text="Annulé" prefWidth="80"/>
-        </columns>
-    </TableView>
+    <ListView fx:id="listView" VBox.vgrow="ALWAYS" styleClass="modern-list-view"/>
 
     <HBox spacing="12" alignment="CENTER_LEFT" >
         <TextField fx:id="inputParticipantId" promptText="ID Participant" prefWidth="90"/>
