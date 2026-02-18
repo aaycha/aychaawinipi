@@ -19,15 +19,7 @@ import javafx.scene.text.Font;
 public class RestaurationRestrictionsController {
 
     @FXML
-    private TableView<Restauration> restrictionsTable;
-    @FXML
-    private TableColumn<Restauration, Long> colRestId;
-    @FXML
-    private TableColumn<Restauration, String> colRestLibelle;
-    @FXML
-    private TableColumn<Restauration, String> colRestDescription;
-    @FXML
-    private TableColumn<Restauration, Boolean> colRestActif;
+    private ListView<Restauration> listView;
 
     @FXML
     private TextField searchField;
@@ -94,7 +86,7 @@ public class RestaurationRestrictionsController {
         Label title = new Label("Participant #" + item.getParticipantId());
         title.getStyleClass().add("card-title");
 
-        Label typeBadge = new Label(item.getType() != null ? item.getType() : "N/A");
+        Label typeBadge = new Label(item.getRestrictionLibelle() != null ? item.getRestrictionLibelle() : "N/A");
         typeBadge.getStyleClass().add("status-badge");
         typeBadge.setStyle("-fx-background-color: #ffebee; -fx-text-fill: #c62828;"); // Light red for restrictions
 
@@ -104,7 +96,8 @@ public class RestaurationRestrictionsController {
         header.getChildren().addAll(title, spacer, typeBadge);
 
         HBox details = new HBox(15);
-        Label descLabel = new Label(item.getDescription() != null ? item.getDescription() : "Aucune description");
+        Label descLabel = new Label(
+                item.getRestrictionDescription() != null ? item.getRestrictionDescription() : "Aucune description");
         descLabel.getStyleClass().add("card-label");
 
         details.getChildren().add(descLabel);
@@ -118,29 +111,14 @@ public class RestaurationRestrictionsController {
     @FXML
     public void initialize() {
         try {
-            colRestId.setCellValueFactory(
-                    cellData -> new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().getId()));
+            setupListView();
 
-            colRestLibelle.setCellValueFactory(cellData -> {
-                String libelle = cellData.getValue().getRestrictionLibelle();
-                return new javafx.beans.property.SimpleStringProperty(libelle != null ? libelle : "");
-            });
-
-            colRestDescription.setCellValueFactory(cellData -> {
-                String desc = cellData.getValue().getRestrictionDescription();
-                return new javafx.beans.property.SimpleStringProperty(desc != null ? desc : "");
-            });
-
-            colRestActif.setCellValueFactory(
-                    cellData -> new javafx.beans.property.SimpleBooleanProperty(cellData.getValue().isActif()));
-
-            restrictionsTable.setItems(restrictionsData);
-            restrictionsTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-            restrictionsTable.setVisible(true);
-            restrictionsTable.setManaged(true);
+            listView.setItems(restrictionsData);
+            listView.setVisible(true);
+            listView.setManaged(true);
 
             filteredData = new FilteredList<>(restrictionsData, p -> true);
-            restrictionsTable.setItems(filteredData);
+            listView.setItems(filteredData);
 
             inputLibelle.textProperty().addListener((obs, oldVal, newVal) -> validateForm());
 
