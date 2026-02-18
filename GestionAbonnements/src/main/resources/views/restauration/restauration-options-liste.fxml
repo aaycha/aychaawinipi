@@ -7,7 +7,8 @@
 <!-- Page liste uniquement : pas de formulaire sur cette page. Le formulaire s'ouvre dans une fenêtre séparée. -->
 <VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.gestion.ui.restauration.RestaurationOptionsListeController"
-      spacing="20" styleClass="modern-panel" prefWidth="1000" VBox.vgrow="ALWAYS">
+      spacing="20" styleClass="modern-panel" prefWidth="1000" VBox.vgrow="ALWAYS"
+      stylesheets="@../../styles/card-view.css">
     <padding>
         <Insets top="24" right="24" bottom="24" left="24"/>
     </padding>
@@ -35,19 +36,13 @@
             <Region HBox.hgrow="ALWAYS"/>
             <Label fx:id="countLabel" text="0 options" styleClass="count-label"/>
         </HBox>
-        <TableView fx:id="optionsTable" VBox.vgrow="ALWAYS" minHeight="350" prefHeight="400"
-                   styleClass="modern-table" onMouseClicked="#onTableClick">
+        <ListView fx:id="listView" VBox.vgrow="ALWAYS" minHeight="350" prefHeight="400"
+                   styleClass="modern-list-view" onMouseClicked="#onListClick">
             <placeholder>
                 <VBox alignment="CENTER" spacing="12">
                     <Label text="📭 Aucune donnée disponible" styleClass="placeholder-text"/>
                 </VBox>
             </placeholder>
-            <columns>
-                <TableColumn fx:id="colOptId" text="ID" prefWidth="60" minWidth="50" sortable="true"/>
-                <TableColumn fx:id="colOptLibelle" text="Libellé" prefWidth="300" minWidth="220" sortable="true"/>
-                <TableColumn fx:id="colOptType" text="Type Événement" prefWidth="250" minWidth="180" sortable="true"/>
-                <TableColumn fx:id="colOptActif" text="Actif" prefWidth="100" minWidth="80" sortable="true"/>
-            </columns>
-        </TableView>
+        </ListView>
     </VBox>
 </VBox>
