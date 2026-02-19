@@ -1,6 +1,5 @@
 package com.gestion.ui.utilisateur;
 
-import com.gestion.controllers.MainController;
 import com.gestion.entities.CompositionMenu;
 import com.gestion.entities.ParticipantRestauration;
 import com.gestion.entities.RepasDetaille;
@@ -16,7 +15,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -71,6 +69,9 @@ public class MonEspaceRestaurationController {
     private TextArea apercuMenu;
 
     @FXML
+    private ListView<CompositionMenu> listeMesCompositions;
+
+    @FXML
     private Label statTotalRepas;
     @FXML
     private Label statTotalDepense;
@@ -87,6 +88,7 @@ public class MonEspaceRestaurationController {
     private final ObservableList<RepasDetaille> repasMenu = FXCollections.observableArrayList();
     private final ObservableList<RepasDetaille> compositionPlat = FXCollections.observableArrayList();
     private final ObservableList<RepasDetaille> composantsDispoList = FXCollections.observableArrayList();
+    private final ObservableList<CompositionMenu> mesCompositions = FXCollections.observableArrayList();
 
     @FXML
     public void initialize() {
@@ -113,6 +115,48 @@ public class MonEspaceRestaurationController {
 
     private void setupListViews() {
         listeRepasMenu.setItems(repasMenu);
+        listeRepasMenu.setCellFactory(lv -> new ListCell<>() {
+            @Override
+            protected void updateItem(RepasDetaille item, boolean empty) {
+                super.updateItem(item, empty);
+                setText((empty || item == null) ? null : item.getNom() + " (" + item.getTypeRepas() + ")");
+            }
+        });
+
+        // CellFactory pour les ComboBoxes
+        if (comboMenu != null) {
+            comboMenu.setCellFactory(lv -> new ListCell<>() {
+                @Override
+                protected void updateItem(Restauration item, boolean empty) {
+                    super.updateItem(item, empty);
+                    setText((empty || item == null) ? null : item.getNom());
+                }
+            });
+            comboMenu.setButtonCell(new ListCell<>() {
+                @Override
+                protected void updateItem(Restauration item, boolean empty) {
+                    super.updateItem(item, empty);
+                    setText((empty || item == null) ? null : item.getNom());
+                }
+            });
+        }
+
+        if (comboRepas != null) {
+            comboRepas.setCellFactory(lv -> new ListCell<>() {
+                @Override
+                protected void updateItem(RepasDetaille item, boolean empty) {
+                    super.updateItem(item, empty);
+                    setText((empty || item == null) ? null : item.getNom() + " — " + item.getPrix() + " €");
+                }
+            });
+            comboRepas.setButtonCell(new ListCell<>() {
+                @Override
+                protected void updateItem(RepasDetaille item, boolean empty) {
+                    super.updateItem(item, empty);
+                    setText((empty || item == null) ? null : item.getNom() + " — " + item.getPrix() + " €");
+                }
+            });
+        }
 
         if (listeComposantsDispo != null) {
             listeComposantsDispo.setItems(composantsDispoList);
@@ -135,16 +179,19 @@ public class MonEspaceRestaurationController {
             });
         }
 
-        if (listeMaComposition != null) {
-            listeMaComposition.setItems(compositionPlat);
-            listeMaComposition.setCellFactory(lv -> new ListCell<>() {
+        if (listeMesCompositions != null) {
+            listeMesCompositions.setItems(mesCompositions);
+            listeMesCompositions.setCellFactory(lv -> new ListCell<>() {
                 @Override
-                protected void updateItem(RepasDetaille item, boolean empty) {
+                protected void updateItem(CompositionMenu item, boolean empty) {
                     super.updateItem(item, empty);
                     if (empty || item == null) {
                         setText(null);
+                        setGraphic(null);
                     } else {
-                        setText(item.getNom() + " — " + (item.getPrix() != null ? item.getPrix() + " €" : "0 €"));
+                        setText(String.format("📅 %s | Menu #%d | Repas #%d — Ordre: %d %s",
+                                item.getDate(), item.getMenuId(), item.getRepasId(), item.getOrdre(),
+                                item.isActif() ? "✅" : "❌"));
                     }
                 }
             });
@@ -216,22 +263,29 @@ public class MonEspaceRestaurationController {
 
     @FXML
     void onEnregistrerRestrictions() {
+        // Tentative de récupération de l'événement ID si disponible
+        Long evenementId = parseLong(inputEvenementId.getText());
+
+        if (evenementId == null) {
+            showAlert(Alert.AlertType.WARNING, "Événement ID Requis",
+                    "Veuillez saisir un ID d'événement valide pour enregistrer vos restrictions.");
+            return;
+        }
+
         // Enregistrer les restrictions dans ParticipantRestauration
         ParticipantRestauration besoin = new ParticipantRestauration();
         besoin.setParticipantId(currentUserId);
+        besoin.setEvenementId(evenementId);
         besoin.setRestrictionLibelle(buildRestrictionLibelle());
         besoin.setRestrictionDescription(inputAllergies.getText());
         besoin.setNiveauGravite("MODEREE");
         besoin.setRestrictionActive(true);
 
-        // Tentative de récupération de l'événement ID si disponible
-        Long evenementId = parseLong(inputEvenementId.getText());
-        besoin.setEvenementId(evenementId);
-
         // Utiliser RestaurationService pour créer le besoin
         restaurationService.createBesoin(besoin);
 
-        showAlert(Alert.AlertType.INFORMATION, "Succès", "Restrictions enregistrées avec succès");
+        showAlert(Alert.AlertType.INFORMATION, "Succès",
+                "Restrictions enregistrées avec succès pour l'événement #" + evenementId);
         loadRepas(); // Recharger les repas compatibles
     }
 
@@ -313,6 +367,10 @@ public class MonEspaceRestaurationController {
         }
 
         Long evenementId = parseLong(inputEvenementId.getText());
+        if (evenementId == null) {
+            showAlert(Alert.AlertType.WARNING, "Champ requis", "Veuillez saisir un l'ID de l'événement.");
+            return;
+        }
         LocalDate date = inputDateMenu.getValue() != null ? inputDateMenu.getValue() : LocalDate.now();
 
         // Créer les compositions
@@ -460,6 +518,7 @@ public class MonEspaceRestaurationController {
         apercuMenu.setText(apercu.toString());
     }
 
+    @FXML
     private void loadStatistics() {
         List<RepasDetaille> mesRepas = repasService.findByParticipantId(currentUserId);
         BigDecimal totalDepense = repasService.getTotalPrixByParticipant(currentUserId);
@@ -471,7 +530,23 @@ public class MonEspaceRestaurationController {
             statTotalDepense.setText(String.format("%.2f €", totalDepense));
             statTotalCalories.setText(String.valueOf(totalCalories));
             statTotalMenus.setText(String.valueOf(mesMenus.size()));
+            mesCompositions.setAll(mesMenus);
         });
+    }
+
+    @FXML
+    void onSupprimerHistoriqueMenu() {
+        CompositionMenu selected = listeMesCompositions.getSelectionModel().getSelectedItem();
+        if (selected != null) {
+            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
+                    "Voulez-vous vraiment supprimer cette composition ?");
+            confirm.showAndWait().ifPresent(response -> {
+                if (response == ButtonType.OK) {
+                    compositionService.delete(selected.getId());
+                    loadStatistics();
+                }
+            });
+        }
     }
 
     private Long parseLong(String s) {

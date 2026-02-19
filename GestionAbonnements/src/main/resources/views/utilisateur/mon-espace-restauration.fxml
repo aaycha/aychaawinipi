@@ -142,6 +142,26 @@
                     </VBox>
                 </ScrollPane>
             </Tab>
+            <Tab text="📅 Mes Menus Composés">
+                <ScrollPane fitToWidth="true" styleClass="modern-scroll-pane">
+                    <VBox spacing="16" styleClass="modern-panel">
+                        <padding>
+                            <Insets top="20" right="20" bottom="20" left="20"/>
+                        </padding>
+                        <Label text="Mes Compositions de Menu" styleClass="section-title"/>
+                        <Label text="Retrouvez ici l'historique de vos menus composés pour différents événements." 
+                               style="-fx-text-fill: #666; -fx-font-size: 13px;" wrapText="true"/>
+                        
+                        <VBox spacing="12" styleClass="form-section" VBox.vgrow="ALWAYS">
+                            <ListView fx:id="listeMesCompositions" prefHeight="400" styleClass="modern-list"/>
+                            <HBox spacing="12">
+                                <Button text="🔄 Actualiser" onAction="#loadStatistics" styleClass="btn-info"/>
+                                <Button text="🗑️ Supprimer l'historique" onAction="#onSupprimerHistoriqueMenu" styleClass="btn-danger"/>
+                            </HBox>
+                        </VBox>
+                    </VBox>
+                </ScrollPane>
+            </Tab>
             <Tab text="📊 Mes Statistiques">
                 <ScrollPane fitToWidth="true" styleClass="modern-scroll-pane">
                     <VBox spacing="16" styleClass="modern-panel">
