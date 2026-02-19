@@ -31,129 +31,140 @@
     <center>
         <TabPane tabClosingPolicy="UNAVAILABLE" styleClass="modern-tab-pane">
             <Tab text="🍽️ Composer un plat">
-                <VBox spacing="16" styleClass="modern-panel">
-                    <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
-                    <Label text="Choisissez des composants pour créer votre plat" styleClass="section-title"/>
-                    <Label text="Sélectionnez des plats ou ingrédients dans la liste, ajoutez-les à votre composition, donnez un nom à votre plat puis enregistrez." style="-fx-text-fill: #666; -fx-font-size: 13px;" wrapText="true"/>
-                    <HBox spacing="16">
-                        <VBox spacing="8" HBox.hgrow="ALWAYS">
-                            <Label text="Composants disponibles" styleClass="section-subtitle"/>
-                            <ListView fx:id="listeComposantsDispo" prefHeight="280" prefWidth="320" styleClass="modern-list"/>
-                            <Button text="➕ Ajouter à mon plat" onAction="#onAjouterComposant" styleClass="btn-success"/>
-                        </VBox>
-                        <VBox spacing="8" HBox.hgrow="ALWAYS">
-                            <Label text="Ma composition (mon plat)" styleClass="section-subtitle"/>
-                            <ListView fx:id="listeMaComposition" prefHeight="280" prefWidth="320" styleClass="modern-list"/>
-                            <Button text="🗑️ Retirer de la composition" onAction="#onRetirerComposant" styleClass="btn-danger"/>
-                        </VBox>
-                    </HBox>
-                    <Separator/>
-                    <GridPane hgap="12" vgap="12">
-                        <columnConstraints>
-                            <ColumnConstraints minWidth="120" halignment="RIGHT"/>
-                            <ColumnConstraints minWidth="280" hgrow="ALWAYS"/>
-                        </columnConstraints>
-                        <Label text="Nom de mon plat *" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-font-weight: bold;"/>
-                        <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                            <TextField fx:id="inputNomPlatCompose" promptText="Ex: Mon assiette personnalisée"
-                                       style="-fx-padding: 10 14; -fx-font-size: 14px;"/>
-                            <Label fx:id="errorNomPlatCompose" text="" visible="false" managed="false" style="-fx-text-fill: #e74c3c; -fx-font-size: 12px;"/>
-                        </VBox>
-                        <Label text="Type" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-                        <ComboBox fx:id="comboTypePlatCompose" prefWidth="200" promptText="DEJEUNER, DINER..." GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-                    </GridPane>
-                    <HBox spacing="12">
-                        <Button text="💾 Enregistrer mon plat" onAction="#onEnregistrerPlatCompose" styleClass="btn-success"/>
-                        <Button text="🔄 Réinitialiser" onAction="#onReinitialiserComposition" styleClass="btn-secondary"/>
-                    </HBox>
-                    <Label fx:id="messagePlatCompose" text="" wrapText="true" style="-fx-text-fill: #27ae60; -fx-font-size: 13px;" visible="false" managed="false"/>
-                </VBox>
+                <ScrollPane fitToWidth="true" styleClass="modern-scroll-pane">
+                    <VBox spacing="16" styleClass="modern-panel">
+                        <padding>
+                            <Insets top="20" right="20" bottom="20" left="20"/>
+                        </padding>
+                        <Label text="Choisissez des composants pour créer votre plat" styleClass="section-title"/>
+                        <Label text="Sélectionnez des plats ou ingrédients dans la liste, ajoutez-les à votre composition, donnez un nom à votre plat puis enregistrez."
+                               style="-fx-text-fill: #666; -fx-font-size: 13px;" wrapText="true"/>
+                        <HBox spacing="16">
+                            <VBox spacing="8" HBox.hgrow="ALWAYS">
+                                <Label text="Composants disponibles" styleClass="section-subtitle"/>
+                                <ListView fx:id="listeComposantsDispo" prefHeight="280" prefWidth="320" styleClass="modern-list"/>
+                                <Button text="➕ Ajouter à mon plat" onAction="#onAjouterComposant" styleClass="btn-success"/>
+                            </VBox>
+                            <VBox spacing="8" HBox.hgrow="ALWAYS">
+                                <Label text="Ma composition (mon plat)" styleClass="section-subtitle"/>
+                                <ListView fx:id="listeMaComposition" prefHeight="280" prefWidth="320" styleClass="modern-list"/>
+                                <Button text="🗑️ Retirer de la composition" onAction="#onRetirerComposant" styleClass="btn-danger"/>
+                            </VBox>
+                        </HBox>
+                        <Separator/>
+                        <GridPane hgap="12" vgap="12">
+                            <columnConstraints>
+                                <ColumnConstraints minWidth="120" halignment="RIGHT"/>
+                                <ColumnConstraints minWidth="280" hgrow="ALWAYS"/>
+                            </columnConstraints>
+                            <Label text="Nom de mon plat *" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-font-weight: bold;"/>
+                            <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                                <TextField fx:id="inputNomPlatCompose" promptText="Ex: Mon assiette personnalisée"
+                                           style="-fx-padding: 10 14; -fx-font-size: 14px;"/>
+                                <Label fx:id="errorNomPlatCompose" text="" visible="false" managed="false"
+                                       style="-fx-text-fill: #e74c3c; -fx-font-size: 12px;"/>
+                            </VBox>
+                            <Label text="Type" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                            <ComboBox fx:id="comboTypePlatCompose" prefWidth="200" promptText="DEJEUNER, DINER..." GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                        </GridPane>
+                        <HBox spacing="12">
+                            <Button text="💾 Enregistrer mon plat" onAction="#onEnregistrerPlatCompose" styleClass="btn-success"/>
+                            <Button text="🔄 Réinitialiser" onAction="#onReinitialiserComposition" styleClass="btn-secondary"/>
+                        </HBox>
+                        <Label fx:id="messagePlatCompose" text="" wrapText="true"
+                               style="-fx-text-fill: #27ae60; -fx-font-size: 13px;" visible="false" managed="false"/>
+                    </VBox>
+                </ScrollPane>
             </Tab>
             <Tab text="📋 Choisir un menu">
-                <VBox spacing="16" styleClass="modern-panel">
-                    <padding>
-                        <Insets top="20" right="20" bottom="20" left="20"/>
-                    </padding>
-                    
-                    <Label text="Choisir un menu : prendre un menu existant ou composer le vôtre" styleClass="section-title"/>
-                    
-                    <!-- Restrictions alimentaires -->
-                    <VBox spacing="12" styleClass="form-section">
-                        <Label text="Mes Restrictions Alimentaires" styleClass="section-subtitle"/>
-                        <HBox spacing="16">
-                            <CheckBox fx:id="checkVegetarien" text="Végétarien"/>
-                            <CheckBox fx:id="checkVegan" text="Végan"/>
-                            <CheckBox fx:id="checkSansGluten" text="Sans gluten"/>
-                            <CheckBox fx:id="checkHalal" text="Halal"/>
-                        </HBox>
-                        <TextArea fx:id="inputAllergies" promptText="Listez vos allergies (séparées par des virgules)" 
-                                  wrapText="true" prefRowCount="2" styleClass="input-field"/>
-                        <Button text="💾 Enregistrer mes restrictions" onAction="#onEnregistrerRestrictions" styleClass="btn-success"/>
+                <ScrollPane fitToWidth="true" styleClass="modern-scroll-pane">
+                    <VBox spacing="16" styleClass="modern-panel">
+                        <padding>
+                            <Insets top="20" right="20" bottom="20" left="20"/>
+                        </padding>
+
+                        <Label text="Choisir un menu : prendre un menu existant ou composer le vôtre" styleClass="section-title"/>
+
+                        <!-- Restrictions alimentaires -->
+                        <VBox spacing="12" styleClass="form-section">
+                            <Label text="Mes Restrictions Alimentaires" styleClass="section-subtitle"/>
+                            <HBox spacing="16">
+                                <CheckBox fx:id="checkVegetarien" text="Végétarien"/>
+                                <CheckBox fx:id="checkVegan" text="Végan"/>
+                                <CheckBox fx:id="checkSansGluten" text="Sans gluten"/>
+                                <CheckBox fx:id="checkHalal" text="Halal"/>
+                            </HBox>
+                            <TextArea fx:id="inputAllergies" promptText="Listez vos allergies (séparées par des virgules)"
+                                      wrapText="true" prefRowCount="2" styleClass="input-field"/>
+                            <Button text="💾 Enregistrer mes restrictions" onAction="#onEnregistrerRestrictions" styleClass="btn-success"/>
+                        </VBox>
+
+                        <!-- Génération automatique -->
+                        <VBox spacing="12" styleClass="form-section">
+                            <Label text="Génération Automatique de Menu" styleClass="section-subtitle"/>
+                            <HBox spacing="12">
+                                <Label text="Événement ID:"/>
+                                <TextField fx:id="inputEvenementId" promptText="ID événement" styleClass="input-field"/>
+                                <Label text="Date:"/>
+                                <DatePicker fx:id="inputDateMenu" styleClass="input-field"/>
+                                <Button text="✨ Générer Menu" onAction="#onGenererMenu" styleClass="btn-primary"/>
+                            </HBox>
+                            <Label fx:id="menuGenereLabel" text="" wrapText="true" styleClass="info-label"/>
+                        </VBox>
+
+                        <!-- Choisir un menu : sélectionner un menu puis ajouter des repas -->
+                        <VBox spacing="12" styleClass="form-section">
+                            <Label text="Sélectionner un menu puis ajouter des plats" styleClass="section-subtitle"/>
+                            <HBox spacing="12">
+                                <Label text="Menu :"/>
+                                <ComboBox fx:id="comboMenu" prefWidth="220" promptText="Choisir un menu"/>
+                                <Label text="Plat :"/>
+                                <ComboBox fx:id="comboRepas" prefWidth="220" promptText="Choisir un plat à ajouter"/>
+                                <Button text="➕ Ajouter au menu" onAction="#onAjouterRepasAuMenu" styleClass="btn-success"/>
+                            </HBox>
+
+                            <Label text="Plats dans mon menu :" styleClass="section-subtitle"/>
+                            <ListView fx:id="listeRepasMenu" prefHeight="200" styleClass="modern-list"/>
+                            <HBox spacing="12">
+                                <Button text="🔄 Réorganiser" onAction="#onReorganiser" styleClass="btn-secondary"/>
+                                <Button text="🗑️ Supprimer sélectionné" onAction="#onSupprimerRepas" styleClass="btn-danger"/>
+                                <Button text="💾 Enregistrer mon menu" onAction="#onEnregistrerMenu" styleClass="btn-success"/>
+                            </HBox>
+                        </VBox>
+
+                        <!-- Aperçu menu -->
+                        <VBox spacing="12" styleClass="form-section">
+                            <Label text="Aperçu de Mon Menu" styleClass="section-subtitle"/>
+                            <TextArea fx:id="apercuMenu" editable="false" wrapText="true" prefRowCount="5"
+                                      styleClass="preview-area"/>
+                            <Button text="👁️ Prévisualiser" onAction="#onPrevisualiser" styleClass="btn-info"/>
+                        </VBox>
                     </VBox>
-                    
-                    <!-- Génération automatique -->
-                    <VBox spacing="12" styleClass="form-section">
-                        <Label text="Génération Automatique de Menu" styleClass="section-subtitle"/>
-                        <HBox spacing="12">
-                            <Label text="Événement ID:"/>
-                            <TextField fx:id="inputEvenementId" promptText="ID événement" styleClass="input-field"/>
-                            <Label text="Date:"/>
-                            <DatePicker fx:id="inputDateMenu" styleClass="input-field"/>
-                            <Button text="✨ Générer Menu" onAction="#onGenererMenu" styleClass="btn-primary"/>
-                        </HBox>
-                        <Label fx:id="menuGenereLabel" text="" wrapText="true" styleClass="info-label"/>
-                    </VBox>
-                    
-                    <!-- Choisir un menu : sélectionner un menu puis ajouter des repas -->
-                    <VBox spacing="12" styleClass="form-section">
-                        <Label text="Sélectionner un menu puis ajouter des plats" styleClass="section-subtitle"/>
-                        <HBox spacing="12">
-                            <Label text="Menu :"/>
-                            <ComboBox fx:id="comboMenu" prefWidth="220" promptText="Choisir un menu"/>
-                            <Label text="Plat :"/>
-                            <ComboBox fx:id="comboRepas" prefWidth="220" promptText="Choisir un plat à ajouter"/>
-                            <Button text="➕ Ajouter au menu" onAction="#onAjouterRepasAuMenu" styleClass="btn-success"/>
-                        </HBox>
-                        
-                        <Label text="Plats dans mon menu :" styleClass="section-subtitle"/>
-                        <ListView fx:id="listeRepasMenu" prefHeight="200" styleClass="modern-list"/>
-                        <HBox spacing="12">
-                            <Button text="🔄 Réorganiser" onAction="#onReorganiser" styleClass="btn-secondary"/>
-                            <Button text="🗑️ Supprimer sélectionné" onAction="#onSupprimerRepas" styleClass="btn-danger"/>
-                            <Button text="💾 Enregistrer mon menu" onAction="#onEnregistrerMenu" styleClass="btn-success"/>
-                        </HBox>
-                    </VBox>
-                    
-                    <!-- Aperçu menu -->
-                    <VBox spacing="12" styleClass="form-section">
-                        <Label text="Aperçu de Mon Menu" styleClass="section-subtitle"/>
-                        <TextArea fx:id="apercuMenu" editable="false" wrapText="true" prefRowCount="5" 
-                                  styleClass="preview-area"/>
-                        <Button text="👁️ Prévisualiser" onAction="#onPrevisualiser" styleClass="btn-info"/>
-                    </VBox>
-                </VBox>
+                </ScrollPane>
             </Tab>
             <Tab text="📊 Mes Statistiques">
-                <VBox spacing="16" styleClass="modern-panel">
-                    <padding>
-                        <Insets top="20" right="20" bottom="20" left="20"/>
-                    </padding>
-                    <Label text="Mes Statistiques Restauration" styleClass="section-title"/>
-                    <GridPane hgap="12" vgap="12">
-                        <columnConstraints>
-                            <ColumnConstraints minWidth="200" prefWidth="300"/>
-                            <ColumnConstraints minWidth="200" prefWidth="300"/>
-                        </columnConstraints>
-                        <Label text="Total repas créés:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-                        <Label fx:id="statTotalRepas" text="0" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
-                        <Label text="Total dépensé:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-                        <Label fx:id="statTotalDepense" text="0.00 €" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-                        <Label text="Total calories:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-                        <Label fx:id="statTotalCalories" text="0" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-                        <Label text="Menus composés:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
-                        <Label fx:id="statTotalMenus" text="0" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
-                    </GridPane>
-                </VBox>
+                <ScrollPane fitToWidth="true" styleClass="modern-scroll-pane">
+                    <VBox spacing="16" styleClass="modern-panel">
+                        <padding>
+                            <Insets top="20" right="20" bottom="20" left="20"/>
+                        </padding>
+                        <Label text="Mes Statistiques Restauration" styleClass="section-title"/>
+                        <GridPane hgap="12" vgap="12">
+                            <columnConstraints>
+                                <ColumnConstraints minWidth="200" prefWidth="300"/>
+                                <ColumnConstraints minWidth="200" prefWidth="300"/>
+                            </columnConstraints>
+                            <Label text="Total repas créés:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                            <Label fx:id="statTotalRepas" text="0" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                            <Label text="Total dépensé:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                            <Label fx:id="statTotalDepense" text="0.00 €" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                            <Label text="Total calories:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                            <Label fx:id="statTotalCalories" text="0" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                            <Label text="Menus composés:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                            <Label fx:id="statTotalMenus" text="0" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                        </GridPane>
+                    </VBox>
+                </ScrollPane>
             </Tab>
         </TabPane>
     </center>

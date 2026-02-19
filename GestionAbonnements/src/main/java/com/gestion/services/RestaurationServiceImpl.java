@@ -20,8 +20,8 @@ public class RestaurationServiceImpl implements RestaurationService {
     private final MyConnection dbConnection = MyConnection.getInstance();
 
     private <T> List<T> executeQuery(String sql,
-                                     SQLConsumer<PreparedStatement> setter,
-                                     SQLFunction<ResultSet, T> mapper) {
+            SQLConsumer<PreparedStatement> setter,
+            SQLFunction<ResultSet, T> mapper) {
         List<T> list = new java.util.ArrayList<>();
         Connection c = null;
         try {
@@ -31,12 +31,14 @@ public class RestaurationServiceImpl implements RestaurationService {
                 return list;
             }
             try (PreparedStatement ps = c.prepareStatement(sql)) {
-                if (setter != null) setter.accept(ps);
+                if (setter != null)
+                    setter.accept(ps);
                 try (ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
                         try {
                             T item = mapper.apply(rs);
-                            if (item != null) list.add(item);
+                            if (item != null)
+                                list.add(item);
                         } catch (Exception e) {
                             logger.error("Mapping error in executeQuery for SQL: {}", sql, e);
                         }
@@ -53,7 +55,8 @@ public class RestaurationServiceImpl implements RestaurationService {
 
     @Override
     public Restauration create(Restauration r) {
-        if (r == null || r.getType() == null) return null;
+        if (r == null || r.getType() == null)
+            return null;
         switch (r.getType()) {
             case MENU -> insertMenu(r);
             case OPTION -> insertOption(r);
@@ -81,9 +84,10 @@ public class RestaurationServiceImpl implements RestaurationService {
             case REPAS -> executeQuery("SELECT * FROM repas", null, this::mapRepas).stream()
                     .peek(x -> x.setType(Restauration.TypeRestauration.REPAS))
                     .collect(Collectors.toList());
-            case RESTRICTION -> executeQuery("SELECT * FROM restriction_alimentaire", null, this::mapRestriction).stream()
-                    .peek(x -> x.setType(Restauration.TypeRestauration.RESTRICTION))
-                    .collect(Collectors.toList());
+            case RESTRICTION ->
+                executeQuery("SELECT * FROM restriction_alimentaire", null, this::mapRestriction).stream()
+                        .peek(x -> x.setType(Restauration.TypeRestauration.RESTRICTION))
+                        .collect(Collectors.toList());
             case PRESENCE -> executeQuery("SELECT * FROM presence", null, this::mapPresence).stream()
                     .peek(x -> x.setType(Restauration.TypeRestauration.PRESENCE))
                     .collect(Collectors.toList());
@@ -129,9 +133,10 @@ public class RestaurationServiceImpl implements RestaurationService {
 
     @Override
     public List<Restauration> findOptionsByTypeEvenement(String typeEvenement) {
-        // Récupérer toutes les options (la colonne type_evenement peut ne pas exister dans certaines bases)
+        // Récupérer toutes les options (la colonne type_evenement peut ne pas exister
+        // dans certaines bases)
         List<Restauration> allOptions = findAll(Restauration.TypeRestauration.OPTION);
-        
+
         // Filtrer par type_evenement si spécifié
         if (typeEvenement != null && !typeEvenement.isBlank()) {
             return allOptions.stream()
@@ -140,7 +145,7 @@ public class RestaurationServiceImpl implements RestaurationService {
                     .filter(o -> typeEvenement.equalsIgnoreCase(o.getTypeEvenement()))
                     .collect(Collectors.toList());
         }
-        
+
         // Sinon retourner toutes les options actives
         return allOptions.stream()
                 .peek(o -> o.setType(Restauration.TypeRestauration.OPTION))
@@ -197,13 +202,15 @@ public class RestaurationServiceImpl implements RestaurationService {
     private void insertMenu(Restauration r) {
         String sql = "INSERT INTO menu_proposition (nom, option_restauration_id, actif) VALUES (?,?,?)";
         try (Connection c = dbConnection.getConnection();
-             PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, r.getNom());
             ps.setObject(2, r.getOptionRestaurationId());
             ps.setBoolean(3, r.isActif());
             ps.executeUpdate();
             setGeneratedId(ps, r);
-        } catch (SQLException e) { logger.error("insertMenu", e); }
+        } catch (SQLException e) {
+            logger.error("insertMenu", e);
+        }
     }
 
     // ================= UPDATES / DELETES =================
@@ -211,7 +218,7 @@ public class RestaurationServiceImpl implements RestaurationService {
     private void updateMenu(Restauration r) throws SQLException {
         String sql = "UPDATE menu_proposition SET nom=?, option_restauration_id=?, actif=? WHERE id=?";
         try (Connection c = dbConnection.getConnection();
-             PreparedStatement ps = c.prepareStatement(sql)) {
+                PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setString(1, r.getNom());
             ps.setObject(2, r.getOptionRestaurationId());
             ps.setBoolean(3, r.isActif());
@@ -226,7 +233,7 @@ public class RestaurationServiceImpl implements RestaurationService {
         }
         String sql = "UPDATE repas SET nom_repas=?, prix=?, date=?, participant_id=? WHERE id=?";
         try (Connection c = dbConnection.getConnection();
-             PreparedStatement ps = c.prepareStatement(sql)) {
+                PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setString(1, r.getNomRepas());
             ps.setBigDecimal(2, r.getPrix());
             ps.setDate(3, Date.valueOf(r.getDate()));
@@ -238,7 +245,7 @@ public class RestaurationServiceImpl implements RestaurationService {
 
     private boolean deleteById(String sql, Long id) {
         try (Connection c = dbConnection.getConnection();
-             PreparedStatement ps = c.prepareStatement(sql)) {
+                PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setLong(1, id);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -250,13 +257,15 @@ public class RestaurationServiceImpl implements RestaurationService {
     private void insertOption(Restauration r) {
         String sql = "INSERT INTO option_restauration (libelle, type_evenement, actif) VALUES (?,?,?)";
         try (Connection c = dbConnection.getConnection();
-             PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, r.getLibelle());
             ps.setString(2, r.getTypeEvenement());
             ps.setBoolean(3, r.isActif());
             ps.executeUpdate();
             setGeneratedId(ps, r);
-        } catch (SQLException e) { logger.error("insertOption", e); }
+        } catch (SQLException e) {
+            logger.error("insertOption", e);
+        }
     }
 
     private void insertRepas(Restauration r) {
@@ -266,43 +275,50 @@ public class RestaurationServiceImpl implements RestaurationService {
             throw new IllegalStateException("Doublon interdit");
         String sql = "INSERT INTO repas (nom_repas, prix, date, participant_id) VALUES (?,?,?,?)";
         try (Connection c = dbConnection.getConnection();
-             PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, r.getNomRepas());
             ps.setBigDecimal(2, r.getPrix());
             ps.setDate(3, Date.valueOf(r.getDate()));
             ps.setLong(4, r.getParticipantId());
             ps.executeUpdate();
             setGeneratedId(ps, r);
-        } catch (SQLException e) { logger.error("insertRepas", e); }
+        } catch (SQLException e) {
+            logger.error("insertRepas", e);
+        }
     }
 
     private void insertRestriction(Restauration r) {
         String sql = "INSERT INTO restriction_alimentaire (libelle, description, actif) VALUES (?,?,?)";
         try (Connection c = dbConnection.getConnection();
-             PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, r.getRestrictionLibelle());
             ps.setString(2, r.getRestrictionDescription());
             ps.setBoolean(3, r.isActif());
             ps.executeUpdate();
             setGeneratedId(ps, r);
-        } catch (SQLException e) { logger.error("insertRestriction", e); }
+        } catch (SQLException e) {
+            logger.error("insertRestriction", e);
+        }
     }
 
     private void insertPresence(Restauration r) {
         String sql = "INSERT INTO presence (participant_id, date, abonnement_actif) VALUES (?,?,?)";
         try (Connection c = dbConnection.getConnection();
-             PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setLong(1, r.getParticipantId());
             ps.setDate(2, Date.valueOf(r.getDatePresence()));
             ps.setBoolean(3, r.isAbonnementActif());
             ps.executeUpdate();
             setGeneratedId(ps, r);
-        } catch (SQLException e) { logger.error("insertPresence", e); }
+        } catch (SQLException e) {
+            logger.error("insertPresence", e);
+        }
     }
 
     private void setGeneratedId(PreparedStatement ps, Restauration r) throws SQLException {
         try (ResultSet keys = ps.getGeneratedKeys()) {
-            if (keys.next()) r.setId(keys.getLong(1));
+            if (keys.next())
+                r.setId(keys.getLong(1));
         }
     }
 
@@ -338,7 +354,8 @@ public class RestaurationServiceImpl implements RestaurationService {
         r.setNomRepas(rs.getString("nom_repas"));
         r.setPrix(rs.getBigDecimal("prix"));
         Date d = rs.getDate("date");
-        if (d != null) r.setDate(d.toLocalDate());
+        if (d != null)
+            r.setDate(d.toLocalDate());
         r.setParticipantId(rs.getLong("participant_id"));
         return r;
     }
@@ -357,7 +374,8 @@ public class RestaurationServiceImpl implements RestaurationService {
         r.setId(rs.getLong("id"));
         r.setParticipantId(rs.getLong("participant_id"));
         Date d = rs.getDate("date");
-        if (d != null) r.setDatePresence(d.toLocalDate());
+        if (d != null)
+            r.setDatePresence(d.toLocalDate());
         r.setAbonnementActif(rs.getBoolean("abonnement_actif"));
         return r;
     }
@@ -373,9 +391,15 @@ public class RestaurationServiceImpl implements RestaurationService {
                 VALUES (?,?,?,?,?,?,?,?)
                 """;
         try (Connection c = dbConnection.getConnection();
-             PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            ps.setLong(1, besoin.getParticipantId());
-            ps.setLong(2, besoin.getEvenementId());
+                PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            if (besoin.getParticipantId() != null)
+                ps.setLong(1, besoin.getParticipantId());
+            else
+                ps.setNull(1, Types.BIGINT);
+            if (besoin.getEvenementId() != null)
+                ps.setLong(2, besoin.getEvenementId());
+            else
+                ps.setNull(2, Types.BIGINT);
             ps.setString(3, besoin.getBesoinLibelle());
             ps.setString(4, besoin.getRestrictionLibelle());
             ps.setString(5, besoin.getNiveauGravite());
@@ -384,16 +408,19 @@ public class RestaurationServiceImpl implements RestaurationService {
             ps.setBoolean(8, besoin.isAnnule());
             ps.executeUpdate();
             try (ResultSet keys = ps.getGeneratedKeys()) {
-                if (keys.next()) besoin.setId(keys.getLong(1));
+                if (keys.next())
+                    besoin.setId(keys.getLong(1));
             }
-        } catch (SQLException e) { logger.error("createBesoin", e); }
+        } catch (SQLException e) {
+            logger.error("createBesoin", e);
+        }
         return besoin;
     }
 
     @Override
     public Optional<ParticipantRestauration> findBesoinById(Long id) {
         return executeQuery("SELECT * FROM participant_restauration WHERE id=?",
-                        ps -> ps.setLong(1, id), this::mapParticipantRestauration)
+                ps -> ps.setLong(1, id), this::mapParticipantRestauration)
                 .stream().findFirst();
     }
 
@@ -413,45 +440,55 @@ public class RestaurationServiceImpl implements RestaurationService {
             ps.setBoolean(4, besoin.isAnnule());
             ps.setLong(5, besoin.getId());
             ps.executeUpdate();
-        } catch (SQLException e) { logger.error("updateBesoin", e); }
+        } catch (SQLException e) {
+            logger.error("updateBesoin", e);
+        }
         return besoin;
     }
 
     @Override
     public boolean deleteBesoin(Long id) {
         try (Connection c = dbConnection.getConnection();
-             PreparedStatement ps = c.prepareStatement("DELETE FROM participant_restauration WHERE id=?")) {
+                PreparedStatement ps = c.prepareStatement("DELETE FROM participant_restauration WHERE id=?")) {
             ps.setLong(1, id);
             return ps.executeUpdate() > 0;
-        } catch (SQLException e) { logger.error("deleteBesoin", e); }
+        } catch (SQLException e) {
+            logger.error("deleteBesoin", e);
+        }
         return false;
     }
 
     @Override
     public boolean peutModifierChoixRepas(Long id) {
         return findBesoinById(id)
-                .map(c -> c.getDateLimiteModification() == null || !LocalDate.now().isAfter(c.getDateLimiteModification()))
+                .map(c -> c.getDateLimiteModification() == null
+                        || !LocalDate.now().isAfter(c.getDateLimiteModification()))
                 .orElse(false);
     }
 
     private ParticipantRestauration mapParticipantRestauration(ResultSet rs) throws SQLException {
         ParticipantRestauration p = new ParticipantRestauration();
         p.setId(rs.getLong("id"));
-        p.setParticipantId(rs.getLong("participant_id"));
-        p.setEvenementId(rs.getLong("evenement_id"));
+        p.setParticipantId(rs.getObject("participant_id") != null ? rs.getLong("participant_id") : null);
+        p.setEvenementId(rs.getObject("evenement_id") != null ? rs.getLong("evenement_id") : null);
         p.setBesoinLibelle(rs.getString("besoin_libelle"));
         p.setRestrictionLibelle(rs.getString("restriction_libelle"));
         p.setNiveauGravite(rs.getString("niveau_gravite"));
         p.setMenuPropositionId(rs.getLong("menu_proposition_id"));
         Date d = rs.getDate("date_limite_modification");
-        if (d != null) p.setDateLimiteModification(d.toLocalDate());
+        if (d != null)
+            p.setDateLimiteModification(d.toLocalDate());
         p.setAnnule(rs.getBoolean("annule"));
         return p;
     }
 
     @FunctionalInterface
-    interface SQLConsumer<T> { void accept(T t) throws Exception; }
+    interface SQLConsumer<T> {
+        void accept(T t) throws Exception;
+    }
 
     @FunctionalInterface
-    interface SQLFunction<T, R> { R apply(T t) throws Exception; }
+    interface SQLFunction<T, R> {
+        R apply(T t) throws Exception;
+    }
 }
