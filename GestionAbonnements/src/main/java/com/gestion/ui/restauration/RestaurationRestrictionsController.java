@@ -75,8 +75,11 @@ public class RestaurationRestrictionsController {
         card.setAlignment(Pos.CENTER_LEFT);
 
         // Icon
+        StackPane iconPane = new StackPane();
+        javafx.scene.shape.Circle bg = new javafx.scene.shape.Circle(20, javafx.scene.paint.Color.web("#fff5f5"));
         Text icon = new Text("⚠️");
-        icon.setFont(Font.font("Segoe UI Emoji", 24));
+        icon.setFont(Font.font("Segoe UI Emoji", 20));
+        iconPane.getChildren().addAll(bg, icon);
 
         VBox content = new VBox(5);
         HBox.setHgrow(content, Priority.ALWAYS);
@@ -86,24 +89,38 @@ public class RestaurationRestrictionsController {
         Label title = new Label("Participant #" + item.getParticipantId());
         title.getStyleClass().add("card-title");
 
-        Label typeBadge = new Label(item.getRestrictionLibelle() != null ? item.getRestrictionLibelle() : "N/A");
-        typeBadge.getStyleClass().add("status-badge");
-        typeBadge.setStyle("-fx-background-color: #ffebee; -fx-text-fill: #c62828;"); // Light red for restrictions
+        Label libelleBadge = new Label(item.getRestrictionLibelle() != null ? item.getRestrictionLibelle() : "N/A");
+        libelleBadge.getStyleClass().add("status-badge");
+        libelleBadge.setStyle("-fx-background-color: #ffebee; -fx-text-fill: #c62828;");
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        header.getChildren().addAll(title, spacer, typeBadge);
+        header.getChildren().addAll(title, libelleBadge, spacer);
 
-        HBox details = new HBox(15);
+        VBox details = new VBox(2);
         Label descLabel = new Label(
                 item.getRestrictionDescription() != null ? item.getRestrictionDescription() : "Aucune description");
         descLabel.getStyleClass().add("card-label");
+        descLabel.setWrapText(true);
 
         details.getChildren().add(descLabel);
 
         content.getChildren().addAll(header, details);
-        card.getChildren().addAll(icon, content);
+
+        // Right side: Active status
+        VBox rightSide = new VBox();
+        rightSide.setAlignment(Pos.CENTER_RIGHT);
+        Label statusBadgeLabel = new Label(item.isActif() ? "ACTIF" : "INACTIF");
+        statusBadgeLabel.getStyleClass().add("status-badge");
+        if (item.isActif()) {
+            statusBadgeLabel.setStyle("-fx-background-color: #28a745;");
+        } else {
+            statusBadgeLabel.setStyle("-fx-background-color: #6c757d;");
+        }
+        rightSide.getChildren().add(statusBadgeLabel);
+
+        card.getChildren().addAll(iconPane, content, rightSide);
 
         return card;
     }

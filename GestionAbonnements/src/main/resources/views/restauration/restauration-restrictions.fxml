@@ -37,20 +37,14 @@
                 <Region HBox.hgrow="ALWAYS"/>
                 <Label fx:id="countLabel" text="0 restrictions" styleClass="count-label"/>
             </HBox>
-            <TableView fx:id="restrictionsTable" VBox.vgrow="ALWAYS" minHeight="350" prefHeight="400" 
-                       styleClass="modern-table" onMouseClicked="#onTableClick">
+            <ListView fx:id="listView" VBox.vgrow="ALWAYS" minHeight="350" prefHeight="400" 
+                      styleClass="modern-list-view" onMouseClicked="#onListClick">
                 <placeholder>
                     <VBox alignment="CENTER" spacing="12">
                         <Label text="📭 Aucune donnée disponible" styleClass="placeholder-text"/>
                     </VBox>
                 </placeholder>
-                <columns>
-                    <TableColumn fx:id="colRestId" text="ID" prefWidth="60" minWidth="50" sortable="true"/>
-                    <TableColumn fx:id="colRestLibelle" text="Libellé" prefWidth="250" minWidth="200" sortable="true"/>
-                    <TableColumn fx:id="colRestDescription" text="Description" prefWidth="400" minWidth="300" sortable="true"/>
-                    <TableColumn fx:id="colRestActif" text="Actif" prefWidth="100" minWidth="80" sortable="true"/>
-                </columns>
-            </TableView>
+            </ListView>
         </VBox>
 
         <VBox spacing="12" styleClass="form-section">

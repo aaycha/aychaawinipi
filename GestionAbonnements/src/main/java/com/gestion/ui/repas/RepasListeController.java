@@ -4,8 +4,6 @@ import com.gestion.controllers.RepasController;
 import com.gestion.entities.Menu;
 import com.gestion.entities.Repas;
 import com.gestion.entities.Restaurant;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -15,7 +13,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -28,28 +28,30 @@ import java.util.ResourceBundle;
  */
 public class RepasListeController implements Initializable {
 
-    @FXML private TextField searchField;
-    @FXML private ComboBox<Restaurant> filterRestaurantCombo;
-    @FXML private ComboBox<Menu> filterMenuCombo;
-    @FXML private ComboBox<Repas.Categorie> filterCategorieCombo;
-    @FXML private ComboBox<Repas.TypePlat> filterTypePlatCombo;
-    @FXML private ComboBox<String> filterDisponibleCombo;
-    @FXML private Label countLabel;
-    @FXML private Label statusLabel;
-    @FXML private TableView<Repas> repasTable;
-    @FXML private TableColumn<Repas, Long> colId;
-    @FXML private TableColumn<Repas, String> colNom;
-    @FXML private TableColumn<Repas, String> colRestaurant;
-    @FXML private TableColumn<Repas, String> colMenu;
-    @FXML private TableColumn<Repas, String> colCategorie;
-    @FXML private TableColumn<Repas, String> colTypePlat;
-    @FXML private TableColumn<Repas, String> colPrix;
-    @FXML private TableColumn<Repas, Integer> colTemps;
-    @FXML private TableColumn<Repas, String> colDisponible;
-    @FXML private TableColumn<Repas, Void> colActions;
-    @FXML private Button btnModifier;
-    @FXML private Button btnSupprimer;
-    @FXML private Button btnVoirDetails;
+    @FXML
+    private TextField searchField;
+    @FXML
+    private ComboBox<Restaurant> filterRestaurantCombo;
+    @FXML
+    private ComboBox<Menu> filterMenuCombo;
+    @FXML
+    private ComboBox<Repas.Categorie> filterCategorieCombo;
+    @FXML
+    private ComboBox<Repas.TypePlat> filterTypePlatCombo;
+    @FXML
+    private ComboBox<String> filterDisponibleCombo;
+    @FXML
+    private Label countLabel;
+    @FXML
+    private Label statusLabel;
+    @FXML
+    private ListView<Repas> listView;
+    @FXML
+    private Button btnModifier;
+    @FXML
+    private Button btnSupprimer;
+    @FXML
+    private Button btnVoirDetails;
 
     private final RepasController controller = new RepasController();
     private ObservableList<Repas> repas = FXCollections.observableArrayList();
@@ -57,59 +59,38 @@ public class RepasListeController implements Initializable {
     private ObservableList<Menu> menus = FXCollections.observableArrayList();
     private FilteredList<Repas> filteredRepas;
     private Repas selectedRepas;
-    
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        setupTableColumns();
+        setupListView();
         setupFilters();
         loadRestaurants();
         loadMenus();
         loadRepas();
-        setupTableSelectionListener();
     }
 
-    private void setupTableColumns() {
-        colId.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getId()));
-        colNom.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getNom()));
-        colRestaurant.setCellValueFactory(cellData -> new SimpleStringProperty(
-                cellData.getValue().getRestaurantNom() != null ? cellData.getValue().getRestaurantNom() : "-"));
-        colMenu.setCellValueFactory(cellData -> new SimpleStringProperty(
-                cellData.getValue().getMenuNom() != null ? cellData.getValue().getMenuNom() : "-"));
-        colCategorie.setCellValueFactory(cellData -> {
-            var cat = cellData.getValue().getCategorie();
-            return new SimpleStringProperty(cat != null ? cat.getLabel() : "-");
-        });
-        colTypePlat.setCellValueFactory(cellData -> {
-            var type = cellData.getValue().getTypePlat();
-            return new SimpleStringProperty(type != null ? type.getLabel() : "-");
-        });
-        colPrix.setCellValueFactory(cellData -> {
-            var prix = cellData.getValue().getPrix();
-            return new SimpleStringProperty(prix != null ? String.format("%.2f", prix) : "-");
-        });
-        colTemps.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getTempsPreparation()));
-        colDisponible.setCellValueFactory(cellData -> {
-            boolean dispo = cellData.getValue().isDisponible();
-            return new SimpleStringProperty(dispo ? "✅" : "❌");
-        });
-
-        colActions.setCellFactory(param -> new TableCell<>() {
-            private final Button editBtn = new Button("✏️");
-            private final Button deleteBtn = new Button("🗑️");
-            private final HBox pane = new HBox(5, editBtn, deleteBtn);
-
-            {
-                editBtn.setStyle("-fx-background-color: #f39c12; -fx-text-fill: white; -fx-padding: 4 8;");
-                deleteBtn.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-padding: 4 8;");
-                editBtn.setOnAction(event -> handleEdit(getTableRow().getItem()));
-                deleteBtn.setOnAction(event -> handleDelete(getTableRow().getItem()));
-            }
-
+    private void setupListView() {
+        listView.setCellFactory(param -> new ListCell<Repas>() {
             @Override
-            protected void updateItem(Void item, boolean empty) {
+            protected void updateItem(Repas item, boolean empty) {
                 super.updateItem(item, empty);
-                setGraphic(empty ? null : pane);
+                if (empty || item == null) {
+                    setText(null);
+                    setGraphic(null);
+                    setStyle("-fx-background-color: transparent;");
+                } else {
+                    setGraphic(createRepasCard(item));
+                    setStyle("-fx-background-color: transparent; -fx-padding: 5 10 5 10;");
+                }
             }
+        });
+
+        listView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            selectedRepas = newSelection;
+            boolean hasSelection = newSelection != null;
+            btnModifier.setDisable(!hasSelection);
+            btnSupprimer.setDisable(!hasSelection);
+            btnVoirDetails.setDisable(!hasSelection);
         });
     }
 
@@ -139,34 +120,91 @@ public class RepasListeController implements Initializable {
         filterMenuCombo.setPromptText("Tous les menus");
     }
 
-    private void setupTableSelectionListener() {
-        repasTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-            selectedRepas = newSelection;
-            boolean hasSelection = newSelection != null;
-            btnModifier.setDisable(!hasSelection);
-            btnSupprimer.setDisable(!hasSelection);
-            btnVoirDetails.setDisable(!hasSelection);
-        });
-        repasTable.setRowFactory(tv -> {
-            javafx.scene.control.TableRow<Repas> row = new javafx.scene.control.TableRow<>();
-            row.setOnMouseClicked(event -> {
-                if (event.getClickCount() == 2 && !row.isEmpty()) {
-                    openDetailPage(row.getItem());
-                }
-            });
-            return row;
-        });
+    private javafx.scene.Node createRepasCard(Repas item) {
+        HBox card = new HBox(15);
+        card.getStyleClass().add("modern-card");
+        card.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+
+        // Icon
+        javafx.scene.layout.StackPane iconPane = new javafx.scene.layout.StackPane();
+        javafx.scene.shape.Circle bg = new javafx.scene.shape.Circle(20, javafx.scene.paint.Color.web("#fff0f6"));
+        javafx.scene.text.Text icon = new javafx.scene.text.Text("🍽️");
+        icon.setFont(javafx.scene.text.Font.font("Segoe UI Emoji", 20));
+        iconPane.getChildren().addAll(bg, icon);
+
+        // Content
+        VBox content = new VBox(5);
+        HBox.setHgrow(content, javafx.scene.layout.Priority.ALWAYS);
+
+        HBox header = new HBox(10);
+        header.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+        Label title = new Label(item.getNom());
+        title.getStyleClass().add("card-title");
+
+        Label statusBadge = new Label(item.isDisponible() ? "DISPO" : "ÉPUISÉ");
+        statusBadge.getStyleClass().add("status-badge");
+        if (item.isDisponible()) {
+            statusBadge.setStyle("-fx-background-color: #28a745;");
+        } else {
+            statusBadge.setStyle("-fx-background-color: #6c757d;");
+        }
+
+        javafx.scene.layout.Region spacer = new javafx.scene.layout.Region();
+        HBox.setHgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
+
+        header.getChildren().addAll(title, spacer, statusBadge);
+
+        GridPane details = new GridPane();
+        details.setHgap(20);
+        details.setVgap(5);
+
+        details.add(createDetailLabel("🏨 Resto:", item.getRestaurantNom()), 0, 0);
+        details.add(createDetailLabel("📜 Menu:", item.getMenuNom()), 1, 0);
+        details.add(createDetailLabel("📂 Cat:", item.getCategorie() != null ? item.getCategorie().getLabel() : "N/A"),
+                0, 1);
+        details.add(createDetailLabel("⏱️ Prép:", item.getTempsPreparation() + " min"), 1, 1);
+
+        content.getChildren().addAll(header, details);
+
+        // Right Side: Price
+        VBox rightSide = new VBox(5);
+        rightSide.setAlignment(javafx.geometry.Pos.CENTER_RIGHT);
+        rightSide.setMinWidth(80);
+
+        Label price = new Label(String.format("%.2f €", item.getPrix() != null ? item.getPrix() : 0.0));
+        price.getStyleClass().add("card-price");
+
+        Label typeLabel = new Label(item.getTypePlat() != null ? item.getTypePlat().getLabel() : "");
+        typeLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: #6c757d;");
+
+        rightSide.getChildren().addAll(price, typeLabel);
+
+        card.getChildren().addAll(iconPane, content, rightSide);
+
+        return card;
+    }
+
+    private HBox createDetailLabel(String labelText, String valueText) {
+        HBox box = new HBox(5);
+        box.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+        Label label = new Label(labelText);
+        label.getStyleClass().add("card-label");
+        Label value = new Label(valueText != null ? valueText : "-");
+        value.getStyleClass().add("card-value");
+        box.getChildren().addAll(label, value);
+        return box;
     }
 
     private void loadRepas() {
         repas.setAll(controller.getAllRepas());
         filteredRepas = new FilteredList<>(repas, p -> true);
-        repasTable.setItems(filteredRepas);
+        listView.setItems(filteredRepas);
         updateCountLabel();
     }
 
     private void applyFilters() {
-        if (filteredRepas == null) return;
+        if (filteredRepas == null)
+            return;
 
         String searchText = searchField.getText().toLowerCase();
         String dispoFilter = filterDisponibleCombo.getValue();
@@ -247,6 +285,19 @@ public class RepasListeController implements Initializable {
     }
 
     @FXML
+    private void onListClick(javafx.scene.input.MouseEvent event) {
+        selectedRepas = listView.getSelectionModel().getSelectedItem();
+        boolean hasSelection = selectedRepas != null;
+        btnModifier.setDisable(!hasSelection);
+        btnSupprimer.setDisable(!hasSelection);
+        btnVoirDetails.setDisable(!hasSelection);
+
+        if (event.getClickCount() == 2 && hasSelection) {
+            openDetailPage(selectedRepas);
+        }
+    }
+
+    @FXML
     public void onActualiser() {
         loadRestaurants();
         loadMenus();
@@ -272,12 +323,14 @@ public class RepasListeController implements Initializable {
     }
 
     private void handleDelete(Repas repas) {
-        if (repas == null) return;
+        if (repas == null)
+            return;
 
         Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
         confirmAlert.setTitle("Confirmation de suppression");
         confirmAlert.setHeaderText("Supprimer le plat ?");
-        confirmAlert.setContentText("Êtes-vous sûr de vouloir supprimer \"" + repas.getNom() + "\" ?\n\nCette action est irréversible.");
+        confirmAlert.setContentText(
+                "Êtes-vous sûr de vouloir supprimer \"" + repas.getNom() + "\" ?\n\nCette action est irréversible.");
 
         confirmAlert.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
@@ -349,8 +402,7 @@ public class RepasListeController implements Initializable {
                 r.getPrix() != null ? r.getPrix() + " €" : "Non renseigné",
                 r.getTempsPreparation() != null ? r.getTempsPreparation() : 0,
                 r.getDescription() != null ? r.getDescription() : "Non renseignée",
-                r.isDisponible() ? "Oui" : "Non"
-        );
+                r.isDisponible() ? "Oui" : "Non");
     }
 
     private void showAlert(Alert.AlertType type, String title, String header, String content) {

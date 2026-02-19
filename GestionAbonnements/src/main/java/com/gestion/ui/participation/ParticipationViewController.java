@@ -135,9 +135,9 @@ public class ParticipationViewController {
         card.getStyleClass().add("modern-card");
         card.setAlignment(Pos.CENTER_LEFT);
 
-        // Icon
+        // Icon / Avatar
         StackPane iconPane = new StackPane();
-        Circle bg = new Circle(20, Color.web("#fff0f6"));
+        Circle bg = new Circle(20, Color.web("#e7f1ff"));
         Text icon = new Text(getItemIcon(item.getType()));
         icon.setFont(Font.font("Segoe UI Emoji", 20));
         iconPane.getChildren().addAll(bg, icon);
@@ -146,10 +146,10 @@ public class ParticipationViewController {
         VBox content = new VBox(5);
         HBox.setHgrow(content, Priority.ALWAYS);
 
-        // Header
+        // Header: Title + Status
         HBox header = new HBox(10);
         header.setAlignment(Pos.CENTER_LEFT);
-        Label title = new Label("User #" + item.getUserId() + " • Événement #" + item.getEvenementId());
+        Label title = new Label("Participation #" + item.getId());
         title.getStyleClass().add("card-title");
 
         Label statusBadge = new Label(item.getStatut().name());
@@ -165,20 +165,51 @@ public class ParticipationViewController {
         details.setHgap(20);
         details.setVgap(5);
 
-        // Info
-        details.add(createDetailLabel("🎭 Type:", item.getType().name()), 0, 0);
-        details.add(createDetailLabel("🤝 Contexte:", item.getContexteSocial().name()), 1, 0);
+        // Formatter for date
+        java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        String dateStr = item.getDateInscription() != null ? item.getDateInscription().format(formatter) : "N/A";
 
+        // Row 1
+        details.add(createDetailLabel("📅 Date:", dateStr), 0, 0);
+        details.add(createDetailLabel("👤 User:", "#" + item.getUserId()), 1, 0);
+
+        // Row 2
+        details.add(createDetailLabel("🎭 Type:", item.getType().name()), 0, 1);
+        String participantsStr = item.getTotalParticipants() + " (Ad:" + item.getNbAdultes() + ", Enf:"
+                + item.getNbEnfants() + ")";
+        details.add(createDetailLabel("👥 Participants:", participantsStr), 1, 1);
+
+        // Row 3 (Optional: Hebergement/Contexte)
         if (item.getHebergementNuits() > 0) {
-            details.add(createDetailLabel("🏨 Hébergement:", item.getHebergementNuits() + " nuits"), 0, 1);
+            details.add(createDetailLabel("🏨 Hébergement:", item.getHebergementNuits() + " nuits"), 0, 2);
         }
-        if (item.getBadgeAssocie() != null && !item.getBadgeAssocie().isEmpty()) {
-            details.add(createDetailLabel("🏷️ Badge:", item.getBadgeAssocie()), 1, 1);
-        }
+        details.add(createDetailLabel("🤝 Contexte:", item.getContexteSocial().name()), 1,
+                item.getHebergementNuits() > 0 ? 2 : 1); // Adjust row if hebergement exists
 
         content.getChildren().addAll(header, details);
 
-        card.getChildren().addAll(iconPane, content);
+        // Right Side: Price & Event
+        VBox rightSide = new VBox(5);
+        rightSide.setAlignment(Pos.CENTER_RIGHT);
+        rightSide.setMinWidth(100);
+
+        // Price
+        String priceStr = "0.00 €";
+        if (item.getMontantCalcule() != null) {
+            priceStr = String.format("%.2f %s", item.getMontantCalcule(),
+                    item.getDevise() != null ? item.getDevise() : "EUR");
+        }
+        Label price = new Label(priceStr);
+        price.getStyleClass().add("card-price");
+
+        // Event Badge
+        Label eventLabel = new Label("Événement #" + item.getEvenementId());
+        eventLabel.setStyle(
+                "-fx-text-fill: #6c757d; -fx-font-size: 12px; -fx-background-color: #f8f9fa; -fx-padding: 4 8; -fx-background-radius: 4;");
+
+        rightSide.getChildren().addAll(price, eventLabel);
+
+        card.getChildren().addAll(iconPane, content, rightSide);
         return card;
     }
 

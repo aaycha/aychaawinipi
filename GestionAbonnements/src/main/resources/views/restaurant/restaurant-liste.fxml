@@ -86,9 +86,8 @@
 
                 <Label text="📋 Liste des Restaurants" style="-fx-font-weight: bold; -fx-font-size: 18px;"/>
 
-                <TableView fx:id="restaurantTable" VBox.vgrow="ALWAYS"
-                           style="-fx-background-color: transparent; -fx-border-color: #e0e0e0;
-                                  -fx-border-radius: 8; -fx-table-cell-border-color: transparent;">
+                <ListView fx:id="listView" VBox.vgrow="ALWAYS"
+                          styleClass="modern-list-view" onMouseClicked="#onListClick">
                     <placeholder>
                         <VBox alignment="CENTER" spacing="12" style="-fx-padding: 40;">
                             <Label text="🍽️" style="-fx-font-size: 48px;"/>
@@ -96,19 +95,7 @@
                             <Label text="Commencez par ajouter un nouveau restaurant" style="-fx-font-size: 13px; -fx-text-fill: #aaa;"/>
                         </VBox>
                     </placeholder>
-                    <columns>
-                        <TableColumn fx:id="colId" text="ID" prefWidth="60" style="-fx-alignment: CENTER;"/>
-                        <TableColumn fx:id="colNom" text="Nom" prefWidth="180" style="-fx-font-weight: bold;"/>
-                        <TableColumn fx:id="colAdresse" text="Adresse" prefWidth="200"/>
-                        <TableColumn fx:id="colTelephone" text="Téléphone" prefWidth="120"/>
-                        <TableColumn fx:id="colEmail" text="Email" prefWidth="180"/>
-                        <TableColumn fx:id="colStatut" text="Statut" prefWidth="90" style="-fx-alignment: CENTER;"/>
-                        <TableColumn fx:id="colActions" text="Actions" prefWidth="150" style="-fx-alignment: CENTER;"/>
-                    </columns>
-                    <columnResizePolicy>
-                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
-                    </columnResizePolicy>
-                </TableView>
+                </ListView>
             </VBox>
         </VBox>
     </center>

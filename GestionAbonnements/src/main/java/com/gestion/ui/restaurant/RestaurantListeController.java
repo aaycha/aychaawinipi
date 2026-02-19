@@ -14,7 +14,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -27,21 +29,22 @@ import java.util.ResourceBundle;
  */
 public class RestaurantListeController implements Initializable {
 
-    @FXML private TextField searchField;
-    @FXML private ComboBox<String> filterActifCombo;
-    @FXML private Label countLabel;
-    @FXML private Label statusLabel;
-    @FXML private TableView<Restaurant> restaurantTable;
-    @FXML private TableColumn<Restaurant, Long> colId;
-    @FXML private TableColumn<Restaurant, String> colNom;
-    @FXML private TableColumn<Restaurant, String> colAdresse;
-    @FXML private TableColumn<Restaurant, String> colTelephone;
-    @FXML private TableColumn<Restaurant, String> colEmail;
-    @FXML private TableColumn<Restaurant, String> colStatut;
-    @FXML private TableColumn<Restaurant, Void> colActions;
-    @FXML private Button btnModifier;
-    @FXML private Button btnSupprimer;
-    @FXML private Button btnVoirDetails;
+    @FXML
+    private TextField searchField;
+    @FXML
+    private ComboBox<String> filterActifCombo;
+    @FXML
+    private Label countLabel;
+    @FXML
+    private Label statusLabel;
+    @FXML
+    private ListView<Restaurant> listView;
+    @FXML
+    private Button btnModifier;
+    @FXML
+    private Button btnSupprimer;
+    @FXML
+    private Button btnVoirDetails;
 
     private final RestaurantController controller = new RestaurantController();
     private ObservableList<Restaurant> restaurants = FXCollections.observableArrayList();
@@ -50,41 +53,33 @@ public class RestaurantListeController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        setupTableColumns();
+        setupListView();
         setupFilters();
         loadRestaurants();
-        setupTableSelectionListener();
     }
 
-    private void setupTableColumns() {
-        colId.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getId()));
-        colNom.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getNom()));
-        colAdresse.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getAdresse()));
-        colTelephone.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTelephone()));
-        colEmail.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getEmail()));
-        colStatut.setCellValueFactory(cellData -> {
-            boolean actif = cellData.getValue().isActif();
-            return new SimpleStringProperty(actif ? "✅ Actif" : "❌ Inactif");
+    private void setupListView() {
+        listView.setCellFactory(param -> new ListCell<Restaurant>() {
+            @Override
+            protected void updateItem(Restaurant item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setGraphic(null);
+                    setStyle("-fx-background-color: transparent;");
+                } else {
+                    setGraphic(createRestaurantCard(item));
+                    setStyle("-fx-background-color: transparent; -fx-padding: 5 10 5 10;");
+                }
+            }
         });
 
-        // Actions column with buttons
-        colActions.setCellFactory(param -> new TableCell<>() {
-            private final Button editBtn = new Button("✏️");
-            private final Button deleteBtn = new Button("🗑️");
-            private final HBox pane = new HBox(5, editBtn, deleteBtn);
-
-            {
-                editBtn.setStyle("-fx-background-color: #f39c12; -fx-text-fill: white; -fx-padding: 4 8;");
-                deleteBtn.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-padding: 4 8;");
-                editBtn.setOnAction(event -> handleEdit(getTableRow().getItem()));
-                deleteBtn.setOnAction(event -> handleDelete(getTableRow().getItem()));
-            }
-
-            @Override
-            protected void updateItem(Void item, boolean empty) {
-                super.updateItem(item, empty);
-                setGraphic(empty ? null : pane);
-            }
+        listView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            selectedRestaurant = newSelection;
+            boolean hasSelection = newSelection != null;
+            btnModifier.setDisable(!hasSelection);
+            btnSupprimer.setDisable(!hasSelection);
+            btnVoirDetails.setDisable(!hasSelection);
         });
     }
 
@@ -96,34 +91,83 @@ public class RestaurantListeController implements Initializable {
         searchField.textProperty().addListener((observable, oldValue, newValue) -> applyFilters());
     }
 
-    private void setupTableSelectionListener() {
-        restaurantTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-            selectedRestaurant = newSelection;
-            boolean hasSelection = newSelection != null;
-            btnModifier.setDisable(!hasSelection);
-            btnSupprimer.setDisable(!hasSelection);
-            btnVoirDetails.setDisable(!hasSelection);
-        });
-        restaurantTable.setRowFactory(tv -> {
-            javafx.scene.control.TableRow<Restaurant> row = new javafx.scene.control.TableRow<>();
-            row.setOnMouseClicked(event -> {
-                if (event.getClickCount() == 2 && !row.isEmpty()) {
-                    openDetailPage(row.getItem());
-                }
-            });
-            return row;
-        });
+    private javafx.scene.Node createRestaurantCard(Restaurant item) {
+        HBox card = new HBox(15);
+        card.getStyleClass().add("modern-card");
+        card.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+
+        // Icon
+        javafx.scene.layout.StackPane iconPane = new javafx.scene.layout.StackPane();
+        javafx.scene.shape.Circle bg = new javafx.scene.shape.Circle(20, javafx.scene.paint.Color.web("#e7f1ff"));
+        javafx.scene.text.Text icon = new javafx.scene.text.Text("🍽️");
+        icon.setFont(javafx.scene.text.Font.font("Segoe UI Emoji", 20));
+        iconPane.getChildren().addAll(bg, icon);
+
+        // Content
+        VBox content = new VBox(5);
+        HBox.setHgrow(content, javafx.scene.layout.Priority.ALWAYS);
+
+        HBox header = new HBox(10);
+        header.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+        Label title = new Label(item.getNom());
+        title.getStyleClass().add("card-title");
+
+        Label statusBadge = new Label(item.isActif() ? "ACTIF" : "INACTIF");
+        statusBadge.getStyleClass().add("status-badge");
+        if (item.isActif()) {
+            statusBadge.setStyle("-fx-background-color: #28a745;");
+        } else {
+            statusBadge.setStyle("-fx-background-color: #dc3545;");
+        }
+
+        javafx.scene.layout.Region spacer = new javafx.scene.layout.Region();
+        HBox.setHgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
+
+        header.getChildren().addAll(title, spacer, statusBadge);
+
+        GridPane details = new GridPane();
+        details.setHgap(20);
+        details.setVgap(5);
+
+        details.add(createDetailLabel("📍 Adresse:", item.getAdresse()), 0, 0);
+        details.add(createDetailLabel("📞 Tél:", item.getTelephone()), 1, 0);
+        details.add(createDetailLabel("✉️ Email:", item.getEmail()), 0, 1);
+
+        if (item.getDescription() != null && !item.getDescription().isEmpty()) {
+            Label desc = new Label(item.getDescription());
+            desc.setStyle("-fx-font-size: 11px; -fx-text-fill: #7f8c8d; -fx-font-style: italic;");
+            desc.setWrapText(true);
+            desc.setMaxWidth(400);
+            details.add(desc, 1, 1);
+        }
+
+        content.getChildren().addAll(header, details);
+        card.getChildren().addAll(iconPane, content);
+
+        return card;
+    }
+
+    private HBox createDetailLabel(String labelText, String valueText) {
+        HBox box = new HBox(5);
+        box.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+        Label label = new Label(labelText);
+        label.getStyleClass().add("card-label");
+        Label value = new Label(valueText != null ? valueText : "Non renseigné");
+        value.getStyleClass().add("card-value");
+        box.getChildren().addAll(label, value);
+        return box;
     }
 
     private void loadRestaurants() {
         restaurants.setAll(controller.getAllRestaurants());
         filteredRestaurants = new FilteredList<>(restaurants, p -> true);
-        restaurantTable.setItems(filteredRestaurants);
+        listView.setItems(filteredRestaurants);
         updateCountLabel();
     }
 
     private void applyFilters() {
-        if (filteredRestaurants == null) return;
+        if (filteredRestaurants == null)
+            return;
 
         String searchText = searchField.getText().toLowerCase();
         String actifFilter = filterActifCombo.getValue();
@@ -193,6 +237,19 @@ public class RestaurantListeController implements Initializable {
     }
 
     @FXML
+    private void onListClick(javafx.scene.input.MouseEvent event) {
+        selectedRestaurant = listView.getSelectionModel().getSelectedItem();
+        boolean hasSelection = selectedRestaurant != null;
+        btnModifier.setDisable(!hasSelection);
+        btnSupprimer.setDisable(!hasSelection);
+        btnVoirDetails.setDisable(!hasSelection);
+
+        if (event.getClickCount() == 2 && hasSelection) {
+            openDetailPage(selectedRestaurant);
+        }
+    }
+
+    @FXML
     public void onActualiser() {
         loadRestaurants();
         statusLabel.setText("Liste actualisée");
@@ -212,12 +269,14 @@ public class RestaurantListeController implements Initializable {
     }
 
     private void handleDelete(Restaurant restaurant) {
-        if (restaurant == null) return;
+        if (restaurant == null)
+            return;
 
         Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
         confirmAlert.setTitle("Confirmation de suppression");
         confirmAlert.setHeaderText("Supprimer le restaurant ?");
-        confirmAlert.setContentText("Êtes-vous sûr de vouloir supprimer \"" + restaurant.getNom() + "\" ?\n\nCette action est irréversible.");
+        confirmAlert.setContentText("Êtes-vous sûr de vouloir supprimer \"" + restaurant.getNom()
+                + "\" ?\n\nCette action est irréversible.");
 
         confirmAlert.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
@@ -284,8 +343,7 @@ public class RestaurantListeController implements Initializable {
                 r.getEmail() != null ? r.getEmail() : "Non renseigné",
                 r.getDescription() != null ? r.getDescription() : "Non renseignée",
                 r.isActif() ? "Actif" : "Inactif",
-                r.getDateCreation() != null ? r.getDateCreation().toString() : "Inconnue"
-        );
+                r.getDateCreation() != null ? r.getDateCreation().toString() : "Inconnue");
     }
 
     private void showAlert(Alert.AlertType type, String title, String header, String content) {
