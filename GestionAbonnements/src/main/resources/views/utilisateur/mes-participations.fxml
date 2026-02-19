@@ -49,31 +49,26 @@
         </HBox>
 
         <!-- ══ TableView ════════════════════════════════════════════════ -->
-        <VBox spacing="8" VBox.vgrow="ALWAYS">
-            <Label text="Liste de mes participations"
-                   style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1a3c5e;"/>
-
-            <TableView fx:id="table" VBox.vgrow="ALWAYS" minHeight="350" prefHeight="400">
+        <VBox spacing="10" VBox.vgrow="ALWAYS">
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Liste de mes participations"
+                       style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1a3c5e;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="countLabel" text="0 participation(s)" style="-fx-font-size: 12px; -fx-text-fill: #6c757d;"/>
+            </HBox>
+            
+            <ListView fx:id="listView" VBox.vgrow="ALWAYS" minHeight="350" prefHeight="400"
+                      styleClass="modern-list-view" stylesheets="@../../styles/card-view.css"
+                      onMouseClicked="#onListClick">
                 <placeholder>
                     <VBox alignment="CENTER" spacing="12">
                         <Label text="📭 Aucune participation trouvée"
                                style="-fx-font-size: 14px; -fx-text-fill: #6c757d;"/>
                         <Label text="Cliquez sur 'Créer une participation' pour vous inscrire à un événement."
-                               style="-fx-font-size: 11px; -fx-text-fill: #aaa; -fx-wrap-text: true;"/>
+                               style="-fx-font-size: 11px; -fx-text-fill: #aaa; -fx-wrap-text: true;" alignment="CENTER"/>
                     </VBox>
                 </placeholder>
-                <columns>
-                    <TableColumn fx:id="colId" text="ID" prefWidth="55" minWidth="45" sortable="true"/>
-                    <TableColumn fx:id="colEventId" text="Événement" prefWidth="90" minWidth="70" sortable="true"/>
-                    <TableColumn fx:id="colDateInscription" text="Date inscription" prefWidth="145" minWidth="120" sortable="true"/>
-                    <TableColumn fx:id="colStatut" text="Statut" prefWidth="120" minWidth="100" sortable="true"/>
-                    <TableColumn fx:id="colNbAdultes" text="Adultes" prefWidth="70" minWidth="60" sortable="true"/>
-                    <TableColumn fx:id="colNbEnfants" text="Enfants" prefWidth="70" minWidth="60" sortable="true"/>
-                    <TableColumn fx:id="colNbChiens" text="Chiens" prefWidth="65" minWidth="55" sortable="true"/>
-                    <TableColumn fx:id="colTypeAbonnement" text="Abonnement" prefWidth="130" minWidth="110" sortable="true"/>
-                    <TableColumn fx:id="colMontant" text="Montant (€)" prefWidth="100" minWidth="85" sortable="true"/>
-                </columns>
-            </TableView>
+            </ListView>
         </VBox>
 
     </VBox>

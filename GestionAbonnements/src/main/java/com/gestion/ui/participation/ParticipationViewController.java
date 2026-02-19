@@ -152,8 +152,11 @@ public class ParticipationViewController {
         Label title = new Label("Participation #" + item.getId());
         title.getStyleClass().add("card-title");
 
-        Label statusBadge = new Label(item.getStatut().name());
-        statusBadge.getStyleClass().addAll("status-badge", item.getStatut().name());
+        Label statusBadge = new Label(item.getStatut() != null ? item.getStatut().name() : "N/A");
+        statusBadge.getStyleClass().add("status-badge");
+        if (item.getStatut() != null) {
+            statusBadge.getStyleClass().add(item.getStatut().name());
+        }
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -183,7 +186,10 @@ public class ParticipationViewController {
         if (item.getHebergementNuits() > 0) {
             details.add(createDetailLabel("🏨 Hébergement:", item.getHebergementNuits() + " nuits"), 0, 2);
         }
-        details.add(createDetailLabel("🤝 Contexte:", item.getContexteSocial().name()), 1,
+        details.add(
+                createDetailLabel("🤝 Contexte:",
+                        item.getContexteSocial() != null ? item.getContexteSocial().name() : "N/A"),
+                1,
                 item.getHebergementNuits() > 0 ? 2 : 1); // Adjust row if hebergement exists
 
         content.getChildren().addAll(header, details);

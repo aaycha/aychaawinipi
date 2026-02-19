@@ -3,14 +3,14 @@ package com.gestion.ui.utilisateur;
 import com.gestion.controllers.AbonnementController;
 import com.gestion.entities.Abonnement;
 import javafx.application.Platform;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleLongProperty;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.geometry.Pos;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,15 +21,10 @@ import java.util.stream.Collectors;
  */
 public class AbonnementChoixController {
 
-    @FXML private TableView<Abonnement> table;
-    @FXML private TableColumn<Abonnement, Long> colId;
-    @FXML private TableColumn<Abonnement, String> colType;
-    @FXML private TableColumn<Abonnement, String> colDateDebut;
-    @FXML private TableColumn<Abonnement, String> colDateFin;
-    @FXML private TableColumn<Abonnement, String> colPrix;
-    @FXML private TableColumn<Abonnement, String> colStatut;
-    @FXML private TableColumn<Abonnement, String> colAutoRenew;
-    @FXML private Label statusLabel;
+    @FXML
+    private ListView<Abonnement> listView;
+    @FXML
+    private Label statusLabel;
 
     private final AbonnementController controller = new AbonnementController();
     // TODO: remplacer par l'utilisateur connecté
@@ -37,54 +32,106 @@ public class AbonnementChoixController {
 
     @FXML
     public void initialize() {
-        setupColumns();
+        setupListView();
         onActualiser();
     }
 
-    private void setupColumns() {
-        if (table == null) return;
+    private void setupListView() {
+        listView.setCellFactory(param -> new ListCell<Abonnement>() {
+            @Override
+            protected void updateItem(Abonnement item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setGraphic(null);
+                    setStyle("-fx-background-color: transparent;");
+                } else {
+                    setGraphic(createAbonnementCard(item));
+                    setStyle("-fx-background-color: transparent; -fx-padding: 5 10 5 10;");
+                }
+            }
+        });
+    }
+
+    private javafx.scene.Node createAbonnementCard(Abonnement item) {
+        HBox card = new HBox(15);
+        card.getStyleClass().add("modern-card");
+        card.setAlignment(Pos.CENTER_LEFT);
+
+        // Icon
+        StackPane iconPane = new StackPane();
+        Circle bg = new Circle(20, Color.web("#e7f5ff"));
+        Text icon = new Text("🎫");
+        icon.setFont(Font.font("Segoe UI Emoji", 20));
+        iconPane.getChildren().addAll(bg, icon);
+
+        // Content
+        VBox content = new VBox(5);
+        HBox.setHgrow(content, Priority.ALWAYS);
+
+        HBox header = new HBox(10);
+        header.setAlignment(Pos.CENTER_LEFT);
+        Label title = new Label(item.getType() != null ? item.getType().getLabel() : "Abonnement #" + item.getId());
+        title.getStyleClass().add("card-title");
+
+        Label statusBadge = new Label(item.getStatut() != null ? item.getStatut().getLabel().toUpperCase() : "INCONNU");
+        statusBadge.getStyleClass().add("status-badge");
+        if (item.getStatut() == Abonnement.StatutAbonnement.ACTIF) {
+            statusBadge.setStyle("-fx-background-color: #28a745;");
+        } else {
+            statusBadge.setStyle("-fx-background-color: #6c757d;");
+        }
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        header.getChildren().addAll(title, spacer, statusBadge);
+
+        GridPane details = new GridPane();
+        details.setHgap(20);
+        details.setVgap(5);
 
         DateTimeFormatter df = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        String dateFin = item.getDateFin() != null ? item.getDateFin().format(df) : "Indéfinie";
 
-        if (colId != null) {
-            colId.setCellValueFactory(cd -> new SimpleLongProperty(cd.getValue().getId()).asObject());
-        }
-        if (colType != null) {
-            colType.setCellValueFactory(cd -> new SimpleStringProperty(
-                    cd.getValue().getType() != null ? cd.getValue().getType().getLabel() : ""));
-        }
-        if (colDateDebut != null) {
-            colDateDebut.setCellValueFactory(cd -> new SimpleStringProperty(
-                    cd.getValue().getDateDebut() != null ? cd.getValue().getDateDebut().format(df) : ""));
-        }
-        if (colDateFin != null) {
-            colDateFin.setCellValueFactory(cd -> new SimpleStringProperty(
-                    cd.getValue().getDateFin() != null ? cd.getValue().getDateFin().format(df) : ""));
-        }
-        if (colPrix != null) {
-            colPrix.setCellValueFactory(cd -> new SimpleStringProperty(
-                    cd.getValue().getPrix() != null ? cd.getValue().getPrix().toPlainString() : ""));
-        }
-        if (colStatut != null) {
-            colStatut.setCellValueFactory(cd -> new SimpleStringProperty(
-                    cd.getValue().getStatut() != null ? cd.getValue().getStatut().getLabel() : ""));
-        }
-        if (colAutoRenew != null) {
-            colAutoRenew.setCellValueFactory(cd -> new SimpleStringProperty(
-                    cd.getValue().isAutoRenew() ? "Oui" : "Non"));
-        }
+        details.add(createDetailLabel("📅 Expire:", dateFin), 0, 0);
+        details.add(createDetailLabel("🔄 Renouvellement:", item.isAutoRenew() ? "Auto" : "Manuel"), 1, 0);
+
+        content.getChildren().addAll(header, details);
+
+        // Right side: Price
+        VBox rightSide = new VBox(5);
+        rightSide.setAlignment(Pos.CENTER_RIGHT);
+        Label price = new Label(String.format("%.2f €", item.getPrix() != null ? item.getPrix() : 0.0));
+        price.getStyleClass().add("card-price");
+        rightSide.getChildren().add(price);
+
+        card.getChildren().addAll(iconPane, content, rightSide);
+        return card;
+    }
+
+    private HBox createDetailLabel(String labelText, String valueText) {
+        HBox box = new HBox(5);
+        box.setAlignment(Pos.CENTER_LEFT);
+        Label label = new Label(labelText);
+        label.getStyleClass().add("card-label");
+        Label value = new Label(valueText);
+        value.getStyleClass().add("card-value");
+        box.getChildren().addAll(label, value);
+        return box;
     }
 
     @FXML
     public void onActualiser() {
-        if (table == null) return;
+        if (listView == null)
+            return;
         Platform.runLater(() -> {
             try {
                 List<Abonnement> all = controller.getAll();
                 List<Abonnement> mine = all.stream()
                         .filter(a -> a.getUserId() != null && a.getUserId().equals(currentUserId))
                         .collect(Collectors.toList());
-                table.getItems().setAll(mine);
+                listView.getItems().setAll(mine);
                 if (statusLabel != null) {
                     statusLabel.setText(mine.isEmpty()
                             ? "Aucun abonnement trouvé pour l'utilisateur " + currentUserId
@@ -98,4 +145,3 @@ public class AbonnementChoixController {
         });
     }
 }
-

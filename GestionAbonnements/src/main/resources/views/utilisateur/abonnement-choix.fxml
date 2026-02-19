@@ -27,24 +27,16 @@
         <!-- Tableau des abonnements de l'utilisateur -->
         <VBox spacing="8" VBox.vgrow="ALWAYS">
             <Label text="Mes abonnements" styleClass="section-title"/>
-            <TableView fx:id="table" VBox.vgrow="ALWAYS" styleClass="modern-table">
-                <columns>
-                    <TableColumn fx:id="colId" text="ID" prefWidth="60"/>
-                    <TableColumn fx:id="colType" text="Type" prefWidth="120"/>
-                    <TableColumn fx:id="colDateDebut" text="Date début" prefWidth="110"/>
-                    <TableColumn fx:id="colDateFin" text="Date fin" prefWidth="110"/>
-                    <TableColumn fx:id="colPrix" text="Prix (€)" prefWidth="90"/>
-                    <TableColumn fx:id="colStatut" text="Statut" prefWidth="110"/>
-                    <TableColumn fx:id="colAutoRenew" text="Renouvellement" prefWidth="120"/>
-                </columns>
+            <ListView fx:id="listView" VBox.vgrow="ALWAYS"
+                       styleClass="modern-list-view" stylesheets="@../../styles/card-view.css">
                 <placeholder>
-                    <VBox alignment="CENTER" spacing="8">
-                        <Label text="Aucun abonnement trouvé" styleClass="placeholder-text"/>
+                    <VBox alignment="CENTER" spacing="12">
+                        <Label text="📭 Aucun abonnement trouvé" styleClass="placeholder-text"/>
                         <Label text="Contactez un administrateur pour souscrire un abonnement."
                                style="-fx-text-fill: #888; -fx-font-size: 11px;"/>
                     </VBox>
                 </placeholder>
-            </TableView>
+            </ListView>
         </VBox>
     </VBox>
 </ScrollPane>
