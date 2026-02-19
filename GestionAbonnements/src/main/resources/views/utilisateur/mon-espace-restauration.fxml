@@ -104,7 +104,7 @@
                             <Label text="Génération Automatique de Menu" styleClass="section-subtitle"/>
                             <HBox spacing="12">
                                 <Label text="Événement ID:"/>
-                                <TextField fx:id="inputEvenementId" promptText="ID événement" styleClass="input-field"/>
+                                <ComboBox fx:id="comboEvenement" prefWidth="250" promptText="Choisir un événement" styleClass="input-field"/>
                                 <Label text="Date:"/>
                                 <DatePicker fx:id="inputDateMenu" styleClass="input-field"/>
                                 <Button text="✨ Générer Menu" onAction="#onGenererMenu" styleClass="btn-primary"/>

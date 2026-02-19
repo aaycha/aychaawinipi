@@ -1,9 +1,4 @@
-
-
-
-
-
-/*package com.gestion.controllers;
+package com.gestion.controllers;
 
 import com.gestion.tools.MyConnection;
 import com.gestion.entities.Evenement;
@@ -20,8 +15,8 @@ public class EvenementDAO {
                 "(titre, description, type, date_debut, date_fin, lieu) " +
                 "VALUES (?, ?, ?, ?, ?, ?)";
 
-       try (Connection cn = MyConnection.getConnection();
-             PreparedStatement ps = cn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try (Connection cn = MyConnection.getInstance().getConnection();
+                PreparedStatement ps = cn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             ps.setString(1, e.getTitre());
             ps.setString(2, e.getDescription());
@@ -54,13 +49,14 @@ public class EvenementDAO {
     public Evenement findById(int id) throws SQLException {
         String sql = "SELECT * FROM evenement WHERE id_event = ?";
 
-        try (Connection cn = MyConnection.getConnection();
-             PreparedStatement ps = cn.prepareStatement(sql)) {
+        try (Connection cn = MyConnection.getInstance().getConnection();
+                PreparedStatement ps = cn.prepareStatement(sql)) {
 
             ps.setInt(1, id);
 
             try (ResultSet rs = ps.executeQuery()) {
-                if (!rs.next()) return null;
+                if (!rs.next())
+                    return null;
 
                 return mapResultSet(rs);
             }
@@ -72,9 +68,9 @@ public class EvenementDAO {
         String sql = "SELECT * FROM evenement ORDER BY date_debut DESC";
         List<Evenement> list = new ArrayList<>();
 
-        try (Connection cn = MyConnection.getConnection();
-             PreparedStatement ps = cn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        try (Connection cn = MyConnection.getInstance().getConnection();
+                PreparedStatement ps = cn.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 list.add(mapResultSet(rs));
@@ -89,8 +85,8 @@ public class EvenementDAO {
                 "titre=?, description=?, type=?, date_debut=?, date_fin=?, lieu=? " +
                 "WHERE id_event=?";
 
-        try (Connection cn = MyConnection.getConnection();
-             PreparedStatement ps = cn.prepareStatement(sql)) {
+        try (Connection cn = MyConnection.getInstance().getConnection();
+                PreparedStatement ps = cn.prepareStatement(sql)) {
 
             ps.setString(1, e.getTitre());
             ps.setString(2, e.getDescription());
@@ -114,8 +110,8 @@ public class EvenementDAO {
     public boolean delete(int id) throws SQLException {
         String sql = "DELETE FROM evenement WHERE id_event=?";
 
-        try (Connection cn = MyConnection.getConnection();
-             PreparedStatement ps = cn.prepareStatement(sql)) {
+        try (Connection cn = MyConnection.getInstance().getConnection();
+                PreparedStatement ps = cn.prepareStatement(sql)) {
 
             ps.setInt(1, id);
             return ps.executeUpdate() > 0;
@@ -139,4 +135,4 @@ public class EvenementDAO {
         e.setLieu(rs.getString("lieu"));
         return e;
     }
-}*/
+}

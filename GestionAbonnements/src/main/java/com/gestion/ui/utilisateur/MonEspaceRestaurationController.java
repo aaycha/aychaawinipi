@@ -1,5 +1,7 @@
 package com.gestion.ui.utilisateur;
 
+import com.gestion.entities.Evenement;
+import com.gestion.controllers.EvenementDAO;
 import com.gestion.entities.CompositionMenu;
 import com.gestion.entities.ParticipantRestauration;
 import com.gestion.entities.RepasDetaille;
@@ -39,7 +41,7 @@ public class MonEspaceRestaurationController {
     private TextArea inputAllergies;
 
     @FXML
-    private TextField inputEvenementId;
+    private ComboBox<Evenement> comboEvenement;
     @FXML
     private DatePicker inputDateMenu;
     @FXML
@@ -83,12 +85,14 @@ public class MonEspaceRestaurationController {
     private final RepasDetailleService repasService = new RepasDetailleServiceImpl();
     private final RestaurationService restaurationService = new RestaurationServiceImpl();
     private final CompositionMenuService compositionService = new CompositionMenuServiceImpl();
+    private final EvenementDAO evenementDAO = new EvenementDAO();
 
     private Long currentUserId = 1L; // À récupérer depuis la session
     private final ObservableList<RepasDetaille> repasMenu = FXCollections.observableArrayList();
     private final ObservableList<RepasDetaille> compositionPlat = FXCollections.observableArrayList();
     private final ObservableList<RepasDetaille> composantsDispoList = FXCollections.observableArrayList();
     private final ObservableList<CompositionMenu> mesCompositions = FXCollections.observableArrayList();
+    private final ObservableList<Evenement> evenements = FXCollections.observableArrayList();
 
     @FXML
     public void initialize() {
@@ -96,6 +100,7 @@ public class MonEspaceRestaurationController {
         initUserSession();
 
         setupListViews();
+        loadEvents();
 
         if (comboTypePlatCompose != null) {
             comboTypePlatCompose
@@ -114,6 +119,17 @@ public class MonEspaceRestaurationController {
     }
 
     private void setupListViews() {
+        if (listeMaComposition != null) {
+            listeMaComposition.setItems(compositionPlat);
+            listeMaComposition.setCellFactory(lv -> new ListCell<>() {
+                @Override
+                protected void updateItem(RepasDetaille item, boolean empty) {
+                    super.updateItem(item, empty);
+                    setText((empty || item == null) ? null : item.getNom() + " (" + item.getTypeRepas() + ")");
+                }
+            });
+        }
+
         listeRepasMenu.setItems(repasMenu);
         listeRepasMenu.setCellFactory(lv -> new ListCell<>() {
             @Override
@@ -196,6 +212,24 @@ public class MonEspaceRestaurationController {
                 }
             });
         }
+
+        if (comboEvenement != null) {
+            comboEvenement.setItems(evenements);
+            comboEvenement.setCellFactory(lv -> new ListCell<>() {
+                @Override
+                protected void updateItem(Evenement item, boolean empty) {
+                    super.updateItem(item, empty);
+                    setText((empty || item == null) ? null : item.getTitre());
+                }
+            });
+            comboEvenement.setButtonCell(new ListCell<>() {
+                @Override
+                protected void updateItem(Evenement item, boolean empty) {
+                    super.updateItem(item, empty);
+                    setText((empty || item == null) ? null : item.getTitre());
+                }
+            });
+        }
     }
 
     private void loadAllData() {
@@ -261,16 +295,28 @@ public class MonEspaceRestaurationController {
         // Pour l'instant, valeurs par défaut
     }
 
+    private void loadEvents() {
+        try {
+            List<Evenement> allEvents = evenementDAO.findAll();
+            evenements.setAll(allEvents);
+            if (!evenements.isEmpty()) {
+                comboEvenement.getSelectionModel().selectFirst();
+            }
+        } catch (Exception e) {
+            System.err.println("Erreur chargement événements: " + e.getMessage());
+        }
+    }
+
     @FXML
     void onEnregistrerRestrictions() {
         // Tentative de récupération de l'événement ID si disponible
-        Long evenementId = parseLong(inputEvenementId.getText());
-
-        if (evenementId == null) {
-            showAlert(Alert.AlertType.WARNING, "Événement ID Requis",
-                    "Veuillez saisir un ID d'événement valide pour enregistrer vos restrictions.");
+        Evenement selectedEvent = comboEvenement.getValue();
+        if (selectedEvent == null) {
+            showAlert(Alert.AlertType.WARNING, "Événement Requis",
+                    "Veuillez sélectionner un événement pour enregistrer vos restrictions.");
             return;
         }
+        Long evenementId = (long) selectedEvent.getIdEvent();
 
         // Enregistrer les restrictions dans ParticipantRestauration
         ParticipantRestauration besoin = new ParticipantRestauration();
@@ -303,8 +349,14 @@ public class MonEspaceRestaurationController {
     }
 
     @FXML
-    void onGenererMenu() {
-        Long evenementId = parseLong(inputEvenementId.getText());
+    private void onGenererMenu() {
+        Evenement selectedEvent = comboEvenement.getValue();
+        if (selectedEvent == null) {
+            menuGenereLabel.setText("❌ Veuillez sélectionner un événement.");
+            return;
+        }
+
+        Long evenementId = (long) selectedEvent.getIdEvent();
         LocalDate date = inputDateMenu.getValue();
 
         if (evenementId == null || date == null) {
@@ -365,12 +417,14 @@ public class MonEspaceRestaurationController {
             showAlert(Alert.AlertType.WARNING, "Champs requis", "Veuillez sélectionner un menu et ajouter des repas");
             return;
         }
-
-        Long evenementId = parseLong(inputEvenementId.getText());
-        if (evenementId == null) {
-            showAlert(Alert.AlertType.WARNING, "Champ requis", "Veuillez saisir un l'ID de l'événement.");
+        // Validation evenement
+        Evenement selectedEvent = comboEvenement.getValue();
+        if (selectedEvent == null) {
+            showAlert(Alert.AlertType.WARNING, "Action impossible",
+                    "Veuillez d'abord sélectionner un événement dans l'onglet 'Choisir un menu'.");
             return;
         }
+        Long evenementId = (long) selectedEvent.getIdEvent();
         LocalDate date = inputDateMenu.getValue() != null ? inputDateMenu.getValue() : LocalDate.now();
 
         // Créer les compositions
