@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.gestion.ui.utilisateur.CheckoutController"
+      spacing="0" prefWidth="480" prefHeight="650"
+      stylesheets="@../../styles/restoration-2026.css"
+      styleClass="checkout-root">
+
+    <VBox spacing="25" VBox.vgrow="ALWAYS">
+        <padding>
+            <Insets top="40" right="40" bottom="40" left="40"/>
+        </padding>
+
+        <!-- Header -->
+        <VBox spacing="12" alignment="CENTER">
+            <Label text="LAMMA" styleClass="lamma-logo-text" style="-fx-font-size: 24px;"/>
+            <Label text="Paiement Sécurisé" styleClass="card-title-2026" style="-fx-font-size: 26px;"/>
+            <Label fx:id="amountLabel" text="Total: 0.00 €" styleClass="card-price-2026" style="-fx-font-size: 22px;"/>
+        </VBox>
+
+        <Separator style="-fx-opacity: 0.2;" />
+
+        <!-- Stripe Elements (Blue Refresh) -->
+        <VBox spacing="20">
+            <VBox spacing="8">
+                <Label text="Email de contact" styleClass="delicious-baseline" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+                <TextField fx:id="emailField" promptText="votre@email.com" styleClass="stripe-input"/>
+            </VBox>
+
+            <VBox spacing="8">
+                <Label text="Détails de la carte" styleClass="delicious-baseline" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+                <VBox spacing="0" style="-fx-border-color: #E6E9F0; -fx-border-radius: 14px; -fx-background-color: white; -fx-overflow: hidden; -fx-border-width: 1.5px;">
+                    <TextField fx:id="cardNumberField" promptText="0000 0000 0000 0000" styleClass="stripe-input" style="-fx-background-color: transparent; -fx-border-width: 0 0 1 0; -fx-border-radius: 0;"/>
+                    <HBox spacing="0">
+                        <TextField fx:id="expiryField" promptText="MM / YY" styleClass="stripe-input" style="-fx-background-color: transparent; -fx-border-width: 0 1 0 0; -fx-border-radius: 0;" HBox.hgrow="ALWAYS"/>
+                        <TextField fx:id="cvcField" promptText="CVC" styleClass="stripe-input" style="-fx-background-color: transparent; -fx-border-width: 0; -fx-border-radius: 0;" prefWidth="120"/>
+                    </HBox>
+                </VBox>
+            </VBox>
+
+            <VBox spacing="8">
+                <Label text="Pays ou région" styleClass="delicious-baseline" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+                <ComboBox fx:id="countryCombo" promptText="France" maxWidth="Infinity" styleClass="stripe-input"/>
+            </VBox>
+        </VBox>
+
+        <Region VBox.vgrow="ALWAYS" />
+
+        <!-- Footer -->
+        <VBox spacing="15">
+            <VBox spacing="10" alignment="CENTER" styleClass="payment-locked-info">
+                 <HBox spacing="10" alignment="CENTER">
+                    <Label text="🔒" style="-fx-font-size: 16px;"/>
+                    <Label text="Vos données sont chiffrées et sécurisées" styleClass="delicious-baseline" style="-fx-font-size: 12px; -fx-text-fill: #059669;"/>
+                </HBox>
+            </VBox>
+
+            <Button fx:id="payButton" text="Valider le paiement" onAction="#onPay" 
+                    styleClass="btn-rose" maxWidth="Infinity"/>
+            
+            <Button text="Annuler" onAction="#onCancel" maxWidth="Infinity" style="-fx-text-fill: #6B7280; -fx-background-color: transparent; -fx-cursor: hand;"/>
+        </VBox>
+    </VBox>
+</VBox>

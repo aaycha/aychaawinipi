@@ -24,7 +24,7 @@ public class RepasServiceImpl implements RepasService {
     }
 
     private void ensureTable() {
-        String sql = """
+        String createSql = """
                 CREATE TABLE IF NOT EXISTS %s (
                   id BIGINT PRIMARY KEY AUTO_INCREMENT,
                   restaurant_id BIGINT NOT NULL,
@@ -43,22 +43,37 @@ public class RepasServiceImpl implements RepasService {
                   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
                 )
                 """.formatted(TABLE);
+
         try (Connection c = db.getConnection(); Statement st = c.createStatement()) {
-            st.execute(sql);
+            st.execute(createSql);
+
+            // Check if updated_at exists (it might be missing if table was created in an
+            // older version)
+            try {
+                st.executeQuery("SELECT updated_at FROM " + TABLE + " LIMIT 1").close();
+            } catch (SQLException e) {
+                // Column probably missing, add it
+                st.execute(
+                        "ALTER TABLE " + TABLE + " ADD COLUMN updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP");
+            }
         } catch (SQLException e) {
-            throw new RuntimeException("Impossible de créer la table " + TABLE + " : " + e.getMessage(), e);
+            throw new RuntimeException(
+                    "Impossible d'assurer la structure de la table " + TABLE + " : " + e.getMessage(), e);
         }
     }
 
     @Override
     public Repas create(Repas repas) {
-        if (repas == null) throw new IllegalArgumentException("Le repas ne peut pas être null");
+        if (repas == null)
+            throw new IllegalArgumentException("Le repas ne peut pas être null");
         ValidationResult validation = repas.validate();
-        if (validation.hasErrors()) throw new IllegalArgumentException(validation.getAllErrorsAsString());
+        if (validation.hasErrors())
+            throw new IllegalArgumentException(validation.getAllErrorsAsString());
 
-        String sql = "INSERT INTO " + TABLE + " (restaurant_id, restaurant_nom, menu_id, menu_nom, nom, description, prix, categorie, type_plat, temps_preparation, image_url, disponible) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO " + TABLE
+                + " (restaurant_id, restaurant_nom, menu_id, menu_nom, nom, description, prix, categorie, type_plat, temps_preparation, image_url, disponible) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection c = db.getConnection();
-             PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setLong(1, repas.getRestaurantId());
             ps.setString(2, repas.getRestaurantNom());
             ps.setLong(3, repas.getMenuId());
@@ -73,7 +88,8 @@ public class RepasServiceImpl implements RepasService {
             ps.setBoolean(12, repas.isDisponible());
             ps.executeUpdate();
             try (ResultSet keys = ps.getGeneratedKeys()) {
-                if (keys.next()) repas.setId(keys.getLong(1));
+                if (keys.next())
+                    repas.setId(keys.getLong(1));
             }
             return repas;
         } catch (SQLException e) {
@@ -87,9 +103,11 @@ public class RepasServiceImpl implements RepasService {
             throw new IllegalArgumentException("Le repas et son ID sont obligatoires");
         }
         ValidationResult validation = repas.validate();
-        if (validation.hasErrors()) throw new IllegalArgumentException(validation.getAllErrorsAsString());
+        if (validation.hasErrors())
+            throw new IllegalArgumentException(validation.getAllErrorsAsString());
 
-        String sql = "UPDATE " + TABLE + " SET restaurant_id=?, restaurant_nom=?, menu_id=?, menu_nom=?, nom=?, description=?, prix=?, categorie=?, type_plat=?, temps_preparation=?, image_url=?, disponible=?, updated_at=CURRENT_TIMESTAMP WHERE id=?";
+        String sql = "UPDATE " + TABLE
+                + " SET restaurant_id=?, restaurant_nom=?, menu_id=?, menu_nom=?, nom=?, description=?, prix=?, categorie=?, type_plat=?, temps_preparation=?, image_url=?, disponible=?, updated_at=CURRENT_TIMESTAMP WHERE id=?";
         try (Connection c = db.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setLong(1, repas.getRestaurantId());
             ps.setString(2, repas.getRestaurantNom());
@@ -105,7 +123,8 @@ public class RepasServiceImpl implements RepasService {
             ps.setBoolean(12, repas.isDisponible());
             ps.setLong(13, repas.getId());
             int updated = ps.executeUpdate();
-            if (updated == 0) throw new IllegalArgumentException("Repas non trouvé avec l'ID: " + repas.getId());
+            if (updated == 0)
+                throw new IllegalArgumentException("Repas non trouvé avec l'ID: " + repas.getId());
             return repas;
         } catch (SQLException e) {
             throw new RuntimeException("Erreur mise à jour repas : " + e.getMessage(), e);
@@ -114,7 +133,8 @@ public class RepasServiceImpl implements RepasService {
 
     @Override
     public boolean delete(Long id) {
-        if (id == null) return false;
+        if (id == null)
+            return false;
         String sql = "DELETE FROM " + TABLE + " WHERE id=?";
         try (Connection c = db.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setLong(1, id);
@@ -126,7 +146,8 @@ public class RepasServiceImpl implements RepasService {
 
     @Override
     public Optional<Repas> findById(Long id) {
-        if (id == null) return Optional.empty();
+        if (id == null)
+            return Optional.empty();
         String sql = "SELECT * FROM " + TABLE + " WHERE id=?";
         try (Connection c = db.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setLong(1, id);
@@ -141,9 +162,12 @@ public class RepasServiceImpl implements RepasService {
     @Override
     public List<Repas> findAll() {
         String sql = "SELECT * FROM " + TABLE + " ORDER BY id DESC";
-        try (Connection c = db.getConnection(); PreparedStatement ps = c.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+        try (Connection c = db.getConnection();
+                PreparedStatement ps = c.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
             List<Repas> list = new ArrayList<>();
-            while (rs.next()) list.add(map(rs));
+            while (rs.next())
+                list.add(map(rs));
             return list;
         } catch (SQLException e) {
             throw new RuntimeException("Erreur findAll repas : " + e.getMessage(), e);
@@ -153,9 +177,12 @@ public class RepasServiceImpl implements RepasService {
     @Override
     public List<Repas> findDisponibles() {
         String sql = "SELECT * FROM " + TABLE + " WHERE disponible=TRUE ORDER BY nom ASC";
-        try (Connection c = db.getConnection(); PreparedStatement ps = c.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+        try (Connection c = db.getConnection();
+                PreparedStatement ps = c.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
             List<Repas> list = new ArrayList<>();
-            while (rs.next()) list.add(map(rs));
+            while (rs.next())
+                list.add(map(rs));
             return list;
         } catch (SQLException e) {
             throw new RuntimeException("Erreur findDisponibles repas : " + e.getMessage(), e);
@@ -164,13 +191,15 @@ public class RepasServiceImpl implements RepasService {
 
     @Override
     public List<Repas> findByRestaurantId(Long restaurantId) {
-        if (restaurantId == null) return new ArrayList<>();
+        if (restaurantId == null)
+            return new ArrayList<>();
         String sql = "SELECT * FROM " + TABLE + " WHERE restaurant_id=? ORDER BY nom ASC";
         try (Connection c = db.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setLong(1, restaurantId);
             try (ResultSet rs = ps.executeQuery()) {
                 List<Repas> list = new ArrayList<>();
-                while (rs.next()) list.add(map(rs));
+                while (rs.next())
+                    list.add(map(rs));
                 return list;
             }
         } catch (SQLException e) {
@@ -180,13 +209,15 @@ public class RepasServiceImpl implements RepasService {
 
     @Override
     public List<Repas> findDisponiblesByRestaurantId(Long restaurantId) {
-        if (restaurantId == null) return new ArrayList<>();
+        if (restaurantId == null)
+            return new ArrayList<>();
         String sql = "SELECT * FROM " + TABLE + " WHERE restaurant_id=? AND disponible=TRUE ORDER BY nom ASC";
         try (Connection c = db.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setLong(1, restaurantId);
             try (ResultSet rs = ps.executeQuery()) {
                 List<Repas> list = new ArrayList<>();
-                while (rs.next()) list.add(map(rs));
+                while (rs.next())
+                    list.add(map(rs));
                 return list;
             }
         } catch (SQLException e) {
@@ -196,13 +227,15 @@ public class RepasServiceImpl implements RepasService {
 
     @Override
     public List<Repas> findByMenuId(Long menuId) {
-        if (menuId == null) return new ArrayList<>();
+        if (menuId == null)
+            return new ArrayList<>();
         String sql = "SELECT * FROM " + TABLE + " WHERE menu_id=? ORDER BY nom ASC";
         try (Connection c = db.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setLong(1, menuId);
             try (ResultSet rs = ps.executeQuery()) {
                 List<Repas> list = new ArrayList<>();
-                while (rs.next()) list.add(map(rs));
+                while (rs.next())
+                    list.add(map(rs));
                 return list;
             }
         } catch (SQLException e) {
@@ -212,13 +245,15 @@ public class RepasServiceImpl implements RepasService {
 
     @Override
     public List<Repas> findByCategorie(Repas.Categorie categorie) {
-        if (categorie == null) return new ArrayList<>();
+        if (categorie == null)
+            return new ArrayList<>();
         String sql = "SELECT * FROM " + TABLE + " WHERE categorie=? ORDER BY nom ASC";
         try (Connection c = db.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setString(1, categorie.name());
             try (ResultSet rs = ps.executeQuery()) {
                 List<Repas> list = new ArrayList<>();
-                while (rs.next()) list.add(map(rs));
+                while (rs.next())
+                    list.add(map(rs));
                 return list;
             }
         } catch (SQLException e) {
@@ -228,13 +263,15 @@ public class RepasServiceImpl implements RepasService {
 
     @Override
     public List<Repas> findByTypePlat(Repas.TypePlat typePlat) {
-        if (typePlat == null) return new ArrayList<>();
+        if (typePlat == null)
+            return new ArrayList<>();
         String sql = "SELECT * FROM " + TABLE + " WHERE type_plat=? ORDER BY nom ASC";
         try (Connection c = db.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setString(1, typePlat.name());
             try (ResultSet rs = ps.executeQuery()) {
                 List<Repas> list = new ArrayList<>();
-                while (rs.next()) list.add(map(rs));
+                while (rs.next())
+                    list.add(map(rs));
                 return list;
             }
         } catch (SQLException e) {
@@ -244,13 +281,15 @@ public class RepasServiceImpl implements RepasService {
 
     @Override
     public List<Repas> searchByNom(String nom) {
-        if (nom == null || nom.trim().isEmpty()) return findAll();
+        if (nom == null || nom.trim().isEmpty())
+            return findAll();
         String sql = "SELECT * FROM " + TABLE + " WHERE LOWER(nom) LIKE ? ORDER BY nom ASC";
         try (Connection c = db.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setString(1, "%" + nom.trim().toLowerCase() + "%");
             try (ResultSet rs = ps.executeQuery()) {
                 List<Repas> list = new ArrayList<>();
-                while (rs.next()) list.add(map(rs));
+                while (rs.next())
+                    list.add(map(rs));
                 return list;
             }
         } catch (SQLException e) {
@@ -260,7 +299,8 @@ public class RepasServiceImpl implements RepasService {
 
     @Override
     public boolean existsById(Long id) {
-        if (id == null) return false;
+        if (id == null)
+            return false;
         String sql = "SELECT 1 FROM " + TABLE + " WHERE id=? LIMIT 1";
         try (Connection c = db.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setLong(1, id);
@@ -275,7 +315,9 @@ public class RepasServiceImpl implements RepasService {
     @Override
     public long count() {
         String sql = "SELECT COUNT(*) FROM " + TABLE;
-        try (Connection c = db.getConnection(); PreparedStatement ps = c.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+        try (Connection c = db.getConnection();
+                PreparedStatement ps = c.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
             return rs.next() ? rs.getLong(1) : 0L;
         } catch (SQLException e) {
             throw new RuntimeException("Erreur count repas : " + e.getMessage(), e);
@@ -284,7 +326,8 @@ public class RepasServiceImpl implements RepasService {
 
     @Override
     public long countByRestaurantId(Long restaurantId) {
-        if (restaurantId == null) return 0;
+        if (restaurantId == null)
+            return 0;
         String sql = "SELECT COUNT(*) FROM " + TABLE + " WHERE restaurant_id=?";
         try (Connection c = db.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setLong(1, restaurantId);

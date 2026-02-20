@@ -1,0 +1,87 @@
+}
+
+.upload-zone {
+    -fx-border-color: #3B82F6;
+    -fx-border-width: 2;
+    -fx-border-style: dashed;
+    -fx-border-radius: 12;
+    -fx-background-color: rgba(59, 130, 246, 0.05);
+    -fx-alignment: center;
+}
+
+.preview-image-admin {
+    -fx-background-radius: 12;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 10, 0, 0, 2);
+}
+
+.spin-animation {
+    -fx-rotate: 360;
+}
+
+.pulse-animation {
+    -fx-scale-x: 1.1;
+    -fx-scale-y: 1.1;
+}
+
+/* --- 2026 ADDITIONAL STYLES --- */
+.btn-ai-assist {
+    -fx-background-color: #E0BBE4;
+    -fx-text-fill: #1E3A8A;
+    -fx-font-weight: 900;
+    -fx-background-radius: 20;
+    -fx-padding: 5 15;
+    -fx-border-color: white;
+    -fx-border-width: 1.5;
+    -fx-font-size: 11px;
+}
+
+.badge-mint {
+    -fx-background-color: #CFFFEF;
+    -fx-text-fill: #00897B;
+    -fx-font-weight: 900;
+    -fx-background-radius: 20;
+    -fx-padding: 5 15;
+    -fx-font-size: 11px;
+}
+
+.badge-lavender {
+    -fx-background-color: #E0BBE4;
+    -fx-text-fill: #6A1B9A;
+    -fx-font-weight: 900;
+    -fx-background-radius: 20;
+    -fx-padding: 5 15;
+    -fx-font-size: 11px;
+}
+
+.search-bar-smart {
+    -fx-background-color: rgba(255, 255, 255, 0.85);
+    -fx-background-radius: 30;
+    -fx-border-color: #E0E7FF;
+    -fx-border-radius: 30;
+    -fx-border-width: 1.5;
+    -fx-padding: 8 20;
+}
+
+.sticky-footer {
+    -fx-background-color: rgba(255, 255, 255, 0.95);
+    -fx-border-color: #E6E9F0 transparent transparent transparent;
+    -fx-border-width: 1.5;
+    -fx-padding: 12 40;
+}
+
+.duck-logo {
+    -fx-cursor: hand;
+}
+
+.duck-logo:hover {
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+
+.modern-combo {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-border-color: #E0E7FF;
+    -fx-border-radius: 12;
+    -fx-padding: 5;
+}

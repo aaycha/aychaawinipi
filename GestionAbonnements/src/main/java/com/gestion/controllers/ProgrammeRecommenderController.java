@@ -165,7 +165,6 @@ public class ProgrammeRecommenderController {
     }
 }*/
 
-
 /*package com.gestion.controllers;
 
 import com.gestion.entities.ProgrammeRecommender;
@@ -278,23 +277,22 @@ public class ProgrammeRecommenderController {
     /**
      * Supprime tous les programmes recommandés liés à une participation donnée
      */
-    /*public void deleteByParticipation(Long participationId) {
-        String sql = "DELETE FROM programme_recommande WHERE participation_id = ?";
+/*public void deleteByParticipation(Long participationId) {
+    String sql = "DELETE FROM programme_recommande WHERE participation_id = ?";
 
-        try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setLong(1, participationId);
-            int rows = ps.executeUpdate();
-            System.out.println("→ " + rows + " programme(s) supprimé(s) pour participation " + participationId);
-        } catch (SQLException e) {
-            throw new RuntimeException("Erreur lors de la suppression des programmes pour participation " + participationId, e);
-        }
+    try (Connection conn = getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setLong(1, participationId);
+        int rows = ps.executeUpdate();
+        System.out.println("→ " + rows + " programme(s) supprimé(s) pour participation " + participationId);
+    } catch (SQLException e) {
+        throw new RuntimeException("Erreur lors de la suppression des programmes pour participation " + participationId, e);
     }
+}
 
-    private static final ProgrammeRecommenderService programmeRecommenderService = new ProgrammeRecommenderService();
-    private static final ProgrammeRecommenderController programmeRecommenderController = new ProgrammeRecommenderController();
+private static final ProgrammeRecommenderService programmeRecommenderService = new ProgrammeRecommenderService();
+private static final ProgrammeRecommenderController programmeRecommenderController = new ProgrammeRecommenderController();
 }*/
-
 
 package com.gestion.controllers;
 
@@ -329,13 +327,13 @@ public class ProgrammeRecommenderController {
         }
 
         String sql = """
-            INSERT INTO programme_recommande
-            (participation_id, activite, heure_debut, heure_fin, ambiance, justification, recommande)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        """;
+                    INSERT INTO programme_recommande
+                    (participation_id, activite, heure_debut, heure_fin, ambiance, justification, recommande)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                """;
 
         try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             ps.setLong(1, p.getParticipationId());
             ps.setString(2, p.getActivite());
@@ -357,8 +355,8 @@ public class ProgrammeRecommenderController {
         } catch (SQLException e) {
             throw new RuntimeException(
                     "Erreur lors de la sauvegarde du programme recommandé pour participation " +
-                            p.getParticipationId(), e
-            );
+                            p.getParticipationId(),
+                    e);
         }
     }
 
@@ -370,8 +368,8 @@ public class ProgrammeRecommenderController {
         String sql = "SELECT * FROM programme_recommande ORDER BY heure_debut ASC";
 
         try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 list.add(mapFromResultSet(rs));
@@ -390,13 +388,13 @@ public class ProgrammeRecommenderController {
 
         List<ProgrammeRecommender> list = new ArrayList<>();
         String sql = """
-        SELECT * FROM programme_recommande
-        WHERE participation_id = ?
-        ORDER BY heure_debut
-    """;
+                    SELECT * FROM programme_recommande
+                    WHERE participation_id = ?
+                    ORDER BY heure_debut
+                """;
 
         try (Connection c = getConnection();
-             PreparedStatement ps = c.prepareStatement(sql)) {
+                PreparedStatement ps = c.prepareStatement(sql)) {
 
             ps.setLong(1, participation_id);
 
@@ -431,7 +429,7 @@ public class ProgrammeRecommenderController {
         String sql = "DELETE FROM programme_recommande WHERE participation_id = ?";
 
         try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setLong(1, participationId);
             int rowsAffected = ps.executeUpdate();
@@ -440,8 +438,7 @@ public class ProgrammeRecommenderController {
 
         } catch (SQLException e) {
             throw new RuntimeException(
-                    "Erreur lors de la suppression des programmes pour participation " + participationId, e
-            );
+                    "Erreur lors de la suppression des programmes pour participation " + participationId, e);
         }
     }
 

@@ -32,6 +32,7 @@
 /* ========== Global Styles ========== */
 .root {
     -fx-font-family: 'Segoe UI', 'System', sans-serif;
+    -fx-background: #f8f9fa;
     -fx-background-color: linear-gradient(to bottom, #f8f9fa, #e9ecef);
 }
 
@@ -39,7 +40,7 @@
 .module-header {
     -fx-background-color: linear-gradient(to right, #2c3e50, #3498db);
     -fx-padding: 24 32;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 4);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0, 0, 4);
 }
 
 .module-title {
@@ -50,7 +51,7 @@
 
 .module-subtitle {
     -fx-font-size: 14px;
-    -fx-text-fill: rgba(255,255,255,0.8);
+    -fx-text-fill: rgba(255, 255, 255, 0.8);
 }
 
 /* ========== Card Styles ========== */
@@ -58,13 +59,13 @@
     -fx-background-color: white;
     -fx-background-radius: 16px;
     -fx-padding: 24;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 16, 0, 0, 4);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 16, 0, 0, 4);
     -fx-transition: -fx-translate-y 0.3s ease;
 }
 
 .modern-card:hover {
     -fx-translate-y: -4px;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 20, 0, 0, 8);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.12), 20, 0, 0, 8);
 }
 
 /* ========== Button Styles ========== */
@@ -80,7 +81,7 @@
 
 .btn-primary:hover {
     -fx-background-color: #2980b9;
-    -fx-effect: dropshadow(gaussian, rgba(52,152,219,0.4), 8, 0, 0, 2);
+    -fx-effect: dropshadow(gaussian, rgba(52, 152, 219, 0.4), 8, 0, 0, 2);
 }
 
 .btn-success {
@@ -94,7 +95,7 @@
 
 .btn-success:hover {
     -fx-background-color: #229954;
-    -fx-effect: dropshadow(gaussian, rgba(39,174,96,0.4), 8, 0, 0, 2);
+    -fx-effect: dropshadow(gaussian, rgba(39, 174, 96, 0.4), 8, 0, 0, 2);
 }
 
 .btn-warning {
@@ -121,7 +122,7 @@
 
 .btn-danger:hover {
     -fx-background-color: #c0392b;
-    -fx-effect: dropshadow(gaussian, rgba(231,76,60,0.4), 8, 0, 0, 2);
+    -fx-effect: dropshadow(gaussian, rgba(231, 76, 60, 0.4), 8, 0, 0, 2);
 }
 
 .btn-secondary {
@@ -149,7 +150,7 @@
 
 .modern-input:focused {
     -fx-border-color: #3498db;
-    -fx-effect: dropshadow(gaussian, rgba(52,152,219,0.3), 4, 0, 0, 0);
+    -fx-effect: dropshadow(gaussian, rgba(52, 152, 219, 0.3), 4, 0, 0, 0);
 }
 
 .modern-textarea {
@@ -247,7 +248,7 @@
 .filter-section {
     -fx-background-color: white;
     -fx-background-radius: 12px;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 8, 0, 0, 2);
     -fx-padding: 16 20;
 }
 
@@ -261,7 +262,7 @@
 .action-bar {
     -fx-background-color: white;
     -fx-background-radius: 12px;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 8, 0, 0, 2);
     -fx-padding: 16 20;
 }
 
@@ -368,13 +369,25 @@
 
 /* ========== Animation Keyframes ========== */
 @keyframes fadeIn {
-    from { -fx-opacity: 0; }
-    to { -fx-opacity: 1; }
+    from {
+        -fx-opacity: 0;
+    }
+
+    to {
+        -fx-opacity: 1;
+    }
 }
 
 @keyframes slideUp {
-    from { -fx-translate-y: 20; -fx-opacity: 0; }
-    to { -fx-translate-y: 0; -fx-opacity: 1; }
+    from {
+        -fx-translate-y: 20;
+        -fx-opacity: 0;
+    }
+
+    to {
+        -fx-translate-y: 0;
+        -fx-opacity: 1;
+    }
 }
 
 /* ========== Responsive Utilities ========== */

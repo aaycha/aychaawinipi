@@ -13,15 +13,19 @@ import javafx.scene.layout.VBox;
 import java.util.List;
 
 /**
- * Contrôleur de l'espace utilisateur : liste scrollable avec Mes Participations,
+ * Contrôleur de l'espace utilisateur : liste scrollable avec Mes
+ * Participations,
  * Mes Repas, Restauration, Abonnement et boutons de navigation.
  */
 public class EspaceUtilisateurController {
 
-    @FXML private FlowPane cardsContainer;
-    @FXML private Label sectionLabel;
+    @FXML
+    private FlowPane cardsContainer;
+    @FXML
+    private Label sectionLabel;
 
-    private record UserSection(String id, String titre, String description, String fxmlPath, String icon) {}
+    private record UserSection(String id, String titre, String description, String fxmlPath, String icon) {
+    }
 
     private static final List<UserSection> SECTIONS = List.of(
             new UserSection("participation", "Mes Participations",
@@ -31,16 +35,16 @@ public class EspaceUtilisateurController {
                     "Voir mes plats et compositions",
                     "/views/repas/repas-liste.fxml", "\uD83C\uDF55"),
             new UserSection("restauration", "Restauration",
-                    "Menus, repas et restrictions alimentaires",
-                    "/views/utilisateur/mon-espace-restauration.fxml", "\uD83C\uDF74"),
+                    "Menus, repas et personnalisation 2026",
+                    "/views/utilisateur/restauration-2026.fxml", "\uD83C\uDF74"),
             new UserSection("abonnement", "Mon Abonnement",
                     "Gérer mon abonnement LAMMA",
-                    "/views/utilisateur/abonnement-choix.fxml", "\uD83D\uDCCB")
-    );
+                    "/views/utilisateur/abonnement-choix.fxml", "\uD83D\uDCCB"));
 
     @FXML
     public void initialize() {
-        if (cardsContainer == null) return;
+        if (cardsContainer == null)
+            return;
         cardsContainer.getChildren().clear();
         for (UserSection section : SECTIONS) {
             VBox card = createCard(section);

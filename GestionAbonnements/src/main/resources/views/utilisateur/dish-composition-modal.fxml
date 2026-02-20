@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.gestion.ui.utilisateur.DishCompositionController"
+      spacing="0" prefWidth="500" prefHeight="700"
+      stylesheets="@../../styles/restoration-2026.css"
+      style="-fx-background-color: transparent;">
+
+    <VBox spacing="20" styleClass="glass-panel" VBox.vgrow="ALWAYS">
+        <padding>
+            <Insets top="30" right="30" bottom="30" left="30"/>
+        </padding>
+
+        <!-- Header -->
+        <HBox spacing="20" alignment="CENTER_LEFT">
+            <ImageView fx:id="smallHeroImage" fitWidth="100" preserveRatio="true" styleClass="featured-image-container"/>
+            <VBox spacing="5" HBox.hgrow="ALWAYS">
+                <Label fx:id="dishNameLabel" text="Personnalise ton Eggs Curry" styleClass="card-title-2026"/>
+                <Label fx:id="basePriceLabel" text="À partir de 15.00 €" styleClass="delicious-baseline"/>
+            </VBox>
+        </HBox>
+
+        <HBox spacing="20">
+            <VBox spacing="2" alignment="CENTER" styleClass="neo-card" prefWidth="120">
+                <Label text="🔥 Calories" styleClass="delicious-baseline" style="-fx-font-size: 10px;"/>
+                <Label fx:id="liveCalories" text="420" styleClass="card-title-2026" style="-fx-text-fill: #FF5E78;"/>
+            </VBox>
+            <VBox spacing="2" alignment="CENTER" styleClass="neo-card" prefWidth="120">
+                <Label text="⏱ Temps" styleClass="delicious-baseline" style="-fx-font-size: 10px;"/>
+                <Label fx:id="liveTime" text="25 Mins" styleClass="card-title-2026"/>
+            </VBox>
+            <VBox spacing="2" alignment="CENTER" styleClass="neo-card" prefWidth="120">
+                <Label text="💪 Protéines" styleClass="delicious-baseline" style="-fx-font-size: 10px;"/>
+                <Label fx:id="liveProteins" text="28g" styleClass="card-title-2026" style="-fx-text-fill: #28a745;"/>
+            </VBox>
+        </HBox>
+
+        <Separator />
+
+        <!-- Ingredients Selection -->
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" style="-fx-background-color: transparent;" VBox.vgrow="ALWAYS">
+            <VBox fx:id="ingredientsContainer" spacing="20">
+                <!-- Categories will be injected here: BASE, PROTEINE, LEGUME, etc. -->
+            </VBox>
+        </ScrollPane>
+
+        <!-- Footer -->
+        <VBox spacing="15" styleClass="peek-metadata" style="-fx-background-color: white;">
+            <HBox alignment="CENTER_LEFT">
+                <VBox>
+                    <Label text="PRIX TOTAL" styleClass="delicious-baseline" style="-fx-font-size: 10px; -fx-font-weight: bold;"/>
+                    <Label fx:id="totalPriceLabel" text="18.50 €" styleClass="card-price-2026" style="-fx-font-size: 28px;"/>
+                </VBox>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label text="Fat free option" styleClass="status-badge" style="-fx-background-color: #28a745;"/>
+            </HBox>
+
+            <HBox spacing="15">
+                <Button text="❤️ Favori" styleClass="btn-rose" style="-fx-background-color: #FFF0E6; -fx-text-fill: #FF5E78;"/>
+                <Button text="Ajouter au Panier" onAction="#onAddToCart" styleClass="btn-rose" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+            </HBox>
+        </VBox>
+    </VBox>
+</VBox>

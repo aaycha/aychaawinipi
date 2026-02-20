@@ -9,7 +9,7 @@
 
 <ScrollPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.gestion.ui.abonnement.AbonnementViewController"
-            fitToWidth="true" fitToHeight="true" styleClass="modern-scroll-pane"
+            fitToWidth="true" styleClass="modern-scroll-pane"
             vbarPolicy="AS_NEEDED" hbarPolicy="NEVER"
             stylesheets="@../../styles/card-view.css">
 

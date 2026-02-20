@@ -15,21 +15,81 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class RepasDetailleServiceImpl implements RepasDetailleService {
-    
+    public RepasDetailleServiceImpl() {
+        initTable();
+    }
+
+    private void initTable() {
+        String sql = """
+                CREATE TABLE IF NOT EXISTS repas_detaille (
+                    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                    nom VARCHAR(100) NOT NULL,
+                    description TEXT,
+                    prix DECIMAL(10,2),
+                    calories INT,
+                    type_repas VARCHAR(50),
+                    date DATE,
+                    participant_id BIGINT,
+                    evenement_id BIGINT,
+                    ingredients TEXT,
+                    allergenes TEXT,
+                    vegetarien BOOLEAN,
+                    vegan BOOLEAN,
+                    sans_gluten BOOLEAN,
+                    halal BOOLEAN,
+                    actif BOOLEAN DEFAULT TRUE,
+                    image_url VARCHAR(255),
+                    notes TEXT
+                )
+                """;
+        try (Connection c = dbConnection.getConnection();
+                Statement st = c.createStatement()) {
+            st.execute(sql);
+            try (ResultSet rs = st.executeQuery("SELECT COUNT(*) FROM repas_detaille")) {
+                if (rs.next() && rs.getInt(1) == 0) {
+                    insertDefaultDishes();
+                }
+            }
+        } catch (SQLException e) {
+            logger.error("Erreur initTable repas_detaille", e);
+        }
+    }
+
+    private void insertDefaultDishes() {
+        RepasDetaille r1 = new RepasDetaille("Crab Ramen",
+                "Spicy ramen with garlic, fresh herbs, and premium crab slice.", new BigDecimal("24.00"), 580);
+        r1.setImageUrl("https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=500&q=80");
+        r1.setTypeRepas("DEJEUNER");
+
+        RepasDetaille r2 = new RepasDetaille("Eggs Curry",
+                "Special healthy and fat free dish for those who want to lose weight.", new BigDecimal("15.00"), 420);
+        r2.setImageUrl("https://images.unsplash.com/photo-1588166524941-3bf61a9c41db?w=500&q=80");
+        r2.setTypeRepas("DEJEUNER");
+
+        RepasDetaille r3 = new RepasDetaille("Chicken Slice",
+                "Grilled chicken breast with fresh green salad and lemon dressing.", new BigDecimal("12.00"), 350);
+        r3.setImageUrl("https://images.unsplash.com/photo-1532550907401-a500c9a57435?w=500&q=80");
+        r3.setTypeRepas("DINER");
+
+        create(r1);
+        create(r2);
+        create(r3);
+    }
+
     private static final Logger logger = LoggerFactory.getLogger(RepasDetailleServiceImpl.class);
     private final MyConnection dbConnection = MyConnection.getInstance();
-    
+
     @Override
     public RepasDetaille create(RepasDetaille repas) {
         String sql = """
-            INSERT INTO repas_detaille 
-            (nom, description, prix, calories, type_repas, date, participant_id, evenement_id,
-             ingredients, allergenes, vegetarien, vegan, sans_gluten, halal, actif, image_url, notes)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """;
+                INSERT INTO repas_detaille
+                (nom, description, prix, calories, type_repas, date, participant_id, evenement_id,
+                 ingredients, allergenes, vegetarien, vegan, sans_gluten, halal, actif, image_url, notes)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """;
         try (Connection c = dbConnection.getConnection();
-             PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            
+                PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
             ps.setString(1, repas.getNom());
             ps.setString(2, repas.getDescription());
             ps.setBigDecimal(3, repas.getPrix());
@@ -47,10 +107,11 @@ public class RepasDetailleServiceImpl implements RepasDetailleService {
             ps.setBoolean(15, repas.isActif());
             ps.setString(16, repas.getImageUrl());
             ps.setString(17, repas.getNotes());
-            
+
             ps.executeUpdate();
             try (ResultSet keys = ps.getGeneratedKeys()) {
-                if (keys.next()) repas.setId(keys.getLong(1));
+                if (keys.next())
+                    repas.setId(keys.getLong(1));
             }
             logger.info("Repas détaillé créé: ID {}", repas.getId());
         } catch (SQLException e) {
@@ -58,38 +119,39 @@ public class RepasDetailleServiceImpl implements RepasDetailleService {
         }
         return repas;
     }
-    
+
     @Override
     public Optional<RepasDetaille> findById(Long id) {
         String sql = "SELECT * FROM repas_detaille WHERE id = ?";
         try (Connection c = dbConnection.getConnection();
-             PreparedStatement ps = c.prepareStatement(sql)) {
+                PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setLong(1, id);
             try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) return Optional.of(mapRepas(rs));
+                if (rs.next())
+                    return Optional.of(mapRepas(rs));
             }
         } catch (SQLException e) {
             logger.error("Erreur findById", e);
         }
         return Optional.empty();
     }
-    
+
     @Override
     public List<RepasDetaille> findAll() {
         return executeQuery("SELECT * FROM repas_detaille WHERE actif = 1 ORDER BY nom", null);
     }
-    
+
     @Override
     public RepasDetaille update(RepasDetaille repas) {
         String sql = """
-            UPDATE repas_detaille SET 
-            nom=?, description=?, prix=?, calories=?, type_repas=?, date=?, participant_id=?, evenement_id=?,
-            ingredients=?, allergenes=?, vegetarien=?, vegan=?, sans_gluten=?, halal=?, actif=?, image_url=?, notes=?
-            WHERE id=?
-            """;
+                UPDATE repas_detaille SET
+                nom=?, description=?, prix=?, calories=?, type_repas=?, date=?, participant_id=?, evenement_id=?,
+                ingredients=?, allergenes=?, vegetarien=?, vegan=?, sans_gluten=?, halal=?, actif=?, image_url=?, notes=?
+                WHERE id=?
+                """;
         try (Connection c = dbConnection.getConnection();
-             PreparedStatement ps = c.prepareStatement(sql)) {
-            
+                PreparedStatement ps = c.prepareStatement(sql)) {
+
             ps.setString(1, repas.getNom());
             ps.setString(2, repas.getDescription());
             ps.setBigDecimal(3, repas.getPrix());
@@ -108,7 +170,7 @@ public class RepasDetailleServiceImpl implements RepasDetailleService {
             ps.setString(16, repas.getImageUrl());
             ps.setString(17, repas.getNotes());
             ps.setLong(18, repas.getId());
-            
+
             ps.executeUpdate();
             logger.info("Repas détaillé mis à jour: ID {}", repas.getId());
         } catch (SQLException e) {
@@ -116,12 +178,12 @@ public class RepasDetailleServiceImpl implements RepasDetailleService {
         }
         return repas;
     }
-    
+
     @Override
     public boolean delete(Long id) {
         String sql = "DELETE FROM repas_detaille WHERE id = ?";
         try (Connection c = dbConnection.getConnection();
-             PreparedStatement ps = c.prepareStatement(sql)) {
+                PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setLong(1, id);
             int affected = ps.executeUpdate();
             logger.info("Repas détaillé supprimé: ID {}", id);
@@ -131,98 +193,116 @@ public class RepasDetailleServiceImpl implements RepasDetailleService {
         }
         return false;
     }
-    
+
     @Override
     public List<RepasDetaille> findByParticipantId(Long participantId) {
-        return executeQuery("SELECT * FROM repas_detaille WHERE participant_id = ? AND actif = 1 ORDER BY date DESC", 
-            ps -> ps.setLong(1, participantId));
+        return executeQuery("SELECT * FROM repas_detaille WHERE participant_id = ? AND actif = 1 ORDER BY date DESC",
+                ps -> ps.setLong(1, participantId));
     }
-    
+
     @Override
     public List<RepasDetaille> findByEvenementId(Long evenementId) {
-        return executeQuery("SELECT * FROM repas_detaille WHERE evenement_id = ? AND actif = 1 ORDER BY date DESC", 
-            ps -> ps.setLong(1, evenementId));
+        return executeQuery("SELECT * FROM repas_detaille WHERE evenement_id = ? AND actif = 1 ORDER BY date DESC",
+                ps -> ps.setLong(1, evenementId));
     }
-    
+
     @Override
     public List<RepasDetaille> findByDate(LocalDate date) {
-        return executeQuery("SELECT * FROM repas_detaille WHERE date = ? AND actif = 1 ORDER BY nom", 
-            ps -> ps.setDate(1, Date.valueOf(date)));
+        return executeQuery("SELECT * FROM repas_detaille WHERE date = ? AND actif = 1 ORDER BY nom",
+                ps -> ps.setDate(1, Date.valueOf(date)));
     }
-    
+
     @Override
     public List<RepasDetaille> findByTypeRepas(String typeRepas) {
-        return executeQuery("SELECT * FROM repas_detaille WHERE type_repas = ? AND actif = 1 ORDER BY nom", 
-            ps -> ps.setString(1, typeRepas));
+        return executeQuery("SELECT * FROM repas_detaille WHERE type_repas = ? AND actif = 1 ORDER BY nom",
+                ps -> ps.setString(1, typeRepas));
     }
-    
+
     @Override
     public List<RepasDetaille> findByPrixRange(BigDecimal min, BigDecimal max) {
-        return executeQuery("SELECT * FROM repas_detaille WHERE prix BETWEEN ? AND ? AND actif = 1 ORDER BY prix", 
-            ps -> { ps.setBigDecimal(1, min); ps.setBigDecimal(2, max); });
+        return executeQuery("SELECT * FROM repas_detaille WHERE prix BETWEEN ? AND ? AND actif = 1 ORDER BY prix",
+                ps -> {
+                    ps.setBigDecimal(1, min);
+                    ps.setBigDecimal(2, max);
+                });
     }
-    
+
     @Override
     public List<RepasDetaille> findByCaloriesRange(Integer min, Integer max) {
-        return executeQuery("SELECT * FROM repas_detaille WHERE calories BETWEEN ? AND ? AND actif = 1 ORDER BY calories", 
-            ps -> { ps.setInt(1, min); ps.setInt(2, max); });
+        return executeQuery(
+                "SELECT * FROM repas_detaille WHERE calories BETWEEN ? AND ? AND actif = 1 ORDER BY calories",
+                ps -> {
+                    ps.setInt(1, min);
+                    ps.setInt(2, max);
+                });
     }
-    
+
     @Override
-    public List<RepasDetaille> findByRestrictions(boolean vegetarien, boolean vegan, boolean sansGluten, boolean halal) {
+    public List<RepasDetaille> findByRestrictions(boolean vegetarien, boolean vegan, boolean sansGluten,
+            boolean halal) {
         StringBuilder sql = new StringBuilder("SELECT * FROM repas_detaille WHERE actif = 1");
         List<Object> params = new ArrayList<>();
-        if (vegetarien) { sql.append(" AND vegetarien = 1"); }
-        if (vegan) { sql.append(" AND vegan = 1"); }
-        if (sansGluten) { sql.append(" AND sans_gluten = 1"); }
-        if (halal) { sql.append(" AND halal = 1"); }
+        if (vegetarien) {
+            sql.append(" AND vegetarien = 1");
+        }
+        if (vegan) {
+            sql.append(" AND vegan = 1");
+        }
+        if (sansGluten) {
+            sql.append(" AND sans_gluten = 1");
+        }
+        if (halal) {
+            sql.append(" AND halal = 1");
+        }
         sql.append(" ORDER BY nom");
         return executeQuery(sql.toString(), null);
     }
-    
+
     @Override
     public List<RepasDetaille> findByAllergene(String allergene) {
         return findAll().stream()
-            .filter(r -> r.getAllergenes().contains(allergene))
-            .collect(Collectors.toList());
+                .filter(r -> r.getAllergenes().contains(allergene))
+                .collect(Collectors.toList());
     }
-    
+
     @Override
     public List<RepasDetaille> searchByName(String nom) {
-        return executeQuery("SELECT * FROM repas_detaille WHERE nom LIKE ? AND actif = 1 ORDER BY nom", 
-            ps -> ps.setString(1, "%" + nom + "%"));
+        return executeQuery("SELECT * FROM repas_detaille WHERE nom LIKE ? AND actif = 1 ORDER BY nom",
+                ps -> ps.setString(1, "%" + nom + "%"));
     }
-    
+
     @Override
     public BigDecimal getTotalPrixByParticipant(Long participantId) {
         return findByParticipantId(participantId).stream()
-            .map(RepasDetaille::getPrix)
-            .reduce(BigDecimal.ZERO, BigDecimal::add);
+                .map(RepasDetaille::getPrix)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
-    
+
     @Override
     public Integer getTotalCaloriesByParticipant(Long participantId) {
         return findByParticipantId(participantId).stream()
-            .mapToInt(r -> r.getCalories() != null ? r.getCalories() : 0)
-            .sum();
+                .mapToInt(r -> r.getCalories() != null ? r.getCalories() : 0)
+                .sum();
     }
-    
+
     @Override
     public BigDecimal getMoyennePrix() {
         List<RepasDetaille> all = findAll();
-        if (all.isEmpty()) return BigDecimal.ZERO;
+        if (all.isEmpty())
+            return BigDecimal.ZERO;
         BigDecimal total = all.stream().map(RepasDetaille::getPrix).reduce(BigDecimal.ZERO, BigDecimal::add);
         return total.divide(BigDecimal.valueOf(all.size()), 2, BigDecimal.ROUND_HALF_UP);
     }
-    
+
     @Override
     public Integer getMoyenneCalories() {
         List<RepasDetaille> all = findAll();
-        if (all.isEmpty()) return 0;
+        if (all.isEmpty())
+            return 0;
         int total = all.stream().mapToInt(r -> r.getCalories() != null ? r.getCalories() : 0).sum();
         return total / all.size();
     }
-    
+
     // Helpers
     private List<RepasDetaille> executeQuery(String sql, SQLConsumer<PreparedStatement> setter) {
         List<RepasDetaille> list = new ArrayList<>();
@@ -234,7 +314,8 @@ public class RepasDetailleServiceImpl implements RepasDetailleService {
                 return list;
             }
             try (PreparedStatement ps = c.prepareStatement(sql)) {
-                if (setter != null) setter.accept(ps);
+                if (setter != null)
+                    setter.accept(ps);
                 try (ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
                         try {
@@ -250,7 +331,7 @@ public class RepasDetailleServiceImpl implements RepasDetailleService {
         }
         return list;
     }
-    
+
     private RepasDetaille mapRepas(ResultSet rs) throws SQLException {
         RepasDetaille r = new RepasDetaille();
         r.setId(rs.getLong("id"));
@@ -260,10 +341,11 @@ public class RepasDetailleServiceImpl implements RepasDetailleService {
         r.setCalories(rs.getObject("calories") != null ? rs.getInt("calories") : null);
         r.setTypeRepas(rs.getString("type_repas"));
         Date d = rs.getDate("date");
-        if (d != null) r.setDate(d.toLocalDate());
+        if (d != null)
+            r.setDate(d.toLocalDate());
         r.setParticipantId(rs.getObject("participant_id") != null ? rs.getLong("participant_id") : null);
         r.setEvenementId(rs.getObject("evenement_id") != null ? rs.getLong("evenement_id") : null);
-        
+
         String ing = rs.getString("ingredients");
         if (ing != null && !ing.isEmpty()) {
             r.getIngredients().addAll(List.of(ing.split(",")));
@@ -272,7 +354,7 @@ public class RepasDetailleServiceImpl implements RepasDetailleService {
         if (all != null && !all.isEmpty()) {
             r.getAllergenes().addAll(List.of(all.split(",")));
         }
-        
+
         r.setVegetarien(rs.getBoolean("vegetarien"));
         r.setVegan(rs.getBoolean("vegan"));
         r.setSansGluten(rs.getBoolean("sans_gluten"));
@@ -282,7 +364,9 @@ public class RepasDetailleServiceImpl implements RepasDetailleService {
         r.setNotes(rs.getString("notes"));
         return r;
     }
-    
+
     @FunctionalInterface
-    interface SQLConsumer<T> { void accept(T t) throws Exception; }
+    interface SQLConsumer<T> {
+        void accept(T t) throws Exception;
+    }
 }
