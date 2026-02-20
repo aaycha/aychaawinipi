@@ -49,6 +49,54 @@
             </HBox>
         </VBox>
     </top>
+    
+    <left>
+        <VBox styleClass="admin-sidebar" spacing="30" prefWidth="250">
+            <padding>
+                <Insets top="30" right="15" bottom="30" left="15"/>
+            </padding>
+            
+            <VBox spacing="10">
+                <Label text="NAVIGATION" styleClass="sidebar-title" />
+                
+                <HBox styleClass="nav-item, nav-item-active" onMouseClicked="#onGoDashboard">
+                    <Label text="🏠" styleClass="nav-icon"/>
+                    <Label text="Dashboard" styleClass="nav-label"/>
+                </HBox>
+                
+                <HBox styleClass="nav-item" onMouseClicked="#onGoPlats">
+                    <Label text="🍲" styleClass="nav-icon"/>
+                    <Label text="Plats &amp; Recettes" styleClass="nav-label"/>
+                </HBox>
+                
+                <HBox styleClass="nav-item" onMouseClicked="#onGoPlanner">
+                    <Label text="📅" styleClass="nav-icon"/>
+                    <Label text="Planificateur" styleClass="nav-label"/>
+                </HBox>
+            </VBox>
+            
+            <VBox spacing="10">
+                <Label text="INSIGHTS" styleClass="sidebar-title" />
+                
+                <HBox styleClass="nav-item" onMouseClicked="#onGoAnalytics">
+                    <Label text="📈" styleClass="nav-icon"/>
+                    <Label text="Analytics" styleClass="nav-label"/>
+                </HBox>
+                
+                <HBox styleClass="nav-item" onMouseClicked="#onGoStock">
+                    <Label text="📦" styleClass="nav-icon"/>
+                    <Label text="Stock &amp; Inventaire" styleClass="nav-label"/>
+                </HBox>
+            </VBox>
+            
+            <Region VBox.vgrow="ALWAYS" />
+            
+            <VBox spacing="10" styleClass="glass-panel-light" style="-fx-padding: 15;">
+                <Label text="Version 2026.1" style="-fx-font-size: 10px; -fx-text-fill: #64748B;"/>
+                <Label text="Support IA Actif" style="-fx-font-size: 10px; -fx-text-fill: #00D4B4; -fx-font-weight: bold;"/>
+            </VBox>
+        </VBox>
+    </left>
 
     <center>
         <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" style="-fx-background-color: transparent;">

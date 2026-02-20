@@ -578,4 +578,42 @@ public class RepasListeController implements Initializable {
         alert.setContentText(content);
         alert.showAndWait();
     }
+
+    // --- SIDEBAR NAVIGATION ---
+
+    @FXML
+    private void onGoDashboard() {
+        if (com.gestion.controllers.MainController.getInstance() != null) {
+            com.gestion.controllers.MainController.getInstance().retourDashboard();
+        }
+    }
+
+    @FXML
+    private void onGoPlats() {
+        onActualiser();
+        statusLabel.setText("Navigation : Plats & Recettes");
+    }
+
+    @FXML
+    private void onGoPlanner() {
+        if (com.gestion.controllers.MainController.getInstance() != null) {
+            com.gestion.controllers.MainController.getInstance()
+                    .loadInternalView("/views/repas/admin-menu-planner.fxml", "Planificateur de Menus");
+        }
+    }
+
+    @FXML
+    private void onGoAnalytics() {
+        if (com.gestion.controllers.MainController.getInstance() != null) {
+            com.gestion.controllers.MainController.getInstance()
+                    .loadInternalView("/views/repas/admin-kpi-dashboard.fxml", "Analytics & KPIs");
+        }
+    }
+
+    @FXML
+    private void onGoStock() {
+        statusLabel.setText("Navigation : Stock & Inventaire");
+        showAlert(Alert.AlertType.INFORMATION, "Stock", "Gestion des Stocks",
+                "Le suivi des stocks en temps réel avec alertes de seuil arrive bientôt.");
+    }
 }

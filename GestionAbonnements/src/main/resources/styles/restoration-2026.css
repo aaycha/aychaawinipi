@@ -85,3 +85,65 @@
     -fx-border-radius: 12;
     -fx-padding: 5;
 }
+
+/* --- ADMIN SIDEBAR & NAVIGATION --- */
+.admin-sidebar {
+    -fx-background-color: rgba(255, 255, 255, 0.4);
+    -fx-background-radius: 0 32 32 0;
+    -fx-padding: 30 15;
+    -fx-border-color: transparent rgba(255, 255, 255, 0.3) transparent transparent;
+    -fx-border-width: 0 1.5 0 0;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 20, 0, 10, 0);
+}
+
+.nav-item {
+    -fx-background-color: transparent;
+    -fx-background-radius: 16;
+    -fx-padding: 12 20;
+    -fx-cursor: hand;
+    -fx-alignment: center-left;
+    -fx-spacing: 15;
+}
+
+.nav-item:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.6);
+    -fx-scale-x: 1.02;
+}
+
+.nav-item-active {
+    -fx-background-color: white;
+    -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.15), 15, 0, 0, 4);
+}
+
+.nav-icon {
+    -fx-font-size: 18px;
+}
+
+.nav-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #1E3A8A;
+}
+
+/* --- ENHANCED GLASSMORPHISM --- */
+.glass-panel-heavy {
+    -fx-background-color: rgba(255, 255, 255, 0.7);
+    -fx-background-radius: 24;
+    -fx-border-color: rgba(255, 255, 255, 0.5);
+    -fx-border-width: 1.5;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 15, 0, 0, 5);
+}
+
+.glass-panel-light {
+    -fx-background-color: rgba(255, 255, 255, 0.3);
+    -fx-background-radius: 20;
+    -fx-border-color: rgba(255, 255, 255, 0.2);
+    -fx-border-width: 1;
+}
+
+.sidebar-title {
+    -fx-font-size: 11px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #64748B;
+    -fx-padding: 0 0 10 10;
+}

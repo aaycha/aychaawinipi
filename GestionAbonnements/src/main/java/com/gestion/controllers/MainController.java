@@ -188,7 +188,6 @@ import java.util.List;
     }
 }*/
 
-
 package com.gestion.controllers;
 
 import com.gestion.MainApplication;
@@ -223,21 +222,30 @@ public class MainController {
     private static Role currentRole = Role.ADMIN;
 
     // ─── Panneaux principaux ────────────────────────────────────────
-    @FXML private ScrollPane dashboardScroll;
-    @FXML private ScrollPane userDashboardScroll;
-    @FXML private FlowPane cardsContainer;
-    @FXML private BorderPane moduleContentPane;
+    @FXML
+    private ScrollPane dashboardScroll;
+    @FXML
+    private ScrollPane userDashboardScroll;
+    @FXML
+    private FlowPane cardsContainer;
+    @FXML
+    private BorderPane moduleContentPane;
     @FXML
     public StackPane moduleStackPane;
 
     private static MainController instance;
 
     // ─── Éléments d'en-tête / statut ────────────────────────────────
-    @FXML private Label moduleTitleLabel;
-    @FXML private Label statusLabel;
-    @FXML private Label userLabel;
-    @FXML private ComboBox<String> roleCombo;
-    @FXML private Button backButton;
+    @FXML
+    private Label moduleTitleLabel;
+    @FXML
+    private Label statusLabel;
+    @FXML
+    private Label userLabel;
+    @FXML
+    private ComboBox<String> roleCombo;
+    @FXML
+    private Button backButton;
 
     // ─── Structure des modules ──────────────────────────────────────
     private record ModuleGestion(
@@ -245,8 +253,8 @@ public class MainController {
             String titre,
             String description,
             String fxmlPath,
-            String icon
-    ) {}
+            String icon) {
+    }
 
     private final List<ModuleGestion> modules = new ArrayList<>();
 
@@ -267,11 +275,17 @@ public class MainController {
         }
     }
 
-    /** Permet à l'espace utilisateur de charger une section (Mes Participations, Mes Repas, etc.) */
+    /**
+     * Permet à l'espace utilisateur de charger une section (Mes Participations, Mes
+     * Repas, etc.)
+     */
     public void loadUserSection(String fxmlPath, String title) {
-        if (statusLabel != null) statusLabel.setText("Chargement de " + title + "...");
-        if (backButton != null) backButton.setVisible(true);
-        if (moduleStackPane != null) moduleStackPane.setCursor(Cursor.WAIT);
+        if (statusLabel != null)
+            statusLabel.setText("Chargement de " + title + "...");
+        if (backButton != null)
+            backButton.setVisible(true);
+        if (moduleStackPane != null)
+            moduleStackPane.setCursor(Cursor.WAIT);
 
         Platform.runLater(() -> {
             try {
@@ -280,15 +294,17 @@ public class MainController {
                     throw new IOException("FXML introuvable : " + fxmlPath);
                 }
                 Parent root = loader.load();
-                if (moduleStackPane != null) moduleStackPane.getChildren().setAll(root);
-                if (moduleTitleLabel != null) moduleTitleLabel.setText(title);
+                if (moduleStackPane != null)
+                    moduleStackPane.getChildren().setAll(root);
+                if (moduleTitleLabel != null)
+                    moduleTitleLabel.setText(title);
                 Object ctrl = loader.getController();
                 if (ctrl != null) {
                     try {
                         Method refresh = ctrl.getClass().getMethod("onActualiser");
                         refresh.invoke(ctrl);
-                    } catch (NoSuchMethodException ignored) {}
-                    catch (Exception ex) {
+                    } catch (NoSuchMethodException ignored) {
+                    } catch (Exception ex) {
                         System.err.println("Erreur onActualiser : " + ex.getMessage());
                     }
                 }
@@ -297,12 +313,15 @@ public class MainController {
                     userDashboardScroll.setVisible(false);
                     userDashboardScroll.setManaged(false);
                 }
-                if (statusLabel != null) statusLabel.setText("Module " + title + " chargé");
+                if (statusLabel != null)
+                    statusLabel.setText("Module " + title + " chargé");
             } catch (IOException e) {
-                if (statusLabel != null) statusLabel.setText("Erreur chargement " + title);
+                if (statusLabel != null)
+                    statusLabel.setText("Erreur chargement " + title);
                 showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de charger " + title, e.getMessage());
             } finally {
-                if (moduleStackPane != null) moduleStackPane.setCursor(Cursor.DEFAULT);
+                if (moduleStackPane != null)
+                    moduleStackPane.setCursor(Cursor.DEFAULT);
             }
         });
     }
@@ -329,54 +348,47 @@ public class MainController {
         modules.add(new ModuleGestion(
                 "abonnement", "Abonnements",
                 "Gérer les abonnements mensuels, annuels et premium",
-                "/views/abonnement/abonnement.fxml", "\uD83D\uDCCB"
-        ));
+                "/views/abonnement/abonnement.fxml", "\uD83D\uDCCB"));
 
         modules.add(new ModuleGestion(
                 "participation", "Participations",
                 "Inscriptions aux événements et activités",
-                "/views/participation/participation.fxml", "\uD83D\uDC65"
-        ));
+                "/views/participation/participation.fxml", "\uD83D\uDC65"));
 
         modules.add(new ModuleGestion(
                 "restaurants", "Restaurants",
                 "Gérer les restaurants partenaires",
-                "/views/restaurant/restaurant-liste.fxml", "\uD83C\uDF74"
-        ));
+                "/views/restaurant/restaurant-liste.fxml", "\uD83C\uDF74"));
 
         modules.add(new ModuleGestion(
                 "menus", "Menus",
                 "Gérer les menus des restaurants",
-                "/views/menu/menu-liste.fxml", "\uD83D\uDCD6"
-        ));
+                "/views/menu/menu-liste.fxml", "\uD83D\uDCD6"));
 
         modules.add(new ModuleGestion(
                 "repas", "Plats",
                 "Gérer les plats et leur composition",
-                "/views/repas/repas-liste.fxml", "\uD83C\uDF55"
-        ));
+                "/views/repas/repas-liste.fxml", "\uD83C\uDF55"));
 
         modules.add(new ModuleGestion(
                 "restauration", "Restauration (Legacy)",
                 "Menus, repas, restrictions et présences (Ancienne version)",
-                "/views/restauration/restauration-main.fxml", "\uD83C\uDF74"
-        ));
+                "/views/restauration/restauration-main.fxml", "\uD83C\uDF74"));
 
         modules.add(new ModuleGestion(
                 "recommandations", "Recommandations IA",
                 "Suggestions personnalisées pour vos aventures",
-                "/views/recommandations/recommandations.fxml", "\uD83E\uDD16"
-        ));
+                "/views/recommandations/recommandations.fxml", "\uD83E\uDD16"));
 
         modules.add(new ModuleGestion(
                 "analytics", "Analytics",
                 "Statistiques et tableaux de bord",
-                "/views/analytics/analytics.fxml", "\uD83D\uDCC8"
-        ));
+                "/views/analytics/analytics.fxml", "\uD83D\uDCC8"));
     }
 
     private void createDashboardCards() {
-        if (cardsContainer == null) return;
+        if (cardsContainer == null)
+            return;
         cardsContainer.getChildren().clear();
 
         for (ModuleGestion module : modules) {
@@ -419,7 +431,8 @@ public class MainController {
     }
 
     private void setupRoleSelector() {
-        if (roleCombo == null) return;
+        if (roleCombo == null)
+            return;
 
         roleCombo.getItems().setAll("Admin", "Utilisateur");
         roleCombo.getSelectionModel().select("Admin");
@@ -430,9 +443,7 @@ public class MainController {
             setCurrentRole(newRole);
 
             if (userLabel != null) {
-                userLabel.setText(newRole == Role.ADMIN ?
-                        "Espace administrateur LAMMA" :
-                        "Espace utilisateur LAMMA");
+                userLabel.setText(newRole == Role.ADMIN ? "Espace administrateur LAMMA" : "Espace utilisateur LAMMA");
             }
 
             if (statusLabel != null) {
@@ -445,9 +456,7 @@ public class MainController {
 
     private void updateUIForRole() {
         if (userLabel != null) {
-            userLabel.setText(currentRole == Role.ADMIN ?
-                    "Espace administrateur LAMMA" :
-                    "Espace utilisateur LAMMA");
+            userLabel.setText(currentRole == Role.ADMIN ? "Espace administrateur LAMMA" : "Espace utilisateur LAMMA");
         }
     }
 
@@ -506,8 +515,7 @@ public class MainController {
                         Alert.AlertType.ERROR,
                         "Erreur de chargement",
                         "Impossible de charger le module " + module.titre(),
-                        "Chemin FXML : " + module.fxmlPath() + "\n\n" + e.getMessage()
-                );
+                        "Chemin FXML : " + module.fxmlPath() + "\n\n" + e.getMessage());
                 showModuleContent(false);
 
             } finally {
@@ -529,7 +537,30 @@ public class MainController {
         }
     }
 
-    @FXML
+    public void loadInternalView(String fxmlPath, String title) {
+        if (statusLabel != null)
+            statusLabel.setText("Chargement : " + title);
+        if (moduleStackPane != null)
+            moduleStackPane.setCursor(Cursor.WAIT);
+
+        Platform.runLater(() -> {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+                Parent root = loader.load();
+                if (moduleStackPane != null)
+                    moduleStackPane.getChildren().setAll(root);
+                if (moduleTitleLabel != null)
+                    moduleTitleLabel.setText(title);
+                showModuleContent(true);
+            } catch (IOException e) {
+                showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de charger " + title, e.getMessage());
+            } finally {
+                if (moduleStackPane != null)
+                    moduleStackPane.setCursor(Cursor.DEFAULT);
+            }
+        });
+    }
+
     public void retourDashboard() {
         showModuleContent(false);
         if (statusLabel != null) {
@@ -557,6 +588,7 @@ public class MainController {
             currentRole = role;
         }
     }
+
     @FXML
     private void loadAbonnements() {
         MainApplication.loadView("/views/abonnements/abonnement-list.fxml");
