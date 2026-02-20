@@ -72,7 +72,7 @@ public class DishCompositionController {
         basePriceLabel.setText(String.format("À partir de %.2f €", dish.getPrix()));
         if (dish.getImageUrl() != null && !dish.getImageUrl().isEmpty()) {
             try {
-                smallHeroImage.setImage(new Image(dish.getImageUrl()));
+                smallHeroImage.setImage(new Image(dish.getImageUrl(), 250, 250, true, true));
             } catch (Exception e) {
             }
         }
@@ -113,33 +113,35 @@ public class DishCompositionController {
         HBox row = new HBox(15);
         row.getStyleClass().add("neo-card");
         row.setAlignment(Pos.CENTER_LEFT);
-        row.setStyle("-fx-padding: 10px;");
+        row.setStyle("-fx-padding: 12px 15px; -fx-background-radius: 18;");
 
         Label name = new Label(ing.getNom());
         name.getStyleClass().add("card-title-2026");
-        name.setStyle("-fx-font-size: 14px;");
+        name.setStyle("-fx-font-size: 15px;");
 
-        Label price = new Label(
+        Label priceText = new Label(
                 ing.getPrixSupplement().doubleValue() > 0 ? String.format("+%.2f €", ing.getPrixSupplement())
-                        : "Gratuit");
-        price.getStyleClass().add("delicious-baseline");
-        price.setStyle("-fx-font-size: 11px;");
+                        : "Inclus");
+        priceText.getStyleClass().add("delicious-baseline");
+        priceText.setStyle("-fx-font-size: 11px; -fx-text-fill: #00D4B4;");
 
-        VBox info = new VBox(2, name, price);
+        VBox info = new VBox(4, name, priceText);
         HBox.setHgrow(info, Priority.ALWAYS);
 
-        HBox controls = new HBox(10);
+        HBox controls = new HBox(15);
         controls.setAlignment(Pos.CENTER);
 
         Button minus = new Button("-");
-        minus.getStyleClass().add("btn-ingredient-control");
+        minus.getStyleClass().add("btn-soft");
+        minus.setStyle("-fx-min-width: 32; -fx-min-height: 32; -fx-padding: 0; -fx-font-size: 18px;");
 
         Label qty = new Label("0");
         qty.getStyleClass().add("card-title-2026");
-        qty.setStyle("-fx-font-size: 14px;");
+        qty.setStyle("-fx-font-size: 16px; -fx-min-width: 25; -fx-alignment: center;");
 
         Button plus = new Button("+");
-        plus.getStyleClass().add("btn-ingredient-control");
+        plus.getStyleClass().add("btn-primary");
+        plus.setStyle("-fx-min-width: 32; -fx-min-height: 32; -fx-padding: 0; -fx-font-size: 18px;");
 
         minus.setOnAction(e -> {
             int current = selectedIngredients.getOrDefault(ing, 0);

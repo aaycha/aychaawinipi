@@ -56,24 +56,35 @@ public class RepasDetailleServiceImpl implements RepasDetailleService {
     }
 
     private void insertDefaultDishes() {
-        RepasDetaille r1 = new RepasDetaille("Crab Ramen",
-                "Spicy ramen with garlic, fresh herbs, and premium crab slice.", new BigDecimal("24.00"), 580);
-        r1.setImageUrl("https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=500&q=80");
+        RepasDetaille r1 = new RepasDetaille("Crab Ramen Signature",
+                "Ramen artisanal pimenté à l'ail noir, herbes fraîches et tranche de crabe premium.",
+                new BigDecimal("24.00"), 580);
+        r1.setImageUrl("https://images.unsplash.com/photo-1591814448473-7f37435f306d?w=800&q=100");
         r1.setTypeRepas("DEJEUNER");
 
-        RepasDetaille r2 = new RepasDetaille("Eggs Curry",
-                "Special healthy and fat free dish for those who want to lose weight.", new BigDecimal("15.00"), 420);
-        r2.setImageUrl("https://images.unsplash.com/photo-1588166524941-3bf61a9c41db?w=500&q=80");
+        RepasDetaille r2 = new RepasDetaille("Eggs Curry Zen",
+                "Un curry ancestral revisité, léger et sans matières grasses. Équilibre parfait.",
+                new BigDecimal("15.00"), 420);
+        r2.setImageUrl("https://images.unsplash.com/photo-1548943487-a2e4e43b4853?w=800&q=100");
         r2.setTypeRepas("DEJEUNER");
 
-        RepasDetaille r3 = new RepasDetaille("Chicken Slice",
-                "Grilled chicken breast with fresh green salad and lemon dressing.", new BigDecimal("12.00"), 350);
-        r3.setImageUrl("https://images.unsplash.com/photo-1532550907401-a500c9a57435?w=500&q=80");
+        RepasDetaille r3 = new RepasDetaille("Chicken Slice Fitness",
+                "Blanc de poulet grillé au charbon de bois, salade de saison et zestes de citron.",
+                new BigDecimal("12.00"), 350);
+        r3.setImageUrl("https://images.unsplash.com/photo-1532550907401-a500c9a57435?w=800&q=100");
         r3.setTypeRepas("DINER");
+
+        RepasDetaille r4 = new RepasDetaille("Rainbow Veggie Bowl",
+                "Quinoa tricolore, légumes rôtis du jardin et sauce tahini onctueuse. 100% Vitalité.",
+                new BigDecimal("16.00"), 410);
+        r4.setImageUrl("https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&q=100");
+        r4.setTypeRepas("DEJEUNER");
+        r4.setVegetarien(true);
 
         create(r1);
         create(r2);
         create(r3);
+        create(r4);
     }
 
     private static final Logger logger = LoggerFactory.getLogger(RepasDetailleServiceImpl.class);

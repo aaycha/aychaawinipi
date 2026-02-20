@@ -17,16 +17,16 @@
                 <Label text="Planificateur de Menus Hebdomadaire" style="-fx-font-size: 24px; -fx-font-weight: 900; -fx-text-fill: #1E3A8A;"/>
                 <Region HBox.hgrow="ALWAYS"/>
                 <HBox spacing="10" alignment="CENTER_LEFT">
-                    <Button text="Semaine Précédente" styleClass="btn-secondary"/>
+                    <Button text="Semaine Précédente" styleClass="btn-secondary" onAction="#onPreviousWeek"/>
                     <Label fx:id="currentWeekLabel" text="Semaine du 16 au 22 Février 2026" style="-fx-font-weight: bold;"/>
-                    <Button text="Semaine Suivante" styleClass="btn-primary"/>
+                    <Button text="Semaine Suivante" styleClass="btn-primary" onAction="#onNextWeek"/>
                 </HBox>
             </HBox>
         </VBox>
     </top>
 
     <center>
-        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;" styleClass="modern-scroll">
             <VBox spacing="20" style="-fx-padding: 30;">
                 <GridPane fx:id="plannerGrid" hgap="15" vgap="15">
                     <columnConstraints>
@@ -39,38 +39,7 @@
                         <ColumnConstraints percentWidth="14.28" />
                     </columnConstraints>
                     
-                    <!-- Days Headers -->
-                    <VBox alignment="CENTER" styleClass="glass-panel" style="-fx-padding: 10; -fx-background-color: #E0E7FF;" GridPane.columnIndex="0">
-                        <Label text="LUNDI" style="-fx-font-weight: 900; -fx-font-size: 12px;"/>
-                        <Label text="16 Fév" style="-fx-font-size: 10px;"/>
-                    </VBox>
-                    <VBox alignment="CENTER" styleClass="glass-panel" style="-fx-padding: 10;" GridPane.columnIndex="1">
-                        <Label text="MARDI" style="-fx-font-weight: 900; -fx-font-size: 12px;"/>
-                        <Label text="17 Fév" style="-fx-font-size: 10px;"/>
-                    </VBox>
-                    <VBox alignment="CENTER" styleClass="glass-panel" style="-fx-padding: 10;" GridPane.columnIndex="2">
-                        <Label text="MERCREDI" style="-fx-font-weight: 900; -fx-font-size: 12px;"/>
-                        <Label text="18 Fév" style="-fx-font-size: 10px;"/>
-                    </VBox>
-                    <VBox alignment="CENTER" styleClass="glass-panel" style="-fx-padding: 10;" GridPane.columnIndex="3">
-                        <Label text="JEUDI" style="-fx-font-weight: 900; -fx-font-size: 12px;"/>
-                        <Label text="19 Fév" style="-fx-font-size: 10px;"/>
-                    </VBox>
-                    <VBox alignment="CENTER" styleClass="glass-panel" style="-fx-padding: 10;" GridPane.columnIndex="4">
-                        <Label text="VENDREDI" style="-fx-font-weight: 900; -fx-font-size: 12px;"/>
-                        <Label text="20 Fév" style="-fx-font-size: 10px;"/>
-                    </VBox>
-                    <VBox alignment="CENTER" styleClass="glass-panel" style="-fx-padding: 10; -fx-background-color: #FEE2E2;" GridPane.columnIndex="5">
-                        <Label text="SAMEDI" style="-fx-font-weight: 900; -fx-font-size: 12px;"/>
-                        <Label text="21 Fév" style="-fx-font-size: 10px;"/>
-                    </VBox>
-                    <VBox alignment="CENTER" styleClass="glass-panel" style="-fx-padding: 10; -fx-background-color: #FEE2E2;" GridPane.columnIndex="6">
-                        <Label text="DIMANCHE" style="-fx-font-weight: 900; -fx-font-size: 12px;"/>
-                        <Label text="22 Fév" style="-fx-font-size: 10px;"/>
-                    </VBox>
-                    
-                    <!-- Planning Slots (Row 1: Breakfast, 2: Lunch, 3: Dinner) -->
-                    <!-- Placeholder for slots, will be populated by controller -->
+                    <!-- Days Headers will be dynamically updated or fixed -->
                 </GridPane>
             </VBox>
         </ScrollPane>
@@ -82,7 +51,7 @@
                 <Insets top="30" right="20" bottom="30" left="20"/>
             </padding>
             <Label text="CATALOGUE RAPIDE" styleClass="sidebar-title" />
-            <TextField promptText="Rechercher un plat..." styleClass="search-bar-smart" />
+            <TextField fx:id="searchField" promptText="Rechercher un plat..." styleClass="search-bar-smart" />
             <ListView fx:id="availableDishesList" VBox.vgrow="ALWAYS" styleClass="modern-list-view" />
             <Button text="Nouveau Plat" styleClass="btn-turquoise" maxWidth="Infinity" />
         </VBox>

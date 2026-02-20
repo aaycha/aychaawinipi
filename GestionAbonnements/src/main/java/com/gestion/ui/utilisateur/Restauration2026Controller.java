@@ -17,6 +17,7 @@ import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.scene.input.MouseEvent;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -61,6 +62,16 @@ public class Restauration2026Controller {
         });
     }
 
+    @FXML
+    private void onHome(MouseEvent event) {
+        System.out.println("🏠 Home clicked");
+    }
+
+    @FXML
+    private void onProfile(MouseEvent event) {
+        System.out.println("👤 Profile clicked");
+    }
+
     private void updateCartBadge() {
         int count = cartService.getItemCount();
         cartCountBadge.setText(String.valueOf(count));
@@ -72,6 +83,37 @@ public class Restauration2026Controller {
         if (!allDishes.isEmpty()) {
             setFeatured(allDishes.get(0));
             applyFilters();
+        }
+    }
+
+    @FXML
+    private void onFavorites(MouseEvent event) {
+        System.out.println("Favorites icon clicked");
+        // TODO: show favorite dishes only (can reuse your toggleFavorites logic)
+    }
+
+    @FXML
+    private void handleNavClick(MouseEvent event) {
+        var source = (Label) event.getSource();
+        String id = source.getId();
+
+        if (id == null) {
+            // fallback using text or style class
+            String text = source.getText();
+            if ("🏠".equals(text)) {
+                /* home */ } else if ("❤️".equals(text)) {
+                /* favorites */ } else if ("👤".equals(text)) {
+                /* profile */ }
+            return;
+        }
+
+        switch (id) {
+            case "navHome":
+                System.out.println("Home");
+            case "navFav":
+                System.out.println("Favorites");
+            case "navProfile":
+                System.out.println("Profile");
         }
     }
 
@@ -99,58 +141,69 @@ public class Restauration2026Controller {
     }
 
     private VBox createDishCard(RepasDetaille dish) {
-        VBox card = new VBox(10);
+        VBox card = new VBox(15);
         card.getStyleClass().add("neo-card");
-        card.setPrefWidth(450);
+        card.setPrefWidth(500); // Slightly wider for 2026 aesthetic
 
-        HBox topRow = new HBox(15);
-        topRow.setAlignment(Pos.CENTER_LEFT);
+        HBox contentRow = new HBox(20);
+        contentRow.setAlignment(Pos.CENTER_LEFT);
+
+        // Image Container with subtle glow
+        StackPane imgBox = new StackPane();
+        imgBox.getStyleClass().add("featured-image-box");
+        imgBox.setStyle("-fx-background-radius: 18; -fx-padding: 3; -fx-min-width: 90; -fx-min-height: 90;");
 
         ImageView img = new ImageView();
         if (dish.getImageUrl() != null && !dish.getImageUrl().isEmpty()) {
             try {
-                img.setImage(new Image(dish.getImageUrl()));
+                img.setImage(new Image(dish.getImageUrl(), 180, 180, true, true));
             } catch (Exception e) {
-                // Fallback icon or default image
+                // Fallback icon could be added here
             }
         }
-        img.setFitWidth(80);
-        img.setFitHeight(80);
+        img.setFitWidth(85);
+        img.setFitHeight(85);
         img.setPreserveRatio(true);
+        img.getStyleClass().add("featured-image-container");
+        imgBox.getChildren().add(img);
 
-        VBox info = new VBox(5);
+        VBox info = new VBox(8);
         Label title = new Label(dish.getNom());
         title.getStyleClass().add("card-title-2026");
+        title.setStyle("-fx-font-size: 18px;");
 
         HBox badges = new HBox(8);
         if (dish.getCalories() != null && dish.getCalories() < 500) {
-            Label calBadge = new Label("Low Cal 🔥");
+            Label calBadge = new Label("Léger 🔥");
             calBadge.getStyleClass().add("health-badge");
             badges.getChildren().add(calBadge);
         }
-        if (dish.getNom().toLowerCase().contains("poulet") || dish.getNom().toLowerCase().contains("crab")) {
-            Label proBadge = new Label("High Protein 💪");
-            proBadge.getStyleClass().add("health-badge");
-            badges.getChildren().add(proBadge);
+        if (dish.isVegetarien()) {
+            Label vegBadge = new Label("Veggie 🌱");
+            vegBadge.getStyleClass().add("health-badge");
+            vegBadge.setStyle("-fx-background-color: rgba(40, 167, 69, 0.15); -fx-text-fill: #28a745;");
+            badges.getChildren().add(vegBadge);
         }
 
         Label desc = new Label(dish.getDescription());
         desc.getStyleClass().add("delicious-baseline");
         desc.setWrapText(true);
+        desc.setMaxHeight(40);
         info.getChildren().addAll(title, badges, desc);
         HBox.setHgrow(info, Priority.ALWAYS);
 
-        topRow.getChildren().addAll(img, info);
+        contentRow.getChildren().addAll(imgBox, info);
 
         HBox bottomRow = new HBox();
         bottomRow.setAlignment(Pos.CENTER_LEFT);
         Label price = new Label(String.format("%.2f €", dish.getPrix()));
         price.getStyleClass().add("card-price-2026");
+        price.setStyle("-fx-font-size: 20px; -fx-text-fill: #00D4B4;");
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        HBox actions = new HBox(12);
+        HBox actions = new HBox(15);
         actions.setAlignment(Pos.CENTER_RIGHT);
 
         Label fav = new Label(favoriteIds.contains(dish.getId()) ? "❤️" : "🤍");
@@ -163,13 +216,12 @@ public class Restauration2026Controller {
             } else {
                 favoriteIds.add(dish.getId());
                 fav.setText("❤️");
-                // Scale animation
                 javafx.animation.ScaleTransition st = new javafx.animation.ScaleTransition(
                         javafx.util.Duration.millis(200), fav);
                 st.setFromX(1.0);
                 st.setFromY(1.0);
-                st.setToX(1.3);
-                st.setToY(1.3);
+                st.setToX(1.4);
+                st.setToY(1.4);
                 st.setCycleCount(2);
                 st.setAutoReverse(true);
                 st.play();
@@ -183,23 +235,21 @@ public class Restauration2026Controller {
         quickAdd.getStyleClass().add("quick-add-btn");
         quickAdd.setOnAction(e -> {
             cartService.addItem(dish);
-            System.out.println("Quick added: " + dish.getNom());
             e.consume();
         });
 
         actions.getChildren().addAll(fav, quickAdd);
         bottomRow.getChildren().addAll(price, spacer, actions);
 
-        card.getChildren().addAll(topRow, bottomRow);
+        card.getChildren().addAll(contentRow, bottomRow);
         card.setOnMouseClicked(e -> {
             setFeatured(dish);
-            // Click scale effect
-            javafx.animation.ScaleTransition st = new javafx.animation.ScaleTransition(javafx.util.Duration.millis(100),
+            javafx.animation.ScaleTransition st = new javafx.animation.ScaleTransition(javafx.util.Duration.millis(150),
                     card);
             st.setFromX(1.0);
             st.setFromY(1.0);
-            st.setToX(1.02);
-            st.setToY(1.02);
+            st.setToX(1.03);
+            st.setToY(1.03);
             st.setCycleCount(2);
             st.setAutoReverse(true);
             st.play();
@@ -292,4 +342,5 @@ public class Restauration2026Controller {
         stage.setScene(scene);
         stage.show();
     }
+
 }

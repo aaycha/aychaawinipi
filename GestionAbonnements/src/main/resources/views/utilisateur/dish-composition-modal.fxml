@@ -11,58 +11,66 @@
       stylesheets="@../../styles/restoration-2026.css"
       style="-fx-background-color: transparent;">
 
-    <VBox spacing="20" styleClass="glass-panel" VBox.vgrow="ALWAYS">
+    <VBox spacing="25" styleClass="glass-panel" VBox.vgrow="ALWAYS" style="-fx-background-radius: 40; -fx-border-color: rgba(255,255,255,0.1); -fx-border-width: 1.5;">
         <padding>
-            <Insets top="30" right="30" bottom="30" left="30"/>
+            <Insets top="40" right="40" bottom="30" left="40"/>
         </padding>
 
         <!-- Header -->
-        <HBox spacing="20" alignment="CENTER_LEFT">
-            <ImageView fx:id="smallHeroImage" fitWidth="100" preserveRatio="true" styleClass="featured-image-container"/>
-            <VBox spacing="5" HBox.hgrow="ALWAYS">
-                <Label fx:id="dishNameLabel" text="Personnalise ton Eggs Curry" styleClass="card-title-2026"/>
-                <Label fx:id="basePriceLabel" text="À partir de 15.00 €" styleClass="delicious-baseline"/>
+        <HBox spacing="25" alignment="CENTER_LEFT">
+            <StackPane styleClass="featured-image-box" style="-fx-background-radius: 20; -fx-padding: 5;">
+                <ImageView fx:id="smallHeroImage" fitWidth="120" fitHeight="120" preserveRatio="true" styleClass="featured-image-container"/>
+            </StackPane>
+            <VBox spacing="8" HBox.hgrow="ALWAYS">
+                <Label fx:id="dishNameLabel" text="Personnalise ton Plat" styleClass="card-title-2026" style="-fx-font-size: 24px;"/>
+                <Label fx:id="basePriceLabel" text="À partir de 15.00 €" styleClass="delicious-baseline" style="-fx-font-size: 14px; -fx-text-fill: #00D4B4; -fx-font-weight: bold;"/>
             </VBox>
         </HBox>
 
-        <HBox spacing="20">
-            <VBox spacing="2" alignment="CENTER" styleClass="neo-card" prefWidth="120">
-                <Label text="🔥 Calories" styleClass="delicious-baseline" style="-fx-font-size: 10px;"/>
-                <Label fx:id="liveCalories" text="420" styleClass="card-title-2026" style="-fx-text-fill: #FF5E78;"/>
+        <HBox spacing="15">
+            <VBox spacing="5" alignment="CENTER" styleClass="neo-card" HBox.hgrow="ALWAYS">
+                <Label text="🔥 Calories" styleClass="delicious-baseline" style="-fx-font-size: 11px;"/>
+                <Label fx:id="liveCalories" text="420" styleClass="card-title-2026" style="-fx-text-fill: #FF5E78; -fx-font-size: 18px;"/>
             </VBox>
-            <VBox spacing="2" alignment="CENTER" styleClass="neo-card" prefWidth="120">
-                <Label text="⏱ Temps" styleClass="delicious-baseline" style="-fx-font-size: 10px;"/>
-                <Label fx:id="liveTime" text="25 Mins" styleClass="card-title-2026"/>
+            <VBox spacing="5" alignment="CENTER" styleClass="neo-card" HBox.hgrow="ALWAYS">
+                <Label text="⏱ Temps" styleClass="delicious-baseline" style="-fx-font-size: 11px;"/>
+                <Label fx:id="liveTime" text="25 Mins" styleClass="card-title-2026" style="-fx-font-size: 18px;"/>
             </VBox>
-            <VBox spacing="2" alignment="CENTER" styleClass="neo-card" prefWidth="120">
-                <Label text="💪 Protéines" styleClass="delicious-baseline" style="-fx-font-size: 10px;"/>
-                <Label fx:id="liveProteins" text="28g" styleClass="card-title-2026" style="-fx-text-fill: #28a745;"/>
+            <VBox spacing="5" alignment="CENTER" styleClass="neo-card" HBox.hgrow="ALWAYS">
+                <Label text="💪 Protéines" styleClass="delicious-baseline" style="-fx-font-size: 11px;"/>
+                <Label fx:id="liveProteins" text="28g" styleClass="card-title-2026" style="-fx-text-fill: #28a745; -fx-font-size: 18px;"/>
             </VBox>
         </HBox>
 
-        <Separator />
+        <Separator style="-fx-opacity: 0.1;"/>
 
         <!-- Ingredients Selection -->
         <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" style="-fx-background-color: transparent;" VBox.vgrow="ALWAYS">
-            <VBox fx:id="ingredientsContainer" spacing="20">
-                <!-- Categories will be injected here: BASE, PROTEINE, LEGUME, etc. -->
+            <VBox fx:id="ingredientsContainer" spacing="25">
+                <padding>
+                    <Insets right="10"/>
+                </padding>
+                <!-- Categories will be injected here -->
             </VBox>
         </ScrollPane>
 
         <!-- Footer -->
-        <VBox spacing="15" styleClass="peek-metadata" style="-fx-background-color: white;">
+        <VBox spacing="20" styleClass="peek-metadata" style="-fx-background-color: rgba(255,255,255,0.05); -fx-border-color: rgba(255,255,255,0.1); -fx-border-width: 1 0 0 0;">
+            <padding>
+                <Insets top="20"/>
+            </padding>
             <HBox alignment="CENTER_LEFT">
-                <VBox>
-                    <Label text="PRIX TOTAL" styleClass="delicious-baseline" style="-fx-font-size: 10px; -fx-font-weight: bold;"/>
-                    <Label fx:id="totalPriceLabel" text="18.50 €" styleClass="card-price-2026" style="-fx-font-size: 28px;"/>
+                <VBox spacing="5">
+                    <Label text="PRIX TOTAL" styleClass="delicious-baseline" style="-fx-font-size: 11px; -fx-font-weight: 900; -fx-text-fill: rgba(255,255,255,0.6);"/>
+                    <Label fx:id="totalPriceLabel" text="18.50 €" styleClass="card-price-2026" style="-fx-font-size: 32px; -fx-text-fill: #00D4B4;"/>
                 </VBox>
                 <Region HBox.hgrow="ALWAYS"/>
-                <Label text="Fat free option" styleClass="status-badge" style="-fx-background-color: #28a745;"/>
+                <Label text="Healthy Pick ✨" styleClass="health-badge" style="-fx-padding: 8 15;"/>
             </HBox>
 
             <HBox spacing="15">
-                <Button text="❤️ Favori" styleClass="btn-rose" style="-fx-background-color: #FFF0E6; -fx-text-fill: #FF5E78;"/>
-                <Button text="Ajouter au Panier" onAction="#onAddToCart" styleClass="btn-rose" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                <Button text="❤️ Favori" styleClass="btn-soft" prefHeight="45" prefWidth="120"/>
+                <Button text="Ajouter au Panier" onAction="#onAddToCart" styleClass="btn-primary" prefHeight="45" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
             </HBox>
         </VBox>
     </VBox>

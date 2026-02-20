@@ -4,118 +4,194 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.shape.Circle?>
-<?import javafx.scene.text.Text?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+<AnchorPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.gestion.ui.utilisateur.Restauration2026Controller"
-            prefWidth="1200" prefHeight="800"
+            prefWidth="1300"
+            prefHeight="820"
             stylesheets="@../../styles/restoration-2026.css"
-            styleClass="modern-2026-root">
+            styleClass="modern-root">
 
-    <HBox spacing="40" AnchorPane.topAnchor="20" AnchorPane.leftAnchor="30" AnchorPane.rightAnchor="30" AnchorPane.bottomAnchor="20">
-        
-        <!-- Left Side: Discover & List -->
-        <VBox spacing="25" prefWidth="480">
-            <!-- Header / Top Bar -->
-            <HBox alignment="CENTER_LEFT" spacing="20">
+    <!-- BACKGROUND -->
+    <StackPane AnchorPane.topAnchor="0"
+               AnchorPane.bottomAnchor="0"
+               AnchorPane.leftAnchor="0"
+               AnchorPane.rightAnchor="0"
+               styleClass="background-gradient"/>
+
+    <VBox spacing="20"
+          AnchorPane.topAnchor="20"
+          AnchorPane.leftAnchor="30"
+          AnchorPane.rightAnchor="30"
+          AnchorPane.bottomAnchor="20">
+
+        <!-- ================= NAVBAR ================= -->
+        <HBox spacing="30" alignment="CENTER_LEFT" styleClass="top-navbar">
+            <padding>
+                <Insets top="15" right="25" bottom="15" left="25"/>
+            </padding>
+
+            <Label text="LAMMA 2026" styleClass="logo-modern"/>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <!-- Search -->
+            <HBox spacing="10" alignment="CENTER_LEFT" styleClass="search-box">
+                <Label text="🔍"/>
+                <TextField promptText="Rechercher un plat..."
+                           styleClass="search-field"/>
+            </HBox>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <Label text="Bonjour Emma 👋" styleClass="user-label"/>
+        </HBox>
+
+        <!-- ================= MAIN CONTENT ================= -->
+        <HBox spacing="40" VBox.vgrow="ALWAYS">
+
+            <!-- LEFT SIDE -->
+            <VBox spacing="25" prefWidth="550">
                 <padding>
-                    <Insets top="0" right="0" bottom="10" left="0"/>
+                    <Insets right="10"/>
                 </padding>
-                <HBox alignment="CENTER" styleClass="lamma-logo-box">
-                    <Label text="LAMMA" styleClass="lamma-logo-text"/>
-                </HBox>
-                <Region HBox.hgrow="ALWAYS"/>
-                
-                <HBox spacing="15" alignment="CENTER_LEFT">
-                    <Button text="Tous les plats" onAction="#onCategoryClick" style="-fx-background-color: transparent; -fx-text-fill: #1A3C5E; -fx-font-weight: bold; -fx-cursor: hand;"/>
-                    <Button text="Mes Favoris ❤️" onAction="#toggleFavorites" style="-fx-background-color: #E0F7FA; -fx-text-fill: #00D4B4; -fx-font-weight: bold; -fx-background-radius: 20px; -fx-cursor: hand;"/>
+
+                <Label text="Découvre ton repas idéal"
+                       styleClass="title-modern"
+                       style="-fx-font-size: 36px; -fx-letter-spacing: -1;"/>
+
+                <!-- Categories -->
+                <HBox spacing="15">
+                    <Button text="🔥 Tous" styleClass="pill-btn, pill-btn-active"/>
+                    <Button text="🍔 Fast Food" styleClass="pill-btn"/>
+                    <Button text="🥗 Healthy" styleClass="pill-btn"/>
+                    <Button text="🍜 Asian" styleClass="pill-btn"/>
                 </HBox>
 
-                <Label fx:id="userWelcomeLabel" text="Bonjour, Alex" styleClass="delicious-baseline"/>
-            </HBox>
+                <!-- Dish List -->
+                <ScrollPane fitToWidth="true"
+                            VBox.vgrow="ALWAYS"
+                            hbarPolicy="NEVER"
+                            styleClass="modern-scroll"
+                            style="-fx-background-color: transparent;">
 
-            <!-- Header -->
-            <VBox spacing="5">
-                <Label text="Delicious Food" styleClass="delicious-title"/>
-                <Label text="We made fresh and Healthy food" styleClass="delicious-baseline"/>
+                    <VBox fx:id="dishListContainer" spacing="25">
+                        <padding>
+                            <Insets top="15" right="15" bottom="15" left="15"/>
+                        </padding>
+                    </VBox>
+
+                </ScrollPane>
+
             </VBox>
 
-            <!-- Categories -->
-            <HBox spacing="20" alignment="CENTER_LEFT">
-                <VBox spacing="8" alignment="CENTER" styleClass="category-icon" onMouseClicked="#onCategoryClick">
-                    <Label text="🍔"/>
-                </VBox>
-                <VBox spacing="8" alignment="CENTER" styleClass="category-icon" onMouseClicked="#onCategoryClick">
-                    <Label text="🍜"/>
-                </VBox>
-                <VBox spacing="8" alignment="CENTER" styleClass="category-icon" onMouseClicked="#onCategoryClick">
-                    <Label text="🥗"/>
-                </VBox>
-                <VBox spacing="8" alignment="CENTER" styleClass="category-icon" onMouseClicked="#onCategoryClick">
-                    <Label text="🥤"/>
-                </VBox>
-            </HBox>
+            <!-- RIGHT SIDE (FEATURED) -->
+            <VBox spacing="30"
+                  HBox.hgrow="ALWAYS"
+                  styleClass="featured-glass"
+                  alignment="TOP_CENTER">
 
-            <!-- Dish List -->
-            <ScrollPane fx:id="dishScrollPane" fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" style="-fx-background-color: transparent;" VBox.vgrow="ALWAYS">
-                <VBox fx:id="dishListContainer" spacing="20">
-                    <padding>
-                        <Insets right="15" bottom="20"/>
-                    </padding>
-                    <!-- Cards will be injected here -->
-                </VBox>
-            </ScrollPane>
-        </VBox>
+                <padding>
+                    <Insets top="40" right="40" bottom="30" left="40"/>
+                </padding>
 
-        <!-- Right Side: Featured Dish -->
-        <VBox spacing="30" alignment="TOP_CENTER" HBox.hgrow="ALWAYS" styleClass="featured-peek">
-            
-            <StackPane fx:id="featuredImageContainer" styleClass="featured-image-container">
-                <ImageView fx:id="featuredImage" fitWidth="500" preserveRatio="true" />
-            </StackPane>
-
-            <VBox spacing="15" styleClass="peek-metadata">
-                <HBox alignment="CENTER_LEFT" spacing="15">
-                    <Label fx:id="featuredTitle" text="Eggs Curry" styleClass="delicious-title" style="-fx-font-size: 28px;"/>
-                    <Region HBox.hgrow="ALWAYS"/>
-                    <Label fx:id="featuredTime" text="⏱ 25 Mins" styleClass="delicious-baseline" style="-fx-font-weight: bold;"/>
-                </HBox>
-
-                <Label fx:id="featuredMarketingText" text="special healthy and fat free dish for those who want to lose weight" 
-                       wrapText="true" styleClass="delicious-baseline"/>
-                
-                <HBox spacing="15" alignment="CENTER_LEFT">
-                    <Label fx:id="featuredPrice" text="24.00 €" styleClass="card-price-2026" style="-fx-font-size: 24px;"/>
-                    <Region HBox.hgrow="ALWAYS"/>
-                    <Label text="🔥 420 kcal" styleClass="delicious-baseline" style="-fx-font-weight: bold; -fx-text-fill: #FF5E78;"/>
-                </HBox>
-
-                <Separator />
-
-                <HBox spacing="15" alignment="CENTER">
-                    <Button text="Personnaliser" onAction="#onPersonalize" styleClass="btn-rose" style="-fx-background-color: #FFF0E6; -fx-text-fill: #FF5E78;"/>
-                    <Button text="Add to Cart" onAction="#onAddToCart" styleClass="btn-rose" prefWidth="250"/>
-                </HBox>
-            </VBox>
-
-            <Region VBox.vgrow="ALWAYS" />
-            
-            <!-- Bottom Navigation Bar -->
-            <HBox spacing="40" alignment="CENTER" styleClass="glass-panel" prefHeight="70">
-                <Label fx:id="navHome" text="🏠" style="-fx-font-size: 24px; -fx-cursor: hand;"/>
-                <StackPane style="-fx-cursor: hand;" onMouseClicked="#onOpenCheckout">
-                    <Label fx:id="navCart" text="🛒" style="-fx-font-size: 24px;"/>
-                    <Label fx:id="cartCountBadge" text="0" styleClass="cart-badge" StackPane.alignment="TOP_RIGHT">
-                        <StackPane.margin>
-                            <Insets top="-5" right="-5"/>
-                        </StackPane.margin>
-                    </Label>
+                <StackPane styleClass="featured-image-box" maxWidth="540">
+                    <ImageView fx:id="featuredImage"
+                               fitWidth="520"
+                               preserveRatio="true"
+                               styleClass="featured-image-container"/>
                 </StackPane>
-                <Label fx:id="navFav" text="❤️" style="-fx-font-size: 24px; -fx-cursor: hand;"/>
-                <Label fx:id="navProfile" text="👤" style="-fx-font-size: 24px; -fx-cursor: hand;"/>
-            </HBox>
-        </VBox>
 
-    </HBox>
+                <VBox spacing="20">
+
+                    <HBox alignment="CENTER_LEFT">
+                        <VBox spacing="5" HBox.hgrow="ALWAYS">
+                            <Label fx:id="featuredTitle"
+                                   text="Plat du Jour"
+                                   styleClass="featured-title"/>
+                            <Label text="Chef's Special 2026 Collection" 
+                                   style="-fx-text-fill: #00D4B4; -fx-font-weight: bold; -fx-font-size: 11px;"/>
+                        </VBox>
+                        <Label fx:id="featuredTime"
+                               text="⏱ 20 min"
+                               styleClass="featured-time"
+                               style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                    </HBox>
+
+                    <Label fx:id="featuredMarketingText"
+                           wrapText="true"
+                           styleClass="featured-description"
+                           style="-fx-font-size: 15px; -fx-line-spacing: 1.4;"/>
+
+                    <HBox alignment="CENTER_LEFT" spacing="15">
+                        <Label fx:id="featuredPrice"
+                               text="24.00 €"
+                               styleClass="featured-price"
+                               style="-fx-font-size: 32px;"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <HBox alignment="CENTER" spacing="10" styleClass="health-badge" style="-fx-padding: 8 15;">
+                             <Label text="🔥 420 kcal" style="-fx-text-fill: inherit; -fx-font-weight: bold;"/>
+                        </HBox>
+                    </HBox>
+
+                    <Separator style="-fx-opacity: 0.1;"/>
+
+                    <HBox spacing="20" alignment="CENTER">
+                        <Button text="✨ Personnaliser"
+                                onAction="#onPersonalize"
+                                styleClass="btn-soft"
+                                prefHeight="50"
+                                prefWidth="180"/>
+
+                        <Button text="🛒 Ajouter au panier"
+                                onAction="#onAddToCart"
+                                styleClass="btn-primary"
+                                prefHeight="50"
+                                HBox.hgrow="ALWAYS"
+                                maxWidth="Infinity"/>
+                    </HBox>
+
+                </VBox>
+
+                <Region VBox.vgrow="ALWAYS"/>
+
+                <!-- Floating Navigation -->
+                <HBox spacing="60"
+                      alignment="CENTER"
+                      styleClass="floating-nav">
+
+                    <Label text="🏠"
+                           styleClass="nav-icon"
+                           onMouseClicked="#onHome"/>
+
+                    <StackPane onMouseClicked="#onOpenCheckout"
+                               styleClass="nav-icon">
+                        <Label text="🛒"/>
+                        <Label fx:id="cartCountBadge"
+                               text="0"
+                               styleClass="badge-modern"
+                               StackPane.alignment="TOP_RIGHT">
+                            <StackPane.margin>
+                                <Insets top="-5" right="-5"/>
+                            </StackPane.margin>
+                        </Label>
+                    </StackPane>
+
+                    <Label text="❤️"
+                           styleClass="nav-icon"
+                           onMouseClicked="#toggleFavorites"/>
+
+                    <Label text="👤"
+                           styleClass="nav-icon"
+                           onMouseClicked="#onProfile"/>
+
+                </HBox>
+
+            </VBox>
+
+        </HBox>
+
+    </VBox>
+
 </AnchorPane>

@@ -104,4 +104,8 @@ public class RepasDetaille {
     public String getAllergenesAsString() {
         return String.join(", ", allergenes);
     }
-}
+
+    public BigDecimal getPrixOriginal() {
+
+        return null;
+    }}
