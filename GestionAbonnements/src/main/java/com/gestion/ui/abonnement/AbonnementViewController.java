@@ -20,7 +20,6 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.input.MouseEvent;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -61,38 +60,24 @@ public class AbonnementViewController {
     private Button btnModifier;
     @FXML
     private Button btnSupprimer;
-    @FXML
-    private Button btnEnregistrer;
-    @FXML
-    private Button btnModifierForm;
 
     // Labels
     @FXML
     private Label statusInfoLabel;
     @FXML
     private Label countLabel;
-    @FXML
-    private Label validationMessage;
 
     private final AbonnementController controller = new AbonnementController();
     private final ObservableList<Abonnement> data = FXCollections.observableArrayList();
     private FilteredList<Abonnement> filteredData;
     private Abonnement selectedAbonnement = null;
-    private boolean isEditMode = false;
 
     @FXML
     public void initialize() {
         try {
             setupListView();
             setupFilters();
-            setupForm();
 
-            // Configuration du ListView
-            listView.setItems(filteredData);
-            listView.setVisible(true);
-            listView.setManaged(true);
-
-            // Initialiser le filtered list
             // Initialiser le filtered list
             filteredData = new FilteredList<>(data, p -> true);
             listView.setItems(filteredData);
@@ -103,7 +88,7 @@ public class AbonnementViewController {
             // Mise à jour du compteur
             updateCount();
 
-            applyRolePermissions();
+            updateButtons();
 
             System.out.println("AbonnementViewController initialisé avec succès");
         } catch (Exception e) {
@@ -223,39 +208,13 @@ public class AbonnementViewController {
     }
 
     private void setupFilters() {
-        filterStatut.getItems().addAll("", "ACTIF", "EXPIRE", "SUSPENDU", "EN_ATTENTE");
-        filterType.getItems().addAll("", "MENSUEL", "ANNUEL", "PREMIUM");
-    }
-
-    private void setupForm() {
-        inputType.getItems().addAll(Abonnement.TypeAbonnement.values());
-        inputStatut.getItems().addAll(Abonnement.StatutAbonnement.values());
-
-        // Validation en temps réel
-        inputUserId.textProperty().addListener((obs, oldVal, newVal) -> validateForm());
-        inputPrix.textProperty().addListener((obs, oldVal, newVal) -> validateForm());
-        inputDateDebut.valueProperty().addListener((obs, oldVal, newVal) -> validateForm());
+        filterStatut.getItems().setAll("", "ACTIF", "EXPIRE", "SUSPENDU", "EN_ATTENTE");
+        filterType.getItems().setAll("", "MENSUEL", "ANNUEL", "PREMIUM");
     }
 
     @FXML
     void onNouveau() {
-        selectedAbonnement = null;
-        isEditMode = false;
-        clearForm();
-
-        // Auto-fill userId from session if not admin
-        if (!isAdmin()) {
-            Integer currentId = com.gestion.tools.Session.getInstance().getCurrentUserId();
-            if (currentId != null) {
-                inputUserId.setText(String.valueOf(currentId));
-                inputUserId.setDisable(true);
-            }
-        } else {
-            inputUserId.setDisable(false);
-        }
-
-        updateButtons();
-        hideValidationMessage();
+        openForm(null);
     }
 
     @FXML
@@ -263,8 +222,7 @@ public class AbonnementViewController {
         try {
             List<Abonnement> list = controller.getAll();
             Platform.runLater(() -> {
-                data.clear();
-                data.addAll(list);
+                data.setAll(list);
                 updateCount();
                 updateStatusInfo("Données actualisées avec succès");
                 listView.refresh();
@@ -335,34 +293,9 @@ public class AbonnementViewController {
     @FXML
     void onListClick(MouseEvent event) {
         selectedAbonnement = listView.getSelectionModel().getSelectedItem();
-        if (selectedAbonnement != null) {
-            loadAbonnementInForm(selectedAbonnement);
-            updateButtons();
-        }
-    }
-
-    @FXML
-    void onEnregistrer() {
-        if (!validateForm()) {
-            return;
-        }
-
-        try {
-            Abonnement abonnement = buildAbonnementFromForm();
-
-            if (isEditMode && selectedAbonnement != null) {
-                abonnement.setId(selectedAbonnement.getId());
-                controller.update(abonnement);
-                showAlert(Alert.AlertType.INFORMATION, "Succès", "Abonnement modifié avec succès");
-            } else {
-                controller.create(abonnement);
-                showAlert(Alert.AlertType.INFORMATION, "Succès", "Abonnement créé avec succès");
-            }
-
-            onActualiser();
-            onNouveau();
-        } catch (Exception e) {
-            showAlert(Alert.AlertType.ERROR, "Erreur", e.getMessage());
+        updateButtons();
+        if (event.getClickCount() == 2 && selectedAbonnement != null) {
+            onModifier();
         }
     }
 
@@ -372,11 +305,27 @@ public class AbonnementViewController {
             showAlert(Alert.AlertType.WARNING, "Sélection requise", "Veuillez sélectionner un abonnement à modifier");
             return;
         }
+        openForm(selectedAbonnement);
+    }
 
-        isEditMode = true;
-        loadAbonnementInForm(selectedAbonnement);
-        updateButtons();
-        showValidationMessage("Mode édition activé", "info");
+    private void openForm(Abonnement a) {
+        try {
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(
+                    getClass().getResource("/views/abonnement/abonnement-form.fxml"));
+            javafx.scene.Parent root = loader.load();
+            AbonnementFormController ctrl = loader.getController();
+            ctrl.setAbonnement(a);
+            ctrl.setOnSave(this::onActualiser);
+
+            javafx.stage.Stage stage = new javafx.stage.Stage();
+            stage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
+            stage.setTitle(a == null ? "Nouvelle Expédition" : "Modifier l'Expédition");
+            stage.setScene(new javafx.scene.Scene(root));
+            stage.showAndWait();
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ouvrir le formulaire : " + e.getMessage());
+        }
     }
 
     @FXML
@@ -400,7 +349,8 @@ public class AbonnementViewController {
                     if (deleted) {
                         showAlert(Alert.AlertType.INFORMATION, "Succès", "Abonnement supprimé avec succès");
                         onActualiser();
-                        onNouveau();
+                        selectedAbonnement = null;
+                        updateButtons();
                     } else {
                         showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de supprimer l'abonnement");
                     }
@@ -413,7 +363,9 @@ public class AbonnementViewController {
 
     @FXML
     void onAnnuler() {
-        onNouveau();
+        selectedAbonnement = null;
+        listView.getSelectionModel().clearSelection();
+        updateButtons();
     }
 
     @FXML
@@ -438,109 +390,16 @@ public class AbonnementViewController {
         }
     }
 
-    private void loadAbonnementInForm(Abonnement abonnement) {
-        inputUserId.setText(String.valueOf(abonnement.getUserId()));
-        inputType.setValue(abonnement.getType());
-        inputDateDebut.setValue(abonnement.getDateDebut());
-        inputDateFin.setValue(abonnement.getDateFin());
-        inputPrix.setText(abonnement.getPrix().toString());
-        inputStatut.setValue(abonnement.getStatut());
-        inputAutoRenew.setSelected(abonnement.isAutoRenew());
-    }
-
-    private Abonnement buildAbonnementFromForm() {
-        Long userId = parseLong(inputUserId.getText());
-        Abonnement.TypeAbonnement type = inputType.getValue();
-        LocalDate dateDebut = inputDateDebut.getValue();
-        LocalDate dateFin = inputDateFin.getValue();
-        BigDecimal prix = parseBigDecimal(inputPrix.getText());
-        Abonnement.StatutAbonnement statut = inputStatut.getValue();
-        boolean autoRenew = inputAutoRenew.isSelected();
-
-        Abonnement abonnement = new Abonnement(userId, type, dateDebut, prix, autoRenew);
-        if (dateFin != null) {
-            abonnement.setDateFin(dateFin);
-        }
-        if (statut != null) {
-            abonnement.setStatut(statut);
-        }
-
-        return abonnement;
-    }
-
-    private boolean validateForm() {
-        StringBuilder errors = new StringBuilder();
-
-        if (inputUserId.getText() == null || inputUserId.getText().trim().isEmpty()) {
-            errors.append("• User ID est requis\n");
-        } else {
-            try {
-                Long.parseLong(inputUserId.getText().trim());
-            } catch (NumberFormatException e) {
-                errors.append("• User ID doit être un nombre valide\n");
-            }
-        }
-
-        if (inputType.getValue() == null) {
-            errors.append("• Type est requis\n");
-        }
-
-        if (inputDateDebut.getValue() == null) {
-            errors.append("• Date de début est requise\n");
-        }
-
-        if (inputPrix.getText() == null || inputPrix.getText().trim().isEmpty()) {
-            errors.append("• Prix est requis\n");
-        } else {
-            try {
-                BigDecimal prix = new BigDecimal(inputPrix.getText().trim());
-                if (prix.compareTo(BigDecimal.ZERO) < 0) {
-                    errors.append("• Le prix doit être positif\n");
-                }
-            } catch (NumberFormatException e) {
-                errors.append("• Prix doit être un nombre valide\n");
-            }
-        }
-
-        if (inputDateFin.getValue() != null && inputDateDebut.getValue() != null) {
-            if (inputDateFin.getValue().isBefore(inputDateDebut.getValue())) {
-                errors.append("• La date de fin doit être après la date de début\n");
-            }
-        }
-
-        if (errors.length() > 0) {
-            showValidationMessage(errors.toString(), "error");
-            return false;
-        } else {
-            hideValidationMessage();
-            return true;
-        }
-    }
-
-    private void clearForm() {
-        inputUserId.clear();
-        inputType.getSelectionModel().selectFirst();
-        inputDateDebut.setValue(LocalDate.now());
-        inputDateFin.setValue(null);
-        inputPrix.clear();
-        inputStatut.getSelectionModel().selectFirst();
-        inputAutoRenew.setSelected(true);
-    }
-
     private void updateButtons() {
         boolean hasSelection = selectedAbonnement != null;
         boolean admin = isAdmin();
         btnModifier.setDisable(!admin || !hasSelection);
         btnSupprimer.setDisable(!admin || !hasSelection);
-        btnModifierForm.setDisable(!admin || !hasSelection);
-        // en mode utilisateur, on autorise uniquement la création de nouveaux
-        // abonnements
-        btnEnregistrer.setDisable(!admin && isEditMode);
     }
 
     private void updateCount() {
         int count = filteredData != null ? filteredData.size() : data.size();
-        countLabel.setText(count + " abonnement(s)");
+        countLabel.setText(count + " abonnement(s) tracked");
     }
 
     private void updateStatusInfo(String message) {
@@ -549,29 +408,8 @@ public class AbonnementViewController {
         }
     }
 
-    private void showValidationMessage(String message, String type) {
-        if (validationMessage != null) {
-            validationMessage.setText(message);
-            validationMessage.setVisible(true);
-            validationMessage.setManaged(true);
-            validationMessage.getStyleClass().removeAll("validation-error", "validation-info", "validation-success");
-            validationMessage.getStyleClass().add("validation-" + type);
-        }
-    }
-
-    private void hideValidationMessage() {
-        if (validationMessage != null) {
-            validationMessage.setVisible(false);
-            validationMessage.setManaged(false);
-        }
-    }
-
     private boolean isAdmin() {
         return MainController.getCurrentRole() == MainController.Role.ADMIN;
-    }
-
-    private void applyRolePermissions() {
-        updateButtons();
     }
 
     private Long parseLong(String s) {
@@ -581,16 +419,6 @@ public class AbonnementViewController {
             return Long.parseLong(s.trim());
         } catch (NumberFormatException e) {
             return null;
-        }
-    }
-
-    private BigDecimal parseBigDecimal(String s) {
-        if (s == null || s.isBlank())
-            return BigDecimal.ZERO;
-        try {
-            return new BigDecimal(s.trim());
-        } catch (NumberFormatException e) {
-            return BigDecimal.ZERO;
         }
     }
 
