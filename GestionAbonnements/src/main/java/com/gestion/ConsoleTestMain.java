@@ -3,10 +3,8 @@ package com.gestion;
 //import com.gestion.controllers.EvenementDAO;
 //import com.gestion.controllers.ProgrammeDAO;
 import com.gestion.controllers.ProgrammeRecommenderController;
-import com.gestion.criteria.ParticipationCriteria;
 import com.gestion.entities.*;
 import com.gestion.interfaces.AbonnementService;
-import com.gestion.interfaces.ProgrammeService;
 import com.gestion.interfaces.TicketService;
 import com.gestion.services.*;
 
@@ -17,7 +15,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class ConsoleTestMain {
 
@@ -30,8 +27,8 @@ public class ConsoleTestMain {
     private static final AbonnementService abonnementService = new AbonnementServiceImpl();
 
     // ===== DAO JDBC =====
-    //private static final EvenementDAO eventDAO = new EvenementDAO();
-    //private static final ProgrammeDAO programmeDAO = new ProgrammeDAO();
+    // private static final EvenementDAO eventDAO = new EvenementDAO();
+    // private static final ProgrammeDAO programmeDAO = new ProgrammeDAO();
 
     // ======================= MAIN =======================
     public static void main(String[] args) {
@@ -41,17 +38,30 @@ public class ConsoleTestMain {
             String choix = sc.nextLine();
 
             switch (choix) {
-                case "1" -> afficherEvenements();
-                case "2" -> afficherProgrammesEvent();
-                case "3" -> gestionProgrammeRecommender();
-                case "4" -> gestionParticipation(); // Bloc Participation
-                case "5" -> testerTicket();
-                case "6" -> testerAbonnement();
-                case "0" -> {
+                case "1":
+                    afficherEvenements();
+                    break;
+                case "2":
+                    afficherProgrammesEvent();
+                    break;
+                case "3":
+                    gestionProgrammeRecommender();
+                    break;
+                case "4":
+                    gestionParticipation();
+                    break;
+                case "5":
+                    testerTicket();
+                    break;
+                case "6":
+                    testerAbonnement();
+                    break;
+                case "0":
                     System.out.println("\n👋 Fin du programme. Merci !");
                     return;
-                }
-                default -> System.out.println("❌ Choix invalide !");
+                default:
+                    System.out.println("❌ Choix invalide !");
+                    break;
             }
         }
     }
@@ -75,8 +85,8 @@ public class ConsoleTestMain {
     private static void afficherEvenements() {
         System.out.println("\n📌 LISTE DES ÉVÉNEMENTS");
         try {
-         //   List<Evenement> list = eventDAO.findAll();
-           // list.forEach(e -> System.out.println("• " + e));
+            // List<Evenement> list = eventDAO.findAll();
+            // list.forEach(e -> System.out.println("• " + e));
         } catch (Exception e) {
             System.out.println("❌ Erreur événements : " + e.getMessage());
         }
@@ -89,12 +99,11 @@ public class ConsoleTestMain {
             int eventId = Integer.parseInt(sc.nextLine());
             // List<Programme> list = programmeDAO.findByEventId(eventId);
             System.out.println("\n📅 PROGRAMMES DE L'ÉVÉNEMENT");
-            //list.forEach(p -> System.out.println("• " + p));
+            // list.forEach(p -> System.out.println("• " + p));
         } catch (Exception e) {
             System.out.println("❌ Erreur programme événement : " + e.getMessage());
         }
     }
-
 
     // ======================= PARTICIPATION =======================
     private static void gestionParticipation() {
@@ -129,34 +138,55 @@ public class ConsoleTestMain {
 
             try {
                 switch (choix) {
-                    case 1 -> creerParticipation();
-                    case 2 -> {
+                    case 1:
+                        creerParticipation();
+                        break;
+                    case 2:
                         System.out.println("\nToutes les participations :");
                         participationService.findAll().forEach(System.out::println);
-                    }
-                    case 3 -> rechercherParUtilisateur();
-                    case 4 -> rechercherParEvenement();
-                    case 5 -> mettreAJourParticipation();
-                    case 6 -> supprimerParticipation();
-                    case 7 -> {
+                        break;
+                    case 3:
+                        rechercherParUser();
+                        break;
+                    case 4:
+                        rechercherParEvenement();
+                        break;
+                    case 5:
+                        mettreAJourParticipation();
+                        break;
+                    case 6:
+                        supprimerParticipation();
+                        break;
+                    case 7:
                         System.out.println("\nParticipations confirmées :");
                         participationService.findParticipationsConfirmees().forEach(System.out::println);
-                    }
-                    case 8 -> {
+                        break;
+                    case 8:
                         System.out.println("\nParticipations en attente :");
                         participationService.findParticipationsEnAttente().forEach(System.out::println);
-                    }
-                    case 9 -> confirmerParticipation();
-                    case 10 -> annulerParticipation();
-                    case 15 -> afficherStats();
-                    case 0 -> System.out.println("Retour au menu principal...");
-                    default -> System.out.println("Choix invalide ! Veuillez choisir un numéro entre 0 et 10.");
+                        break;
+                    case 9:
+                        confirmerParticipation();
+                        break;
+                    case 10:
+                        annulerParticipation();
+                        break;
+                    case 15:
+                        afficherStats();
+                        break;
+                    case 0:
+                        System.out.println("Retour au menu principal...");
+                        break;
+                    default:
+                        System.out.println("Choix invalide ! Veuillez choisir un numéro entre 0 et 10.");
+                        break;
                 }
             } catch (Exception e) {
                 System.out.println("❌ Erreur : " + e.getMessage());
             }
         } while (choix != 0);
     }
+
     // Tri personnalisé
     private static void listerAvecTri() {
         System.out.print("Trier par (date/type/statut/nuits) [défaut: date] : ");
@@ -224,39 +254,47 @@ public class ConsoleTestMain {
     }
 
     // ────────────────────────────────────────────────
-// 1. Créer participation
-// ────────────────────────────────────────────────
+    // 1. Créer participation
+    // ────────────────────────────────────────────────
     private static void creerParticipation() {
         try {
             System.out.print("User ID : ");
             String userInput = sc.nextLine().trim();
-            if (userInput.isEmpty()) throw new IllegalArgumentException("User ID obligatoire");
+            if (userInput.isEmpty())
+                throw new IllegalArgumentException("User ID obligatoire");
             Long userId = Long.parseLong(userInput);
-            if (userId <= 0) throw new IllegalArgumentException("User ID doit être positif");
+            if (userId <= 0)
+                throw new IllegalArgumentException("User ID doit être positif");
 
             System.out.print("Événement ID : ");
             String eventInput = sc.nextLine().trim();
-            if (eventInput.isEmpty()) throw new IllegalArgumentException("Événement ID obligatoire");
+            if (eventInput.isEmpty())
+                throw new IllegalArgumentException("Événement ID obligatoire");
             Long eventId = Long.parseLong(eventInput);
-            if (eventId <= 0) throw new IllegalArgumentException("Événement ID doit être positif");
+            if (eventId <= 0)
+                throw new IllegalArgumentException("Événement ID doit être positif");
 
             System.out.print("Type (SIMPLE, HEBERGEMENT, GROUPE) : ");
             String typeStr = sc.nextLine().trim().toUpperCase();
-            if (typeStr.isEmpty()) throw new IllegalArgumentException("Type obligatoire");
+            if (typeStr.isEmpty())
+                throw new IllegalArgumentException("Type obligatoire");
             Participation.TypeParticipation type = Participation.TypeParticipation.valueOf(typeStr);
 
             System.out.print("Contexte (COUPLE, AMIS, FAMILLE, SOLO, PROFESSIONNEL) : ");
             String contexteStr = sc.nextLine().trim().toUpperCase();
-            if (contexteStr.isEmpty()) throw new IllegalArgumentException("Contexte obligatoire");
+            if (contexteStr.isEmpty())
+                throw new IllegalArgumentException("Contexte obligatoire");
             Participation.ContexteSocial contexte = Participation.ContexteSocial.valueOf(contexteStr);
 
             int nuits = 0;
             if (type == Participation.TypeParticipation.HEBERGEMENT) {
                 System.out.print("Nombre de nuits (≥ 1) : ");
                 String nuitsStr = sc.nextLine().trim();
-                if (nuitsStr.isEmpty()) throw new IllegalArgumentException("Nombre de nuits obligatoire pour HEBERGEMENT");
+                if (nuitsStr.isEmpty())
+                    throw new IllegalArgumentException("Nombre de nuits obligatoire pour HEBERGEMENT");
                 nuits = Integer.parseInt(nuitsStr);
-                if (nuits < 1) throw new IllegalArgumentException("Au moins 1 nuit pour un hébergement");
+                if (nuits < 1)
+                    throw new IllegalArgumentException("Au moins 1 nuit pour un hébergement");
             }
 
             Participation p = new Participation(userId, eventId, type, contexte);
@@ -279,15 +317,17 @@ public class ConsoleTestMain {
     }
 
     // ────────────────────────────────────────────────
-// 3. Rechercher par utilisateur
-// ────────────────────────────────────────────────
-    private static void rechercherParUtilisateur() {
+    // 3. Rechercher par utilisateur
+    // ────────────────────────────────────────────────
+    private static void rechercherParUser() {
         try {
             System.out.print("User ID : ");
             String input = sc.nextLine().trim();
-            if (input.isEmpty()) throw new IllegalArgumentException("User ID obligatoire");
+            if (input.isEmpty())
+                throw new IllegalArgumentException("User ID obligatoire");
             Long userId = Long.parseLong(input);
-            if (userId <= 0) throw new IllegalArgumentException("User ID doit être positif");
+            if (userId <= 0)
+                throw new IllegalArgumentException("User ID doit être positif");
 
             List<Participation> participations = participationService.findByUserId(userId);
             if (participations.isEmpty()) {
@@ -304,15 +344,17 @@ public class ConsoleTestMain {
     }
 
     // ────────────────────────────────────────────────
-// 4. Rechercher par événement
-// ────────────────────────────────────────────────
+    // 4. Rechercher par événement
+    // ────────────────────────────────────────────────
     private static void rechercherParEvenement() {
         try {
             System.out.print("Événement ID : ");
             String input = sc.nextLine().trim();
-            if (input.isEmpty()) throw new IllegalArgumentException("Événement ID obligatoire");
+            if (input.isEmpty())
+                throw new IllegalArgumentException("Événement ID obligatoire");
             Long eventId = Long.parseLong(input);
-            if (eventId <= 0) throw new IllegalArgumentException("Événement ID doit être positif");
+            if (eventId <= 0)
+                throw new IllegalArgumentException("Événement ID doit être positif");
 
             List<Participation> participations = participationService.findByEvenementId(eventId);
             if (participations.isEmpty()) {
@@ -329,15 +371,17 @@ public class ConsoleTestMain {
     }
 
     // ────────────────────────────────────────────────
-// 5. Mettre à jour participation
-// ────────────────────────────────────────────────
+    // 5. Mettre à jour participation
+    // ────────────────────────────────────────────────
     private static void mettreAJourParticipation() {
         try {
             System.out.print("ID de la participation à modifier : ");
             String input = sc.nextLine().trim();
-            if (input.isEmpty()) throw new IllegalArgumentException("ID obligatoire");
+            if (input.isEmpty())
+                throw new IllegalArgumentException("ID obligatoire");
             Long id = Long.parseLong(input);
-            if (id <= 0) throw new IllegalArgumentException("ID doit être positif");
+            if (id <= 0)
+                throw new IllegalArgumentException("ID doit être positif");
 
             Optional<Participation> opt = participationService.findById(id);
             if (opt.isEmpty()) {
@@ -356,7 +400,8 @@ public class ConsoleTestMain {
                 try {
                     p.setStatut(Participation.StatutParticipation.valueOf(statutStr));
                 } catch (IllegalArgumentException e) {
-                    throw new IllegalArgumentException("Statut invalide. Valeurs possibles : EN_ATTENTE, CONFIRME, ANNULE, REFUSE");
+                    throw new IllegalArgumentException(
+                            "Statut invalide. Valeurs possibles : EN_ATTENTE, CONFIRME, ANNULE, REFUSE");
                 }
             }
 
@@ -366,7 +411,8 @@ public class ConsoleTestMain {
                 String nuitsStr = sc.nextLine().trim();
                 if (!nuitsStr.isEmpty()) {
                     int nuits = Integer.parseInt(nuitsStr);
-                    if (nuits < 0) throw new IllegalArgumentException("Nombre de nuits ne peut pas être négatif");
+                    if (nuits < 0)
+                        throw new IllegalArgumentException("Nombre de nuits ne peut pas être négatif");
                     p.setHebergementNuits(nuits);
                 }
             }
@@ -385,15 +431,17 @@ public class ConsoleTestMain {
     }
 
     // ────────────────────────────────────────────────
-// 6. Supprimer participation
-// ────────────────────────────────────────────────
+    // 6. Supprimer participation
+    // ────────────────────────────────────────────────
     private static void supprimerParticipation() {
         try {
             System.out.print("ID de la participation à supprimer : ");
             String input = sc.nextLine().trim();
-            if (input.isEmpty()) throw new IllegalArgumentException("ID obligatoire");
+            if (input.isEmpty())
+                throw new IllegalArgumentException("ID obligatoire");
             Long id = Long.parseLong(input);
-            if (id <= 0) throw new IllegalArgumentException("ID doit être positif");
+            if (id <= 0)
+                throw new IllegalArgumentException("ID doit être positif");
 
             if (participationService.delete(id)) {
                 System.out.println("✅ Participation supprimée avec succès (ID " + id + ")");
@@ -408,15 +456,17 @@ public class ConsoleTestMain {
     }
 
     // ────────────────────────────────────────────────
-// 9. Confirmer participation
-// ────────────────────────────────────────────────
+    // 9. Confirmer participation
+    // ────────────────────────────────────────────────
     private static void confirmerParticipation() {
         try {
             System.out.print("ID de la participation à confirmer : ");
             String input = sc.nextLine().trim();
-            if (input.isEmpty()) throw new IllegalArgumentException("ID obligatoire");
+            if (input.isEmpty())
+                throw new IllegalArgumentException("ID obligatoire");
             Long id = Long.parseLong(input);
-            if (id <= 0) throw new IllegalArgumentException("ID doit être positif");
+            if (id <= 0)
+                throw new IllegalArgumentException("ID doit être positif");
 
             Participation confirmed = participationService.confirmerParticipation(id);
             System.out.println("\n✅ Participation confirmée avec succès :");
@@ -429,19 +479,22 @@ public class ConsoleTestMain {
     }
 
     // ────────────────────────────────────────────────
-// 10. Annuler participation
-// ────────────────────────────────────────────────
+    // 10. Annuler participation
+    // ────────────────────────────────────────────────
     private static void annulerParticipation() {
         try {
             System.out.print("ID de la participation à annuler : ");
             String input = sc.nextLine().trim();
-            if (input.isEmpty()) throw new IllegalArgumentException("ID obligatoire");
+            if (input.isEmpty())
+                throw new IllegalArgumentException("ID obligatoire");
             Long id = Long.parseLong(input);
-            if (id <= 0) throw new IllegalArgumentException("ID doit être positif");
+            if (id <= 0)
+                throw new IllegalArgumentException("ID doit être positif");
 
             System.out.print("Raison de l'annulation : ");
             String raison = sc.nextLine().trim();
-            if (raison.isEmpty()) throw new IllegalArgumentException("La raison est obligatoire");
+            if (raison.isEmpty())
+                throw new IllegalArgumentException("La raison est obligatoire");
 
             Participation cancelled = participationService.annulerParticipation(id, raison);
             System.out.println("\n✅ Participation annulée avec succès :");
@@ -455,38 +508,40 @@ public class ConsoleTestMain {
         }
     }
 
-
-
     // ======================= TICKET =======================
-    /*private static void testerTicket() {
-        try {
-            System.out.println("\n🎫 TEST TICKET");
-
-            System.out.print("Entrez l'ID de la participation : ");
-            Long participationId = Long.parseLong(sc.nextLine());
-
-            System.out.print("Entrez votre ID utilisateur : ");
-            Long userId = Long.parseLong(sc.nextLine());
-
-            System.out.print("Type de ticket (TICKET/BADGE/PASS) : ");
-            Ticket.TypeTicket type = Ticket.TypeTicket.valueOf(sc.nextLine().toUpperCase());
-
-            System.out.print("Format du ticket (NUMERIQUE/PHYSIQUE/HYBRIDE) : ");
-            Ticket.FormatTicket format = Ticket.FormatTicket.valueOf(sc.nextLine().toUpperCase());
-
-            Ticket t = ticketService.creerTicketSelonChoix(
-                    participationId,
-                    userId,
-                    type,
-                    36.8, 10.2, "Tunis", format
-            );
-
-            System.out.println("\n✅ Ticket généré avec succès : " + t);
-
-        } catch (Exception e) {
-            System.out.println("❌ Erreur ticket : " + e.getMessage());
-        }
-    }*/
+    /*
+     * private static void testerTicket() {
+     * try {
+     * System.out.println("\n🎫 TEST TICKET");
+     * 
+     * System.out.print("Entrez l'ID de la participation : ");
+     * Long participationId = Long.parseLong(sc.nextLine());
+     * 
+     * System.out.print("Entrez votre ID utilisateur : ");
+     * Long userId = Long.parseLong(sc.nextLine());
+     * 
+     * System.out.print("Type de ticket (TICKET/BADGE/PASS) : ");
+     * Ticket.TypeTicket type =
+     * Ticket.TypeTicket.valueOf(sc.nextLine().toUpperCase());
+     * 
+     * System.out.print("Format du ticket (NUMERIQUE/PHYSIQUE/HYBRIDE) : ");
+     * Ticket.FormatTicket format =
+     * Ticket.FormatTicket.valueOf(sc.nextLine().toUpperCase());
+     * 
+     * Ticket t = ticketService.creerTicketSelonChoix(
+     * participationId,
+     * userId,
+     * type,
+     * 36.8, 10.2, "Tunis", format
+     * );
+     * 
+     * System.out.println("\n✅ Ticket généré avec succès : " + t);
+     * 
+     * } catch (Exception e) {
+     * System.out.println("❌ Erreur ticket : " + e.getMessage());
+     * }
+     * }
+     */
 
     // ======================= TICKET =======================
     private static void testerTicket() {
@@ -532,29 +587,67 @@ public class ConsoleTestMain {
 
             try {
                 switch (choix) {
-                    case 1  -> creerTicketInteractif();
-                    case 2  -> afficherTicketParId();
-                    case 3  -> afficherTousTickets();
-                    case 4  -> afficherTousTicketsAvecTri();
-                    case 5  -> modifierTicketInteractif();
-                    case 6  -> supprimerTicketInteractif();
-                    case 7  -> listerParParticipation();
-                    case 8  -> listerParUtilisateur();
-                    case 9  -> listerParType();
-                    case 10 -> listerParStatut();
-                    case 11 -> listerParFormat();
-                    case 12 -> listerParCoordonnees();
-                    case 13 -> listerParLieu();
-                    case 14 -> marquerUtilise();
-                    case 15 -> annulerTicket();
-                    case 16 -> listerTicketsValides();
-                    case 17 -> listerTicketsExpires();
-                    case 18 -> validerTicketParCode();
-                    case 0  -> {
+                    case 1:
+                        creerTicketInteractif();
+                        break;
+                    case 2:
+                        afficherTicketParId();
+                        break;
+                    case 3:
+                        afficherTousTickets();
+                        break;
+                    case 4:
+                        afficherTousTicketsAvecTri();
+                        break;
+                    case 5:
+                        modifierTicketInteractif();
+                        break;
+                    case 6:
+                        supprimerTicketInteractif();
+                        break;
+                    case 7:
+                        listerParParticipation();
+                        break;
+                    case 8:
+                        listerParUser();
+                        break;
+                    case 9:
+                        listerParType();
+                        break;
+                    case 10:
+                        listerParStatut();
+                        break;
+                    case 11:
+                        listerParFormat();
+                        break;
+                    case 12:
+                        listerParCoordonnees();
+                        break;
+                    case 13:
+                        listerParLieu();
+                        break;
+                    case 14:
+                        marquerUtilise();
+                        break;
+                    case 15:
+                        annulerTicket();
+                        break;
+                    case 16:
+                        listerTicketsValides();
+                        break;
+                    case 17:
+                        listerTicketsExpires();
+                        break;
+                    case 18:
+                        validerTicketParCode();
+                        break;
+                    case 0:
                         System.out.println("Retour au menu principal...");
                         quitter = true;
-                    }
-                    default -> System.out.println("Choix invalide. Essayez encore.");
+                        break;
+                    default:
+                        System.out.println("Choix invalide. Essayez encore.");
+                        break;
                 }
             } catch (Exception e) {
                 System.out.println("❌ Erreur : " + e.getMessage());
@@ -567,9 +660,9 @@ public class ConsoleTestMain {
         }
     }
 
-// ────────────────────────────────────────────────
-// Méthodes auxiliaires (CRUD + filtres)
-// ────────────────────────────────────────────────
+    // ────────────────────────────────────────────────
+    // Méthodes auxiliaires (CRUD + filtres)
+    // ────────────────────────────────────────────────
 
     private static void creerTicketInteractif() {
         try {
@@ -601,8 +694,7 @@ public class ConsoleTestMain {
             Double longitude = lonStr.isEmpty() ? null : Double.parseDouble(lonStr);
 
             Ticket ticket = ticketService.creerTicketSelonChoix(
-                    participationId, userId, type, latitude, longitude, lieu, format
-            );
+                    participationId, userId, type, latitude, longitude, lieu, format);
 
             System.out.println("\n🎉 Ticket créé avec succès !");
             System.out.println(ticket);
@@ -639,13 +731,16 @@ public class ConsoleTestMain {
     }
 
     private static void afficherTousTicketsAvecTri() {
-        System.out.print("Trier par (date_creation / statut / type / format / date_expiration) [défaut: date_creation] : ");
+        System.out.print(
+                "Trier par (date_creation / statut / type / format / date_expiration) [défaut: date_creation] : ");
         String sortBy = sc.nextLine().trim();
-        if (sortBy.isEmpty()) sortBy = "date_creation";
+        if (sortBy.isEmpty())
+            sortBy = "date_creation";
 
         System.out.print("Ordre (ASC / DESC) [défaut: DESC] : ");
         String sortOrder = sc.nextLine().trim().toUpperCase();
-        if (sortOrder.isEmpty()) sortOrder = "DESC";
+        if (sortOrder.isEmpty())
+            sortOrder = "DESC";
 
         List<Ticket> tickets = ticketService.getAll(sortBy, sortOrder);
         afficherListeTickets(tickets, "tous les tickets triés par " + sortBy + " (" + sortOrder + ")");
@@ -667,7 +762,8 @@ public class ConsoleTestMain {
 
             System.out.print("Nouveau lieu (vide = garder) : ");
             String lieu = sc.nextLine().trim();
-            if (!lieu.isEmpty()) ticket.setLieu(lieu);
+            if (!lieu.isEmpty())
+                ticket.setLieu(lieu);
 
             System.out.print("Nouveau statut (VALIDE/UTILISE/EXPIRE/ANNULE - vide = garder) : ");
             String statutStr = sc.nextLine().trim().toUpperCase();
@@ -713,7 +809,7 @@ public class ConsoleTestMain {
         }
     }
 
-    private static void listerParUtilisateur() {
+    private static void listerParUser() {
         System.out.print("ID utilisateur : ");
         try {
             Long id = Long.parseLong(sc.nextLine().trim());
@@ -837,8 +933,6 @@ public class ConsoleTestMain {
         }
     }
 
-
-
     // ======================= ABONNEMENT =======================
     private static void testerAbonnement() {
         boolean quitter = false;
@@ -880,16 +974,21 @@ public class ConsoleTestMain {
             String choix = sc.nextLine();
             try {
                 switch (choix) {
-                    case "1" -> creerAbonnementAvecControles();
-                    case "2" -> {
+                    case "1":
+                        creerAbonnementAvecControles();
+                        break;
+                    case "2": {
                         System.out.print("Trier par (date_debut, date_fin, prix, statut) : ");
                         String sortBy = sc.nextLine();
                         System.out.print("Ordre (ASC/DESC) : ");
                         String sortOrder = sc.nextLine();
                         abonnementService.findAll(sortBy, sortOrder).forEach(System.out::println);
+                        break;
                     }
-                    case "3" -> mettreAJourAbonnementAvecControles();
-                    case "4" -> {
+                    case "3":
+                        mettreAJourAbonnementAvecControles();
+                        break;
+                    case "4": {
                         System.out.print("ID à supprimer : ");
                         Long id = Long.parseLong(sc.nextLine());
                         if (abonnementService.delete(id)) {
@@ -897,41 +996,50 @@ public class ConsoleTestMain {
                         } else {
                             System.out.println("❌ Impossible de supprimer.");
                         }
+                        break;
                     }
-                    case "5" -> {
+                    case "5": {
                         System.out.print("ID : ");
                         Long id = Long.parseLong(sc.nextLine());
-                        abonnementService.findById(id).ifPresentOrElse(System.out::println, () -> System.out.println("Introuvable"));
+                        abonnementService.findById(id).ifPresentOrElse(System.out::println,
+                                () -> System.out.println("Introuvable"));
+                        break;
                     }
-                    case "6" -> {
+                    case "6": {
                         System.out.print("Type (MENSUEL/ANNUEL/PREMIUM) : ");
                         Abonnement.TypeAbonnement type = Abonnement.TypeAbonnement.valueOf(sc.nextLine().toUpperCase());
                         abonnementService.findByType(type).forEach(System.out::println);
+                        break;
                     }
-                    case "7" -> {
+                    case "7": {
                         System.out.print("Statut (ACTIF/EXPIRE/SUSPENDU/EN_ATTENTE) : ");
-                        Abonnement.StatutAbonnement statut = Abonnement.StatutAbonnement.valueOf(sc.nextLine().toUpperCase());
+                        Abonnement.StatutAbonnement statut = Abonnement.StatutAbonnement
+                                .valueOf(sc.nextLine().toUpperCase());
                         abonnementService.findByStatut(statut).forEach(System.out::println);
+                        break;
                     }
-                    case "8" -> {
+                    case "8": {
                         System.out.print("User ID : ");
                         Long userId = Long.parseLong(sc.nextLine());
                         abonnementService.findByUserId(userId).forEach(System.out::println);
+                        break;
                     }
-                    case "9" -> {
+                    case "9": {
                         System.out.print("Jours : ");
                         int jours = Integer.parseInt(sc.nextLine());
                         abonnementService.findAbonnementsProchesExpiration(jours).forEach(System.out::println);
+                        break;
                     }
-                    case "10" -> {
+                    case "10": {
                         System.out.print("ID : ");
                         Long id = Long.parseLong(sc.nextLine());
                         System.out.print("Points à ajouter : ");
                         int points = Integer.parseInt(sc.nextLine());
                         abonnementService.ajouterPoints(id, points);
                         System.out.println("✅ Points ajoutés !");
+                        break;
                     }
-                    case "11" -> {
+                    case "11": {
                         System.out.print("ID : ");
                         Long id = Long.parseLong(sc.nextLine());
                         System.out.print("Points à utiliser : ");
@@ -941,52 +1049,60 @@ public class ConsoleTestMain {
                         } else {
                             System.out.println("❌ Points insuffisants.");
                         }
+                        break;
                     }
-                    case "12" -> {
+                    case "12": {
                         System.out.print("Date (AAAA-MM-JJ) : ");
                         LocalDate date = LocalDate.parse(sc.nextLine());
                         abonnementService.findByDateFinBefore(date).forEach(System.out::println);
+                        break;
                     }
-                    case "13" -> {
+                    case "13": {
                         System.out.print("Date début (AAAA-MM-JJ) : ");
                         LocalDate debut = LocalDate.parse(sc.nextLine());
                         System.out.print("Date fin (AAAA-MM-JJ) : ");
                         LocalDate fin = LocalDate.parse(sc.nextLine());
                         abonnementService.findByDateFinBetween(debut, fin).forEach(System.out::println);
+                        break;
                     }
-                    case "14" -> {
+                    case "14": {
                         System.out.print("Auto-renew (true/false) : ");
                         boolean auto = Boolean.parseBoolean(sc.nextLine());
                         abonnementService.findByAutoRenew(auto).forEach(System.out::println);
+                        break;
                     }
-                    case "15" -> {
+                    case "15": {
                         System.out.print("Points min : ");
                         int min = Integer.parseInt(sc.nextLine());
                         abonnementService.findByPointsMinimum(min).forEach(System.out::println);
+                        break;
                     }
-                    case "16" -> {
+                    case "16": {
                         System.out.print("ID : ");
                         Long id = Long.parseLong(sc.nextLine());
                         System.out.print("Nouveau type (MENSUEL/ANNUEL/PREMIUM) : ");
                         Abonnement.TypeAbonnement type = Abonnement.TypeAbonnement.valueOf(sc.nextLine().toUpperCase());
                         Abonnement upgraded = abonnementService.upgradeAbonnement(id, type);
                         System.out.println("✅ Upgradé : " + upgraded);
+                        break;
                     }
-                    case "17" -> {
+                    case "17": {
                         System.out.print("ID : ");
                         Long id = Long.parseLong(sc.nextLine());
                         System.out.print("Nouveau type (MENSUEL/ANNUEL/PREMIUM) : ");
                         Abonnement.TypeAbonnement type = Abonnement.TypeAbonnement.valueOf(sc.nextLine().toUpperCase());
                         Abonnement downgraded = abonnementService.downgradeAbonnement(id, type);
                         System.out.println("✅ Downgradé : " + downgraded);
+                        break;
                     }
-                    case "18" -> {
+                    case "18": {
                         System.out.print("ID : ");
                         Long id = Long.parseLong(sc.nextLine());
                         Abonnement renewed = abonnementService.renouvelerAbonnement(id);
                         System.out.println("✅ Renouvelé : " + renewed);
+                        break;
                     }
-                    case "19" -> {
+                    case "19": {
                         System.out.print("ID : ");
                         Long id = Long.parseLong(sc.nextLine());
                         System.out.print("Raison : ");
@@ -996,8 +1112,9 @@ public class ConsoleTestMain {
                         } else {
                             System.out.println("❌ Échec.");
                         }
+                        break;
                     }
-                    case "20" -> {
+                    case "20": {
                         System.out.print("ID : ");
                         Long id = Long.parseLong(sc.nextLine());
                         if (abonnementService.reactiverAbonnement(id)) {
@@ -1005,52 +1122,66 @@ public class ConsoleTestMain {
                         } else {
                             System.out.println("❌ Échec.");
                         }
+                        break;
                     }
-                    case "21" -> {
+                    case "21": {
                         System.out.print("Limite : ");
                         int limite = Integer.parseInt(sc.nextLine());
-                        abonnementService.findTopUtilisateursParPoints(limite).forEach(System.out::println);
+                        abonnementService.findTopUsersParPoints(limite).forEach(System.out::println);
+                        break;
                     }
-                    case "22" -> {
+                    case "22": {
                         System.out.print("Statut (ACTIF/EXPIRE/SUSPENDU/EN_ATTENTE) : ");
-                        Abonnement.StatutAbonnement statut = Abonnement.StatutAbonnement.valueOf(sc.nextLine().toUpperCase());
+                        Abonnement.StatutAbonnement statut = Abonnement.StatutAbonnement
+                                .valueOf(sc.nextLine().toUpperCase());
                         System.out.println("Count : " + abonnementService.countByStatut(statut));
+                        break;
                     }
-                    case "23" -> {
+                    case "23": {
                         System.out.print("Type (MENSUEL/ANNUEL/PREMIUM) : ");
                         Abonnement.TypeAbonnement type = Abonnement.TypeAbonnement.valueOf(sc.nextLine().toUpperCase());
                         System.out.println("Count : " + abonnementService.countByType(type));
+                        break;
                     }
-                    case "24" -> System.out.println("Revenu total : " + abonnementService.calculerRevenuTotal());
-                    case "25" -> {
+                    case "24":
+                        System.out.println("Revenu total : " + abonnementService.calculerRevenuTotal());
+                        break;
+                    case "25": {
                         System.out.print("Mois (1-12) : ");
                         int mois = Integer.parseInt(sc.nextLine());
                         System.out.print("Année : ");
                         int annee = Integer.parseInt(sc.nextLine());
                         System.out.println("Revenu : " + abonnementService.calculerRevenuParMois(mois, annee));
+                        break;
                     }
-                    case "26" -> {
+                    case "26": {
                         System.out.print("Seuil churn (0.0-1.0) : ");
                         double seuil = Double.parseDouble(sc.nextLine());
                         abonnementService.findAbonnementsRisqueChurn(seuil).forEach(System.out::println);
+                        break;
                     }
-                    case "27" -> {
+                    case "27": {
                         System.out.print("Mois : ");
                         int mois = Integer.parseInt(sc.nextLine());
                         System.out.println("Taux retention : " + abonnementService.calculerTauxRetention(mois));
+                        break;
                     }
-                    case "28" -> abonnementService.findAbonnementsAvecParticipationsActives().forEach(System.out::println);
-                    case "29" -> {
+                    case "28":
+                        abonnementService.findAbonnementsAvecParticipationsActives().forEach(System.out::println);
+                        break;
+                    case "29": {
                         System.out.print("Derniers mois : ");
                         int mois = Integer.parseInt(sc.nextLine());
                         abonnementService.findAbonnementsSansParticipation(mois).forEach(System.out::println);
+                        break;
                     }
-                    case "30" -> {
+                    case "30": {
                         System.out.print("ID : ");
                         Long id = Long.parseLong(sc.nextLine());
                         System.out.println("Peut supprimer : " + abonnementService.peutEtreSupprime(id));
+                        break;
                     }
-                    case "31" -> {
+                    case "31": {
                         System.out.print("ID : ");
                         Long id = Long.parseLong(sc.nextLine());
                         System.out.print("Auto-renew (true/false) : ");
@@ -1060,15 +1191,22 @@ public class ConsoleTestMain {
                         } else {
                             System.out.println("❌ Échec.");
                         }
+                        break;
                     }
-                    case "0" -> quitter = true;
-                    default -> System.out.println("⚠️ Choix invalide !");
+                    case "0":
+                        quitter = true;
+                        break;
+                    default:
+                        System.out.println("⚠️ Choix invalide !");
+                        break;
                 }
             } catch (Exception e) {
                 System.out.println("❌ Erreur : " + e.getMessage());
             }
         }
+
     }
+
     private static void creerAbonnementAvecControles() {
         Abonnement a = new Abonnement();
         boolean valide = false;
@@ -1096,7 +1234,8 @@ public class ConsoleTestMain {
 
                 System.out.print("Statut (ACTIF / EN_ATTENTE) [défaut: ACTIF] : ");
                 String statutStr = sc.nextLine().trim().toUpperCase();
-                if (statutStr.isEmpty()) statutStr = "ACTIF";
+                if (statutStr.isEmpty())
+                    statutStr = "ACTIF";
                 a.setStatut(Abonnement.StatutAbonnement.valueOf(statutStr));
 
                 System.out.print("Auto-renew (true/false) [défaut: true] : ");
@@ -1147,35 +1286,43 @@ public class ConsoleTestMain {
                 try {
                     System.out.print("Nouveau type (MENSUEL/ANNUEL/PREMIUM, vide pour garder) : ");
                     String typeStr = sc.nextLine();
-                    if (!typeStr.isBlank()) a.setType(Abonnement.TypeAbonnement.valueOf(typeStr.toUpperCase()));
+                    if (!typeStr.isBlank())
+                        a.setType(Abonnement.TypeAbonnement.valueOf(typeStr.toUpperCase()));
 
                     System.out.print("Nouvelle date début (AAAA-MM-JJ, vide pour garder) : ");
                     String debutStr = sc.nextLine();
-                    if (!debutStr.isBlank()) a.setDateDebut(parseDate(debutStr));
+                    if (!debutStr.isBlank())
+                        a.setDateDebut(parseDate(debutStr));
 
                     System.out.print("Nouvelle date fin (AAAA-MM-JJ, vide pour garder) : ");
                     String finStr = sc.nextLine();
-                    if (!finStr.isBlank()) a.setDateFin(parseDate(finStr));
+                    if (!finStr.isBlank())
+                        a.setDateFin(parseDate(finStr));
 
                     System.out.print("Nouveau prix (ex: 19.99, vide pour garder) : ");
                     String prixStr = sc.nextLine();
-                    if (!prixStr.isBlank()) a.setPrix(new BigDecimal(prixStr));
+                    if (!prixStr.isBlank())
+                        a.setPrix(new BigDecimal(prixStr));
 
                     System.out.print("Nouveau statut (ACTIF/EXPIRE/SUSPENDU/EN_ATTENTE, vide pour garder) : ");
                     String statutStr = sc.nextLine();
-                    if (!statutStr.isBlank()) a.setStatut(Abonnement.StatutAbonnement.valueOf(statutStr.toUpperCase()));
+                    if (!statutStr.isBlank())
+                        a.setStatut(Abonnement.StatutAbonnement.valueOf(statutStr.toUpperCase()));
 
                     System.out.print("Nouveau auto-renew (true/false, vide pour garder) : ");
                     String autoStr = sc.nextLine();
-                    if (!autoStr.isBlank()) a.setAutoRenew(Boolean.parseBoolean(autoStr));
+                    if (!autoStr.isBlank())
+                        a.setAutoRenew(Boolean.parseBoolean(autoStr));
 
                     System.out.print("Nouveaux points (vide pour garder) : ");
                     String pointsStr = sc.nextLine();
-                    if (!pointsStr.isBlank()) a.setPointsAccumules(Integer.parseInt(pointsStr));
+                    if (!pointsStr.isBlank())
+                        a.setPointsAccumules(Integer.parseInt(pointsStr));
 
                     System.out.print("Nouveau churn score (vide pour garder) : ");
                     String churnStr = sc.nextLine();
-                    if (!churnStr.isBlank()) a.setChurnScore(Double.parseDouble(churnStr));
+                    if (!churnStr.isBlank())
+                        a.setChurnScore(Double.parseDouble(churnStr));
 
                     Abonnement updated = abonnementService.update(a);
                     System.out.println("✅ Mis à jour : " + updated);
@@ -1197,7 +1344,6 @@ public class ConsoleTestMain {
             throw new IllegalArgumentException("Format date invalide : AAAA-MM-JJ");
         }
     }
-
 
     // ======================= PROGRAMME RECOMMENDER =======================
     private static final ProgrammeRecommenderService programmeRecommenderService = new ProgrammeRecommenderService();
@@ -1237,18 +1383,42 @@ public class ConsoleTestMain {
 
             try {
                 switch (choix) {
-                    case 1  -> genererEtSauvegarderProgrammes();
-                    case 2  -> afficherTousLesProgrammes();
-                    case 3  -> listerProgrammesParParticipation();
-                    case 4  -> filtrerParAmbiance();
-                    case 5  -> rechercherParActivite();
-                    case 6  -> afficherProgrammesValides();
-                    case 7  -> afficherProgrammesRecommandes();
-                    case 8  -> afficherProgrammesNonRecommandes();
-                    case 9  -> supprimerProgrammesParParticipation();
-                    case 10 -> afficherStatsProgrammes();
-                    case 0  -> System.out.println("Retour au menu principal...");
-                    default -> System.out.println("Choix invalide ! Veuillez entrer un numéro entre 0 et 10.");
+                    case 1:
+                        genererEtSauvegarderProgrammes();
+                        break;
+                    case 2:
+                        afficherTousLesProgrammes();
+                        break;
+                    case 3:
+                        listerProgrammesParParticipation();
+                        break;
+                    case 4:
+                        filtrerParAmbiance();
+                        break;
+                    case 5:
+                        rechercherParActivite();
+                        break;
+                    case 6:
+                        afficherProgrammesValides();
+                        break;
+                    case 7:
+                        afficherProgrammesRecommandes();
+                        break;
+                    case 8:
+                        afficherProgrammesNonRecommandes();
+                        break;
+                    case 9:
+                        supprimerProgrammesParParticipation();
+                        break;
+                    case 10:
+                        afficherStatsProgrammes();
+                        break;
+                    case 0:
+                        System.out.println("Retour au menu principal...");
+                        break;
+                    default:
+                        System.out.println("Choix invalide ! Veuillez entrer un numéro entre 0 et 10.");
+                        break;
                 }
             } catch (Exception e) {
                 System.out.println("❌ Erreur : " + e.getMessage());
@@ -1260,13 +1430,14 @@ public class ConsoleTestMain {
     }
 
     // ────────────────────────────────────────────────
-// 1. Générer et sauvegarder programmes recommandés
-// ────────────────────────────────────────────────
+    // 1. Générer et sauvegarder programmes recommandés
+    // ────────────────────────────────────────────────
     private static void genererEtSauvegarderProgrammes() {
         try {
             System.out.print("ID de la participation : ");
             String idStr = sc.nextLine().trim();
-            if (idStr.isEmpty()) throw new IllegalArgumentException("ID participation obligatoire");
+            if (idStr.isEmpty())
+                throw new IllegalArgumentException("ID participation obligatoire");
             Long participationId = Long.parseLong(idStr);
 
             System.out.println("[DEBUG] ID saisi : " + participationId);
@@ -1285,7 +1456,8 @@ public class ConsoleTestMain {
                 participation.setContexteSocial(Participation.ContexteSocial.valueOf(contexteStr));
                 System.out.println("[DEBUG] Contexte validé : " + participation.getContexteSocial());
             } catch (IllegalArgumentException e) {
-                System.out.println("❌ Contexte invalide. Valeurs possibles : COUPLE, AMIS, FAMILLE, SOLO, PROFESSIONNEL");
+                System.out
+                        .println("❌ Contexte invalide. Valeurs possibles : COUPLE, AMIS, FAMILLE, SOLO, PROFESSIONNEL");
                 return;
             }
 
@@ -1314,7 +1486,8 @@ public class ConsoleTestMain {
             int savedCount = 0;
             for (ProgrammeRecommender prog : programmes) {
                 savedCount++;
-                System.out.print("  Insertion " + savedCount + "/" + programmes.size() + " → " + prog.getActivite() + " ... ");
+                System.out.print(
+                        "  Insertion " + savedCount + "/" + programmes.size() + " → " + prog.getActivite() + " ... ");
                 try {
                     programmeRecommenderController.save(prog);
                     System.out.println("OK (ID = " + prog.getId() + ")");
@@ -1336,8 +1509,8 @@ public class ConsoleTestMain {
     }
 
     // ────────────────────────────────────────────────
-// 2. Lister tous les programmes recommandés
-// ────────────────────────────────────────────────
+    // 2. Lister tous les programmes recommandés
+    // ────────────────────────────────────────────────
     private static void afficherTousLesProgrammes() {
         List<ProgrammeRecommender> all = programmeRecommenderController.findAll();
         if (all.isEmpty()) {
@@ -1349,13 +1522,14 @@ public class ConsoleTestMain {
     }
 
     // ────────────────────────────────────────────────
-// 3. Lister les programmes d'une participation spécifique
-// ────────────────────────────────────────────────
+    // 3. Lister les programmes d'une participation spécifique
+    // ────────────────────────────────────────────────
     private static void listerProgrammesParParticipation() {
         try {
             System.out.print("ID de la participation : ");
             String input = sc.nextLine().trim();
-            if (input.isEmpty()) throw new IllegalArgumentException("ID obligatoire");
+            if (input.isEmpty())
+                throw new IllegalArgumentException("ID obligatoire");
             Long participationId = Long.parseLong(input);
 
             System.out.println("[DEBUG] Recherche pour participation_id = " + participationId);
@@ -1366,9 +1540,12 @@ public class ConsoleTestMain {
 
             if (programmes.isEmpty()) {
                 System.out.println("Aucun programme associé à la participation " + participationId);
-                System.out.println("[DEBUG] Vérification manuelle suggérée : SELECT * FROM programme_recommande WHERE participation_id = " + participationId + ";");
+                System.out.println(
+                        "[DEBUG] Vérification manuelle suggérée : SELECT * FROM programme_recommande WHERE participation_id = "
+                                + participationId + ";");
             } else {
-                System.out.println("\nProgrammes recommandés pour participation " + participationId + " (" + programmes.size() + ") :");
+                System.out.println("\nProgrammes recommandés pour participation " + participationId + " ("
+                        + programmes.size() + ") :");
                 programmes.forEach(System.out::println);
             }
         } catch (NumberFormatException e) {
@@ -1380,13 +1557,14 @@ public class ConsoleTestMain {
     }
 
     // ────────────────────────────────────────────────
-// 4. Afficher les programmes par ambiance
-// ────────────────────────────────────────────────
+    // 4. Afficher les programmes par ambiance
+    // ────────────────────────────────────────────────
     private static void filtrerParAmbiance() {
         try {
             System.out.print("Ambiance (CALME / FESTIVE / SOCIALE / AVENTURE / CULTURELLE) : ");
             String ambianceStr = sc.nextLine().trim().toUpperCase();
-            if (ambianceStr.isEmpty()) throw new IllegalArgumentException("Ambiance obligatoire");
+            if (ambianceStr.isEmpty())
+                throw new IllegalArgumentException("Ambiance obligatoire");
 
             ProgrammeRecommender.Ambiance ambiance = ProgrammeRecommender.Ambiance.valueOf(ambianceStr);
 
@@ -1422,13 +1600,14 @@ public class ConsoleTestMain {
     }
 
     // ────────────────────────────────────────────────
-// 5. Rechercher les programmes par mot-clé dans l'activité
-// ────────────────────────────────────────────────
+    // 5. Rechercher les programmes par mot-clé dans l'activité
+    // ────────────────────────────────────────────────
     private static void rechercherParActivite() {
         try {
             System.out.print("Mot-clé dans l'activité : ");
             String motCle = sc.nextLine().trim().toLowerCase();
-            if (motCle.isEmpty()) throw new IllegalArgumentException("Mot-clé obligatoire");
+            if (motCle.isEmpty())
+                throw new IllegalArgumentException("Mot-clé obligatoire");
 
             System.out.print("ID participation (vide = tous) : ");
             String idStr = sc.nextLine().trim();
@@ -1462,8 +1641,8 @@ public class ConsoleTestMain {
     }
 
     // ────────────────────────────────────────────────
-// 6. Lister les programmes avec horaires valides
-// ────────────────────────────────────────────────
+    // 6. Lister les programmes avec horaires valides
+    // ────────────────────────────────────────────────
     private static void afficherProgrammesValides() {
         try {
             System.out.print("ID participation (vide = tous) : ");
@@ -1495,8 +1674,8 @@ public class ConsoleTestMain {
     }
 
     // ────────────────────────────────────────────────
-// 7. Lister les programmes recommandés (recommande = true)
-// ────────────────────────────────────────────────
+    // 7. Lister les programmes recommandés (recommande = true)
+    // ────────────────────────────────────────────────
     private static void afficherProgrammesRecommandes() {
         try {
             System.out.print("ID participation (vide = tous) : ");
@@ -1528,8 +1707,8 @@ public class ConsoleTestMain {
     }
 
     // ────────────────────────────────────────────────
-// 8. Lister les programmes non recommandés (recommande = false)
-// ────────────────────────────────────────────────
+    // 8. Lister les programmes non recommandés (recommande = false)
+    // ────────────────────────────────────────────────
     private static void afficherProgrammesNonRecommandes() {
         try {
             System.out.print("ID participation (vide = tous) : ");
@@ -1561,19 +1740,21 @@ public class ConsoleTestMain {
     }
 
     // ────────────────────────────────────────────────
-// 9. Supprimer tous les programmes d'une participation
-// ────────────────────────────────────────────────
+    // 9. Supprimer tous les programmes d'une participation
+    // ────────────────────────────────────────────────
     private static void supprimerProgrammesParParticipation() {
         try {
             System.out.print("ID de la participation à nettoyer : ");
             String input = sc.nextLine().trim();
-            if (input.isEmpty()) throw new IllegalArgumentException("ID obligatoire");
+            if (input.isEmpty())
+                throw new IllegalArgumentException("ID obligatoire");
             Long participationId = Long.parseLong(input);
 
             System.out.println("[DEBUG] Suppression des programmes pour participation_id = " + participationId);
 
             programmeRecommenderController.deleteByParticipation(participationId);
-            System.out.println("→ Tous les programmes de la participation " + participationId + " ont été supprimés avec succès.");
+            System.out.println(
+                    "→ Tous les programmes de la participation " + participationId + " ont été supprimés avec succès.");
         } catch (NumberFormatException e) {
             System.out.println("❌ Veuillez entrer un nombre valide");
         } catch (Exception e) {
@@ -1582,8 +1763,8 @@ public class ConsoleTestMain {
     }
 
     // ────────────────────────────────────────────────
-// 10. Afficher statistiques rapides des programmes
-// ────────────────────────────────────────────────
+    // 10. Afficher statistiques rapides des programmes
+    // ────────────────────────────────────────────────
     private static void afficherStatsProgrammes() {
         System.out.println("\n=== Statistiques programmes recommandés ===");
         try {
@@ -1602,8 +1783,10 @@ public class ConsoleTestMain {
 
             long total = source.size();
             long calmes = source.stream().filter(p -> p.getAmbiance() == ProgrammeRecommender.Ambiance.CALME).count();
-            long festifs = source.stream().filter(p -> p.getAmbiance() == ProgrammeRecommender.Ambiance.FESTIVE).count();
-            long sociaux = source.stream().filter(p -> p.getAmbiance() == ProgrammeRecommender.Ambiance.SOCIALE).count();
+            long festifs = source.stream().filter(p -> p.getAmbiance() == ProgrammeRecommender.Ambiance.FESTIVE)
+                    .count();
+            long sociaux = source.stream().filter(p -> p.getAmbiance() == ProgrammeRecommender.Ambiance.SOCIALE)
+                    .count();
             long recommandes = source.stream().filter(ProgrammeRecommender::isRecommande).count();
 
             System.out.printf("Total programmes              : %d%n", total);
@@ -1621,4 +1804,3 @@ public class ConsoleTestMain {
     }
 
 }
-

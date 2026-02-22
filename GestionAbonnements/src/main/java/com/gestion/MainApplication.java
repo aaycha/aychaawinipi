@@ -87,22 +87,25 @@ import java.util.logging.Logger;
 
 public class MainApplication extends Application {
 
-
     private static Stage primaryStage;
     private static MainController mainController;
+    private static com.gestion.api.RestApiService apiService;
 
     public static void main(String[] args) {
         launch(args);
     }
 
-
     @Override
     public void start(Stage stage) {
         primaryStage = stage;
 
+        // Start REST API Server
+        apiService = new com.gestion.api.RestApiService();
+        apiService.start();
+
         try {
             // Chemin du FXML principal (dashboard avec sidebar et conteneur)
-            String mainFxmlPath = "/views/main-view.fxml";
+            String mainFxmlPath = "/usersaif/User.fxml";
 
             System.out.println("Tentative de chargement du FXML principal : " + mainFxmlPath);
 
@@ -115,19 +118,22 @@ public class MainApplication extends Application {
             FXMLLoader loader = new FXMLLoader(fxmlUrl);
             Parent root = loader.load();
 
-            // Récupération du contrôleur principal
-            mainController = loader.getController();
-            if (mainController == null) {
-                throw new IllegalStateException("Impossible de récupérer MainController depuis " + mainFxmlPath);
+            // Récupération du contrôleur principal (si c'est bien lui)
+            Object controller = loader.getController();
+            if (controller instanceof MainController) {
+                mainController = (MainController) controller;
+            } else {
+                System.out.println("Le contrôleur chargé n'est pas MainController (normal si c'est Login)");
             }
 
             Scene scene = new Scene(root, 1200, 800);
 
-            // Chargement des CSS (ajoute les tiens ici)
+            // Chargement des CSS (Nature Mood & Premium)
             String[] cssFiles = {
-                    "/styles/theme-voyage.css",
-                    "/styles/restauration.css",
-                    "/styles/modern-ui.css"   // ← ton CSS global si tu en as un
+                    "/styles/nature-mood.css",
+                    "/styles/dashboard-premium.css",
+                    "/styles/restauration.css", // Legacy support if needed
+                    "/styles/modern-ui.css"
             };
 
             for (String css : cssFiles) {
@@ -150,7 +156,7 @@ public class MainApplication extends Application {
             System.out.println("LAMMA Voyage démarrée avec succès !");
 
             // Charge une vue par défaut au démarrage (optionnel)
-            // loadView("/views/abonnements/abonnement-list.fxml");  // décommente si besoin
+            // loadView("/views/abonnements/abonnement-list.fxml"); // décommente si besoin
 
         } catch (Exception e) {
             System.err.println("Erreur fatale au démarrage : " + e.getMessage());
@@ -174,7 +180,8 @@ public class MainApplication extends Application {
      * Charge une nouvelle vue dans le conteneur du MainController (moduleStackPane)
      * avec une transition fade simple.
      *
-     * @param fxmlPath chemin relatif au classpath, ex: "/views/abonnements/abonnement-list.fxml"
+     * @param fxmlPath chemin relatif au classpath, ex:
+     *                 "/views/abonnements/abonnement-list.fxml"
      */
     public static void loadView(String fxmlPath) {
         if (mainController == null) {
@@ -236,7 +243,8 @@ public class MainApplication extends Application {
     }
 
     /**
-     * Accesseur pour la fenêtre principale (utile pour ouvrir des popups, dialogs, etc.)
+     * Accesseur pour la fenêtre principale (utile pour ouvrir des popups, dialogs,
+     * etc.)
      */
     public static Stage getPrimaryStage() {
         return primaryStage;

@@ -1,8 +1,6 @@
 package com.gestion.ui.utilisateur;
 
 import com.gestion.entities.Participation;
-import com.gestion.interfaces.ParticipationService;
-import com.gestion.services.ParticipationServiceImpl;
 import com.gestion.ui.participation.ParticipationFormController;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -35,9 +33,10 @@ public class MesParticipationsController {
     @FXML
     private Label countLabel;
 
-    private final ParticipationService participationService = new ParticipationServiceImpl();
-    // TODO: à remplacer par l'utilisateur connecté
-    private Long currentUserId = 1L;
+    private final com.gestion.interfaces.ParticipationService participationService = new com.gestion.services.ParticipationServiceImpl();
+    private Long currentUserId = com.gestion.tools.Session.getInstance().getCurrentUserId() != null
+            ? Long.valueOf(com.gestion.tools.Session.getInstance().getCurrentUserId())
+            : null;
 
     @FXML
     public void initialize() {
@@ -125,12 +124,16 @@ public class MesParticipationsController {
     private String getItemIcon(Participation.TypeParticipation type) {
         if (type == null)
             return "🎫";
-        return switch (type) {
-            case GROUPE -> "👥";
-            case HEBERGEMENT -> "🏨";
-            case SIMPLE -> "👤";
-            default -> "🎫";
-        };
+        switch (type) {
+            case GROUPE:
+                return "👥";
+            case HEBERGEMENT:
+                return "🏨";
+            case SIMPLE:
+                return "👤";
+            default:
+                return "🎫";
+        }
     }
 
     private HBox createDetailLabel(String labelText, String valueText) {

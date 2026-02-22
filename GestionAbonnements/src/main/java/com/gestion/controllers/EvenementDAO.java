@@ -15,32 +15,38 @@ public class EvenementDAO {
                 "(titre, description, type, date_debut, date_fin, lieu) " +
                 "VALUES (?, ?, ?, ?, ?, ?)";
 
-        try (Connection cn = MyConnection.getInstance().getConnection();
-                PreparedStatement ps = cn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try {
+            Connection cn = MyConnection.getInstance().getConnection();
+            if (cn == null)
+                return -1;
+            try (PreparedStatement ps = cn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            ps.setString(1, e.getTitre());
-            ps.setString(2, e.getDescription());
-            ps.setString(3, e.getType());
-            ps.setTimestamp(4, Timestamp.valueOf(e.getDateDebut()));
+                ps.setString(1, e.getTitre());
+                ps.setString(2, e.getDescription());
+                ps.setString(3, e.getType());
+                ps.setTimestamp(4, Timestamp.valueOf(e.getDateDebut()));
 
-            // date_fin peut être NULL (SOIREE / RANDONNEE)
-            if (e.getDateFin() == null) {
-                ps.setNull(5, Types.TIMESTAMP);
-            } else {
-                ps.setTimestamp(5, Timestamp.valueOf(e.getDateFin()));
-            }
+                // date_fin peut être NULL (SOIREE / RANDONNEE)
+                if (e.getDateFin() == null) {
+                    ps.setNull(5, Types.TIMESTAMP);
+                } else {
+                    ps.setTimestamp(5, Timestamp.valueOf(e.getDateFin()));
+                }
 
-            ps.setString(6, e.getLieu());
+                ps.setString(6, e.getLieu());
 
-            ps.executeUpdate();
+                ps.executeUpdate();
 
-            try (ResultSet rs = ps.getGeneratedKeys()) {
-                if (rs.next()) {
-                    int id = rs.getInt(1);
-                    e.setIdEvent(id);
-                    return id;
+                try (ResultSet rs = ps.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        int id = rs.getInt(1);
+                        e.setIdEvent(id);
+                        return id;
+                    }
                 }
             }
+        } catch (SQLException ex) {
+            throw ex;
         }
         return -1;
     }
@@ -49,17 +55,23 @@ public class EvenementDAO {
     public Evenement findById(int id) throws SQLException {
         String sql = "SELECT * FROM evenement WHERE id_event = ?";
 
-        try (Connection cn = MyConnection.getInstance().getConnection();
-                PreparedStatement ps = cn.prepareStatement(sql)) {
+        try {
+            Connection cn = MyConnection.getInstance().getConnection();
+            if (cn == null)
+                return null;
+            try (PreparedStatement ps = cn.prepareStatement(sql)) {
 
-            ps.setInt(1, id);
+                ps.setInt(1, id);
 
-            try (ResultSet rs = ps.executeQuery()) {
-                if (!rs.next())
-                    return null;
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (!rs.next())
+                        return null;
 
-                return mapResultSet(rs);
+                    return mapResultSet(rs);
+                }
             }
+        } catch (SQLException ex) {
+            throw ex;
         }
     }
 
@@ -68,13 +80,19 @@ public class EvenementDAO {
         String sql = "SELECT * FROM evenement ORDER BY date_debut DESC";
         List<Evenement> list = new ArrayList<>();
 
-        try (Connection cn = MyConnection.getInstance().getConnection();
-                PreparedStatement ps = cn.prepareStatement(sql);
-                ResultSet rs = ps.executeQuery()) {
+        try {
+            Connection cn = MyConnection.getInstance().getConnection();
+            if (cn == null)
+                return list;
+            try (PreparedStatement ps = cn.prepareStatement(sql);
+                    ResultSet rs = ps.executeQuery()) {
 
-            while (rs.next()) {
-                list.add(mapResultSet(rs));
+                while (rs.next()) {
+                    list.add(mapResultSet(rs));
+                }
             }
+        } catch (SQLException ex) {
+            throw ex;
         }
         return list;
     }
@@ -85,24 +103,30 @@ public class EvenementDAO {
                 "titre=?, description=?, type=?, date_debut=?, date_fin=?, lieu=? " +
                 "WHERE id_event=?";
 
-        try (Connection cn = MyConnection.getInstance().getConnection();
-                PreparedStatement ps = cn.prepareStatement(sql)) {
+        try {
+            Connection cn = MyConnection.getInstance().getConnection();
+            if (cn == null)
+                return false;
+            try (PreparedStatement ps = cn.prepareStatement(sql)) {
 
-            ps.setString(1, e.getTitre());
-            ps.setString(2, e.getDescription());
-            ps.setString(3, e.getType());
-            ps.setTimestamp(4, Timestamp.valueOf(e.getDateDebut()));
+                ps.setString(1, e.getTitre());
+                ps.setString(2, e.getDescription());
+                ps.setString(3, e.getType());
+                ps.setTimestamp(4, Timestamp.valueOf(e.getDateDebut()));
 
-            if (e.getDateFin() == null) {
-                ps.setNull(5, Types.TIMESTAMP);
-            } else {
-                ps.setTimestamp(5, Timestamp.valueOf(e.getDateFin()));
+                if (e.getDateFin() == null) {
+                    ps.setNull(5, Types.TIMESTAMP);
+                } else {
+                    ps.setTimestamp(5, Timestamp.valueOf(e.getDateFin()));
+                }
+
+                ps.setString(6, e.getLieu());
+                ps.setInt(7, e.getIdEvent());
+
+                return ps.executeUpdate() > 0;
             }
-
-            ps.setString(6, e.getLieu());
-            ps.setInt(7, e.getIdEvent());
-
-            return ps.executeUpdate() > 0;
+        } catch (SQLException ex) {
+            throw ex;
         }
     }
 
@@ -110,11 +134,17 @@ public class EvenementDAO {
     public boolean delete(int id) throws SQLException {
         String sql = "DELETE FROM evenement WHERE id_event=?";
 
-        try (Connection cn = MyConnection.getInstance().getConnection();
-                PreparedStatement ps = cn.prepareStatement(sql)) {
+        try {
+            Connection cn = MyConnection.getInstance().getConnection();
+            if (cn == null)
+                return false;
+            try (PreparedStatement ps = cn.prepareStatement(sql)) {
 
-            ps.setInt(1, id);
-            return ps.executeUpdate() > 0;
+                ps.setInt(1, id);
+                return ps.executeUpdate() > 0;
+            }
+        } catch (SQLException ex) {
+            throw ex;
         }
     }
 

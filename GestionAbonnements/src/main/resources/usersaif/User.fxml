@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<?import javafx.scene.layout.Region?>
+<BorderPane prefHeight="750.0" prefWidth="1100.0" styleClass="nature-root" stylesheets="@../styles/nature-mood.css" xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gestion.controllers.Logincontroller">
+
+    <!-- Title Bar -->
+    <top>
+        <HBox alignment="CENTER_RIGHT" spacing="10" style="-fx-background-color: transparent; -fx-padding: 15 25 0 0;">
+            <Button fx:id="minimizeBtn" onAction="#handleMinimize" styleClass="button-capsule-glass" text="−" prefWidth="40" style="-fx-padding: 5;"/>
+            <Button fx:id="maximizeBtn" onAction="#handleMaximize" styleClass="button-capsule-glass" text="□" prefWidth="40" style="-fx-padding: 5;"/>
+            <Button fx:id="closeBtn" onAction="#handleClose" styleClass="button-capsule-glass" text="×" prefWidth="40" style="-fx-padding: 5; -fx-background-color: rgba(239, 68, 68, 0.2);"/>
+        </HBox>
+    </top>
+    <center>
+        <StackPane>
+            <!-- Background Image -->
+            <ImageView fitHeight="900" fitWidth="1600" preserveRatio="false">
+                <image>
+                    <Image url="@roaming_revolution-camping-6626537_1920.jpg" />
+                </image>
+            </ImageView>
+            
+            <!-- Dark/Green Overlay for mood -->
+            <StackPane style="-fx-background-color: rgba(10, 15, 13, 0.75);" />
+
+            <!-- Main Scrollable Content -->
+            <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="modern-scroll">
+                <content>
+                    <VBox alignment="CENTER" spacing="40" style="-fx-padding: 80 0 80 0;">
+                        
+                        <!-- Hero Section -->
+                        <VBox alignment="CENTER" spacing="15">
+                             <ImageView fitHeight="120.0" fitWidth="120.0" pickOnBounds="true" preserveRatio="true">
+                                <image>
+                                    <Image url="@logo.png" />
+                                </image>
+                                <effect>
+                                    <javafx.scene.effect.DropShadow color="rgba(0,0,0,0.5)" radius="20" />
+                                </effect>
+                            </ImageView>
+                            <Label styleClass="text-hero" text="LAMMA ADVENTURE" />
+                            <Label styleClass="text-muted" text="Your gateway to the great outdoors 🌲" />
+                        </VBox>
+
+                        <!-- Login Card -->
+                        <VBox maxWidth="450" spacing="25" styleClass="glass-panel" style="-fx-padding: 45;">
+                            
+                            <VBox spacing="8">
+                                <Label styleClass="text-hero" text="Welcome back" style="-fx-font-size: 28;"/>
+                                <Label styleClass="text-muted" text="Enter your trail credentials below" />
+                            </VBox>
+
+                            <!-- Social Login -->
+                            <HBox alignment="CENTER" spacing="15">
+                                <Button prefHeight="50" prefWidth="180" styleClass="button-capsule-glass" text="f  FACEBOOK" />
+                                <Button prefHeight="50" prefWidth="180" styleClass="button-capsule-glass" text="G  GOOGLE" />
+                            </HBox>
+
+                            <HBox alignment="CENTER" spacing="15">
+                                <Separator HBox.hgrow="ALWAYS" opacity="0.2" />
+                                <Label styleClass="text-muted" text="OR" />
+                                <Separator HBox.hgrow="ALWAYS" opacity="0.2" />
+                            </HBox>
+
+                            <VBox spacing="15">
+                                <VBox spacing="8">
+                                    <Label style="-fx-text-fill: white; -fx-font-weight: 700;" text="EMAIL ADDRESS" />
+                                    <TextField fx:id="emailField" promptText="explorer@hiking.com" styleClass="modern-input" />
+                                </VBox>
+                                
+                                <VBox spacing="8">
+                                    <Label style="-fx-text-fill: white; -fx-font-weight: 700;" text="PASSWORD" />
+                                    <HBox spacing="10" alignment="CENTER_LEFT">
+                                        <StackPane HBox.hgrow="ALWAYS">
+                                            <PasswordField fx:id="passwordField" promptText="Your secret path" styleClass="modern-input" maxWidth="Infinity"/>
+                                            <TextField fx:id="passwordVisible" visible="false" promptText="Your secret path" styleClass="modern-input" maxWidth="Infinity"/>
+                                        </StackPane>
+                                        <Button fx:id="togglePasswordBtn" onAction="#togglePasswordVisibility" styleClass="button-capsule-glass" prefHeight="50" prefWidth="50" style="-fx-padding: 0;">
+                                            <graphic>
+                                                <Label fx:id="eyeIcon" text="👁" style="-fx-text-fill: white; -fx-font-size: 18;"/>
+                                            </graphic>
+                                        </Button>
+                                    </HBox>
+                                </VBox>
+                            </VBox>
+
+                            <HBox alignment="CENTER_LEFT">
+                                <CheckBox styleClass="check-box" text="Keep me signed in" style="-fx-text-fill: #94A3B8;"/>
+                                <Region HBox.hgrow="ALWAYS" />
+                                <Hyperlink text="Lost your map?" style="-fx-text-fill: #F97316; -fx-font-weight: 700;"/>
+                            </HBox>
+
+                            <Button fx:id="loginBtn" maxWidth="Infinity" onAction="#handleLogin" prefHeight="55" styleClass="button-capsule" text="START EXPLORING" />
+
+                            <HBox alignment="CENTER" spacing="5">
+                                <Label styleClass="text-muted" text="New hiker?" />
+                                <Hyperlink fx:id="signupLink" onAction="#goToSignup" style="-fx-text-fill: white; -fx-font-weight: 900;" text="Join our team" />
+                            </HBox>
+                        </VBox>
+
+                    </VBox>
+                </content>
+            </ScrollPane>
+        </StackPane>
+    </center>
+</BorderPane>

@@ -11,55 +11,55 @@
             styleClass="modern-2026-root">
     
     <top>
-        <VBox spacing="15" styleClass="glass-panel" style="-fx-padding: 20; -fx-background-radius: 0 0 24 24;">
-            <HBox alignment="CENTER_LEFT" spacing="20">
-                <Button text="←" styleClass="btn-secondary" style="-fx-background-radius: 50%;" onAction="#onBack"/>
-                <Label text="Tableau de Bord Analytics &amp; KPIs" style="-fx-font-size: 24px; -fx-font-weight: 900; -fx-text-fill: #1E3A8A;"/>
+        <VBox spacing="10" styleClass="glass-panel" style="-fx-padding: 15; -fx-background-radius: 0 0 20 20;">
+            <HBox alignment="CENTER_LEFT" spacing="15">
+                <Button text="←" styleClass="btn-secondary" style="-fx-background-radius: 50%; -fx-padding: 5 10;" onAction="#onBack"/>
+                <Label text="Tableau de Bord Analytics &amp; KPIs" style="-fx-font-size: 20px; -fx-font-weight: 900; -fx-text-fill: #1E3A8A;"/>
                 <Region HBox.hgrow="ALWAYS"/>
-                <Label text="IA Insights Temps Réel" styleClass="badge-lavender"/>
+                <Label text="IA Insights Temps Réel" styleClass="badge-lavender" style="-fx-font-size: 10px;"/>
             </HBox>
         </VBox>
     </top>
 
     <center>
         <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
-            <VBox spacing="25" style="-fx-padding: 30;">
+            <VBox spacing="15" style="-fx-padding: 20;">
                 
-                <HBox spacing="20">
-                    <VBox styleClass="glass-panel-heavy" HBox.hgrow="ALWAYS" alignment="CENTER" style="-fx-padding: 20;">
-                        <Label text="COMMANDES DU JOUR" styleClass="sidebar-title"/>
-                        <Label text="124" style="-fx-font-size: 32px; -fx-font-weight: 900; -fx-text-fill: #3B82F6;"/>
-                        <Label text="+12% vs hier" style="-fx-text-fill: #00D4B4; -fx-font-size: 11px;"/>
+                <HBox spacing="15">
+                    <VBox styleClass="glass-panel-heavy" HBox.hgrow="ALWAYS" alignment="CENTER" style="-fx-padding: 15;">
+                        <Label text="COMMANDES DU JOUR" styleClass="sidebar-title" style="-fx-font-size: 10px;"/>
+                        <Label text="124" style="-fx-font-size: 28px; -fx-font-weight: 900; -fx-text-fill: #3B82F6;"/>
+                        <Label text="+12% vs hier" style="-fx-text-fill: #00D4B4; -fx-font-size: 10px;"/>
                     </VBox>
-                    <VBox styleClass="glass-panel-heavy" HBox.hgrow="ALWAYS" alignment="CENTER" style="-fx-padding: 20;">
-                        <Label text="REVENUS ESTIMÉS" styleClass="sidebar-title"/>
-                        <Label text="1 850 €" style="-fx-font-size: 32px; -fx-font-weight: 900; -fx-text-fill: #00D4B4;"/>
-                        <Label text="Cible : 2 000 €" style="-fx-text-fill: #64748B; -fx-font-size: 11px;"/>
+                    <VBox styleClass="glass-panel-heavy" HBox.hgrow="ALWAYS" alignment="CENTER" style="-fx-padding: 15;">
+                        <Label text="REVENUS ESTIMÉS" styleClass="sidebar-title" style="-fx-font-size: 10px;"/>
+                        <Label text="1 850 €" style="-fx-font-size: 28px; -fx-font-weight: 900; -fx-text-fill: #00D4B4;"/>
+                        <Label text="Cible : 2 000 €" style="-fx-text-fill: #64748B; -fx-font-size: 10px;"/>
                     </VBox>
-                    <VBox styleClass="glass-panel-heavy" HBox.hgrow="ALWAYS" alignment="CENTER" style="-fx-padding: 20;">
-                        <Label text="SATISFACTION CLIENT" styleClass="sidebar-title"/>
-                        <Label text="4.8/5" style="-fx-font-size: 32px; -fx-font-weight: 900; -fx-text-fill: #FBBF24;"/>
-                        <Label text="24 avis aujourd'hui" style="-fx-text-fill: #64748B; -fx-font-size: 11px;"/>
+                    <VBox styleClass="glass-panel-heavy" HBox.hgrow="ALWAYS" alignment="CENTER" style="-fx-padding: 15;">
+                        <Label text="SATISFACTION CLIENT" styleClass="sidebar-title" style="-fx-font-size: 10px;"/>
+                        <Label text="4.8/5" style="-fx-font-size: 28px; -fx-font-weight: 900; -fx-text-fill: #FBBF24;"/>
+                        <Label text="24 avis aujourd'hui" style="-fx-text-fill: #64748B; -fx-font-size: 10px;"/>
                     </VBox>
                 </HBox>
 
-                <GridPane hgap="20" vgap="20">
+                <GridPane hgap="15" vgap="15">
                     <columnConstraints>
                         <ColumnConstraints percentWidth="60"/>
                         <ColumnConstraints percentWidth="40"/>
                     </columnConstraints>
                     
-                    <VBox GridPane.columnIndex="0" styleClass="glass-panel-heavy" style="-fx-padding: 20;">
-                        <Label text="Tendance des Commandes (7 jours)" style="-fx-font-weight: bold;"/>
-                        <LineChart fx:id="orderChart" prefHeight="300">
+                    <VBox GridPane.columnIndex="0" styleClass="glass-panel-heavy" style="-fx-padding: 15;">
+                        <Label text="Tendance des Commandes (7 jours)" style="-fx-font-weight: bold; -fx-font-size: 12px;"/>
+                        <LineChart fx:id="orderChart" prefHeight="250">
                             <xAxis><CategoryAxis side="BOTTOM" /></xAxis>
                             <yAxis><NumberAxis side="LEFT" /></yAxis>
                         </LineChart>
                     </VBox>
                     
-                    <VBox GridPane.columnIndex="1" styleClass="glass-panel-heavy" style="-fx-padding: 20;">
-                        <Label text="Répartition par Catégorie" style="-fx-font-weight: bold;"/>
-                        <PieChart fx:id="categoryChart" prefHeight="300" />
+                    <VBox GridPane.columnIndex="1" styleClass="glass-panel-heavy" style="-fx-padding: 15;">
+                        <Label text="Répartition par Catégorie" style="-fx-font-weight: bold; -fx-font-size: 12px;"/>
+                        <PieChart fx:id="categoryChart" prefHeight="250" />
                     </VBox>
                 </GridPane>
             </VBox>

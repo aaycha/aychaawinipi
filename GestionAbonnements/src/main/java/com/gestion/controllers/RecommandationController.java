@@ -32,41 +32,40 @@ import java.util.List;
     }
 
     /** Top N par utilisateur, optionnellement filtré par contexte (couple, amis, famille). Score > 0.5 pour push. */
-    /*public List<Recommandation> getTopByUser(Long userId, String contexte, int limite) {
-        return recommandationService.findTopByUserId(userId, contexte, limite > 0 ? limite : 5);
-    }
+/*public List<Recommandation> getTopByUser(Long userId, String contexte, int limite) {
+    return recommandationService.findTopByUserId(userId, contexte, limite > 0 ? limite : 5);
+}
 
-    public List<Recommandation> getByUserId(Long userId) {
-        return recommandationService.findByUserId(userId);
-    }
+public List<Recommandation> getByUserId(Long userId) {
+    return recommandationService.findByUserId(userId);
+}
 
-    /** Recherche avec critères (score min, algorithme, valides seulement, limite, tri) */
-    /*public List<Recommandation> search(RecommandationCriteria criteria) {
-        return recommandationService.search(criteria);
-    }
+/** Recherche avec critères (score min, algorithme, valides seulement, limite, tri) */
+/*public List<Recommandation> search(RecommandationCriteria criteria) {
+    return recommandationService.search(criteria);
+}
 
-    public List<Recommandation> search(Long userId, String contexte, Double scoreMin, String sortBy, String sortOrder, Integer limite) {
-        RecommandationCriteria criteria = new RecommandationCriteria();
-        criteria.setUserId(userId);
-        criteria.setContexte(contexte);
-        criteria.setScoreMinimum(scoreMin != null ? scoreMin : 0.5);
-        criteria.setSortBy(sortBy);
-        criteria.setSortOrder(sortOrder);
-        criteria.setLimite(limite != null ? limite : 10);
-        criteria.setValidesSeulement(true);
-        return recommandationService.search(criteria);
-    }
+public List<Recommandation> search(Long userId, String contexte, Double scoreMin, String sortBy, String sortOrder, Integer limite) {
+    RecommandationCriteria criteria = new RecommandationCriteria();
+    criteria.setUserId(userId);
+    criteria.setContexte(contexte);
+    criteria.setScoreMinimum(scoreMin != null ? scoreMin : 0.5);
+    criteria.setSortBy(sortBy);
+    criteria.setSortOrder(sortOrder);
+    criteria.setLimite(limite != null ? limite : 10);
+    criteria.setValidesSeulement(true);
+    return recommandationService.search(criteria);
+}
 
-    public Recommandation update(Recommandation recommandation) {
-        return recommandationService.update(recommandation);
-    }
+public Recommandation update(Recommandation recommandation) {
+    return recommandationService.update(recommandation);
+}
 
-    /** Suppression si reco obsolète (ex: événement annulé). Clean-up périodique. */
-   /* public boolean delete(Long id) {
-        return recommandationService.delete(id);
-    }
+/** Suppression si reco obsolète (ex: événement annulé). Clean-up périodique. */
+/* public boolean delete(Long id) {
+     return recommandationService.delete(id);
+ }
 }*/
-
 
 package com.gestion.controllers;
 
@@ -87,14 +86,12 @@ public class RecommandationController {
     }
 
     public void save(ProgrammeRecommender p) {
-        String sql = """
-            INSERT INTO programme_recommande
-            (participation_id, activite, heure_debut, heure_fin, ambiance, justification, recommande)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        """;
+        String sql = "INSERT INTO programme_recommande " +
+                "(participation_id, activite, heure_debut, heure_fin, ambiance, justification, recommande) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             ps.setLong(1, p.getParticipationId());
             ps.setString(2, p.getActivite());
@@ -119,14 +116,12 @@ public class RecommandationController {
     public List<ProgrammeRecommender> findByParticipation(Long participationId) {
         List<ProgrammeRecommender> list = new ArrayList<>();
 
-        String sql = """
-            SELECT * FROM programme_recommande
-            WHERE participation_id = ?
-            ORDER BY heure_debut ASC
-        """;
+        String sql = "SELECT * FROM programme_recommande " +
+                "WHERE participation_id = ? " +
+                "ORDER BY heure_debut ASC";
 
         try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setLong(1, participationId);
             try (ResultSet rs = ps.executeQuery()) {
@@ -152,7 +147,7 @@ public class RecommandationController {
     public void deleteByParticipation(Long participationId) {
         String sql = "DELETE FROM programme_recommande WHERE participation_id = ?";
         try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setLong(1, participationId);
             ps.executeUpdate();
         } catch (SQLException e) {

@@ -15,6 +15,7 @@ import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Service de gestion des participations - Version Nettoyée et Synchronisée
@@ -116,35 +117,46 @@ public class ParticipationServiceImpl implements ParticipationService {
 
         String sql = "INSERT INTO participations (user_id, evenement_id, date_inscription, type, statut, hebergement_nuits, contexte_social, badge_associe, nb_adultes, nb_enfants, nb_chiens, total_participants, type_abonnement, montant_calcule, devise, commentaire, besoins_speciaux) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try (Connection conn = dbConnection.getConnection();
-                PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            ps.setLong(1, p.getUserId());
-            ps.setLong(2, p.getEvenementId());
-            ps.setTimestamp(3, Timestamp.valueOf(p.getDateInscription()));
-            ps.setString(4, p.getType().name());
-            ps.setString(5, p.getStatut().name());
-            ps.setInt(6, p.getHebergementNuits());
-            ps.setString(7, p.getContexteSocial().name());
-            ps.setString(8, p.getBadgeAssocie());
-            ps.setInt(9, p.getNbAdultes());
-            ps.setInt(10, p.getNbEnfants());
-            ps.setInt(11, p.getNbChiens());
-            ps.setInt(12, p.getTotalParticipants());
-            ps.setString(13, p.getTypeAbonnementChoisi());
-            ps.setBigDecimal(14, p.getMontantCalcule());
-            ps.setString(15, p.getDevise());
-            ps.setString(16, p.getCommentaire());
-            ps.setString(17, p.getBesoinsSpeciaux());
-
-            ps.executeUpdate();
-            try (ResultSet keys = ps.getGeneratedKeys()) {
-                if (keys.next())
-                    p.setId(keys.getLong(1));
+        try (Connection conn = dbConnection.getConnection()) {
+            if (conn == null) {
+                logger.error("Connexion à la base de données indisponible pour create");
+                throw new RuntimeException("Connexion à la base de données indisponible.");
             }
-            return p;
+            try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                ps.setLong(1, p.getUserId());
+                ps.setLong(2, p.getEvenementId());
+                ps.setTimestamp(3, Timestamp.valueOf(p.getDateInscription()));
+                ps.setString(4, p.getType().name());
+                ps.setString(5, p.getStatut().name());
+                ps.setInt(6, p.getHebergementNuits());
+                ps.setString(7, p.getContexteSocial().name());
+                ps.setString(8, p.getBadgeAssocie());
+                ps.setInt(9, p.getNbAdultes());
+                ps.setInt(10, p.getNbEnfants());
+                ps.setInt(11, p.getNbChiens());
+                ps.setInt(12, p.getTotalParticipants());
+                ps.setString(13, p.getTypeAbonnementChoisi());
+                ps.setBigDecimal(14, p.getMontantCalcule());
+                ps.setString(15, p.getDevise());
+                ps.setString(16, p.getCommentaire());
+                ps.setString(17, p.getBesoinsSpeciaux());
+
+                ps.executeUpdate();
+                try (ResultSet keys = ps.getGeneratedKeys()) {
+                    if (keys.next())
+                        p.setId(keys.getLong(1));
+                }
+                return p;
+            }
         } catch (SQLException e) {
-            logger.error("Erreur create participation", e);
-            throw new RuntimeException(e);
+            String msg = e.getMessage();
+            logger.error("Erreur critique lors de l'ajout de participation: {}", msg);
+            if (msg.contains("Unknown column")) {
+                throw new RuntimeException(
+                        "Erreur de base de données : certaines colonnes (ex: nb_adultes) manquent dans la table 'participations'. Veuillez vérifier le schéma SQL.",
+                        e);
+            }
+            throw new RuntimeException("Impossible d'ajouter la participation : " + msg, e);
         }
     }
 
@@ -183,12 +195,17 @@ public class ParticipationServiceImpl implements ParticipationService {
     @Override
     public Optional<Participation> findById(Long id) {
         String sql = "SELECT * FROM participations WHERE id = ?";
-        try (Connection conn = dbConnection.getConnection();
-                PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setLong(1, id);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next())
-                    return Optional.of(map(rs));
+        try (Connection conn = dbConnection.getConnection()) {
+            if (conn == null) {
+                logger.error("Connexion à la base de données indisponible pour findById");
+                return Optional.empty();
+            }
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setLong(1, id);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next())
+                        return Optional.of(map(rs));
+                }
             }
         } catch (SQLException e) {
             logger.error("Error findById", e);
@@ -200,11 +217,16 @@ public class ParticipationServiceImpl implements ParticipationService {
     public List<Participation> findAll() {
         List<Participation> list = new ArrayList<>();
         String sql = "SELECT * FROM participations ORDER BY date_inscription DESC";
-        try (Connection conn = dbConnection.getConnection();
-                PreparedStatement ps = conn.prepareStatement(sql);
-                ResultSet rs = ps.executeQuery()) {
-            while (rs.next())
-                list.add(map(rs));
+        try (Connection conn = dbConnection.getConnection()) {
+            if (conn == null) {
+                logger.error("Connexion à la base de données indisponible pour findAll");
+                return list;
+            }
+            try (PreparedStatement ps = conn.prepareStatement(sql);
+                    ResultSet rs = ps.executeQuery()) {
+                while (rs.next())
+                    list.add(map(rs));
+            }
         } catch (SQLException e) {
             logger.error("Error findAll", e);
         }
@@ -213,21 +235,26 @@ public class ParticipationServiceImpl implements ParticipationService {
 
     @Override
     public List<Participation> findByUserId(Long userId) {
-        return findAll().stream().filter(p -> p.getUserId().equals(userId)).toList();
+        return findAll().stream().filter(p -> p.getUserId().equals(userId)).collect(Collectors.toList());
     }
 
     @Override
     public List<Participation> findByEvenementId(Long evenementId) {
-        return findAll().stream().filter(p -> p.getEvenementId().equals(evenementId)).toList();
+        return findAll().stream().filter(p -> p.getEvenementId().equals(evenementId)).collect(Collectors.toList());
     }
 
     @Override
     public boolean delete(Long id) {
         String sql = "DELETE FROM participations WHERE id = ?";
-        try (Connection conn = dbConnection.getConnection();
-                PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setLong(1, id);
-            return ps.executeUpdate() > 0;
+        try (Connection conn = dbConnection.getConnection()) {
+            if (conn == null) {
+                logger.error("Connexion à la base de données indisponible pour delete");
+                return false;
+            }
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setLong(1, id);
+                return ps.executeUpdate() > 0;
+            }
         } catch (SQLException e) {
             logger.error("Error delete", e);
             return false;
@@ -239,24 +266,29 @@ public class ParticipationServiceImpl implements ParticipationService {
         if (p.getId() == null)
             throw new IllegalArgumentException("ID manquant");
         String sql = "UPDATE participations SET statut=?, hebergement_nuits=?, contexte_social=?, badge_associe=?, nb_adultes=?, nb_enfants=?, nb_chiens=?, total_participants=?, type_abonnement=?, montant_calcule=?, devise=?, commentaire=?, besoins_speciaux=? WHERE id=?";
-        try (Connection conn = dbConnection.getConnection();
-                PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, p.getStatut().name());
-            ps.setInt(2, p.getHebergementNuits());
-            ps.setString(3, p.getContexteSocial().name());
-            ps.setString(4, p.getBadgeAssocie());
-            ps.setInt(5, p.getNbAdultes());
-            ps.setInt(6, p.getNbEnfants());
-            ps.setInt(7, p.getNbChiens());
-            ps.setInt(8, p.getTotalParticipants());
-            ps.setString(9, p.getTypeAbonnementChoisi());
-            ps.setBigDecimal(10, p.getMontantCalcule());
-            ps.setString(11, p.getDevise());
-            ps.setString(12, p.getCommentaire());
-            ps.setString(13, p.getBesoinsSpeciaux());
-            ps.setLong(14, p.getId());
-            ps.executeUpdate();
-            return p;
+        try (Connection conn = dbConnection.getConnection()) {
+            if (conn == null) {
+                logger.error("Connexion à la base de données indisponible pour update");
+                throw new RuntimeException("Connexion à la base de données indisponible.");
+            }
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setString(1, p.getStatut().name());
+                ps.setInt(2, p.getHebergementNuits());
+                ps.setString(3, p.getContexteSocial().name());
+                ps.setString(4, p.getBadgeAssocie());
+                ps.setInt(5, p.getNbAdultes());
+                ps.setInt(6, p.getNbEnfants());
+                ps.setInt(7, p.getNbChiens());
+                ps.setInt(8, p.getTotalParticipants());
+                ps.setString(9, p.getTypeAbonnementChoisi());
+                ps.setBigDecimal(10, p.getMontantCalcule());
+                ps.setString(11, p.getDevise());
+                ps.setString(12, p.getCommentaire());
+                ps.setString(13, p.getBesoinsSpeciaux());
+                ps.setLong(14, p.getId());
+                ps.executeUpdate();
+                return p;
+            }
         } catch (SQLException e) {
             logger.error("Error update", e);
             throw new RuntimeException(e);
@@ -266,12 +298,17 @@ public class ParticipationServiceImpl implements ParticipationService {
     @Override
     public boolean isAlreadyParticipating(Long userId, Long evenementId) {
         String sql = "SELECT 1 FROM participations WHERE user_id = ? AND evenement_id = ? LIMIT 1";
-        try (Connection c = dbConnection.getConnection();
-                PreparedStatement ps = c.prepareStatement(sql)) {
-            ps.setLong(1, userId);
-            ps.setLong(2, evenementId);
-            try (ResultSet rs = ps.executeQuery()) {
-                return rs.next();
+        try (Connection c = dbConnection.getConnection()) {
+            if (c == null) {
+                logger.error("Connexion à la base de données indisponible pour isAlreadyParticipating");
+                return false;
+            }
+            try (PreparedStatement ps = c.prepareStatement(sql)) {
+                ps.setLong(1, userId);
+                ps.setLong(2, evenementId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    return rs.next();
+                }
             }
         } catch (SQLException e) {
             return false;
@@ -293,33 +330,35 @@ public class ParticipationServiceImpl implements ParticipationService {
     @Override
     public List<Participation> search(ParticipationCriteria criteria) {
         return findAll().stream()
-                .filter(p -> (criteria.getUserId() == null || p.getUserId().equals(criteria.getUserId()))).toList();
+                .filter(p -> (criteria.getUserId() == null || p.getUserId().equals(criteria.getUserId())))
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<Participation> findByStatut(Participation.StatutParticipation statut) {
-        return findAll().stream().filter(p -> p.getStatut() == statut).toList();
+        return findAll().stream().filter(p -> p.getStatut() == statut).collect(Collectors.toList());
     }
 
     @Override
     public List<Participation> findByType(Participation.TypeParticipation type) {
-        return findAll().stream().filter(p -> p.getType() == type).toList();
+        return findAll().stream().filter(p -> p.getType() == type).collect(Collectors.toList());
     }
 
     @Override
     public List<Participation> findByContexteSocial(Participation.ContexteSocial contexte) {
-        return findAll().stream().filter(p -> p.getContexteSocial() == contexte).toList();
+        return findAll().stream().filter(p -> p.getContexteSocial() == contexte).collect(Collectors.toList());
     }
 
     @Override
     public List<Participation> findByDateInscriptionBetween(LocalDateTime debut, LocalDateTime fin) {
         return findAll().stream()
-                .filter(p -> !p.getDateInscription().isBefore(debut) && !p.getDateInscription().isAfter(fin)).toList();
+                .filter(p -> !p.getDateInscription().isBefore(debut) && !p.getDateInscription().isAfter(fin))
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<Participation> findByHebergementNuitsMinimum(int nuitsMin) {
-        return findAll().stream().filter(p -> p.getHebergementNuits() >= nuitsMin).toList();
+        return findAll().stream().filter(p -> p.getHebergementNuits() >= nuitsMin).collect(Collectors.toList());
     }
 
     @Override
@@ -335,7 +374,8 @@ public class ParticipationServiceImpl implements ParticipationService {
     @Override
     public List<Participation> findListeAttente(Long evenementId) {
         return findByEvenementId(evenementId).stream()
-                .filter(p -> p.getStatut() == Participation.StatutParticipation.EN_LISTE_ATTENTE).toList();
+                .filter(p -> p.getStatut() == Participation.StatutParticipation.EN_LISTE_ATTENTE)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -386,7 +426,7 @@ public class ParticipationServiceImpl implements ParticipationService {
 
     @Override
     public List<Participation> findAvecHebergement() {
-        return findAll().stream().filter(p -> p.getHebergementNuits() > 0).toList();
+        return findAll().stream().filter(p -> p.getHebergementNuits() > 0).collect(Collectors.toList());
     }
 
     @Override
@@ -412,12 +452,13 @@ public class ParticipationServiceImpl implements ParticipationService {
 
     @Override
     public List<Participation> findByBadge(String badge) {
-        return findAll().stream().filter(p -> badge.equals(p.getBadgeAssocie())).toList();
+        return findAll().stream().filter(p -> badge.equals(p.getBadgeAssocie())).collect(Collectors.toList());
     }
 
     @Override
     public List<Participation> findParticipationsAvecBadge() {
-        return findAll().stream().filter(p -> p.getBadgeAssocie() != null && !p.getBadgeAssocie().isEmpty()).toList();
+        return findAll().stream().filter(p -> p.getBadgeAssocie() != null && !p.getBadgeAssocie().isEmpty())
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -434,7 +475,7 @@ public class ParticipationServiceImpl implements ParticipationService {
     @Override
     public List<Participation> findParticipationsSimilaires(Long userId, Participation.ContexteSocial contexte) {
         return findAll().stream().filter(p -> !p.getUserId().equals(userId) && p.getContexteSocial() == contexte)
-                .toList();
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -512,7 +553,8 @@ public class ParticipationServiceImpl implements ParticipationService {
 
     @Override
     public List<Participation> findParticipationsAbonnementPremium() {
-        return findAll().stream().filter(p -> "PREMIUM".equals(p.getTypeAbonnementChoisi())).toList();
+        return findAll().stream().filter(p -> "PREMIUM".equals(p.getTypeAbonnementChoisi()))
+                .collect(Collectors.toList());
     }
 
     @Override

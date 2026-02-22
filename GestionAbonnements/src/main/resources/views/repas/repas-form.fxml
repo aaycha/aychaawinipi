@@ -1,171 +1,194 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Font?>
-
-<ScrollPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.CheckBox?>
+<ScrollPane xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.gestion.ui.repas.RepasFormController"
-            fitToWidth="true"
-            style="-fx-background-color: transparent;">
+            fitToWidth="true" fitToHeight="true" pannable="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
+            stylesheets="@../../styles/nature-mood.css, @../../styles/card-view.css"
+            style="-fx-background-color: transparent; -fx-background: transparent; -fx-border-color: transparent; -fx-padding: 0;">
 
-    <VBox spacing="30" style="-fx-background-color: transparent;" prefWidth="1000" maxWidth="1000">
-        <padding>
-            <Insets top="40" right="60" bottom="40" left="60"/>
-        </padding>
-
-        <!-- Header 2026 -->
-        <HBox spacing="20" alignment="CENTER_LEFT" style="-fx-background-color: rgba(30, 58, 138, 0.9); -fx-background-radius: 24; -fx-padding: 20 30;">
-            <StackPane style="-fx-background-color: #CFFFEF; -fx-background-radius: 50%; -fx-padding: 10;">
-                <Label text="🦆" style="-fx-font-size: 32px;"/>
-            </StackPane>
-            <VBox spacing="5" HBox.hgrow="ALWAYS">
-                <Label fx:id="formTitle" text="Nouveau Plat" style="-fx-font-size: 32px; -fx-font-weight: 900; -fx-text-fill: white;"/>
-                <Label text="Assistant IA LAMMA Voyage v2.0 • Optimisation du menu" style="-fx-font-size: 13px; -fx-text-fill: #B2F2EA; -fx-font-weight: bold;"/>
-            </VBox>
-            <ToggleButton fx:id="iaToggleInForm" selected="true" text="IA ACTIVE" styleClass="btn-ai-assist" style="-fx-background-color: #00D4B4; -fx-text-fill: white; -fx-font-size: 11px;"/>
-        </HBox>
-
-        <GridPane hgap="30" vgap="0">
-            <columnConstraints>
-                <ColumnConstraints percentWidth="65"/>
-                <ColumnConstraints percentWidth="35"/>
-            </columnConstraints>
-
-            <!-- LEFT: CORE FORM -->
-            <VBox GridPane.columnIndex="0" spacing="25">
-                <!-- Error Container -->
-                <VBox fx:id="errorContainer" visible="false" managed="false" style="-fx-background-color: #FEE2E2; -fx-background-radius: 20; -fx-padding: 20; -fx-border-color: #EF4444; -fx-border-width: 1; -fx-border-radius: 20;">
-                    <HBox spacing="10" alignment="CENTER_LEFT">
-                        <Label text="⚠️" style="-fx-font-size: 16px;"/>
-                        <Label fx:id="globalErrorMessage" text="Veuillez corriger les erreurs avant d'enregistrer." style="-fx-text-fill: #B91C1C; -fx-font-weight: 900; -fx-font-size: 13px;"/>
-                    </HBox>
+    <StackPane style="-fx-background-color: transparent; -fx-padding: 10;">
+        <VBox spacing="10" styleClass="glass-panel" prefWidth="900" maxWidth="950" alignment="TOP_CENTER" style="-fx-padding: 15;">
+            
+            <!-- Hiker Title Section -->
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <StackPane style="-fx-background-color: rgba(34, 197, 94, 0.15); -fx-background-radius: 8; -fx-padding: 6;">
+                    <Label text="🍱" style="-fx-font-size: 16;"/>
+                </StackPane>
+                <VBox spacing="0">
+                    <Label fx:id="formTitle" text="New Ration Manifest"
+                           style="-fx-font-size: 16px; -fx-font-weight: 800; -fx-text-fill: white;"/>
+                    <Label text="Assistant Scout v2.0 • Optimizing expedition calories" style="-fx-font-size: 9px; -fx-text-fill: #94a3b8;"/>
                 </VBox>
+                <Region HBox.hgrow="ALWAYS"/>
+                <ToggleButton fx:id="iaToggleInForm" selected="true" text="SCOUT IA ACTIVE" styleClass="button-capsule-glass" style="-fx-text-fill: #22c55e; -fx-font-size: 10; -fx-font-weight: 900; -fx-padding: 6 15;"/>
+            </HBox>
 
-                <VBox spacing="25" style="-fx-background-color: rgba(255,255,255,0.9); -fx-background-radius: 32; -fx-padding: 35; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 20, 0, 0, 8);">
-                    
-                    <!-- Section: Identité -->
-                    <VBox spacing="15">
-                        <Label text="IDENTITÉ DU PLAT" style="-fx-font-weight: 900; -fx-text-fill: #1E3A8A; -fx-font-size: 12px;"/>
-                        <VBox spacing="8">
-                            <TextField fx:id="inputNom" promptText="Nom du plat..." styleClass="search-bar-smart" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
-                            <HBox spacing="10">
-                                <ComboBox fx:id="comboRestaurant" promptText="Restaurant" HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="modern-combo"/>
-                                <ComboBox fx:id="comboMenu" promptText="Menu" HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="modern-combo"/>
-                            </HBox>
+            <Separator style="-fx-opacity: 0.1;"/>
+
+            <GridPane hgap="20" vgap="0">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="65"/>
+                    <ColumnConstraints percentWidth="35"/>
+                </columnConstraints>
+
+                <!-- LEFT: CORE FORM -->
+                <VBox GridPane.columnIndex="0" spacing="15">
+                    <!-- Error Terminal -->
+                    <VBox fx:id="errorContainer" visible="false" managed="false" style="-fx-background-color: rgba(239, 68, 68, 0.1); -fx-padding: 10; -fx-background-radius: 10; -fx-border-color: rgba(239, 68, 68, 0.2); -fx-border-radius: 10;">
+                        <HBox spacing="8" alignment="CENTER_LEFT">
+                            <Label text="⚠️" style="-fx-font-size: 14px;"/>
+                            <Label fx:id="globalErrorMessage" text="Scout error: Correct coordinates before establishing." style="-fx-text-fill: #ef4444; -fx-font-weight: 900; -fx-font-size: 11px;"/>
+                        </HBox>
+                    </VBox>
+
+                    <!-- Identity Section -->
+                    <VBox spacing="12" styleClass="modern-card" style="-fx-padding: 15;">
+                        <Label text="🍲 RATION IDENTIFICATION" style="-fx-font-weight: 900; -fx-text-fill: #3b82f6; -fx-font-size: 11; -fx-letter-spacing: 1px;"/>
+                        
+                        <VBox spacing="10">
+                            <VBox spacing="3">
+                                <TextField fx:id="inputNom" promptText="Enter dish name (e.g., Trail Mix Plus)..." styleClass="modern-input" style="-fx-font-size: 14px; -fx-font-weight: 800;"/>
+                                <Label fx:id="errorNom" visible="false" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 10px;"/>
+                            </VBox>
+                            <VBox spacing="3">
+                                <HBox spacing="10">
+                                    <ComboBox fx:id="comboRestaurant" promptText="Lodge Assignment" HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="modern-input" style="-fx-font-size: 11;"/>
+                                    <ComboBox fx:id="comboMenu" promptText="Mission Menu" HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="modern-input" style="-fx-font-size: 11;"/>
+                                </HBox>
+                                <Label fx:id="errorRestaurantMenu" visible="false" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 10px;"/>
+                            </VBox>
                         </VBox>
                     </VBox>
 
-                    <!-- Section: Caractéristiques -->
-                    <HBox spacing="20">
-                        <VBox spacing="10" HBox.hgrow="ALWAYS">
-                            <Label text="CLASSIFICATION" style="-fx-font-weight: 900; -fx-text-fill: #1E3A8A; -fx-font-size: 11px;"/>
-                            <ComboBox fx:id="comboCategorie" promptText="Catégorie" maxWidth="Infinity" styleClass="modern-combo"/>
-                            <ComboBox fx:id="comboTypePlat" promptText="Type de plat" maxWidth="Infinity" styleClass="modern-combo"/>
-                        </VBox>
-                        <VBox spacing="10" HBox.hgrow="ALWAYS">
-                            <Label text="METRICS" style="-fx-font-weight: 900; -fx-text-fill: #1E3A8A; -fx-font-size: 11px;"/>
-                            <TextField fx:id="inputPrix" promptText="Prix (€)" styleClass="modern-combo"/>
-                            <TextField fx:id="inputTempsPreparation" promptText="Temps prépa (min)" styleClass="modern-combo"/>
-                        </VBox>
-                    </HBox>
+                    <!-- Metrics Section -->
+                    <VBox spacing="12" styleClass="modern-card" style="-fx-padding: 15;">
+                        <Label text="📊 EXPLOITATION METRICS" style="-fx-font-weight: 900; -fx-text-fill: #FACC15; -fx-font-size: 11; -fx-letter-spacing: 1px;"/>
+                        
+                        <HBox spacing="15">
+                            <VBox spacing="8" HBox.hgrow="ALWAYS">
+                                <Label text="Scout Classification:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 10;"/>
+                                <ComboBox fx:id="comboCategorie" promptText="Ration Category" maxWidth="Infinity" styleClass="modern-input" style="-fx-font-size: 11;"/>
+                                <Label fx:id="errorCategorie" visible="false" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 9px;"/>
+                                <ComboBox fx:id="comboTypePlat" promptText="Serving Type" maxWidth="Infinity" styleClass="modern-input" style="-fx-font-size: 11;"/>
+                                <Label fx:id="errorTypePlat" visible="false" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 9px;"/>
+                            </VBox>
+                            <VBox spacing="8" HBox.hgrow="ALWAYS">
+                                <Label text="Mission Logistics:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 10;"/>
+                                <TextField fx:id="inputPrix" promptText="Price (€)" styleClass="modern-input" style="-fx-font-size: 11;"/>
+                                <Label fx:id="errorPrix" visible="false" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 9px;"/>
+                                <TextField fx:id="inputTempsPreparation" promptText="Prep Time (min)" styleClass="modern-input" style="-fx-font-size: 11;"/>
+                                <Label fx:id="errorTempsPreparation" visible="false" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 9px;"/>
+                            </VBox>
+                        </HBox>
+                    </VBox>
 
-                    <!-- Section: IA Content Generation -->
-                    <VBox spacing="15" style="-fx-background-color: rgba(224, 187, 228, 0.1); -fx-padding: 20; -fx-background-radius: 24; -fx-border-color: #E0BBE4; -fx-border-width: 1; -fx-border-style: dashed;">
-                        <HBox alignment="CENTER_LEFT" spacing="10">
-                            <Label text="CONTENU GÉNÉRÉ PAR IA" style="-fx-font-weight: 900; -fx-text-fill: #6A1B9A; -fx-font-size: 11px;"/>
+                    <!-- AI Intel Section -->
+                    <VBox spacing="12" styleClass="modern-card" style="-fx-padding: 15; -fx-background-color: rgba(168, 85, 247, 0.05); -fx-border-color: rgba(168, 85, 247, 0.1); -fx-border-style: dashed;">
+                        <HBox alignment="CENTER_LEFT" spacing="8">
+                            <Label text="✨ SCOUT IA INTEL" style="-fx-font-weight: 900; -fx-text-fill: #a855f7; -fx-font-size: 11; -fx-letter-spacing: 1px;"/>
                             <Region HBox.hgrow="ALWAYS"/>
-                            <Button text="✨ Générer via IA" onAction="#onIAGenerate" styleClass="badge-lavender" style="-fx-cursor: hand;"/>
+                            <Button text="AUTO-GENERATE" onAction="#onIAGenerate" styleClass="button-capsule-glass" style="-fx-text-fill: #a855f7; -fx-font-size: 10; -fx-padding: 4 10;"/>
                         </HBox>
                         
-                        <VBox spacing="10">
-                            <TextArea fx:id="inputDescription" promptText="L'IA peut rédiger une description alléchante pour vous..." wrapText="true" prefRowCount="4" style="-fx-background-radius: 12; -fx-border-radius: 12;"/>
+                        <VBox spacing="8">
+                            <TextArea fx:id="inputDescription" promptText="Drafting expedition menu details..." wrapText="true" prefRowCount="3" styleClass="modern-input" style="-fx-font-size: 11;"/>
+                            <Label fx:id="errorDescription" visible="false" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 9px;"/>
                             
-                            <!-- Allergen Zone -->
-                            <HBox fx:id="allergenBox" spacing="8" alignment="CENTER_LEFT" managed="false" visible="false">
-                                <Label text="Allergènes détectés :" style="-fx-font-size: 11px; -fx-text-fill: #64748B;"/>
-                                <!-- Badges dynamically added in controller -->
+                            <HBox fx:id="allergenBox" spacing="5" alignment="CENTER_LEFT" managed="false" visible="false">
+                                <Label text="Hazard Warnings:" style="-fx-font-size: 10px; -fx-text-fill: #64748B; -fx-font-weight: 700;"/>
                             </HBox>
                         </VBox>
                     </VBox>
 
-                    <!-- Image & Status -->
-                    <HBox spacing="20" alignment="BOTTOM_LEFT">
-                        <VBox spacing="10" HBox.hgrow="ALWAYS">
-                            <Label text="VISUEL DU PLAT" style="-fx-font-weight: 900; -fx-text-fill: #1E3A8A; -fx-font-size: 11px;"/>
-                            <HBox spacing="10">
-                                <TextField fx:id="inputImageUrl" promptText="URL ou chemin..." HBox.hgrow="ALWAYS" styleClass="modern-combo"/>
-                                <Button text="📁" onAction="#onUploadImage" styleClass="btn-turquoise" style="-fx-padding: 8 15;"/>
-                            </HBox>
-                        </VBox>
-                        <CheckBox fx:id="checkDisponible" text="EN LIGNE" selected="true" style="-fx-font-weight: 900; -fx-text-fill: #00D4B4;"/>
+                    <!-- Visuals -->
+                    <VBox spacing="12" styleClass="modern-card" style="-fx-padding: 15;">
+                        <Label text="🖼️ VISUAL FEED" style="-fx-font-weight: 900; -fx-text-fill: #F97316; -fx-font-size: 11; -fx-letter-spacing: 1px;"/>
+                        
+                        <HBox spacing="12" alignment="BOTTOM_LEFT">
+                            <VBox spacing="5" HBox.hgrow="ALWAYS">
+                                <TextField fx:id="inputImageUrl" promptText="Signal URL or local feed path..." styleClass="modern-input" style="-fx-font-size: 11;"/>
+                                <Label fx:id="errorImageUrl" visible="false" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 9px;"/>
+                            </VBox>
+                            <Button text="📁 FILES" onAction="#onUploadImage" styleClass="button-capsule-glass" style="-fx-padding: 8 20; -fx-font-size: 11;"/>
+                            <CheckBox fx:id="checkDisponible" text="LIVE" selected="true" style="-fx-text-fill: #22c55e; -fx-font-weight: 900; -fx-font-size: 11;"/>
+                        </HBox>
+                    </VBox>
+
+                    <!-- Actions -->
+                    <HBox spacing="12" alignment="CENTER_RIGHT">
+                        <Button text="💾 CONFIRM RATION" onAction="#onEnregistrer" styleClass="button-capsule" style="-fx-padding: 10 30; -fx-font-size: 12;"/>
+                        <Button text="❌ ABORT" onAction="#onAnnuler" styleClass="button-capsule-glass" style="-fx-padding: 10 25; -fx-font-size: 12;"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="statusMessage" text="Awaiting scout input..." style="-fx-text-fill: #64748b; -fx-font-size: 10px; -fx-font-style: italic;"/>
                     </HBox>
                 </VBox>
-                
-                <!-- Action Buttons -->
-                <HBox spacing="15" alignment="CENTER_LEFT">
-                    <Button text="SAUVEGARDER LE PLAT" onAction="#onEnregistrer" styleClass="btn-turquoise" prefWidth="250" prefHeight="50"/>
-                    <Button text="ANNULER" onAction="#onAnnuler" style="-fx-background-color: rgba(255,255,255,0.5); -fx-text-fill: #EF4444; -fx-font-weight: 900; -fx-background-radius: 25; -fx-padding: 10 30;"/>
-                    <Region HBox.hgrow="ALWAYS"/>
-                    <Label fx:id="statusMessage" text="En attente de saisie..." style="-fx-text-fill: #64748B; -fx-font-size: 11px;"/>
-                </HBox>
-            </VBox>
 
-            <!-- RIGHT: IA SUGGESTIONS & TRENDS -->
-            <VBox GridPane.columnIndex="1" spacing="25">
-                <VBox spacing="20" styleClass="glass-panel" style="-fx-padding: 30; -fx-background-radius: 32; -fx-background-color: rgba(30, 58, 138, 0.05);">
-                    <Label text="IA SUGGESTIONS" style="-fx-font-weight: 900; -fx-font-size: 14px; -fx-text-fill: #1E3A8A;"/>
-                    
-                    <VBox spacing="15">
-                        <Label text="TENDANCES VOYAGE ACTIVÉES" style="-fx-font-size: 10px; -fx-text-fill: #64748B; -fx-font-weight: bold;"/>
+                <!-- RIGHT: IA TRENDS -->
+                <VBox GridPane.columnIndex="1" spacing="15">
+                    <VBox spacing="15" styleClass="modern-card" style="-fx-padding: 20; -fx-background-color: rgba(30, 58, 138, 0.05);">
+                        <Label text="MISSION TRENDS" style="-fx-font-weight: 900; -fx-font-size: 12px; -fx-text-fill: white;"/>
                         
                         <VBox spacing="10">
-                            <!-- Trend Card 1 -->
-                            <VBox spacing="5" onMouseClicked="#onTrendPokeBowl" style="-fx-background-color: white; -fx-background-radius: 15; -fx-padding: 12; -fx-cursor: hand; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.03), 10, 0, 0, 2);">
-                                <HBox alignment="CENTER_LEFT">
-                                    <Label text="🥗 Poke Bowl" style="-fx-font-weight: 900; -fx-font-size: 13px;"/>
-                                    <Region HBox.hgrow="ALWAYS"/>
-                                    <Label text="+22%" style="-fx-text-fill: #059669; -fx-font-size: 10px; -fx-font-weight: bold;"/>
-                                </HBox>
-                                <Label text="Boostez vos ventes avec une option saine" style="-fx-font-size: 11px; -fx-text-fill: #94A3B8;" wrapText="true"/>
-                            </VBox>
+                            <Label text="EXPEDITION DEMAND" style="-fx-font-size: 9px; -fx-text-fill: #94a3b8; -fx-font-weight: 900;"/>
+                            
+                            <VBox spacing="8">
+                                <VBox spacing="3" onMouseClicked="#onTrendPokeBowl" styleClass="modern-card" style="-fx-padding: 10; -fx-cursor: hand; -fx-background-color: rgba(255,255,255,0.03);">
+                                    <HBox alignment="CENTER_LEFT">
+                                        <Label text="🥗 Energy Bowl" style="-fx-font-weight: 900; -fx-font-size: 11px; -fx-text-fill: white;"/>
+                                        <Region HBox.hgrow="ALWAYS"/>
+                                        <Label text="+22%" style="-fx-text-fill: #22c55e; -fx-font-size: 9px; -fx-font-weight: 900;"/>
+                                    </HBox>
+                                    <Label text="High-protein fuel popular among summit hikers." style="-fx-font-size: 10px; -fx-text-fill: #64748b;" wrapText="true"/>
+                                </VBox>
 
-                            <!-- Trend Card 2 -->
-                            <VBox spacing="5" onMouseClicked="#onTrendTaco" style="-fx-background-color: white; -fx-background-radius: 15; -fx-padding: 12; -fx-cursor: hand; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.03), 10, 0, 0, 2);">
-                                <HBox alignment="CENTER_LEFT">
-                                    <Label text="🌮 Street Taco" style="-fx-font-weight: 900; -fx-font-size: 13px;"/>
-                                    <Region HBox.hgrow="ALWAYS"/>
-                                    <Label text="+15%" style="-fx-text-fill: #059669; -fx-font-size: 10px; -fx-font-weight: bold;"/>
-                                </HBox>
-                                <Label text="Idéal pour les menus logistique/rapide" style="-fx-font-size: 11px; -fx-text-fill: #94A3B8;" wrapText="true"/>
+                                <VBox spacing="3" onMouseClicked="#onTrendTaco" styleClass="modern-card" style="-fx-padding: 10; -fx-cursor: hand; -fx-background-color: rgba(255,255,255,0.03);">
+                                    <HBox alignment="CENTER_LEFT">
+                                        <Label text="🌮 Trail Taco" style="-fx-font-weight: 900; -fx-font-size: 11px; -fx-text-fill: white;"/>
+                                        <Region HBox.hgrow="ALWAYS"/>
+                                        <Label text="+15%" style="-fx-text-fill: #22c55e; -fx-font-size: 9px; -fx-font-weight: 900;"/>
+                                    </HBox>
+                                    <Label text="Efficient quick-grab ration for base camp." style="-fx-font-size: 10px; -fx-text-fill: #64748b;" wrapText="true"/>
+                                </VBox>
                             </VBox>
+                        </VBox>
+                        
+                        <Separator style="-fx-opacity: 0.1;"/>
+                        
+                        <VBox spacing="8">
+                            <Label text="LIVE SCOUT INTEL" style="-fx-font-weight: 900; -fx-font-size: 10px; -fx-text-fill: #F97316;"/>
+                            <Label fx:id="iaInsightLabel" text="Analyze coordinates for intel." wrapText="true" style="-fx-font-size: 10px; -fx-text-fill: #94a3b8; -fx-font-style: italic;"/>
                         </VBox>
                     </VBox>
-                    
-                    <Separator style="-fx-opacity: 0.1;"/>
-                    
-                    <VBox spacing="12">
-                        <Label text="LIVE INSIGHTS" style="-fx-font-weight: 900; -fx-font-size: 11px; -fx-text-fill: #1E3A8A;"/>
-                        <Label fx:id="iaInsightLabel" text="Saisissez un nom pour analyser le marché local." wrapText="true" style="-fx-font-size: 11px; -fx-text-fill: #64748B;"/>
+
+                    <!-- Nutrition Card -->
+                    <VBox spacing="12" styleClass="modern-card" style="-fx-padding: 15; -fx-background-color: rgba(34, 197, 94, 0.05); -fx-border-color: rgba(34, 197, 94, 0.1);">
+                        <Label text="FUEL VALUES" style="-fx-font-weight: 900; -fx-font-size: 10px; -fx-text-fill: #22c55e;"/>
+                        <GridPane hgap="10" vgap="10">
+                            <VBox GridPane.columnIndex="0" GridPane.rowIndex="0">
+                                <Label text="CALORIES" style="-fx-font-size: 8px; -fx-text-fill: #64748b;"/>
+                                <Label fx:id="mockCalories" text="--" style="-fx-font-weight: 900; -fx-font-size: 14px; -fx-text-fill: white;"/>
+                            </VBox>
+                            <VBox GridPane.columnIndex="1" GridPane.rowIndex="0">
+                                <Label text="PROTEINS" style="-fx-font-size: 8px; -fx-text-fill: #64748b;"/>
+                                <Label fx:id="mockProteins" text="--" style="-fx-font-weight: 900; -fx-font-size: 14px; -fx-text-fill: white;"/>
+                            </VBox>
+                        </GridPane>
                     </VBox>
                 </VBox>
-
-                <!-- Nutrition Mock Card -->
-                <VBox spacing="15" style="-fx-background-color: #CFFFEF; -fx-background-radius: 32; -fx-padding: 25;">
-                    <Label text="VALEURS NUTRI (MOCK)" style="-fx-font-weight: 900; -fx-font-size: 11px; -fx-text-fill: #00897B;"/>
-                    <GridPane hgap="10" vgap="10">
-                        <VBox GridPane.columnIndex="0" GridPane.rowIndex="0">
-                            <Label text="CALORIES" style="-fx-font-size: 9px;"/>
-                            <Label fx:id="mockCalories" text="--" style="-fx-font-weight: 900; -fx-font-size: 16px;"/>
-                        </VBox>
-                        <VBox GridPane.columnIndex="1" GridPane.rowIndex="0">
-                            <Label text="PROTÉINES" style="-fx-font-size: 9px;"/>
-                            <Label fx:id="mockProteins" text="--" style="-fx-font-weight: 900; -fx-font-size: 16px;"/>
-                        </VBox>
-                    </GridPane>
-                </VBox>
-            </VBox>
-        </GridPane>
-    </VBox>
+            </GridPane>
+        </VBox>
+    </StackPane>
 </ScrollPane>

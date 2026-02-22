@@ -1,12 +1,84 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.*?>
 
 <VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-      spacing="16" styleClass="resto-panel" alignment="CENTER">
-    <padding><Insets top="40" right="40" bottom="40" left="40"/></padding>
-    <Label text="Analytics" styleClass="resto-panel-title"/>
-    <Label text="Module en cours de developpement" style="-fx-text-fill: #5a7d9a;"/>
+      fx:controller="com.gestion.ui.repas.AdminKPIDashboardController"
+      spacing="35" styleClass="nature-root"
+      stylesheets="@../../styles/restoration-2026.css">
+    <padding><Insets top="40" right="60" bottom="40" left="60"/></padding>
+
+    <HBox alignment="CENTER_LEFT" spacing="20">
+        <VBox HBox.hgrow="ALWAYS">
+            <Label text="EXPEDITION INTELLIGENCE" styleClass="text-hero" style="-fx-font-size: 36;"/>
+            <Label text="Real-time system performance and user trends" styleClass="text-muted"/>
+        </VBox>
+        <Button text="Refresh Intel" onAction="#onRefresh" styleClass="button-capsule-glass"/>
+    </HBox>
+
+    <!-- Stats Overview Cards -->
+    <HBox spacing="25">
+        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" alignment="CENTER">
+            <Label text="DAILY LOGS" styleClass="stat-title"/>
+            <Label fx:id="todayOrdersLabel" text="Loading..." styleClass="stat-value" style="-fx-text-fill: -fx-nature-accent-orange;"/>
+            <Label text="+12.5% vs yesterday" style="-fx-text-fill: -fx-nature-accent-green; -fx-font-size: 11; -fx-font-weight: 800;"/>
+        </VBox>
+        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" alignment="CENTER">
+            <Label text="ESTIMATED TREASURE" styleClass="stat-title"/>
+            <Label fx:id="estimatedRevenueLabel" text="Loading..." styleClass="stat-value" style="-fx-text-fill: -fx-nature-accent-green;"/>
+            <Label text="Target: 2,500 €" styleClass="stat-title"/>
+        </VBox>
+        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" alignment="CENTER">
+            <Label text="TEAM SPIRIT" styleClass="stat-title"/>
+            <Label fx:id="satisfactionLabel" text="4.9/5" styleClass="stat-value" style="-fx-text-fill: -fx-nature-accent-yellow;"/>
+            <Label text="24 new commendations" styleClass="stat-title"/>
+        </VBox>
+    </HBox>
+
+    <!-- Main Charts Section -->
+    <GridPane hgap="25" vgap="25">
+        <columnConstraints>
+            <ColumnConstraints percentWidth="60"/>
+            <ColumnConstraints percentWidth="40"/>
+        </columnConstraints>
+        
+        <!-- Tendances -->
+        <VBox GridPane.columnIndex="0" styleClass="glass-panel" style="-fx-padding: 30;">
+            <Label text="Daily Scout Activity" styleClass="section-title" style="-fx-font-size: 20;"/>
+            <LineChart fx:id="orderChart" prefHeight="400" legendVisible="false" style="-fx-background-color: transparent;">
+                <xAxis><CategoryAxis side="BOTTOM" tickLabelFill="WHITE" /></xAxis>
+                <yAxis><NumberAxis side="LEFT" tickLabelFill="WHITE" /></yAxis>
+            </LineChart>
+        </VBox>
+        
+        <!-- Répartition -->
+        <VBox GridPane.columnIndex="1" styleClass="glass-panel" style="-fx-padding: 30;">
+            <Label text="Expedition Focus" styleClass="section-title" style="-fx-font-size: 20;"/>
+            <PieChart fx:id="categoryChart" prefHeight="400" legendVisible="true" labelLineLength="15"/>
+        </VBox>
+
+        <!-- Top Restaurants (NEW) -->
+        <VBox GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="glass-panel-heavy" style="-fx-padding: 25;">
+            <Label text="Top 5 Restaurants les plus choisis" style="-fx-font-weight: 900; -fx-font-size: 18px; -fx-text-fill: #1E3A8A; -fx-margin: 0 0 15 0;"/>
+            <BarChart fx:id="restaurantChart" prefHeight="350">
+                <xAxis><CategoryAxis side="BOTTOM" /></xAxis>
+                <yAxis><NumberAxis side="LEFT" /></yAxis>
+            </BarChart>
+        </VBox>
+
+        <!-- Peak Activity (NEW) -->
+        <VBox GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="glass-panel-heavy" style="-fx-padding: 25;">
+            <Label text="Pics d'Activité Horaire" style="-fx-font-weight: 900; -fx-font-size: 18px; -fx-text-fill: #1E3A8A; -fx-margin: 0 0 15 0;"/>
+            <AreaChart fx:id="activityChart" prefHeight="350">
+                <xAxis><CategoryAxis side="BOTTOM" /></xAxis>
+                <yAxis><NumberAxis side="LEFT" /></yAxis>
+            </AreaChart>
+        </VBox>
+    </GridPane>
+
+    <!-- Extra dynamic spacing -->
+    <Region prefHeight="20"/>
 </VBox>

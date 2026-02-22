@@ -1,120 +1,76 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.image.*?>
+<?import java.net.URL?>
 
-<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+<ScrollPane xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.gestion.ui.restaurant.RestaurantListeController"
-            prefWidth="1200" prefHeight="800"
-            style="-fx-background-color: linear-gradient(to bottom, #f8f9fa, #e9ecef);">
+            fitToWidth="false" fitToHeight="false" styleClass="modern-scroll-pane"
+            vbarPolicy="AS_NEEDED" hbarPolicy="AS_NEEDED">
+    <stylesheets>
+        <URL value="@../../styles/card-view.css" />
+        <URL value="@../../styles/nature-mood.css" />
+    </stylesheets>
 
-    <!-- Header -->
-    <top>
-        <VBox style="-fx-background-color: linear-gradient(to right, #2c3e50, #3498db);">
-            <padding>
-                <Insets top="24" right="32" bottom="24" left="32"/>
-            </padding>
-            <HBox alignment="CENTER_LEFT" spacing="16">
-                <Label text="🍽️" style="-fx-font-size: 28px;"/>
-                <Label text="Gestion des Restaurants" styleClass="module-title">
-                    <font>
-                        <Font name="System Bold" size="28"/>
-                    </font>
-                    <style>
-                        -fx-text-fill: white;
-                        -fx-font-weight: bold;
-                    </style>
-                </Label>
-                <Region HBox.hgrow="ALWAYS"/>
-                <Label text="Espace Administrateur" style="-fx-text-fill: rgba(255,255,255,0.8); -fx-font-size: 14px;"/>
-            </HBox>
-        </VBox>
-    </top>
-
-    <!-- Center Content -->
-    <center>
-        <VBox spacing="20" style="-fx-background-color: transparent;">
-            <padding>
-                <Insets top="24" right="32" bottom="24" left="32"/>
-            </padding>
-
-            <!-- Action Bar -->
-            <HBox spacing="12" alignment="CENTER_LEFT"
-                  style="-fx-background-color: white; -fx-background-radius: 12; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2);">
-                <padding>
-                    <Insets top="16" right="20" bottom="16" left="20"/>
-                </padding>
-                <Button text="➕ Nouveau Restaurant" onAction="#onNouveauRestaurant"
-                        style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold;
-                               -fx-background-radius: 8; -fx-padding: 12 20; -fx-cursor: hand;"/>
-                <Button text="🔄 Actualiser" onAction="#onActualiser"
-                        style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold;
-                               -fx-background-radius: 8; -fx-padding: 12 20; -fx-cursor: hand;"/>
-                <Region HBox.hgrow="ALWAYS"/>
-                <TextField fx:id="searchField" promptText="🔍 Rechercher un restaurant..."
-                           style="-fx-background-radius: 8; -fx-padding: 10 16; -fx-font-size: 14px;
-                                  -fx-border-color: #ddd; -fx-border-radius: 8;"
-                           HBox.hgrow="SOMETIMES" maxWidth="400"/>
-            </HBox>
-
-            <!-- Filter Section -->
-            <HBox spacing="16" alignment="CENTER_LEFT"
-                  style="-fx-background-color: white; -fx-background-radius: 12; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2);">
-                <padding>
-                    <Insets top="16" right="20" bottom="16" left="20"/>
-                </padding>
-                <Label text="Filtres:" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
-                <ComboBox fx:id="filterActifCombo" promptText="Tous les statuts"
-                          style="-fx-background-radius: 6;"/>
-                <Label fx:id="countLabel" text="0 restaurants"
-                       style="-fx-font-size: 13px; -fx-text-fill: #666;"/>
-                <Region HBox.hgrow="ALWAYS"/>
-                <Button text="❌ Réinitialiser" onAction="#onReinitialiserFiltres"
-                        style="-fx-background-color: transparent; -fx-text-fill: #e74c3c;
-                               -fx-border-color: #e74c3c; -fx-border-radius: 6; -fx-padding: 8 16;"/>
-            </HBox>
-
-            <!-- Table -->
-            <VBox VBox.vgrow="ALWAYS" spacing="12"
-                  style="-fx-background-color: white; -fx-background-radius: 12;
-                         -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2);">
-                <padding>
-                    <Insets top="20" right="20" bottom="20" left="20"/>
-                </padding>
-
-                <Label text="📋 Liste des Restaurants" style="-fx-font-weight: bold; -fx-font-size: 18px;"/>
-
-                <ListView fx:id="listView" VBox.vgrow="ALWAYS"
-                          styleClass="modern-list-view" onMouseClicked="#onListClick">
-                    <placeholder>
-                        <VBox alignment="CENTER" spacing="12" style="-fx-padding: 40;">
-                            <Label text="🍽️" style="-fx-font-size: 48px;"/>
-                            <Label text="Aucun restaurant trouvé" style="-fx-font-size: 16px; -fx-text-fill: #888;"/>
-                            <Label text="Commencez par ajouter un nouveau restaurant" style="-fx-font-size: 13px; -fx-text-fill: #aaa;"/>
-                        </VBox>
-                    </placeholder>
-                </ListView>
+    <VBox spacing="8" styleClass="modern-panel" prefWidth="1000" style="-fx-padding: 12;">
+        
+        <!-- Nature Header -->
+        <HBox spacing="12" alignment="CENTER_LEFT">
+            <StackPane style="-fx-background-color: rgba(249, 115, 22, 0.15); -fx-background-radius: 8; -fx-padding: 6;">
+                <Label text="🍴" style="-fx-font-size: 16;"/>
+            </StackPane>
+            <VBox spacing="0">
+                <Label text="Base Camp Dining" styleClass="modern-title" style="-fx-text-fill: white; -fx-font-size: 16; -fx-font-weight: 800;"/>
+                <Label text="Manage mountain resorts and trail-side fuel stations" style="-fx-text-fill: #94a3b8; -fx-font-size: 9;"/>
             </VBox>
-        </VBox>
-    </center>
-
-    <!-- Footer -->
-    <bottom>
-        <HBox spacing="12" alignment="CENTER_LEFT"
-              style="-fx-background-color: #2c3e50;">
-            <padding>
-                <Insets top="14" right="32" bottom="14" left="32"/>
-            </padding>
-            <Label fx:id="statusLabel" text="Prêt" style="-fx-text-fill: white;"/>
             <Region HBox.hgrow="ALWAYS"/>
-            <Button fx:id="btnModifier" text="✏️ Modifier" onAction="#onModifier" disable="true"
-                    style="-fx-background-color: #f39c12; -fx-text-fill: white; -fx-padding: 8 16; -fx-cursor: hand;"/>
-            <Button fx:id="btnSupprimer" text="🗑️ Supprimer" onAction="#onSupprimer" disable="true"
-                    style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-padding: 8 16; -fx-cursor: hand;"/>
-            <Button fx:id="btnVoirDetails" text="👁️ Détails" onAction="#onVoirDetails" disable="true"
-                    style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-padding: 8 16; -fx-cursor: hand;"/>
+            <HBox alignment="CENTER" spacing="8" style="-fx-background-color: rgba(255,255,255,0.05); -fx-padding: 4 12; -fx-background-radius: 15; -fx-border-color: rgba(255,255,255,0.1); -fx-border-radius: 15;">
+                <Circle fill="#F97316" radius="3"/>
+                <Label fx:id="statusLabel" text="Kitchen Online" style="-fx-text-fill: white; -fx-font-size: 10; -fx-font-weight: 600;"/>
+            </HBox>
         </HBox>
-    </bottom>
-</BorderPane>
+
+        <!-- Action Bar - Capsule Style -->
+        <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 2 0;">
+            <Button text="➕ NEW" onAction="#onNouveauRestaurant" styleClass="button-capsule" style="-fx-padding: 8 16; -fx-font-size: 11;"/>
+            <Button text="🔄 SYNC" onAction="#onActualiser" styleClass="button-capsule-glass" style="-fx-padding: 8 16; -fx-font-size: 11;"/>
+            <Button fx:id="btnModifier" text="✏️ EDIT" onAction="#onModifier" disable="true" styleClass="button-capsule-glass" style="-fx-padding: 8 16; -fx-font-size: 11;"/>
+            <Button fx:id="btnSupprimer" text="🗑️ REMOVE" onAction="#onSupprimer" disable="true" styleClass="button-capsule-glass" style="-fx-padding: 8 16; -fx-text-fill: #ef4444; -fx-font-size: 11;"/>
+            <Button fx:id="btnVoirDetails" text="👁️ DETAILS" onAction="#onVoirDetails" disable="true" styleClass="button-capsule-glass" style="-fx-padding: 8 16; -fx-text-fill: #3b82f6; -fx-font-size: 11;"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <TextField fx:id="searchField" promptText="🔍 Scout search..." styleClass="modern-input" prefWidth="220" style="-fx-font-size: 11;"/>
+        </HBox>
+
+        <!-- Filter Grid - Glass -->
+        <HBox spacing="12" alignment="CENTER_LEFT" styleClass="modern-card" style="-fx-padding: 10 20;">
+            <Label text="Status:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 11;"/>
+            <ComboBox fx:id="filterActifCombo" promptText="All Lodges" styleClass="modern-input" prefWidth="150" style="-fx-font-size: 11;"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="countLabel" text="0 lodges located" style="-fx-text-fill: #F97316; -fx-font-weight: 800; -fx-font-size: 11; -fx-background-color: rgba(249, 115, 22, 0.1); -fx-padding: 4 12; -fx-background-radius: 12;"/>
+            <Button text="❌ RESET" onAction="#onReinitialiserFiltres" styleClass="button-capsule-glass" style="-fx-padding: 6 15; -fx-font-size: 10;"/>
+        </HBox>
+
+        <!-- Restaurants List -->
+        <VBox spacing="10" VBox.vgrow="ALWAYS">
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <Label text="📋 Registered Lodges" styleClass="section-title" style="-fx-font-size: 14; -fx-text-fill: white;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+            </HBox>
+
+            <ListView fx:id="listView" VBox.vgrow="ALWAYS" minHeight="300"
+                       styleClass="modern-list-view" onMouseClicked="#onListClick">
+                <placeholder>
+                    <VBox alignment="CENTER" spacing="10" style="-fx-padding: 40;">
+                        <Label text="🏘️" style="-fx-font-size: 32;"/>
+                        <Label text="No dining spots on the map" style="-fx-text-fill: #94a3b8; -fx-font-size: 14; -fx-font-weight: 600;"/>
+                        <Label text="Expand your camp network by adding a new restaurant" style="-fx-text-fill: #64748b; -fx-font-size: 11;"/>
+                    </VBox>
+                </placeholder>
+            </ListView>
+        </VBox>
+
+    </VBox>
+</ScrollPane>

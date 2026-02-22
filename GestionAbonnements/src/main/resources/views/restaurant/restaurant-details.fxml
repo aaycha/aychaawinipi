@@ -1,70 +1,76 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-
-<ScrollPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<ScrollPane xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.gestion.ui.restaurant.RestaurantDetailsController"
             fitToWidth="true" fitToHeight="true"
-            style="-fx-background: #f5f6fa; -fx-background-color: #f5f6fa;">
+            style="-fx-background-color: transparent; -fx-background: transparent; -fx-border-color: transparent; -fx-padding: 0;"
+            stylesheets="@../../styles/nature-mood.css, @../../styles/card-view.css">
 
-    <VBox spacing="0" style="-fx-background-color: #f5f6fa;" prefWidth="560">
-        <padding>
-            <Insets top="32" right="40" bottom="32" left="40"/>
-        </padding>
+    <StackPane style="-fx-background-color: transparent; -fx-padding: 25;">
+        <VBox spacing="25" styleClass="glass-panel" prefWidth="600" maxWidth="650" style="-fx-padding: 40;">
+            
+            <!-- Header -->
+            <HBox spacing="18" alignment="CENTER_LEFT">
+                <StackPane style="-fx-background-color: rgba(59, 130, 246, 0.15); -fx-background-radius: 12; -fx-padding: 10;">
+                    <Label text="🏘️" style="-fx-font-size: 24;"/>
+                </StackPane>
+                <VBox spacing="2">
+                    <Label text="Lodge Intel" styleClass="modern-title" style="-fx-text-fill: white; -fx-font-size: 22; -fx-font-weight: 800;"/>
+                    <Label text="Full scout report on this base camp location" style="-fx-text-fill: #94a3b8; -fx-font-size: 13;"/>
+                </VBox>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="✕" onAction="#onFermer" styleClass="button-capsule-glass" style="-fx-padding: 8 15; -fx-font-size: 14; -fx-font-weight: 900;"/>
+            </HBox>
 
-        <!-- En-tête -->
-        <HBox spacing="16" alignment="CENTER_LEFT" style="-fx-padding: 0 0 24 0;">
-            <Label text="🍽️" style="-fx-font-size: 32px;"/>
-            <VBox spacing="4">
-                <Label text="Détail du restaurant" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
-                <Label text="Informations complètes" style="-fx-font-size: 13px; -fx-text-fill: #7f8c8d;"/>
+            <Separator style="-fx-opacity: 0.1;"/>
+
+            <!-- Lodge Info Card -->
+            <VBox spacing="20" styleClass="modern-card" style="-fx-padding: 25;">
+                <Label fx:id="detailNom" text="Lodge Name" style="-fx-font-size: 22px; -fx-font-weight: 900; -fx-text-fill: #F97316; -fx-wrap-text: true;"/>
+                <Separator style="-fx-opacity: 0.1;"/>
+
+                <GridPane hgap="20" vgap="16">
+                    <columnConstraints>
+                        <ColumnConstraints minWidth="130" prefWidth="150" halignment="RIGHT"/>
+                        <ColumnConstraints minWidth="280" hgrow="ALWAYS"/>
+                    </columnConstraints>
+
+                    <Label text="Trail Coordinates:" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700;"/>
+                    <Label fx:id="detailAdresse" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="0" style="-fx-text-fill: white; -fx-font-size: 14px;"/>
+
+                    <Label text="Frequency:" GridPane.columnIndex="0" GridPane.rowIndex="1" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700;"/>
+                    <Label fx:id="detailTelephone" text="" GridPane.columnIndex="1" GridPane.rowIndex="1" style="-fx-text-fill: white; -fx-font-size: 14px;"/>
+
+                    <Label text="Signal Email:" GridPane.columnIndex="0" GridPane.rowIndex="2" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700;"/>
+                    <Label fx:id="detailEmail" text="" GridPane.columnIndex="1" GridPane.rowIndex="2" style="-fx-text-fill: white; -fx-font-size: 14px;"/>
+
+                    <Label text="Status:" GridPane.columnIndex="0" GridPane.rowIndex="3" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700;"/>
+                    <Label fx:id="detailStatut" text="" GridPane.columnIndex="1" GridPane.rowIndex="3" style="-fx-text-fill: #22c55e; -fx-font-size: 14px; -fx-font-weight: 900;"/>
+
+                    <Label text="Established On:" GridPane.columnIndex="0" GridPane.rowIndex="4" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700;"/>
+                    <Label fx:id="detailDateCreation" text="" GridPane.columnIndex="1" GridPane.rowIndex="4" style="-fx-text-fill: white; -fx-font-size: 14px;"/>
+
+                    <Label text="Visual Feed:" GridPane.columnIndex="0" GridPane.rowIndex="5" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700;"/>
+                    <Label fx:id="detailImageUrl" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="5" style="-fx-text-fill: #3b82f6; -fx-font-size: 13px; -fx-font-weight: 600;"/>
+                </GridPane>
+
+                <VBox spacing="10" style="-fx-padding: 10 0 0 0;">
+                    <Label text="LODGE DESCRIPTION" style="-fx-font-weight: 900; -fx-text-fill: #3b82f6; -fx-font-size: 12; -fx-letter-spacing: 1px;"/>
+                    <Label fx:id="detailDescription" wrapText="true" style="-fx-font-size: 14px; -fx-text-fill: #cbd5e1; -fx-line-spacing: 5;"/>
+                </VBox>
             </VBox>
-            <Region HBox.hgrow="ALWAYS"/>
-            <Button text="Fermer" onAction="#onFermer"
-                    style="-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-padding: 10 20; -fx-cursor: hand; -fx-background-radius: 8;"/>
-        </HBox>
 
-        <!-- Carte détail -->
-        <VBox spacing="20"
-              style="-fx-background-color: white; -fx-background-radius: 12;
-                     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 12, 0, 0, 4);">
-            <padding>
-                <Insets top="28" right="32" bottom="28" left="32"/>
-            </padding>
-
-            <Label fx:id="detailNom" text="" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #2c3e50; -fx-wrap-text: true;"/>
-
-            <Separator style="-fx-opacity: 0.25;"/>
-
-            <GridPane hgap="16" vgap="14">
-                <columnConstraints>
-                    <ColumnConstraints minWidth="120" prefWidth="140" halignment="RIGHT"/>
-                    <ColumnConstraints minWidth="280" hgrow="ALWAYS"/>
-                </columnConstraints>
-
-                <Label text="Adresse :" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-text-fill: #7f8c8d;"/>
-                <Label fx:id="detailAdresse" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="0" style="-fx-font-size: 14px;"/>
-
-                <Label text="Téléphone :" GridPane.columnIndex="0" GridPane.rowIndex="1" style="-fx-text-fill: #7f8c8d;"/>
-                <Label fx:id="detailTelephone" text="" GridPane.columnIndex="1" GridPane.rowIndex="1" style="-fx-font-size: 14px;"/>
-
-                <Label text="Email :" GridPane.columnIndex="0" GridPane.rowIndex="2" style="-fx-text-fill: #7f8c8d;"/>
-                <Label fx:id="detailEmail" text="" GridPane.columnIndex="1" GridPane.rowIndex="2" style="-fx-font-size: 14px;"/>
-
-                <Label text="Statut :" GridPane.columnIndex="0" GridPane.rowIndex="3" style="-fx-text-fill: #7f8c8d;"/>
-                <Label fx:id="detailStatut" text="" GridPane.columnIndex="1" GridPane.rowIndex="3" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
-
-                <Label text="Date de création :" GridPane.columnIndex="0" GridPane.rowIndex="4" style="-fx-text-fill: #7f8c8d;"/>
-                <Label fx:id="detailDateCreation" text="" GridPane.columnIndex="1" GridPane.rowIndex="4" style="-fx-font-size: 14px;"/>
-
-                <Label text="URL image :" GridPane.columnIndex="0" GridPane.rowIndex="5" style="-fx-text-fill: #7f8c8d;"/>
-                <Label fx:id="detailImageUrl" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="5" style="-fx-font-size: 13px; -fx-text-fill: #3498db;"/>
-            </GridPane>
-
-            <Label text="Description" style="-fx-font-weight: bold; -fx-text-fill: #2c3e50; -fx-padding: 8 0 4 0;"/>
-            <Label fx:id="detailDescription" wrapText="true" style="-fx-font-size: 14px; -fx-text-fill: #34495e;"/>
+            <HBox alignment="CENTER_RIGHT">
+                <Button text="CLOSE REPORT" onAction="#onFermer" styleClass="button-capsule" style="-fx-padding: 12 35;"/>
+            </HBox>
         </VBox>
-    </VBox>
+    </StackPane>
 </ScrollPane>

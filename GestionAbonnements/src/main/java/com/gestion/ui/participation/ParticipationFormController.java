@@ -1,7 +1,13 @@
 package com.gestion.ui.participation;
 
+import com.gestion.tools.Session;
+
 import com.gestion.controllers.ParticipationController;
+import com.gestion.entities.Evenement;
+import com.gestion.entities.User;
 import com.gestion.entities.Participation;
+import com.gestion.services.EvenementService;
+import com.gestion.services.UserService;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -15,36 +21,57 @@ import java.util.List;
 
 /**
  * Formulaire dédié pour la création / modification d'une participation,
- * avec saisie de nbAdultes / nbEnfants / nbChiens et pré‑visualisation du tarif.
+ * avec saisie de nbAdultes / nbEnfants / nbChiens et pré‑visualisation du
+ * tarif.
  */
 public class ParticipationFormController {
 
-    @FXML private Label formTitle;
+    @FXML
+    private Label formTitle;
 
-    @FXML private TextField inputUserId;
-    @FXML private TextField inputEvenementId;
-    @FXML private ComboBox<Participation.TypeParticipation> inputType;
-    @FXML private ComboBox<Participation.ContexteSocial> inputContexte;
-    @FXML private CheckBox inputHebergement;
-    @FXML private TextField inputHebergementNuits;
+    @FXML
+    private ComboBox<User> comboUser;
+    @FXML
+    private ComboBox<Evenement> comboEvenement;
+    @FXML
+    private ComboBox<Participation.TypeParticipation> inputType;
+    @FXML
+    private ComboBox<Participation.ContexteSocial> inputContexte;
+    @FXML
+    private CheckBox inputHebergement;
+    @FXML
+    private TextField inputHebergementNuits;
 
-    @FXML private TextField inputNbAdultes;
-    @FXML private TextField inputNbEnfants;
-    @FXML private TextField inputNbChiens;
+    @FXML
+    private TextField inputNbAdultes;
+    @FXML
+    private TextField inputNbEnfants;
+    @FXML
+    private TextField inputNbChiens;
 
-    @FXML private TextArea inputCommentaire;
-    @FXML private TextArea inputBesoinsSpeciaux;
+    @FXML
+    private TextArea inputCommentaire;
+    @FXML
+    private TextArea inputBesoinsSpeciaux;
 
-    @FXML private Label labelTotalParticipants;
-    @FXML private Label labelTypeAbonnement;
-    @FXML private Label labelMontant;
+    @FXML
+    private Label labelTotalParticipants;
+    @FXML
+    private Label labelTypeAbonnement;
+    @FXML
+    private Label labelMontant;
 
-    @FXML private Label errorUserId;
-    @FXML private Label errorEvenementId;
-    @FXML private Label errorGroupe;
-    @FXML private Label errorGlobal;
+    @FXML
+    private Label errorUserId;
+    @FXML
+    private Label errorEvenementId;
+    @FXML
+    private Label errorGroupe;
+    @FXML
+    private Label errorGlobal;
 
-    @FXML private Button btnEnregistrer;
+    @FXML
+    private Button btnEnregistrer;
 
     private ParticipationController participationController;
     private Participation participation;
@@ -52,8 +79,163 @@ public class ParticipationFormController {
     private boolean adminMode = true;
     private Runnable onSaved;
 
+    private boolean isFilteringUser = false;
+    private boolean isFilteringEvent = false;
+
+    private final UserService userService = new UserService();
+    private final EvenementService eventService = new EvenementService();
+
     @FXML
     public void initialize() {
+        // Chargement initial des données
+        List<User> users;
+        try {
+            users = userService.recuperer();
+        } catch (java.sql.SQLException e) {
+            users = new ArrayList<>();
+            e.printStackTrace();
+        }
+        List<Evenement> events = eventService.findAll();
+
+        if (comboUser != null) {
+            javafx.collections.ObservableList<User> userList = javafx.collections.FXCollections
+                    .observableArrayList(users);
+            javafx.collections.transformation.FilteredList<User> filteredUsers = new javafx.collections.transformation.FilteredList<>(
+                    userList, p -> true);
+
+            // Ajout d'un StringConverter pour gérer l'édition textuelle sans
+            // ClassCastException
+            comboUser.setConverter(new javafx.util.StringConverter<User>() {
+                @Override
+                public String toString(User u) {
+                    return u == null ? "" : u.getName();
+                }
+
+                @Override
+                public User fromString(String string) {
+                    if (string == null || string.isBlank())
+                        return null;
+                    return comboUser.getItems().stream()
+                            .filter(u -> u.getName().equalsIgnoreCase(string.trim()))
+                            .findFirst().orElse(null);
+                }
+            });
+
+            comboUser.getEditor().textProperty().addListener((obs, oldValue, newValue) -> {
+                if (isFilteringUser)
+                    return;
+                isFilteringUser = true;
+
+                final String filter = newValue == null ? "" : newValue.trim().toLowerCase();
+
+                javafx.application.Platform.runLater(() -> {
+                    try {
+                        filteredUsers.setPredicate(u -> {
+                            if (filter.isEmpty())
+                                return true;
+                            return u.getName().toLowerCase().contains(filter);
+                        });
+
+                        if (!filter.isEmpty() && !comboUser.isShowing()) {
+                            comboUser.show();
+                        }
+                    } finally {
+                        isFilteringUser = false;
+                    }
+                });
+            });
+
+            comboUser.setItems(filteredUsers);
+
+            // Auto-identification pour les nouvelles participations
+            if (!editMode) {
+                Integer currentId = Session.getInstance().getCurrentUserId();
+                if (currentId != null) {
+                    userList.stream()
+                            .filter(u -> Integer.valueOf(u.getId()).equals(currentId))
+                            .findFirst()
+                            .ifPresent(u -> {
+                                comboUser.setValue(u);
+                                // Si on n'est pas admin, on verrouille
+                                if (!adminMode) {
+                                    comboUser.setDisable(true);
+                                }
+                            });
+                }
+            }
+
+            // Listener pour la sélection
+            comboUser.valueProperty().addListener((obs, oldVal, newVal) -> {
+                if (isFilteringUser)
+                    return; // Ignorer les changements pendant le filtrage
+                if (newVal != null) {
+                    clearError(errorUserId);
+                }
+            });
+        }
+
+        if (comboEvenement != null) {
+            comboEvenement.setEditable(true);
+            javafx.collections.ObservableList<Evenement> eventList = javafx.collections.FXCollections
+                    .observableArrayList(events);
+            javafx.collections.transformation.FilteredList<Evenement> filteredEvents = new javafx.collections.transformation.FilteredList<>(
+                    eventList, p -> true);
+
+            // StringConverter pour n'afficher que le TITRE et éviter les ClassCastException
+            comboEvenement.setConverter(new javafx.util.StringConverter<Evenement>() {
+                @Override
+                public String toString(Evenement e) {
+                    return e == null ? "" : e.getTitre();
+                }
+
+                @Override
+                public Evenement fromString(String string) {
+                    if (string == null || string.isBlank())
+                        return null;
+                    return comboEvenement.getItems().stream()
+                            .filter(e -> e.getTitre().equalsIgnoreCase(string.trim()))
+                            .findFirst().orElse(null);
+                }
+            });
+
+            comboEvenement.getEditor().textProperty().addListener((obs, oldValue, newValue) -> {
+                if (isFilteringEvent)
+                    return;
+                isFilteringEvent = true;
+
+                final String filter = newValue == null ? "" : newValue.trim().toLowerCase();
+
+                javafx.application.Platform.runLater(() -> {
+                    try {
+                        filteredEvents.setPredicate(e -> {
+                            if (filter.isEmpty())
+                                return true;
+                            return e.getTitre().toLowerCase().contains(filter);
+                        });
+
+                        if (!filter.isEmpty() && !comboEvenement.isShowing()) {
+                            comboEvenement.show();
+                        }
+                    } finally {
+                        isFilteringEvent = false;
+                    }
+                });
+            });
+
+            comboEvenement.setItems(filteredEvents);
+
+            // Listener pour la sélection
+            comboEvenement.valueProperty().addListener((obs, oldVal, newVal) -> {
+                if (isFilteringEvent)
+                    return; // Ignorer les changements pendant le filtrage
+                if (newVal != null) {
+                    clearError(errorEvenementId);
+                    updatePreviewFromFields();
+                }
+            });
+        }
+
+        // Initialisation des autres combos
         if (inputType != null) {
             inputType.getItems().addAll(Participation.TypeParticipation.values());
         }
@@ -61,18 +243,33 @@ public class ParticipationFormController {
             inputContexte.getItems().addAll(Participation.ContexteSocial.values());
         }
 
-        ChangeListener<String> recomputeListener = (obs, oldVal, newVal) -> updatePreviewFromFields();
-        if (inputNbAdultes != null) inputNbAdultes.textProperty().addListener(recomputeListener);
-        if (inputNbEnfants != null) inputNbEnfants.textProperty().addListener(recomputeListener);
-        if (inputNbChiens != null) inputNbChiens.textProperty().addListener(recomputeListener);
-
-        // Valeurs par défaut
-        if (inputNbAdultes != null) inputNbAdultes.setText("1");
-        if (inputNbEnfants != null) inputNbEnfants.setText("0");
-        if (inputNbChiens != null) inputNbChiens.setText("0");
-        if (inputHebergementNuits != null) inputHebergementNuits.setText("0");
+        // Listeners pour calcul automatique
+        addCalculationListeners();
 
         updatePreviewFromFields();
+    }
+
+    private void addCalculationListeners() {
+        ChangeListener<Object> recalc = (obs, oldVal, newVal) -> updatePreviewFromFields();
+
+        if (inputNbAdultes != null)
+            inputNbAdultes.textProperty().addListener((obs, old, val) -> updatePreviewFromFields());
+        if (inputNbEnfants != null)
+            inputNbEnfants.textProperty().addListener((obs, old, val) -> updatePreviewFromFields());
+        if (inputNbChiens != null)
+            inputNbChiens.textProperty().addListener((obs, old, val) -> updatePreviewFromFields());
+        if (inputHebergement != null)
+            inputHebergement.selectedProperty().addListener((obs, old, val) -> updatePreviewFromFields());
+        if (inputHebergementNuits != null)
+            inputHebergementNuits.textProperty().addListener((obs, old, val) -> updatePreviewFromFields());
+        if (inputType != null)
+            inputType.valueProperty().addListener(recalc);
+        if (inputContexte != null)
+            inputContexte.valueProperty().addListener(recalc);
+    }
+
+    private void clearError(Label label) {
+        hideError(label);
     }
 
     public void setParticipationController(ParticipationController controller) {
@@ -96,25 +293,39 @@ public class ParticipationFormController {
         }
 
         if (participation != null) {
-            if (inputUserId != null && participation.getUserId() != null) {
-                inputUserId.setText(String.valueOf(participation.getUserId()));
+            if (comboUser != null && participation.getUserId() != null) {
+                comboUser.getItems().stream()
+                        .filter(u -> Integer.valueOf(u.getId()).equals(participation.getUserId().intValue()))
+                        .findFirst()
+                        .ifPresent(u -> comboUser.setValue(u));
             }
-            if (inputEvenementId != null && participation.getEvenementId() != null) {
-                inputEvenementId.setText(String.valueOf(participation.getEvenementId()));
+            if (comboEvenement != null && participation.getEvenementId() != null) {
+                comboEvenement.getItems().stream()
+                        .filter(e -> Long.valueOf(e.getIdEvent()).equals(participation.getEvenementId()))
+                        .findFirst()
+                        .ifPresent(e -> comboEvenement.setValue(e));
             }
-            if (inputType != null) inputType.setValue(participation.getType());
-            if (inputContexte != null) inputContexte.setValue(participation.getContexteSocial());
-            if (inputHebergement != null) inputHebergement.setSelected(participation.getHebergementNuits() > 0);
+            if (inputType != null)
+                inputType.setValue(participation.getType());
+            if (inputContexte != null)
+                inputContexte.setValue(participation.getContexteSocial());
+            if (inputHebergement != null)
+                inputHebergement.setSelected(participation.getHebergementNuits() > 0);
             if (inputHebergementNuits != null) {
                 inputHebergementNuits.setText(String.valueOf(participation.getHebergementNuits()));
             }
 
-            if (inputNbAdultes != null) inputNbAdultes.setText(String.valueOf(participation.getNbAdultes()));
-            if (inputNbEnfants != null) inputNbEnfants.setText(String.valueOf(participation.getNbEnfants()));
-            if (inputNbChiens != null) inputNbChiens.setText(String.valueOf(participation.getNbChiens()));
+            if (inputNbAdultes != null)
+                inputNbAdultes.setText(String.valueOf(participation.getNbAdultes()));
+            if (inputNbEnfants != null)
+                inputNbEnfants.setText(String.valueOf(participation.getNbEnfants()));
+            if (inputNbChiens != null)
+                inputNbChiens.setText(String.valueOf(participation.getNbChiens()));
 
-            if (inputCommentaire != null) inputCommentaire.setText(participation.getCommentaire());
-            if (inputBesoinsSpeciaux != null) inputBesoinsSpeciaux.setText(participation.getBesoinsSpeciaux());
+            if (inputCommentaire != null)
+                inputCommentaire.setText(participation.getCommentaire());
+            if (inputBesoinsSpeciaux != null)
+                inputBesoinsSpeciaux.setText(participation.getBesoinsSpeciaux());
 
             if (labelTypeAbonnement != null && participation.getTypeAbonnementChoisi() != null) {
                 labelTypeAbonnement.setText(participation.getTypeAbonnementChoisi());
@@ -131,9 +342,14 @@ public class ParticipationFormController {
     }
 
     public void setCurrentUserId(Long userId) {
-        if (userId != null && inputUserId != null && !adminMode) {
-            inputUserId.setText(String.valueOf(userId));
-            inputUserId.setDisable(true);
+        if (userId != null && comboUser != null && !adminMode) {
+            comboUser.getItems().stream()
+                    .filter(u -> Long.valueOf(u.getId()).equals(userId))
+                    .findFirst()
+                    .ifPresent(u -> {
+                        comboUser.setValue(u);
+                        comboUser.setDisable(true);
+                    });
         }
     }
 
@@ -142,18 +358,57 @@ public class ParticipationFormController {
         clearErrors();
         List<String> errors = new ArrayList<>();
 
-        Long userId = parseLong(inputUserId != null ? inputUserId.getText() : null);
-        Long evenementId = parseLong(inputEvenementId != null ? inputEvenementId.getText() : null);
+        Object userVal = comboUser != null ? comboUser.getValue() : null;
+        User selectedUser = null;
+        if (userVal instanceof User) {
+            selectedUser = (User) userVal;
+        } else if (userVal instanceof String) {
+            String str = ((String) userVal).trim();
+            if (!str.isEmpty()) {
+                // Tentative de résolution intelligente par nom
+                selectedUser = comboUser.getItems().stream()
+                        .filter(u -> u.getName().equalsIgnoreCase(str))
+                        .findFirst()
+                        .orElseGet(() ->
+                        // Deuxième tentative : contient (si unique ou premier match)
+                        comboUser.getItems().stream()
+                                .filter(u -> u.getName().toLowerCase().contains(str.toLowerCase()))
+                                .findFirst().orElse(null));
+
+                // Si trouvé via String, on met à jour la valeur de la combo pour éviter les
+                // ambiguïtés
+                if (selectedUser != null) {
+                    comboUser.setValue(selectedUser);
+                }
+            }
+        }
+
+        Object eventVal = comboEvenement != null ? comboEvenement.getValue() : null;
+        Evenement selectedEvent = null;
+        if (eventVal instanceof Evenement) {
+            selectedEvent = (Evenement) eventVal;
+        } else if (eventVal instanceof String) {
+            String str = (String) eventVal;
+            if (!str.isBlank()) {
+                selectedEvent = comboEvenement.getItems().stream()
+                        .filter(e -> e.getTitre().equalsIgnoreCase(str.trim()))
+                        .findFirst().orElse(null);
+            }
+        }
+
+        Long userId = selectedUser != null ? Long.valueOf(selectedUser.getId()) : null;
+        Long evenementId = selectedEvent != null ? Long.valueOf(selectedEvent.getIdEvent()) : null;
+
         Participation.TypeParticipation type = inputType != null ? inputType.getValue() : null;
         Participation.ContexteSocial contexte = inputContexte != null ? inputContexte.getValue() : null;
 
-        if (userId == null || userId <= 0) {
-            errors.add("User ID est obligatoire et doit être un nombre positif.");
-            showError(errorUserId, "Veuillez saisir un identifiant utilisateur valide (ex: 1, 2, 3...).");
+        if (userId == null) {
+            errors.add("Sélection de l'utilisateur obligatoire.");
+            showError(errorUserId, "Veuillez sélectionner un utilisateur dans la liste.");
         }
-        if (evenementId == null || evenementId <= 0) {
-            errors.add("Événement ID est obligatoire et doit être un nombre positif.");
-            showError(errorEvenementId, "Veuillez saisir un identifiant d'événement valide.");
+        if (evenementId == null) {
+            errors.add("Sélection de l'événement obligatoire.");
+            showError(errorEvenementId, "Veuillez sélectionner un événement dans la liste.");
         }
         if (type == null) {
             errors.add("Le type de participation est obligatoire.");
@@ -318,17 +573,9 @@ public class ParticipationFormController {
         a.showAndWait();
     }
 
-    private Long parseLong(String text) {
-        if (text == null || text.isBlank()) return null;
-        try {
-            return Long.parseLong(text.trim());
-        } catch (NumberFormatException e) {
-            return null;
-        }
-    }
-
     private int parseInt(String text, int defaultValue) {
-        if (text == null || text.isBlank()) return defaultValue;
+        if (text == null || text.isBlank())
+            return defaultValue;
         try {
             return Integer.parseInt(text.trim());
         } catch (NumberFormatException e) {
@@ -345,4 +592,3 @@ public class ParticipationFormController {
         }
     }
 }
-

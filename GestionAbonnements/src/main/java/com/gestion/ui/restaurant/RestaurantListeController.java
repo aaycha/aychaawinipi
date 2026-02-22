@@ -328,22 +328,14 @@ public class RestaurantListeController implements Initializable {
     }
 
     private String getRestaurantDetails(Restaurant r) {
-        return String.format("""
-                Nom: %s
-                Adresse: %s
-                Téléphone: %s
-                Email: %s
-                Description: %s
-                Statut: %s
-                Date de création: %s
-                """,
-                r.getNom(),
-                r.getAdresse() != null ? r.getAdresse() : "Non renseignée",
-                r.getTelephone() != null ? r.getTelephone() : "Non renseigné",
-                r.getEmail() != null ? r.getEmail() : "Non renseigné",
-                r.getDescription() != null ? r.getDescription() : "Non renseignée",
-                r.isActif() ? "Actif" : "Inactif",
-                r.getDateCreation() != null ? r.getDateCreation().toString() : "Inconnue");
+        return "Nom: " + r.getNom() + "\n" +
+                "Adresse: " + (r.getAdresse() != null ? r.getAdresse() : "Non renseignée") + "\n" +
+                "Téléphone: " + (r.getTelephone() != null ? r.getTelephone() : "Non renseigné") + "\n" +
+                "Email: " + (r.getEmail() != null ? r.getEmail() : "Non renseigné") + "\n" +
+                "Description: " + (r.getDescription() != null ? r.getDescription() : "Non renseignée") + "\n" +
+                "Statut: " + (r.isActif() ? "Actif" : "Inactif") + "\n" +
+                "Date de création: " + (r.getDateCreation() != null ? r.getDateCreation().toString() : "Inconnue")
+                + "\n";
     }
 
     private void showAlert(Alert.AlertType type, String title, String header, String content) {

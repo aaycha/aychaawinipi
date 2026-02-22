@@ -27,33 +27,52 @@ import java.util.stream.Collectors;
 
 public class AbonnementViewController {
 
-    @FXML private ListView<Abonnement> listView;
-    
+    @FXML
+    private ListView<Abonnement> listView;
+
     // Filtres et recherche
-    @FXML private ComboBox<String> filterStatut;
-    @FXML private ComboBox<String> filterType;
-    @FXML private TextField filterUserId;
-    @FXML private TextField searchField;
-    
+    @FXML
+    private ComboBox<String> filterStatut;
+    @FXML
+    private ComboBox<String> filterType;
+    @FXML
+    private TextField filterUserId;
+    @FXML
+    private TextField searchField;
+
     // Formulaire
-    @FXML private TextField inputUserId;
-    @FXML private ComboBox<Abonnement.TypeAbonnement> inputType;
-    @FXML private DatePicker inputDateDebut;
-    @FXML private DatePicker inputDateFin;
-    @FXML private TextField inputPrix;
-    @FXML private ComboBox<Abonnement.StatutAbonnement> inputStatut;
-    @FXML private CheckBox inputAutoRenew;
-    
+    @FXML
+    private TextField inputUserId;
+    @FXML
+    private ComboBox<Abonnement.TypeAbonnement> inputType;
+    @FXML
+    private DatePicker inputDateDebut;
+    @FXML
+    private DatePicker inputDateFin;
+    @FXML
+    private TextField inputPrix;
+    @FXML
+    private ComboBox<Abonnement.StatutAbonnement> inputStatut;
+    @FXML
+    private CheckBox inputAutoRenew;
+
     // Boutons
-    @FXML private Button btnModifier;
-    @FXML private Button btnSupprimer;
-    @FXML private Button btnEnregistrer;
-    @FXML private Button btnModifierForm;
-    
+    @FXML
+    private Button btnModifier;
+    @FXML
+    private Button btnSupprimer;
+    @FXML
+    private Button btnEnregistrer;
+    @FXML
+    private Button btnModifierForm;
+
     // Labels
-    @FXML private Label statusInfoLabel;
-    @FXML private Label countLabel;
-    @FXML private Label validationMessage;
+    @FXML
+    private Label statusInfoLabel;
+    @FXML
+    private Label countLabel;
+    @FXML
+    private Label validationMessage;
 
     private final AbonnementController controller = new AbonnementController();
     private final ObservableList<Abonnement> data = FXCollections.observableArrayList();
@@ -67,25 +86,25 @@ public class AbonnementViewController {
             setupListView();
             setupFilters();
             setupForm();
-            
+
             // Configuration du ListView
             listView.setItems(filteredData);
             listView.setVisible(true);
             listView.setManaged(true);
-            
+
             // Initialiser le filtered list
             // Initialiser le filtered list
             filteredData = new FilteredList<>(data, p -> true);
             listView.setItems(filteredData);
-            
+
             // Charger les données
             onActualiser();
-            
+
             // Mise à jour du compteur
             updateCount();
 
             applyRolePermissions();
-            
+
             System.out.println("AbonnementViewController initialisé avec succès");
         } catch (Exception e) {
             System.err.println("Erreur initialisation AbonnementViewController: " + e.getMessage());
@@ -115,37 +134,37 @@ public class AbonnementViewController {
         HBox card = new HBox(15);
         card.getStyleClass().add("modern-card");
         card.setAlignment(Pos.CENTER_LEFT);
-        
+
         // Icon / Avatar
         StackPane iconPane = new StackPane();
         Circle bg = new Circle(20, Color.web("#e7f1ff"));
         Text icon = new Text(getItemIcon(item.getType()));
         icon.setFont(Font.font("Segoe UI Emoji", 20));
         iconPane.getChildren().addAll(bg, icon);
-        
+
         // Content Area
         VBox content = new VBox(5);
         HBox.setHgrow(content, Priority.ALWAYS);
-        
+
         // Header: User ID + Statut
         HBox header = new HBox(10);
         header.setAlignment(Pos.CENTER_LEFT);
         Label title = new Label("Utilisateur #" + item.getUserId());
         title.getStyleClass().add("card-title");
-        
+
         Label statusBadge = new Label(item.getStatut().name());
         statusBadge.getStyleClass().addAll("status-badge", item.getStatut().name());
-        
+
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
-        
+
         header.getChildren().addAll(title, spacer, statusBadge);
-        
+
         // Details Grid
         GridPane details = new GridPane();
         details.setHgap(20);
         details.setVgap(5);
-        
+
         // Row 1
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         details.add(createDetailLabel("📅 Début:", item.getDateDebut().format(formatter)), 0, 0);
@@ -154,37 +173,42 @@ public class AbonnementViewController {
         } else {
             details.add(createDetailLabel("🏁 Fin:", "Illimité"), 1, 0);
         }
-        
+
         // Row 2
         details.add(createDetailLabel("💎 Type:", item.getType().name()), 0, 1);
         details.add(createDetailLabel("🔄 Auto-Renew:", item.isAutoRenew() ? "Oui" : "Non"), 1, 1);
-        
+
         content.getChildren().addAll(header, details);
-        
+
         // Price & Points (Right Side)
         VBox rightSide = new VBox(5);
         rightSide.setAlignment(Pos.CENTER_RIGHT);
-        
+
         Label price = new Label(String.format("%.2f €", item.getPrix()));
         price.getStyleClass().add("card-price");
-        
+
         Label points = new Label(item.getPointsAccumules() + " pts");
         points.setStyle("-fx-text-fill: #6c757d; -fx-font-size: 12px;");
-        
+
         rightSide.getChildren().addAll(price, points);
-        
+
         card.getChildren().addAll(iconPane, content, rightSide);
         return card;
     }
-    
+
     private String getItemIcon(Abonnement.TypeAbonnement type) {
-        if (type == null) return "📄";
-        return switch (type) {
-             case PREMIUM -> "🌟";
-             case ANNUEL -> "📅";
-             case MENSUEL -> "🗓️";
-             default -> "📄";
-        };
+        if (type == null)
+            return "📄";
+        switch (type) {
+            case PREMIUM:
+                return "🌟";
+            case ANNUEL:
+                return "📅";
+            case MENSUEL:
+                return "🗓️";
+            default:
+                return "📄";
+        }
     }
 
     private HBox createDetailLabel(String labelText, String valueText) {
@@ -206,7 +230,7 @@ public class AbonnementViewController {
     private void setupForm() {
         inputType.getItems().addAll(Abonnement.TypeAbonnement.values());
         inputStatut.getItems().addAll(Abonnement.StatutAbonnement.values());
-        
+
         // Validation en temps réel
         inputUserId.textProperty().addListener((obs, oldVal, newVal) -> validateForm());
         inputPrix.textProperty().addListener((obs, oldVal, newVal) -> validateForm());
@@ -218,6 +242,18 @@ public class AbonnementViewController {
         selectedAbonnement = null;
         isEditMode = false;
         clearForm();
+
+        // Auto-fill userId from session if not admin
+        if (!isAdmin()) {
+            Integer currentId = com.gestion.tools.Session.getInstance().getCurrentUserId();
+            if (currentId != null) {
+                inputUserId.setText(String.valueOf(currentId));
+                inputUserId.setDisable(true);
+            }
+        } else {
+            inputUserId.setDisable(false);
+        }
+
         updateButtons();
         hideValidationMessage();
     }
@@ -265,34 +301,34 @@ public class AbonnementViewController {
 
         filteredData.setPredicate(abonnement -> {
             boolean match = true;
-            
+
             // Recherche textuelle
             if (searchText != null && !searchText.isEmpty()) {
-                String searchable = abonnement.getId() + " " + 
-                                  abonnement.getUserId() + " " +
-                                  abonnement.getType().name() + " " +
-                                  abonnement.getStatut().name();
+                String searchable = abonnement.getId() + " " +
+                        abonnement.getUserId() + " " +
+                        abonnement.getType().name() + " " +
+                        abonnement.getStatut().name();
                 match = match && searchable.toLowerCase().contains(searchText);
             }
-            
+
             // Filtre statut
             if (statut != null && !statut.isEmpty()) {
                 match = match && abonnement.getStatut().name().equals(statut);
             }
-            
+
             // Filtre type
             if (type != null && !type.isEmpty()) {
                 match = match && abonnement.getType().name().equals(type);
             }
-            
+
             // Filtre userId
             if (userId != null) {
                 match = match && abonnement.getUserId().equals(userId);
             }
-            
+
             return match;
         });
-        
+
         updateCount();
     }
 
@@ -313,7 +349,7 @@ public class AbonnementViewController {
 
         try {
             Abonnement abonnement = buildAbonnementFromForm();
-            
+
             if (isEditMode && selectedAbonnement != null) {
                 abonnement.setId(selectedAbonnement.getId());
                 controller.update(abonnement);
@@ -322,7 +358,7 @@ public class AbonnementViewController {
                 controller.create(abonnement);
                 showAlert(Alert.AlertType.INFORMATION, "Succès", "Abonnement créé avec succès");
             }
-            
+
             onActualiser();
             onNouveau();
         } catch (Exception e) {
@@ -336,7 +372,7 @@ public class AbonnementViewController {
             showAlert(Alert.AlertType.WARNING, "Sélection requise", "Veuillez sélectionner un abonnement à modifier");
             return;
         }
-        
+
         isEditMode = true;
         loadAbonnementInForm(selectedAbonnement);
         updateButtons();
@@ -353,10 +389,10 @@ public class AbonnementViewController {
         Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
         confirmAlert.setTitle("Confirmation de suppression");
         confirmAlert.setHeaderText("Supprimer l'abonnement ?");
-        confirmAlert.setContentText("ID: " + selectedAbonnement.getId() + 
-                                   "\nUser ID: " + selectedAbonnement.getUserId() +
-                                   "\nType: " + selectedAbonnement.getType().name());
-        
+        confirmAlert.setContentText("ID: " + selectedAbonnement.getId() +
+                "\nUser ID: " + selectedAbonnement.getUserId() +
+                "\nType: " + selectedAbonnement.getType().name());
+
         confirmAlert.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
                 try {
@@ -385,13 +421,13 @@ public class AbonnementViewController {
         try {
             BigDecimal totalPoints = controller.getTotalPointsAccumules();
             List<Abonnement> prochesExpiration = controller.findProchesExpiration(30);
-            
+
             StringBuilder stats = new StringBuilder();
             stats.append("📊 Statistiques des Abonnements\n\n");
             stats.append("Total des points accumulés: ").append(totalPoints).append("\n");
             stats.append("Abonnements proches expiration (30 jours): ").append(prochesExpiration.size()).append("\n");
             stats.append("Total des abonnements: ").append(data.size());
-            
+
             Alert statsAlert = new Alert(Alert.AlertType.INFORMATION);
             statsAlert.setTitle("Statistiques");
             statsAlert.setHeaderText(null);
@@ -428,13 +464,13 @@ public class AbonnementViewController {
         if (statut != null) {
             abonnement.setStatut(statut);
         }
-        
+
         return abonnement;
     }
 
     private boolean validateForm() {
         StringBuilder errors = new StringBuilder();
-        
+
         if (inputUserId.getText() == null || inputUserId.getText().trim().isEmpty()) {
             errors.append("• User ID est requis\n");
         } else {
@@ -444,15 +480,15 @@ public class AbonnementViewController {
                 errors.append("• User ID doit être un nombre valide\n");
             }
         }
-        
+
         if (inputType.getValue() == null) {
             errors.append("• Type est requis\n");
         }
-        
+
         if (inputDateDebut.getValue() == null) {
             errors.append("• Date de début est requise\n");
         }
-        
+
         if (inputPrix.getText() == null || inputPrix.getText().trim().isEmpty()) {
             errors.append("• Prix est requis\n");
         } else {
@@ -465,13 +501,13 @@ public class AbonnementViewController {
                 errors.append("• Prix doit être un nombre valide\n");
             }
         }
-        
+
         if (inputDateFin.getValue() != null && inputDateDebut.getValue() != null) {
             if (inputDateFin.getValue().isBefore(inputDateDebut.getValue())) {
                 errors.append("• La date de fin doit être après la date de début\n");
             }
         }
-        
+
         if (errors.length() > 0) {
             showValidationMessage(errors.toString(), "error");
             return false;
@@ -497,7 +533,8 @@ public class AbonnementViewController {
         btnModifier.setDisable(!admin || !hasSelection);
         btnSupprimer.setDisable(!admin || !hasSelection);
         btnModifierForm.setDisable(!admin || !hasSelection);
-        // en mode utilisateur, on autorise uniquement la création de nouveaux abonnements
+        // en mode utilisateur, on autorise uniquement la création de nouveaux
+        // abonnements
         btnEnregistrer.setDisable(!admin && isEditMode);
     }
 
@@ -538,7 +575,8 @@ public class AbonnementViewController {
     }
 
     private Long parseLong(String s) {
-        if (s == null || s.isBlank()) return null;
+        if (s == null || s.isBlank())
+            return null;
         try {
             return Long.parseLong(s.trim());
         } catch (NumberFormatException e) {
@@ -547,7 +585,8 @@ public class AbonnementViewController {
     }
 
     private BigDecimal parseBigDecimal(String s) {
-        if (s == null || s.isBlank()) return BigDecimal.ZERO;
+        if (s == null || s.isBlank())
+            return BigDecimal.ZERO;
         try {
             return new BigDecimal(s.trim());
         } catch (NumberFormatException e) {

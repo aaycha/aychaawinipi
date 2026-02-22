@@ -11,23 +11,23 @@
             styleClass="modern-2026-root">
     
     <top>
-        <VBox spacing="15" styleClass="glass-panel" style="-fx-padding: 20; -fx-background-radius: 0 0 24 24;">
+        <VBox spacing="10" styleClass="glass-panel" style="-fx-padding: 12; -fx-background-radius: 0 0 15 15;">
             <HBox alignment="CENTER_LEFT" spacing="20">
-                <Button text="←" styleClass="btn-secondary" style="-fx-background-radius: 50%;" onAction="#onBack"/>
-                <Label text="Planificateur de Menus Hebdomadaire" style="-fx-font-size: 24px; -fx-font-weight: 900; -fx-text-fill: #1E3A8A;"/>
+                <Button text="←" styleClass="btn-secondary" style="-fx-background-radius: 50%; -fx-font-size: 10px;" onAction="#onBack"/>
+                <Label text="Planificateur de Menus Hebdomadaire" style="-fx-font-size: 18px; -fx-font-weight: 900; -fx-text-fill: #1E3A8A;"/>
                 <Region HBox.hgrow="ALWAYS"/>
-                <HBox spacing="10" alignment="CENTER_LEFT">
-                    <Button text="Semaine Précédente" styleClass="btn-secondary" onAction="#onPreviousWeek"/>
-                    <Label fx:id="currentWeekLabel" text="Semaine du 16 au 22 Février 2026" style="-fx-font-weight: bold;"/>
-                    <Button text="Semaine Suivante" styleClass="btn-primary" onAction="#onNextWeek"/>
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <Button text="Semaine Précédente" styleClass="btn-secondary" style="-fx-font-size: 10px;" onAction="#onPreviousWeek"/>
+                    <Label fx:id="currentWeekLabel" text="Semaine du 16 au 22 Février 2026" style="-fx-font-weight: bold; -fx-font-size: 11px;"/>
+                    <Button text="Semaine Suivante" styleClass="btn-primary" style="-fx-font-size: 10px;" onAction="#onNextWeek"/>
                 </HBox>
             </HBox>
         </VBox>
     </top>
 
     <center>
-        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;" styleClass="modern-scroll">
-            <VBox spacing="20" style="-fx-padding: 30;">
+        <ScrollPane fitToWidth="false" fitToHeight="false" hbarPolicy="AS_NEEDED" vbarPolicy="AS_NEEDED" style="-fx-background-color: transparent;" styleClass="modern-scroll">
+            <VBox spacing="12" style="-fx-padding: 15;">
                 <GridPane fx:id="plannerGrid" hgap="15" vgap="15">
                     <columnConstraints>
                         <ColumnConstraints percentWidth="14.28" />

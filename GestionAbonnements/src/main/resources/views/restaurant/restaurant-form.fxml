@@ -1,186 +1,133 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Font?>
-
-<ScrollPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<ScrollPane xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.gestion.ui.restaurant.RestaurantFormController"
-            fitToWidth="true" fitToHeight="true"
-            style="-fx-background: linear-gradient(to bottom, #f8f9fa, #e9ecef);">
+            fitToWidth="false" fitToHeight="false" pannable="true" hbarPolicy="AS_NEEDED" vbarPolicy="AS_NEEDED"
+            stylesheets="@../../styles/nature-mood.css, @../../styles/card-view.css"
+            style="-fx-background-color: transparent; -fx-background: transparent; -fx-border-color: transparent; -fx-padding: 0;">
 
-    <VBox spacing="24" style="-fx-background-color: transparent;" prefWidth="900" maxWidth="900">
-        <padding>
-            <Insets top="32" right="48" bottom="32" left="48"/>
-        </padding>
-
-        <!-- Header -->
-        <HBox spacing="16" alignment="CENTER_LEFT">
-            <Label text="🍽️" style="-fx-font-size: 28px;"/>
-            <VBox spacing="4">
-                <Label fx:id="formTitle" text="Nouveau Restaurant" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
-                <Label text="Remplissez les informations du restaurant" style="-fx-font-size: 14px; -fx-text-fill: #7f8c8d;"/>
-            </VBox>
-            <Region HBox.hgrow="ALWAYS"/>
-        </HBox>
-
-        <!-- Form Card -->
-        <VBox spacing="20"
-              style="-fx-background-color: white; -fx-background-radius: 16;
-                     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 16, 0, 0, 4);">
-            <padding>
-                <Insets top="32" right="40" bottom="32" left="40"/>
-            </padding>
-
-            <!-- Section: Informations Générales -->
-            <VBox spacing="16">
-                <HBox spacing="8" alignment="CENTER_LEFT">
-                    <Label text="📋" style="-fx-font-size: 20px;"/>
-                    <Label text="Informations Générales" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
-                </HBox>
-
-                <GridPane hgap="20" vgap="16">
-                    <columnConstraints>
-                        <ColumnConstraints minWidth="140" prefWidth="160" halignment="RIGHT"/>
-                        <ColumnConstraints hgrow="ALWAYS" minWidth="300"/>
-                    </columnConstraints>
-
-                    <!-- Nom (obligatoire) -->
-                    <Label text="Nom * :" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-font-weight: bold;"/>
-                    <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                        <TextField fx:id="inputNom" promptText="Nom du restaurant"
-                                   style="-fx-padding: 12 16; -fx-background-radius: 8; -fx-border-radius: 8;
-                                          -fx-border-color: #ddd; -fx-font-size: 14px;"/>
-                        <Label fx:id="hintNom" text="0 / 100 car. — Obligatoire" style="-fx-text-fill: #7f8c8d; -fx-font-size: 11px;"/>
-                        <Label fx:id="errorNom" text="" visible="false" managed="false"
-                               style="-fx-text-fill: #e74c3c; -fx-font-size: 12px;"/>
-                    </VBox>
-
-                    <!-- Téléphone -->
-                    <Label text="Téléphone :" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-                    <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                        <TextField fx:id="inputTelephone" promptText="+33 1 23 45 67 89"
-                                   style="-fx-padding: 12 16; -fx-background-radius: 8; -fx-border-radius: 8;
-                                          -fx-border-color: #ddd; -fx-font-size: 14px;"/>
-                        <Label fx:id="errorTelephone" text="" visible="false" managed="false"
-                               style="-fx-text-fill: #e74c3c; -fx-font-size: 12px;"/>
-                    </VBox>
-
-                    <!-- Email -->
-                    <Label text="Email :" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-                    <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                        <TextField fx:id="inputEmail" promptText="contact@restaurant.com"
-                                   style="-fx-padding: 12 16; -fx-background-radius: 8; -fx-border-radius: 8;
-                                          -fx-border-color: #ddd; -fx-font-size: 14px;"/>
-                        <Label fx:id="errorEmail" text="" visible="false" managed="false"
-                               style="-fx-text-fill: #e74c3c; -fx-font-size: 12px;"/>
-                    </VBox>
-                </GridPane>
-            </VBox>
-
-            <Separator style="-fx-opacity: 0.3;"/>
-
-            <!-- Section: Adresse -->
-            <VBox spacing="16">
-                <HBox spacing="8" alignment="CENTER_LEFT">
-                    <Label text="📍" style="-fx-font-size: 20px;"/>
-                    <Label text="Adresse" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
-                </HBox>
-
-                <GridPane hgap="20" vgap="16">
-                    <columnConstraints>
-                        <ColumnConstraints minWidth="140" prefWidth="160" halignment="RIGHT"/>
-                        <ColumnConstraints hgrow="ALWAYS" minWidth="300"/>
-                    </columnConstraints>
-
-                    <Label text="Adresse :" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-                    <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                        <TextArea fx:id="inputAdresse" promptText="123 Rue de la Gastronomie, 75001 Paris"
-                                  wrapText="true" prefRowCount="2"
-                                  style="-fx-padding: 12 16; -fx-background-radius: 8; -fx-border-radius: 8;
-                                         -fx-border-color: #ddd; -fx-font-size: 14px;"/>
-                        <Label fx:id="errorAdresse" text="" visible="false" managed="false"
-                               style="-fx-text-fill: #e74c3c; -fx-font-size: 12px;"/>
-                    </VBox>
-                </GridPane>
-            </VBox>
-
-            <Separator style="-fx-opacity: 0.3;"/>
-
-            <!-- Section: Description & Image -->
-            <VBox spacing="16">
-                <HBox spacing="8" alignment="CENTER_LEFT">
-                    <Label text="📝" style="-fx-font-size: 20px;"/>
-                    <Label text="Description  Image" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
-                </HBox>
-
-                <GridPane hgap="20" vgap="16">
-                    <columnConstraints>
-                        <ColumnConstraints minWidth="140" prefWidth="160" halignment="RIGHT"/>
-                        <ColumnConstraints hgrow="ALWAYS" minWidth="300"/>
-                    </columnConstraints>
-
-                    <Label text="Description :" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.valignment="TOP">
-                        <padding>
-                            <Insets top="12"/>
-                        </padding>
-                    </Label>
-                    <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                        <TextArea fx:id="inputDescription" promptText="Décrivez votre restaurant, sa cuisine, son ambiance..."
-                                  wrapText="true" prefRowCount="4"
-                                  style="-fx-padding: 12 16; -fx-background-radius: 8; -fx-border-radius: 8;
-                                         -fx-border-color: #ddd; -fx-font-size: 14px;"/>
-                        <Label fx:id="errorDescription" text="" visible="false" managed="false"
-                               style="-fx-text-fill: #e74c3c; -fx-font-size: 12px;"/>
-                    </VBox>
-
-                    <Label text="URL Image :" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-                    <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                        <TextField fx:id="inputImageUrl" promptText="https://exemple.com/image.jpg"
-                                   style="-fx-padding: 12 16; -fx-background-radius: 8; -fx-border-radius: 8;
-                                          -fx-border-color: #ddd; -fx-font-size: 14px;"/>
-                        <Label fx:id="errorImageUrl" text="" visible="false" managed="false"
-                               style="-fx-text-fill: #e74c3c; -fx-font-size: 12px;"/>
-                    </VBox>
-                </GridPane>
-            </VBox>
-
-            <Separator style="-fx-opacity: 0.3;"/>
-
-            <!-- Section: Statut -->
-            <VBox spacing="16">
-                <HBox spacing="8" alignment="CENTER_LEFT">
-                    <Label text="⚙️" style="-fx-font-size: 20px;"/>
-                    <Label text="Statut" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
-                </HBox>
-
-                <HBox spacing="20">
-                    <CheckBox fx:id="checkActif" text="Restaurant actif (visible aux clients)" selected="true"
-                              style="-fx-font-size: 14px;"/>
-                </HBox>
-            </VBox>
-
-            <!-- Error Messages -->
-            <VBox fx:id="errorContainer" spacing="8" visible="false" managed="false"
-                  style="-fx-background-color: #fdf2f2; -fx-border-color: #fecaca; -fx-border-radius: 8;
-                         -fx-background-radius: 8; -fx-padding: 16;">
-                <Label fx:id="globalErrorMessage" text="" style="-fx-text-fill: #dc2626; -fx-font-size: 14px;"/>
-            </VBox>
-
-            <!-- Buttons -->
-            <HBox spacing="12" alignment="CENTER_LEFT">
-                <Button text="💾 Enregistrer" onAction="#onEnregistrer"
-                        style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold;
-                               -fx-background-radius: 8; -fx-padding: 14 28; -fx-cursor: hand;
-                               -fx-font-size: 14px;"/>
-                <Button text="❌ Annuler" onAction="#onAnnuler"
-                        style="-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-font-weight: bold;
-                               -fx-background-radius: 8; -fx-padding: 14 28; -fx-cursor: hand;
-                               -fx-font-size: 14px;"/>
+    <StackPane style="-fx-background-color: transparent; -fx-padding: 10;">
+        <VBox spacing="10" styleClass="glass-panel" prefWidth="800" maxWidth="850" alignment="TOP_CENTER" style="-fx-padding: 15;">
+            
+            <!-- Hiker Title Section -->
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <StackPane style="-fx-background-color: rgba(249, 115, 22, 0.15); -fx-background-radius: 8; -fx-padding: 6;">
+                    <Label text="🏘️" style="-fx-font-size: 16;"/>
+                </StackPane>
+                <VBox spacing="0">
+                    <Label fx:id="formTitle" text="New Mountain Lodge"
+                           style="-fx-font-size: 16px; -fx-font-weight: 800; -fx-text-fill: white;"/>
+                    <Label text="Establish a new fueling station for explorers" style="-fx-font-size: 9px; -fx-text-fill: #94a3b8;"/>
+                </VBox>
                 <Region HBox.hgrow="ALWAYS"/>
-                <Label text="* Champs obligatoires" style="-fx-text-fill: #95a5a6; -fx-font-size: 12px;"/>
+                <Label text="CERTIFIED BASE CAMP" style="-fx-background-color: rgba(34, 197, 94, 0.1); -fx-text-fill: #22c55e; -fx-font-size: 10; -fx-font-weight: 900; -fx-padding: 4 12; -fx-background-radius: 12;"/>
             </HBox>
+
+            <Separator style="-fx-opacity: 0.1;"/>
+
+            <!-- General Logistics Section -->
+            <VBox spacing="12" styleClass="modern-card" style="-fx-padding: 15;">
+                <Label text="📋 LODGE IDENTIFICATION" style="-fx-font-weight: 900; -fx-text-fill: #3b82f6; -fx-font-size: 11; -fx-letter-spacing: 1px;"/>
+                
+                <GridPane hgap="20" vgap="15">
+                    <columnConstraints>
+                        <ColumnConstraints minWidth="120" prefWidth="140"/>
+                        <ColumnConstraints hgrow="ALWAYS"/>
+                    </columnConstraints>
+
+                    <Label text="Station Name:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 11;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                    <VBox spacing="3" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <TextField fx:id="inputNom" promptText="Lodge or Resort name..." styleClass="modern-input" style="-fx-font-size: 11;"/>
+                        <Label fx:id="hintNom" text="Official trail designation (Required)" style="-fx-text-fill: #64748b; -fx-font-size: 10px;"/>
+                        <Label fx:id="errorNom" text="" visible="false" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 11px;"/>
+                    </VBox>
+
+                    <Label text="Direct Frequency:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 11;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                    <VBox spacing="3" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <TextField fx:id="inputTelephone" promptText="+00 123 456 789" styleClass="modern-input" style="-fx-font-size: 11;"/>
+                        <Label fx:id="errorTelephone" text="" visible="false" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 11px;"/>
+                    </VBox>
+
+                    <Label text="Signal Email:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 11;" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                    <VBox spacing="3" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <TextField fx:id="inputEmail" promptText="lodge@mountain.com" styleClass="modern-input" style="-fx-font-size: 11;"/>
+                        <Label fx:id="errorEmail" text="" visible="false" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 11px;"/>
+                    </VBox>
+                </GridPane>
+            </VBox>
+
+            <!-- Coordinate Section -->
+            <VBox spacing="12" styleClass="modern-card" style="-fx-padding: 15;">
+                <Label text="📍 TRAIL COORDINATES" style="-fx-font-weight: 900; -fx-text-fill: #FACC15; -fx-font-size: 11; -fx-letter-spacing: 1px;"/>
+                
+                <GridPane hgap="20" vgap="12">
+                    <columnConstraints>
+                        <ColumnConstraints minWidth="120" prefWidth="140"/>
+                        <ColumnConstraints hgrow="ALWAYS"/>
+                    </columnConstraints>
+
+                    <Label text="Lodge Address:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 11;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                    <VBox spacing="3" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <TextArea fx:id="inputAdresse" promptText="Peak Altitude, Trail Segment 7..." wrapText="true" prefRowCount="2" styleClass="modern-input" style="-fx-font-size: 11;"/>
+                        <Label fx:id="errorAdresse" text="" visible="false" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 11px;"/>
+                    </VBox>
+                </GridPane>
+            </VBox>
+
+            <!-- Media Section -->
+            <VBox spacing="12" styleClass="modern-card" style="-fx-padding: 15;">
+                <Label text="🖼️ VISUAL SIGNAL" style="-fx-font-weight: 900; -fx-text-fill: #F97316; -fx-font-size: 11; -fx-letter-spacing: 1px;"/>
+                
+                <GridPane hgap="20" vgap="15">
+                    <columnConstraints>
+                        <ColumnConstraints minWidth="120" prefWidth="140"/>
+                        <ColumnConstraints hgrow="ALWAYS"/>
+                    </columnConstraints>
+
+                    <Label text="Brief Bio:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 11;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                    <VBox spacing="3" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <TextArea fx:id="inputDescription" promptText="Tell explorers about your cuisine..." wrapText="true" prefRowCount="3" styleClass="modern-input" style="-fx-font-size: 11;"/>
+                        <Label fx:id="errorDescription" text="" visible="false" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 11px;"/>
+                    </VBox>
+
+                    <Label text="Visual Feed URL:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 11;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                    <VBox spacing="3" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <TextField fx:id="inputImageUrl" promptText="https://images.com/lodge.jpg" styleClass="modern-input" style="-fx-font-size: 11;"/>
+                        <Label fx:id="errorImageUrl" text="" visible="false" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 11px;"/>
+                    </VBox>
+                </GridPane>
+            </VBox>
+
+            <!-- Active Status Section -->
+            <HBox spacing="15" alignment="CENTER_LEFT" styleClass="modern-card" style="-fx-padding: 10 20;">
+                <Label text="⚙️ Operational Status:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 11;"/>
+                <CheckBox fx:id="checkActif" text="Lodge is currently open for explorers" selected="true" style="-fx-text-fill: white; -fx-font-weight: 700; -fx-font-size: 11;"/>
+            </HBox>
+
+            <!-- Error Terminal -->
+            <VBox fx:id="errorContainer" spacing="8" visible="false" managed="false" style="-fx-background-color: rgba(239, 68, 68, 0.1); -fx-padding: 10; -fx-background-radius: 10; -fx-border-color: rgba(239, 68, 68, 0.2); -fx-border-radius: 10;">
+                <Label fx:id="globalErrorMessage" text="" style="-fx-text-fill: #ef4444; -fx-font-weight: 700; -fx-font-size: 11;"/>
+            </VBox>
+
+            <!-- Actions Section -->
+            <HBox spacing="12" alignment="CENTER_RIGHT">
+                <Button text="💾 ESTABLISH LODGE" onAction="#onEnregistrer" styleClass="button-capsule" style="-fx-padding: 10 30; -fx-font-size: 11;"/>
+                <Button text="❌ Abort Mission" onAction="#onAnnuler" styleClass="button-capsule-glass" style="-fx-padding: 10 25; -fx-font-size: 11;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label text="* Mandatory Scout Info" style="-fx-text-fill: #64748b; -fx-font-size: 10px; -fx-font-style: italic;"/>
+            </HBox>
+
         </VBox>
-    </VBox>
+    </StackPane>
 </ScrollPane>

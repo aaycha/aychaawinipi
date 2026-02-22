@@ -25,47 +25,81 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     private void ensureTable() {
-        String sql = """
-                CREATE TABLE IF NOT EXISTS %s (
-                  id BIGINT PRIMARY KEY AUTO_INCREMENT,
-                  nom VARCHAR(100) NOT NULL,
-                  adresse VARCHAR(255) NOT NULL,
-                  telephone VARCHAR(20) NOT NULL,
-                  email VARCHAR(100) NOT NULL,
-                  description TEXT NOT NULL,
-                  image_url VARCHAR(255) NOT NULL,
-                  actif BOOLEAN NOT NULL DEFAULT TRUE,
-                  date_creation DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-                )
-                """.formatted(TABLE);
-        try (Connection c = db.getConnection(); Statement st = c.createStatement()) {
-            st.execute(sql);
+        String createTable = "CREATE TABLE IF NOT EXISTS " + TABLE + " (" +
+                "  id BIGINT PRIMARY KEY AUTO_INCREMENT," +
+                "  nom VARCHAR(100) NOT NULL," +
+                "  adresse VARCHAR(255) NOT NULL," +
+                "  telephone VARCHAR(20) NOT NULL," +
+                "  email VARCHAR(100) NOT NULL," +
+                "  description TEXT NOT NULL," +
+                "  image_url VARCHAR(255) NOT NULL," +
+                "  actif BOOLEAN NOT NULL DEFAULT TRUE," +
+                "  date_creation DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP" +
+                ")";
+
+        try {
+            Connection c = db.getConnection();
+            if (c == null) {
+                System.err.println("DB Status: Unstable. Skipping table initialization for " + TABLE);
+                return;
+            }
+            try (Statement st = c.createStatement()) {
+                st.execute(createTable);
+
+                // Migration: Add new columns if they don't exist
+                addColumnIfNotExists(st, "latitude", "DOUBLE");
+                addColumnIfNotExists(st, "longitude", "DOUBLE");
+                addColumnIfNotExists(st, "rating", "DOUBLE DEFAULT 0.0");
+            }
         } catch (SQLException e) {
-            throw new RuntimeException("Impossible de créer la table " + TABLE + " : " + e.getMessage(), e);
+            System.err.println("Warning: Could not ensure table " + TABLE + " : " + e.getMessage());
+        }
+    }
+
+    private void addColumnIfNotExists(Statement st, String columnName, String definition) {
+        try {
+            st.execute("ALTER TABLE " + TABLE + " ADD COLUMN " + columnName + " " + definition);
+            System.out.println("✅ Added column " + columnName + " to " + TABLE);
+        } catch (SQLException e) {
+            // Error code 1060 is "Duplicate column name" in MySQL
+            if (!"42S21".equals(e.getSQLState()) && e.getErrorCode() != 1060) {
+                System.err.println("⚠️ Warning during migration of " + columnName + ": " + e.getMessage());
+            }
         }
     }
 
     @Override
     public Restaurant create(Restaurant restaurant) {
-        if (restaurant == null) throw new IllegalArgumentException("Le restaurant ne peut pas être null");
+        if (restaurant == null)
+            throw new IllegalArgumentException("Le restaurant ne peut pas être null");
         ValidationResult validation = restaurant.validate();
-        if (validation.hasErrors()) throw new IllegalArgumentException(validation.getAllErrorsAsString());
+        if (validation.hasErrors())
+            throw new IllegalArgumentException(validation.getAllErrorsAsString());
 
-        String sql = "INSERT INTO " + TABLE + " (nom, adresse, telephone, email, description, image_url, actif) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        try (Connection c = db.getConnection();
-             PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            ps.setString(1, restaurant.getNom());
-            ps.setString(2, restaurant.getAdresse());
-            ps.setString(3, restaurant.getTelephone());
-            ps.setString(4, restaurant.getEmail());
-            ps.setString(5, restaurant.getDescription());
-            ps.setString(6, restaurant.getImageUrl());
-            ps.setBoolean(7, restaurant.isActif());
-            ps.executeUpdate();
-            try (ResultSet keys = ps.getGeneratedKeys()) {
-                if (keys.next()) restaurant.setId(keys.getLong(1));
+        String sql = "INSERT INTO " + TABLE
+                + " (nom, adresse, telephone, email, description, image_url, actif, latitude, longitude, rating) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        try {
+            Connection c = db.getConnection();
+            if (c == null)
+                return restaurant;
+            try (PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                ps.setString(1, restaurant.getNom());
+                ps.setString(2, restaurant.getAdresse());
+                ps.setString(3, restaurant.getTelephone());
+                ps.setString(4, restaurant.getEmail());
+                ps.setString(5, restaurant.getDescription());
+                ps.setString(6, restaurant.getImageUrl());
+                ps.setBoolean(7, restaurant.isActif());
+                ps.setObject(8, restaurant.getLatitude());
+                ps.setObject(9, restaurant.getLongitude());
+                ps.setObject(10, restaurant.getRating());
+                ps.executeUpdate();
+                try (ResultSet keys = ps.getGeneratedKeys()) {
+                    if (keys.next())
+                        restaurant.setId(keys.getLong(1));
+                }
+                return restaurant;
             }
-            return restaurant;
         } catch (SQLException e) {
             throw new RuntimeException("Erreur création restaurant : " + e.getMessage(), e);
         }
@@ -77,21 +111,32 @@ public class RestaurantServiceImpl implements RestaurantService {
             throw new IllegalArgumentException("Le restaurant et son ID sont obligatoires");
         }
         ValidationResult validation = restaurant.validate();
-        if (validation.hasErrors()) throw new IllegalArgumentException(validation.getAllErrorsAsString());
+        if (validation.hasErrors())
+            throw new IllegalArgumentException(validation.getAllErrorsAsString());
 
-        String sql = "UPDATE " + TABLE + " SET nom=?, adresse=?, telephone=?, email=?, description=?, image_url=?, actif=? WHERE id=?";
-        try (Connection c = db.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
-            ps.setString(1, restaurant.getNom());
-            ps.setString(2, restaurant.getAdresse());
-            ps.setString(3, restaurant.getTelephone());
-            ps.setString(4, restaurant.getEmail());
-            ps.setString(5, restaurant.getDescription());
-            ps.setString(6, restaurant.getImageUrl());
-            ps.setBoolean(7, restaurant.isActif());
-            ps.setLong(8, restaurant.getId());
-            int updated = ps.executeUpdate();
-            if (updated == 0) throw new IllegalArgumentException("Restaurant non trouvé avec l'ID: " + restaurant.getId());
-            return restaurant;
+        String sql = "UPDATE " + TABLE
+                + " SET nom=?, adresse=?, telephone=?, email=?, description=?, image_url=?, actif=?, latitude=?, longitude=?, rating=? WHERE id=?";
+        try {
+            Connection c = db.getConnection();
+            if (c == null)
+                return restaurant;
+            try (PreparedStatement ps = c.prepareStatement(sql)) {
+                ps.setString(1, restaurant.getNom());
+                ps.setString(2, restaurant.getAdresse());
+                ps.setString(3, restaurant.getTelephone());
+                ps.setString(4, restaurant.getEmail());
+                ps.setString(5, restaurant.getDescription());
+                ps.setString(6, restaurant.getImageUrl());
+                ps.setBoolean(7, restaurant.isActif());
+                ps.setObject(8, restaurant.getLatitude());
+                ps.setObject(9, restaurant.getLongitude());
+                ps.setObject(10, restaurant.getRating());
+                ps.setLong(11, restaurant.getId());
+                int updated = ps.executeUpdate();
+                if (updated == 0)
+                    throw new IllegalArgumentException("Restaurant non trouvé avec l'ID: " + restaurant.getId());
+                return restaurant;
+            }
         } catch (SQLException e) {
             throw new RuntimeException("Erreur mise à jour restaurant : " + e.getMessage(), e);
         }
@@ -99,11 +144,17 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public boolean delete(Long id) {
-        if (id == null) return false;
+        if (id == null)
+            return false;
         String sql = "DELETE FROM " + TABLE + " WHERE id=?";
-        try (Connection c = db.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
-            ps.setLong(1, id);
-            return ps.executeUpdate() > 0;
+        try {
+            Connection c = db.getConnection();
+            if (c == null)
+                return false;
+            try (PreparedStatement ps = c.prepareStatement(sql)) {
+                ps.setLong(1, id);
+                return ps.executeUpdate() > 0;
+            }
         } catch (SQLException e) {
             throw new RuntimeException("Erreur suppression restaurant : " + e.getMessage(), e);
         }
@@ -111,12 +162,18 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public Optional<Restaurant> findById(Long id) {
-        if (id == null) return Optional.empty();
+        if (id == null)
+            return Optional.empty();
         String sql = "SELECT * FROM " + TABLE + " WHERE id=?";
-        try (Connection c = db.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
-            ps.setLong(1, id);
-            try (ResultSet rs = ps.executeQuery()) {
-                return rs.next() ? Optional.of(map(rs)) : Optional.empty();
+        try {
+            Connection c = db.getConnection();
+            if (c == null)
+                return Optional.empty();
+            try (PreparedStatement ps = c.prepareStatement(sql)) {
+                ps.setLong(1, id);
+                try (ResultSet rs = ps.executeQuery()) {
+                    return rs.next() ? Optional.of(map(rs)) : Optional.empty();
+                }
             }
         } catch (SQLException e) {
             throw new RuntimeException("Erreur findById restaurant : " + e.getMessage(), e);
@@ -126,10 +183,17 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Override
     public List<Restaurant> findAll() {
         String sql = "SELECT * FROM " + TABLE + " ORDER BY id DESC";
-        try (Connection c = db.getConnection(); PreparedStatement ps = c.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
-            List<Restaurant> list = new ArrayList<>();
-            while (rs.next()) list.add(map(rs));
-            return list;
+        try {
+            Connection c = db.getConnection();
+            if (c == null)
+                return new ArrayList<>();
+            try (PreparedStatement ps = c.prepareStatement(sql);
+                    ResultSet rs = ps.executeQuery()) {
+                List<Restaurant> list = new ArrayList<>();
+                while (rs.next())
+                    list.add(map(rs));
+                return list;
+            }
         } catch (SQLException e) {
             throw new RuntimeException("Erreur findAll restaurants : " + e.getMessage(), e);
         }
@@ -138,10 +202,17 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Override
     public List<Restaurant> findActifs() {
         String sql = "SELECT * FROM " + TABLE + " WHERE actif=TRUE ORDER BY nom ASC";
-        try (Connection c = db.getConnection(); PreparedStatement ps = c.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
-            List<Restaurant> list = new ArrayList<>();
-            while (rs.next()) list.add(map(rs));
-            return list;
+        try {
+            Connection c = db.getConnection();
+            if (c == null)
+                return new ArrayList<>();
+            try (PreparedStatement ps = c.prepareStatement(sql);
+                    ResultSet rs = ps.executeQuery()) {
+                List<Restaurant> list = new ArrayList<>();
+                while (rs.next())
+                    list.add(map(rs));
+                return list;
+            }
         } catch (SQLException e) {
             throw new RuntimeException("Erreur findActifs restaurants : " + e.getMessage(), e);
         }
@@ -149,13 +220,15 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public List<Restaurant> searchByNom(String nom) {
-        if (nom == null || nom.trim().isEmpty()) return findAll();
+        if (nom == null || nom.trim().isEmpty())
+            return findAll();
         String sql = "SELECT * FROM " + TABLE + " WHERE LOWER(nom) LIKE ? ORDER BY nom ASC";
         try (Connection c = db.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setString(1, "%" + nom.trim().toLowerCase() + "%");
             try (ResultSet rs = ps.executeQuery()) {
                 List<Restaurant> list = new ArrayList<>();
-                while (rs.next()) list.add(map(rs));
+                while (rs.next())
+                    list.add(map(rs));
                 return list;
             }
         } catch (SQLException e) {
@@ -165,7 +238,8 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public boolean existsById(Long id) {
-        if (id == null) return false;
+        if (id == null)
+            return false;
         String sql = "SELECT 1 FROM " + TABLE + " WHERE id=? LIMIT 1";
         try (Connection c = db.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setLong(1, id);
@@ -180,7 +254,9 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Override
     public long count() {
         String sql = "SELECT COUNT(*) FROM " + TABLE;
-        try (Connection c = db.getConnection(); PreparedStatement ps = c.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+        try (Connection c = db.getConnection();
+                PreparedStatement ps = c.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
             return rs.next() ? rs.getLong(1) : 0L;
         } catch (SQLException e) {
             throw new RuntimeException("Erreur count restaurants : " + e.getMessage(), e);
@@ -197,9 +273,14 @@ public class RestaurantServiceImpl implements RestaurantService {
         r.setDescription(rs.getString("description"));
         r.setImageUrl(rs.getString("image_url"));
         r.setActif(rs.getBoolean("actif"));
+        r.setLatitude(rs.getObject("latitude", Double.class));
+        r.setLongitude(rs.getObject("longitude", Double.class));
+        r.setRating(rs.getObject("rating", Double.class));
         Timestamp ts = rs.getTimestamp("date_creation");
-        if (ts != null) r.setDateCreation(ts.toLocalDateTime());
-        else r.setDateCreation(LocalDateTime.now());
+        if (ts != null)
+            r.setDateCreation(ts.toLocalDateTime());
+        else
+            r.setDateCreation(LocalDateTime.now());
         return r;
     }
 }

@@ -20,34 +20,38 @@ public class RepasDetailleServiceImpl implements RepasDetailleService {
     }
 
     private void initTable() {
-        String sql = """
-                CREATE TABLE IF NOT EXISTS repas_detaille (
-                    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                    nom VARCHAR(100) NOT NULL,
-                    description TEXT,
-                    prix DECIMAL(10,2),
-                    calories INT,
-                    type_repas VARCHAR(50),
-                    date DATE,
-                    participant_id BIGINT,
-                    evenement_id BIGINT,
-                    ingredients TEXT,
-                    allergenes TEXT,
-                    vegetarien BOOLEAN,
-                    vegan BOOLEAN,
-                    sans_gluten BOOLEAN,
-                    halal BOOLEAN,
-                    actif BOOLEAN DEFAULT TRUE,
-                    image_url VARCHAR(255),
-                    notes TEXT
-                )
-                """;
-        try (Connection c = dbConnection.getConnection();
-                Statement st = c.createStatement()) {
-            st.execute(sql);
-            try (ResultSet rs = st.executeQuery("SELECT COUNT(*) FROM repas_detaille")) {
-                if (rs.next() && rs.getInt(1) == 0) {
-                    insertDefaultDishes();
+        String sql = "CREATE TABLE IF NOT EXISTS repas_detaille (" +
+                "    id BIGINT AUTO_INCREMENT PRIMARY KEY," +
+                "    nom VARCHAR(100) NOT NULL," +
+                "    description TEXT," +
+                "    prix DECIMAL(10,2)," +
+                "    calories INT," +
+                "    type_repas VARCHAR(50)," +
+                "    date DATE," +
+                "    participant_id BIGINT," +
+                "    evenement_id BIGINT," +
+                "    ingredients TEXT," +
+                "    allergenes TEXT," +
+                "    vegetarien BOOLEAN," +
+                "    vegan BOOLEAN," +
+                "    sans_gluten BOOLEAN," +
+                "    halal BOOLEAN," +
+                "    actif BOOLEAN DEFAULT TRUE," +
+                "    image_url VARCHAR(255)," +
+                "    notes TEXT" +
+                ")";
+        try {
+            Connection c = dbConnection.getConnection();
+            if (c == null) {
+                logger.warn("DB Status: Unstable. Skipping table initialization for repas_detaille");
+                return;
+            }
+            try (Statement st = c.createStatement()) {
+                st.execute(sql);
+                try (ResultSet rs = st.executeQuery("SELECT COUNT(*) FROM repas_detaille")) {
+                    if (rs.next() && rs.getInt(1) == 0) {
+                        insertDefaultDishes();
+                    }
                 }
             }
         } catch (SQLException e) {
@@ -92,39 +96,40 @@ public class RepasDetailleServiceImpl implements RepasDetailleService {
 
     @Override
     public RepasDetaille create(RepasDetaille repas) {
-        String sql = """
-                INSERT INTO repas_detaille
-                (nom, description, prix, calories, type_repas, date, participant_id, evenement_id,
-                 ingredients, allergenes, vegetarien, vegan, sans_gluten, halal, actif, image_url, notes)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                """;
-        try (Connection c = dbConnection.getConnection();
-                PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        String sql = "INSERT INTO repas_detaille " +
+                "(nom, description, prix, calories, type_repas, date, participant_id, evenement_id, " +
+                "ingredients, allergenes, vegetarien, vegan, sans_gluten, halal, actif, image_url, notes) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        try {
+            Connection c = dbConnection.getConnection();
+            if (c == null)
+                return repas;
+            try (PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                ps.setString(1, repas.getNom());
+                ps.setString(2, repas.getDescription());
+                ps.setBigDecimal(3, repas.getPrix());
+                ps.setObject(4, repas.getCalories());
+                ps.setString(5, repas.getTypeRepas());
+                ps.setObject(6, repas.getDate() != null ? Date.valueOf(repas.getDate()) : null);
+                ps.setObject(7, repas.getParticipantId());
+                ps.setObject(8, repas.getEvenementId());
+                ps.setString(9, String.join(",", repas.getIngredients()));
+                ps.setString(10, String.join(",", repas.getAllergenes()));
+                ps.setBoolean(11, repas.isVegetarien());
+                ps.setBoolean(12, repas.isVegan());
+                ps.setBoolean(13, repas.isSansGluten());
+                ps.setBoolean(14, repas.isHalal());
+                ps.setBoolean(15, repas.isActif());
+                ps.setString(16, repas.getImageUrl());
+                ps.setString(17, repas.getNotes());
 
-            ps.setString(1, repas.getNom());
-            ps.setString(2, repas.getDescription());
-            ps.setBigDecimal(3, repas.getPrix());
-            ps.setObject(4, repas.getCalories());
-            ps.setString(5, repas.getTypeRepas());
-            ps.setObject(6, repas.getDate() != null ? Date.valueOf(repas.getDate()) : null);
-            ps.setObject(7, repas.getParticipantId());
-            ps.setObject(8, repas.getEvenementId());
-            ps.setString(9, String.join(",", repas.getIngredients()));
-            ps.setString(10, String.join(",", repas.getAllergenes()));
-            ps.setBoolean(11, repas.isVegetarien());
-            ps.setBoolean(12, repas.isVegan());
-            ps.setBoolean(13, repas.isSansGluten());
-            ps.setBoolean(14, repas.isHalal());
-            ps.setBoolean(15, repas.isActif());
-            ps.setString(16, repas.getImageUrl());
-            ps.setString(17, repas.getNotes());
-
-            ps.executeUpdate();
-            try (ResultSet keys = ps.getGeneratedKeys()) {
-                if (keys.next())
-                    repas.setId(keys.getLong(1));
+                ps.executeUpdate();
+                try (ResultSet keys = ps.getGeneratedKeys()) {
+                    if (keys.next())
+                        repas.setId(keys.getLong(1));
+                }
+                logger.info("Repas détaillé créé: ID {}", repas.getId());
             }
-            logger.info("Repas détaillé créé: ID {}", repas.getId());
         } catch (SQLException e) {
             logger.error("Erreur create repas détaillé", e);
         }
@@ -134,12 +139,16 @@ public class RepasDetailleServiceImpl implements RepasDetailleService {
     @Override
     public Optional<RepasDetaille> findById(Long id) {
         String sql = "SELECT * FROM repas_detaille WHERE id = ?";
-        try (Connection c = dbConnection.getConnection();
-                PreparedStatement ps = c.prepareStatement(sql)) {
-            ps.setLong(1, id);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next())
-                    return Optional.of(mapRepas(rs));
+        try {
+            Connection c = dbConnection.getConnection();
+            if (c == null)
+                return Optional.empty();
+            try (PreparedStatement ps = c.prepareStatement(sql)) {
+                ps.setLong(1, id);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next())
+                        return Optional.of(mapRepas(rs));
+                }
             }
         } catch (SQLException e) {
             logger.error("Erreur findById", e);
@@ -154,36 +163,38 @@ public class RepasDetailleServiceImpl implements RepasDetailleService {
 
     @Override
     public RepasDetaille update(RepasDetaille repas) {
-        String sql = """
-                UPDATE repas_detaille SET
-                nom=?, description=?, prix=?, calories=?, type_repas=?, date=?, participant_id=?, evenement_id=?,
-                ingredients=?, allergenes=?, vegetarien=?, vegan=?, sans_gluten=?, halal=?, actif=?, image_url=?, notes=?
-                WHERE id=?
-                """;
-        try (Connection c = dbConnection.getConnection();
-                PreparedStatement ps = c.prepareStatement(sql)) {
+        String sql = "UPDATE repas_detaille SET " +
+                "nom=?, description=?, prix=?, calories=?, type_repas=?, date=?, participant_id=?, evenement_id=?, " +
+                "ingredients=?, allergenes=?, vegetarien=?, vegan=?, sans_gluten=?, halal=?, actif=?, image_url=?, notes=? "
+                +
+                "WHERE id=?";
+        try {
+            Connection c = dbConnection.getConnection();
+            if (c == null)
+                return repas;
+            try (PreparedStatement ps = c.prepareStatement(sql)) {
+                ps.setString(1, repas.getNom());
+                ps.setString(2, repas.getDescription());
+                ps.setBigDecimal(3, repas.getPrix());
+                ps.setObject(4, repas.getCalories());
+                ps.setString(5, repas.getTypeRepas());
+                ps.setObject(6, repas.getDate() != null ? Date.valueOf(repas.getDate()) : null);
+                ps.setObject(7, repas.getParticipantId());
+                ps.setObject(8, repas.getEvenementId());
+                ps.setString(9, String.join(",", repas.getIngredients()));
+                ps.setString(10, String.join(",", repas.getAllergenes()));
+                ps.setBoolean(11, repas.isVegetarien());
+                ps.setBoolean(12, repas.isVegan());
+                ps.setBoolean(13, repas.isSansGluten());
+                ps.setBoolean(14, repas.isHalal());
+                ps.setBoolean(15, repas.isActif());
+                ps.setString(16, repas.getImageUrl());
+                ps.setString(17, repas.getNotes());
+                ps.setLong(18, repas.getId());
 
-            ps.setString(1, repas.getNom());
-            ps.setString(2, repas.getDescription());
-            ps.setBigDecimal(3, repas.getPrix());
-            ps.setObject(4, repas.getCalories());
-            ps.setString(5, repas.getTypeRepas());
-            ps.setObject(6, repas.getDate() != null ? Date.valueOf(repas.getDate()) : null);
-            ps.setObject(7, repas.getParticipantId());
-            ps.setObject(8, repas.getEvenementId());
-            ps.setString(9, String.join(",", repas.getIngredients()));
-            ps.setString(10, String.join(",", repas.getAllergenes()));
-            ps.setBoolean(11, repas.isVegetarien());
-            ps.setBoolean(12, repas.isVegan());
-            ps.setBoolean(13, repas.isSansGluten());
-            ps.setBoolean(14, repas.isHalal());
-            ps.setBoolean(15, repas.isActif());
-            ps.setString(16, repas.getImageUrl());
-            ps.setString(17, repas.getNotes());
-            ps.setLong(18, repas.getId());
-
-            ps.executeUpdate();
-            logger.info("Repas détaillé mis à jour: ID {}", repas.getId());
+                ps.executeUpdate();
+                logger.info("Repas détaillé mis à jour: ID {}", repas.getId());
+            }
         } catch (SQLException e) {
             logger.error("Erreur update repas détaillé", e);
         }
@@ -193,12 +204,16 @@ public class RepasDetailleServiceImpl implements RepasDetailleService {
     @Override
     public boolean delete(Long id) {
         String sql = "DELETE FROM repas_detaille WHERE id = ?";
-        try (Connection c = dbConnection.getConnection();
-                PreparedStatement ps = c.prepareStatement(sql)) {
-            ps.setLong(1, id);
-            int affected = ps.executeUpdate();
-            logger.info("Repas détaillé supprimé: ID {}", id);
-            return affected > 0;
+        try {
+            Connection c = dbConnection.getConnection();
+            if (c == null)
+                return false;
+            try (PreparedStatement ps = c.prepareStatement(sql)) {
+                ps.setLong(1, id);
+                int affected = ps.executeUpdate();
+                logger.info("Repas détaillé supprimé: ID {}", id);
+                return affected > 0;
+            }
         } catch (SQLException e) {
             logger.error("Erreur delete repas détaillé", e);
         }

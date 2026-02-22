@@ -99,16 +99,16 @@ public class MyConnection {
         return instance;
     }
 
-    public Connection getConnection() {
+    public synchronized Connection getConnection() {
         return getConnectionStatic();
     }
 
-    public static Connection getConnectionStatic() {
+    public static synchronized Connection getConnectionStatic() {
         try {
             if (cnx == null || cnx.isClosed()) {
-                // S'assurer que les paramètres sont corrects
                 System.out.println("Tentative de (re)connexion à " + URL);
                 cnx = DriverManager.getConnection(URL, LOGIN, PWD);
+                System.out.println("Success: Connexion établie !");
             }
         } catch (SQLException e) {
             System.err.println("Erreur fatale ouverture connexion : " + e.getMessage());

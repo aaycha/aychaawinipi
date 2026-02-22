@@ -610,9 +610,13 @@ public class RepasFormController implements Initializable {
     }
 
     private void showError(Label errorLabel, String message) {
-        errorLabel.setText("⚠ " + message);
-        errorLabel.setVisible(true);
-        errorLabel.setManaged(true);
+        if (errorLabel != null) {
+            errorLabel.setText("⚠ " + message);
+            errorLabel.setVisible(true);
+            errorLabel.setManaged(true);
+        } else {
+            System.err.println("Error label is null while displaying: " + message);
+        }
     }
 
     private void showGlobalError(String message) {

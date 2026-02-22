@@ -29,6 +29,8 @@ import java.util.ResourceBundle;
 /**
  * Contrôleur complet pour le planificateur de menus admin (2026 Edition)
  */
+import java.util.stream.Collectors;
+
 public class AdminMenuPlannerController implements Initializable {
 
     @FXML
@@ -227,7 +229,7 @@ public class AdminMenuPlannerController implements Initializable {
 
         List<CompositionMenu> comps = compositionService.findByDate(date).stream()
                 .filter(c -> type.equals(c.getTypeRepas()))
-                .toList();
+                .collect(Collectors.toList());
 
         for (CompositionMenu comp : comps) {
             RepasDetaille dish = dishService.findById(comp.getRepasId()).orElse(null);

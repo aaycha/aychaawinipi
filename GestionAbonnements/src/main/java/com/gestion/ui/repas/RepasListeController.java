@@ -128,18 +128,28 @@ public class RepasListeController implements Initializable {
             spaceSelector.setValue("Administrateur");
         }
 
-        filterCategorieCombo.setItems(FXCollections.observableArrayList(Repas.Categorie.values()));
-        filterTypePlatCombo.setItems(FXCollections.observableArrayList(Repas.TypePlat.values()));
-        filterDisponibleCombo.setItems(FXCollections.observableArrayList("Tous", "Disponible", "Indisponible"));
-        filterDisponibleCombo.setValue("Tous");
+        if (filterCategorieCombo != null) {
+            filterCategorieCombo.setItems(FXCollections.observableArrayList(Repas.Categorie.values()));
+            filterCategorieCombo.setOnAction(e -> applyFilters());
+        }
+        if (filterTypePlatCombo != null) {
+            filterTypePlatCombo.setItems(FXCollections.observableArrayList(Repas.TypePlat.values()));
+            filterTypePlatCombo.setOnAction(e -> applyFilters());
+        }
+        if (filterDisponibleCombo != null) {
+            filterDisponibleCombo.setItems(FXCollections.observableArrayList("Tous", "Disponible", "Indisponible"));
+            filterDisponibleCombo.setValue("Tous");
+            filterDisponibleCombo.setOnAction(e -> applyFilters());
+        }
 
-        searchField.textProperty().addListener((observable, oldValue, newValue) -> applyFilters());
+        if (searchField != null) {
+            searchField.textProperty().addListener((observable, oldValue, newValue) -> applyFilters());
+        }
 
-        filterCategorieCombo.setOnAction(e -> applyFilters());
-        filterTypePlatCombo.setOnAction(e -> applyFilters());
-        filterRestaurantCombo.setOnAction(e -> applyFilters());
-        filterMenuCombo.setOnAction(e -> applyFilters());
-        filterDisponibleCombo.setOnAction(e -> applyFilters());
+        if (filterRestaurantCombo != null)
+            filterRestaurantCombo.setOnAction(e -> applyFilters());
+        if (filterMenuCombo != null)
+            filterMenuCombo.setOnAction(e -> applyFilters());
 
         if (sortCombo != null) {
             sortCombo.setItems(

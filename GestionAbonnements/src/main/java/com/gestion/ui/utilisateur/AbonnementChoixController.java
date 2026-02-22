@@ -27,8 +27,10 @@ public class AbonnementChoixController {
     private Label statusLabel;
 
     private final AbonnementController controller = new AbonnementController();
-    // TODO: remplacer par l'utilisateur connecté
-    private Long currentUserId = 1L;
+    // Récupéré depuis l'utilisateur connecté
+    private Long currentUserId = com.gestion.tools.Session.getInstance().getCurrentUserId() != null
+            ? Long.valueOf(com.gestion.tools.Session.getInstance().getCurrentUserId())
+            : 1L;
 
     @FXML
     public void initialize() {

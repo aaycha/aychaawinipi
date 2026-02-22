@@ -12,7 +12,8 @@ import java.time.LocalDateTime;
 
 /**
  * Entité représentant une participation à un événement
- * Gère les inscriptions individuelles ou groupées avec hébergements et équipements
+ * Gère les inscriptions individuelles ou groupées avec hébergements et
+ * équipements
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Participation {
@@ -31,9 +32,9 @@ public class Participation {
 
     // ─── Nouvelle version : composition du groupe et tarification ─────────────
     // Nombre d'adultes/enfants/chiens pour cette participation
-    private int nbAdultes;               // ≥ 1
-    private int nbEnfants;               // ≥ 0
-    private int nbChiens;                // ≥ 0
+    private int nbAdultes; // ≥ 1
+    private int nbEnfants; // ≥ 0
+    private int nbChiens; // ≥ 0
 
     // Total calculé (adultes + enfants)
     private int totalParticipants;
@@ -108,10 +109,11 @@ public class Participation {
     }
 
     // Constructeurs
-    public Participation() {}
+    public Participation() {
+    }
 
-    public Participation(Long userId, Long evenementId, TypeParticipation type, 
-                        ContexteSocial contexteSocial) {
+    public Participation(Long userId, Long evenementId, TypeParticipation type,
+            ContexteSocial contexteSocial) {
         this.userId = userId;
         this.evenementId = evenementId;
         this.type = type;
@@ -274,8 +276,8 @@ public class Participation {
     }
 
     public boolean estEnAttente() {
-        return statut == StatutParticipation.EN_ATTENTE || 
-               statut == StatutParticipation.EN_LISTE_ATTENTE;
+        return statut == StatutParticipation.EN_ATTENTE ||
+                statut == StatutParticipation.EN_LISTE_ATTENTE;
     }
 
     public boolean requiertHebergement() {
@@ -293,18 +295,25 @@ public class Participation {
     }
 
     private String attribuerBadge() {
-        return switch (contexteSocial) {
-            case COUPLE -> "Romantique_Aventure";
-            case AMIS -> "Esprit_Equipe";
-            case FAMILLE -> "Famille_Unie";
-            case SOLO -> "Explorateur_Solitaire";
-            case PROFESSIONNEL -> "Pro_Leadership";
-        };
+        switch (contexteSocial) {
+            case COUPLE:
+                return "Romantique_Aventure";
+            case AMIS:
+                return "Esprit_Equipe";
+            case FAMILLE:
+                return "Famille_Unie";
+            case SOLO:
+                return "Explorateur_Solitaire";
+            case PROFESSIONNEL:
+                return "Pro_Leadership";
+            default:
+                return "Explorateur_Standard";
+        }
     }
 
     @Override
     public String toString() {
-        return String.format("Participation{id=%d, userId=%d, evenementId=%d, type=%s, statut=%s, contexte=%s}", 
-                           id, userId, evenementId, type, statut, contexteSocial);
+        return String.format("Participation{id=%d, userId=%d, evenementId=%d, type=%s, statut=%s, contexte=%s}",
+                id, userId, evenementId, type, statut, contexteSocial);
     }
 }

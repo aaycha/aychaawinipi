@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import java.net.URL?>
+
+<ScrollPane xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.gestion.ui.evenement.EvenementViewController"
+            fitToWidth="false" fitToHeight="false" styleClass="modern-scroll-pane"
+            vbarPolicy="AS_NEEDED" hbarPolicy="AS_NEEDED">
+    <stylesheets>
+        <URL value="@../../styles/nature-mood.css" />
+    </stylesheets>
+
+    <VBox spacing="10" prefWidth="1000" styleClass="modern-panel" style="-fx-padding: 12;">
+        
+        <!-- Header -->
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <StackPane style="-fx-background-color: rgba(59, 130, 246, 0.15); -fx-background-radius: 8; -fx-padding: 6;">
+                <Label text="📅" style="-fx-font-size: 16;"/>
+            </StackPane>
+            <VBox spacing="0">
+                <Label text="Gestion des Événements" styleClass="modern-title" style="-fx-text-fill: white; -fx-font-size: 16; -fx-font-weight: 800;"/>
+                <Label text="Planifiez et gérez les treks, soirées et séjours" style="-fx-text-fill: #94A3B8; -fx-font-size: 9;"/>
+            </VBox>
+        </HBox>
+
+        <!-- Action Bar -->
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Button text="➕ NEW" onAction="#onNouvelEvenement" styleClass="button-capsule" style="-fx-padding: 8 16; -fx-font-size: 11;"/>
+            <Button text="🔄 SYNC" onAction="#onActualiser" styleClass="button-capsule-glass" style="-fx-padding: 8 16; -fx-font-size: 11;"/>
+            <Button fx:id="btnModifier" text="✏️ EDIT" onAction="#onModifier" disable="true" styleClass="button-capsule-glass" style="-fx-padding: 8 16; -fx-font-size: 11;"/>
+            <Button fx:id="btnSupprimer" text="🗑️ DELETE" onAction="#onSupprimer" disable="true" styleClass="button-capsule-glass" style="-fx-padding: 8 16; -fx-text-fill: #ef4444; -fx-font-size: 11;" />
+            <Region HBox.hgrow="ALWAYS"/>
+            <TextField fx:id="searchField" promptText="🔍 Search trail..." styleClass="modern-input" prefWidth="200" style="-fx-font-size: 11;"/>
+        </HBox>
+
+        <!-- Stats & Info -->
+        <HBox alignment="CENTER_LEFT" spacing="10">
+            <Label fx:id="countLabel" text="0 événement(s)" style="-fx-text-fill: #3b82f6; -fx-font-weight: bold; -fx-font-size: 12;"/>
+            <Label fx:id="statusInfoLabel" text="" style="-fx-text-fill: #94A3B8; -fx-font-size: 10;"/>
+        </HBox>
+
+        <!-- List Area -->
+        <ListView fx:id="listView" VBox.vgrow="ALWAYS" minHeight="400" styleClass="modern-list-view">
+            <placeholder>
+                <VBox alignment="CENTER" spacing="10" style="-fx-padding: 30;">
+                    <Label text="📭" style="-fx-font-size: 32;"/>
+                    <Label text="Aucun événement trouvé" style="-fx-text-fill: #94A3B8; -fx-font-size: 14;"/>
+                </VBox>
+            </placeholder>
+        </ListView>
+    </VBox>
+</ScrollPane>

@@ -34,8 +34,15 @@ public class CompositionMenuServiceImpl implements CompositionMenuService {
                 "evenement_id BIGINT, " +
                 "actif BOOLEAN DEFAULT TRUE, " +
                 "notes TEXT)";
-        try (Connection c = dbConnection.getConnection(); Statement st = c.createStatement()) {
-            st.execute(sql);
+        try {
+            Connection c = dbConnection.getConnection();
+            if (c == null) {
+                logger.warn("DB Status: Unstable. Skipping table initialization for composition_menu");
+                return;
+            }
+            try (Statement st = c.createStatement()) {
+                st.execute(sql);
+            }
         } catch (SQLException e) {
             logger.error("Erreur creation table composition_menu", e);
         }
@@ -45,25 +52,28 @@ public class CompositionMenuServiceImpl implements CompositionMenuService {
         String sql = "INSERT INTO composition_menu " +
                 "(menu_id, repas_id, ordre, type_repas, date, participant_id, evenement_id, actif, notes) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        try (Connection c = dbConnection.getConnection();
-                PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try {
+            Connection c = dbConnection.getConnection();
+            if (c == null)
+                return composition;
+            try (PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                ps.setLong(1, composition.getMenuId());
+                ps.setLong(2, composition.getRepasId());
+                ps.setInt(3, composition.getOrdre());
+                ps.setString(4, composition.getTypeRepas());
+                ps.setObject(5, composition.getDate() != null ? Date.valueOf(composition.getDate()) : null);
+                ps.setObject(6, composition.getParticipantId());
+                ps.setObject(7, composition.getEvenementId());
+                ps.setBoolean(8, composition.isActif());
+                ps.setString(9, composition.getNotes());
 
-            ps.setLong(1, composition.getMenuId());
-            ps.setLong(2, composition.getRepasId());
-            ps.setInt(3, composition.getOrdre());
-            ps.setString(4, composition.getTypeRepas());
-            ps.setObject(5, composition.getDate() != null ? Date.valueOf(composition.getDate()) : null);
-            ps.setObject(6, composition.getParticipantId());
-            ps.setObject(7, composition.getEvenementId());
-            ps.setBoolean(8, composition.isActif());
-            ps.setString(9, composition.getNotes());
-
-            ps.executeUpdate();
-            try (ResultSet keys = ps.getGeneratedKeys()) {
-                if (keys.next())
-                    composition.setId(keys.getLong(1));
+                ps.executeUpdate();
+                try (ResultSet keys = ps.getGeneratedKeys()) {
+                    if (keys.next())
+                        composition.setId(keys.getLong(1));
+                }
+                logger.info("Composition menu créée: ID {}", composition.getId());
             }
-            logger.info("Composition menu créée: ID {}", composition.getId());
         } catch (SQLException e) {
             logger.error("Erreur create composition menu", e);
         }
@@ -73,12 +83,16 @@ public class CompositionMenuServiceImpl implements CompositionMenuService {
     @Override
     public Optional<CompositionMenu> findById(Long id) {
         String sql = "SELECT * FROM composition_menu WHERE id = ?";
-        try (Connection c = dbConnection.getConnection();
-                PreparedStatement ps = c.prepareStatement(sql)) {
-            ps.setLong(1, id);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next())
-                    return Optional.of(mapComposition(rs));
+        try {
+            Connection c = dbConnection.getConnection();
+            if (c == null)
+                return Optional.empty();
+            try (PreparedStatement ps = c.prepareStatement(sql)) {
+                ps.setLong(1, id);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next())
+                        return Optional.of(mapComposition(rs));
+                }
             }
         } catch (SQLException e) {
             logger.error("Erreur findById", e);
@@ -97,22 +111,25 @@ public class CompositionMenuServiceImpl implements CompositionMenuService {
                 "menu_id=?, repas_id=?, ordre=?, type_repas=?, date=?, participant_id=?, evenement_id=?, actif=?, notes=? "
                 +
                 "WHERE id=?";
-        try (Connection c = dbConnection.getConnection();
-                PreparedStatement ps = c.prepareStatement(sql)) {
+        try {
+            Connection c = dbConnection.getConnection();
+            if (c == null)
+                return composition;
+            try (PreparedStatement ps = c.prepareStatement(sql)) {
+                ps.setLong(1, composition.getMenuId());
+                ps.setLong(2, composition.getRepasId());
+                ps.setInt(3, composition.getOrdre());
+                ps.setString(4, composition.getTypeRepas());
+                ps.setObject(5, composition.getDate() != null ? Date.valueOf(composition.getDate()) : null);
+                ps.setObject(6, composition.getParticipantId());
+                ps.setObject(7, composition.getEvenementId());
+                ps.setBoolean(8, composition.isActif());
+                ps.setString(9, composition.getNotes());
+                ps.setLong(10, composition.getId());
 
-            ps.setLong(1, composition.getMenuId());
-            ps.setLong(2, composition.getRepasId());
-            ps.setInt(3, composition.getOrdre());
-            ps.setString(4, composition.getTypeRepas());
-            ps.setObject(5, composition.getDate() != null ? Date.valueOf(composition.getDate()) : null);
-            ps.setObject(6, composition.getParticipantId());
-            ps.setObject(7, composition.getEvenementId());
-            ps.setBoolean(8, composition.isActif());
-            ps.setString(9, composition.getNotes());
-            ps.setLong(10, composition.getId());
-
-            ps.executeUpdate();
-            logger.info("Composition menu mise à jour: ID {}", composition.getId());
+                ps.executeUpdate();
+                logger.info("Composition menu mise à jour: ID {}", composition.getId());
+            }
         } catch (SQLException e) {
             logger.error("Erreur update composition menu", e);
         }
@@ -224,13 +241,17 @@ public class CompositionMenuServiceImpl implements CompositionMenuService {
     // Helpers
     private List<CompositionMenu> executeQuery(String sql, SQLConsumer<PreparedStatement> setter) {
         List<CompositionMenu> list = new ArrayList<>();
-        try (Connection c = dbConnection.getConnection();
-                PreparedStatement ps = c.prepareStatement(sql)) {
-            if (setter != null)
-                setter.accept(ps);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next())
-                    list.add(mapComposition(rs));
+        try {
+            Connection c = dbConnection.getConnection();
+            if (c == null)
+                return list;
+            try (PreparedStatement ps = c.prepareStatement(sql)) {
+                if (setter != null)
+                    setter.accept(ps);
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next())
+                        list.add(mapComposition(rs));
+                }
             }
         } catch (Exception e) {
             logger.error("SQL Error", e);

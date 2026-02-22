@@ -1,51 +1,56 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Text?>
-
-<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.control.Button?>
+<VBox xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.gestion.ui.utilisateur.CheckoutController"
       spacing="0" prefWidth="480" prefHeight="650"
-      stylesheets="@../../styles/restoration-2026.css"
-      styleClass="checkout-root">
+      stylesheets="@../../styles/nature-mood.css, @../../styles/card-view.css"
+      styleClass="glass-panel" style="-fx-background-radius: 30; -fx-border-radius: 30; -fx-background-color: rgba(15, 23, 42, 0.95);">
 
     <VBox spacing="25" VBox.vgrow="ALWAYS">
         <padding>
-            <Insets top="40" right="40" bottom="40" left="40"/>
+            <Insets top="40" right="45" bottom="40" left="45"/>
         </padding>
 
         <!-- Header -->
-        <VBox spacing="12" alignment="CENTER">
-            <Label text="LAMMA" styleClass="lamma-logo-text" style="-fx-font-size: 24px;"/>
-            <Label text="Paiement Sécurisé" styleClass="card-title-2026" style="-fx-font-size: 26px;"/>
-            <Label fx:id="amountLabel" text="Total: 0.00 €" styleClass="card-price-2026" style="-fx-font-size: 22px;"/>
+        <VBox spacing="10" alignment="CENTER">
+            <StackPane style="-fx-background-color: rgba(34, 197, 94, 0.1); -fx-background-radius: 15; -fx-padding: 12;">
+                <Label text="🏔️" style="-fx-font-size: 28;"/>
+            </StackPane>
+            <Label text="SECURE TRAIL PAY" styleClass="hiker-label" style="-fx-text-fill: #22c55e; -fx-font-weight: 900; -fx-font-size: 11;"/>
+            <Label fx:id="amountLabel" text="Total: 0.00 €" style="-fx-font-size: 32; -fx-font-weight: 900; -fx-text-fill: white;"/>
         </VBox>
 
-        <Separator style="-fx-opacity: 0.2;" />
+        <Separator style="-fx-opacity: 0.1;" />
 
-        <!-- Stripe Elements (Blue Refresh) -->
-        <VBox spacing="20">
+        <!-- Payment Card -->
+        <VBox spacing="20" styleClass="modern-card" style="-fx-padding: 30;">
             <VBox spacing="8">
-                <Label text="Email de contact" styleClass="delicious-baseline" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
-                <TextField fx:id="emailField" promptText="votre@email.com" styleClass="stripe-input"/>
+                <Label text="📡 COURIER SIGNAL (EMAIL)" style="-fx-text-fill: #94a3b8; -fx-font-weight: 800; -fx-font-size: 10;"/>
+                <TextField fx:id="emailField" promptText="scout@mountain-node.com" styleClass="modern-input"/>
             </VBox>
 
-            <VBox spacing="8">
-                <Label text="Détails de la carte" styleClass="delicious-baseline" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
-                <VBox spacing="0" style="-fx-border-color: #E6E9F0; -fx-border-radius: 14px; -fx-background-color: white; -fx-overflow: hidden; -fx-border-width: 1.5px;">
-                    <TextField fx:id="cardNumberField" promptText="0000 0000 0000 0000" styleClass="stripe-input" style="-fx-background-color: transparent; -fx-border-width: 0 0 1 0; -fx-border-radius: 0;"/>
+            <VBox spacing="10">
+                <Label text="💳 CRYPTO-CREDIT KEY" style="-fx-text-fill: #94a3b8; -fx-font-weight: 800; -fx-font-size: 10;"/>
+                <VBox spacing="0" styleClass="modern-input" style="-fx-padding: 2; -fx-background-color: rgba(255, 255, 255, 0.03);">
+                    <TextField fx:id="cardNumberField" promptText="0000 0000 0000 0000" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-padding: 12 15; -fx-border-color: rgba(255,255,255,0.05); -fx-border-width: 0 0 1 0;"/>
                     <HBox spacing="0">
-                        <TextField fx:id="expiryField" promptText="MM / YY" styleClass="stripe-input" style="-fx-background-color: transparent; -fx-border-width: 0 1 0 0; -fx-border-radius: 0;" HBox.hgrow="ALWAYS"/>
-                        <TextField fx:id="cvcField" promptText="CVC" styleClass="stripe-input" style="-fx-background-color: transparent; -fx-border-width: 0; -fx-border-radius: 0;" prefWidth="120"/>
+                        <TextField fx:id="expiryField" promptText="MM / YY" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-padding: 12 15; -fx-border-color: rgba(255,255,255,0.05); -fx-border-width: 0 1 0 0;" HBox.hgrow="ALWAYS"/>
+                        <TextField fx:id="cvcField" promptText="CVC" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-padding: 12 15;" prefWidth="120"/>
                     </HBox>
                 </VBox>
             </VBox>
 
             <VBox spacing="8">
-                <Label text="Pays ou région" styleClass="delicious-baseline" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
-                <ComboBox fx:id="countryCombo" promptText="France" maxWidth="Infinity" styleClass="stripe-input"/>
+                <Label text="🌍 DEPLOYMENT ZONE" style="-fx-text-fill: #94a3b8; -fx-font-weight: 800; -fx-font-size: 10;"/>
+                <ComboBox fx:id="countryCombo" promptText="France" maxWidth="Infinity" styleClass="modern-input"/>
             </VBox>
         </VBox>
 
@@ -53,17 +58,15 @@
 
         <!-- Footer -->
         <VBox spacing="15">
-            <VBox spacing="10" alignment="CENTER" styleClass="payment-locked-info">
-                 <HBox spacing="10" alignment="CENTER">
-                    <Label text="🔒" style="-fx-font-size: 16px;"/>
-                    <Label text="Vos données sont chiffrées et sécurisées" styleClass="delicious-baseline" style="-fx-font-size: 12px; -fx-text-fill: #059669;"/>
-                </HBox>
-            </VBox>
+            <HBox spacing="10" alignment="CENTER" style="-fx-background-color: rgba(34, 197, 94, 0.05); -fx-padding: 12; -fx-background-radius: 12; -fx-border-color: rgba(34, 197, 94, 0.1);">
+                <Label text="🔒" style="-fx-font-size: 16;"/>
+                <Label text="EXPEDITION FUNDS ENCRYPTED" style="-fx-font-weight: 900; -fx-font-size: 10; -fx-text-fill: #22c55e;"/>
+            </HBox>
 
-            <Button fx:id="payButton" text="Valider le paiement" onAction="#onPay" 
-                    styleClass="btn-rose" maxWidth="Infinity"/>
+            <Button fx:id="payButton" text="AUTHORIZE TRANSACTION" onAction="#onPay"
+                    styleClass="button-capsule" maxWidth="Infinity" style="-fx-padding: 18;"/>
             
-            <Button text="Annuler" onAction="#onCancel" maxWidth="Infinity" style="-fx-text-fill: #6B7280; -fx-background-color: transparent; -fx-cursor: hand;"/>
+            <Button text="ABORT MISSION" onAction="#onCancel" maxWidth="Infinity" style="-fx-text-fill: #64748b; -fx-background-color: transparent; -fx-cursor: hand; -fx-font-weight: 800; -fx-font-size: 11;"/>
         </VBox>
     </VBox>
 </VBox>

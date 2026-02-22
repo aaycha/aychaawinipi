@@ -24,7 +24,48 @@ public class EspaceUtilisateurController {
     @FXML
     private Label sectionLabel;
 
-    private record UserSection(String id, String titre, String description, String fxmlPath, String icon) {
+    private static byte[] readImageBytes(String imagePath) {
+        try {
+            return java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(imagePath));
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private static class UserSection {
+        private final String id;
+        private final String titre;
+        private final String description;
+        private final String fxmlPath;
+        private final String icon;
+
+        public UserSection(String id, String titre, String description, String fxmlPath, String icon) {
+            this.id = id;
+            this.titre = titre;
+            this.description = description;
+            this.fxmlPath = fxmlPath;
+            this.icon = icon;
+        }
+
+        public String id() {
+            return id;
+        }
+
+        public String titre() {
+            return titre;
+        }
+
+        public String description() {
+            return description;
+        }
+
+        public String fxmlPath() {
+            return fxmlPath;
+        }
+
+        public String icon() {
+            return icon;
+        }
     }
 
     private static final List<UserSection> SECTIONS = List.of(
@@ -39,7 +80,13 @@ public class EspaceUtilisateurController {
                     "/views/utilisateur/restauration-2026.fxml", "\uD83C\uDF74"),
             new UserSection("abonnement", "Mon Abonnement",
                     "Gérer mon abonnement LAMMA",
-                    "/views/utilisateur/abonnement-choix.fxml", "\uD83D\uDCCB"));
+                    "/views/utilisateur/abonnement-choix.fxml", "\uD83D\uDCCB"),
+            new UserSection("chatbot", "Assistant LAMMA",
+                    "Discuter avec l'IA pour obtenir de l'aide",
+                    "/views/chatbot/chatbot-modal.fxml", "\uD83E\uDD16"),
+            new UserSection("map", "Carte Interactive",
+                    "Explorer les refuges et restaurants sur la carte",
+                    "/views/map/map-view.fxml", "\uD83D\uDDFA"));
 
     @FXML
     public void initialize() {

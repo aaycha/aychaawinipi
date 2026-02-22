@@ -58,11 +58,21 @@ public class RestaurationServiceImpl implements RestaurationService {
         if (r == null || r.getType() == null)
             return null;
         switch (r.getType()) {
-            case MENU -> insertMenu(r);
-            case OPTION -> insertOption(r);
-            case REPAS -> insertRepas(r);
-            case RESTRICTION -> insertRestriction(r);
-            case PRESENCE -> insertPresence(r);
+            case MENU:
+                insertMenu(r);
+                break;
+            case OPTION:
+                insertOption(r);
+                break;
+            case REPAS:
+                insertRepas(r);
+                break;
+            case RESTRICTION:
+                insertRestriction(r);
+                break;
+            case PRESENCE:
+                insertPresence(r);
+                break;
         }
         return r;
     }
@@ -74,24 +84,38 @@ public class RestaurationServiceImpl implements RestaurationService {
 
     @Override
     public List<Restauration> findAll(Restauration.TypeRestauration type) {
-        return switch (type) {
-            case MENU -> executeQuery("SELECT * FROM menu_proposition", null, this::mapMenu).stream()
-                    .peek(m -> m.setType(Restauration.TypeRestauration.MENU))
-                    .collect(Collectors.toList());
-            case OPTION -> executeQuery("SELECT * FROM option_restauration", null, this::mapOption).stream()
-                    .peek(o -> o.setType(Restauration.TypeRestauration.OPTION))
-                    .collect(Collectors.toList());
-            case REPAS -> executeQuery("SELECT * FROM repas", null, this::mapRepas).stream()
-                    .peek(x -> x.setType(Restauration.TypeRestauration.REPAS))
-                    .collect(Collectors.toList());
-            case RESTRICTION ->
-                executeQuery("SELECT * FROM restriction_alimentaire", null, this::mapRestriction).stream()
+        List<Restauration> results;
+        switch (type) {
+            case MENU:
+                results = executeQuery("SELECT * FROM menu_proposition", null, this::mapMenu).stream()
+                        .peek(m -> m.setType(Restauration.TypeRestauration.MENU))
+                        .collect(Collectors.toList());
+                break;
+            case OPTION:
+                results = executeQuery("SELECT * FROM option_restauration", null, this::mapOption).stream()
+                        .peek(o -> o.setType(Restauration.TypeRestauration.OPTION))
+                        .collect(Collectors.toList());
+                break;
+            case REPAS:
+                results = executeQuery("SELECT * FROM repas", null, this::mapRepas).stream()
+                        .peek(x -> x.setType(Restauration.TypeRestauration.REPAS))
+                        .collect(Collectors.toList());
+                break;
+            case RESTRICTION:
+                results = executeQuery("SELECT * FROM restriction_alimentaire", null, this::mapRestriction).stream()
                         .peek(x -> x.setType(Restauration.TypeRestauration.RESTRICTION))
                         .collect(Collectors.toList());
-            case PRESENCE -> executeQuery("SELECT * FROM presence", null, this::mapPresence).stream()
-                    .peek(x -> x.setType(Restauration.TypeRestauration.PRESENCE))
-                    .collect(Collectors.toList());
-        };
+                break;
+            case PRESENCE:
+                results = executeQuery("SELECT * FROM presence", null, this::mapPresence).stream()
+                        .peek(x -> x.setType(Restauration.TypeRestauration.PRESENCE))
+                        .collect(Collectors.toList());
+                break;
+            default:
+                results = new java.util.ArrayList<>();
+                break;
+        }
+        return results;
     }
 
     @Override
@@ -101,9 +125,14 @@ public class RestaurationServiceImpl implements RestaurationService {
         }
         try {
             switch (r.getType()) {
-                case MENU -> updateMenu(r);
-                case REPAS -> updateRepas(r);
-                default -> throw new UnsupportedOperationException("Update non supporté pour le type " + r.getType());
+                case MENU:
+                    updateMenu(r);
+                    break;
+                case REPAS:
+                    updateRepas(r);
+                    break;
+                default:
+                    throw new UnsupportedOperationException("Update non supporté pour le type " + r.getType());
             }
         } catch (Exception e) {
             logger.error("Erreur lors de la mise à jour de la restauration", e);
@@ -116,11 +145,13 @@ public class RestaurationServiceImpl implements RestaurationService {
         if (id == null || type == null) {
             return false;
         }
-        return switch (type) {
-            case MENU -> deleteById("DELETE FROM menu_proposition WHERE id=?", id);
-            case REPAS -> deleteById("DELETE FROM repas WHERE id=?", id);
-            default -> throw new UnsupportedOperationException("Suppression non supportée pour le type " + type);
-        };
+        if (type == Restauration.TypeRestauration.MENU) {
+            return deleteById("DELETE FROM menu_proposition WHERE id=?", id);
+        } else if (type == Restauration.TypeRestauration.REPAS) {
+            return deleteById("DELETE FROM repas WHERE id=?", id);
+        } else {
+            throw new UnsupportedOperationException("Suppression non supportée pour le type " + type);
+        }
     }
 
     @Override
@@ -384,12 +415,10 @@ public class RestaurationServiceImpl implements RestaurationService {
 
     @Override
     public ParticipantRestauration createBesoin(ParticipantRestauration besoin) {
-        String sql = """
-                INSERT INTO participant_restauration
-                (participant_id, evenement_id, besoin_libelle, restriction_libelle, niveau_gravite,
-                 menu_proposition_id, date_limite_modification, annule)
-                VALUES (?,?,?,?,?,?,?,?)
-                """;
+        String sql = "INSERT INTO participant_restauration " +
+                "(participant_id, evenement_id, besoin_libelle, restriction_libelle, niveau_gravite, " +
+                "menu_proposition_id, date_limite_modification, annule) " +
+                "VALUES (?,?,?,?,?,?,?,?)";
         try (Connection c = dbConnection.getConnection();
                 PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             if (besoin.getParticipantId() != null)

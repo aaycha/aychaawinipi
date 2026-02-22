@@ -222,12 +222,16 @@ public class ParticipationViewController {
     private String getItemIcon(Participation.TypeParticipation type) {
         if (type == null)
             return "🎫";
-        return switch (type) {
-            case GROUPE -> "👥";
-            case HEBERGEMENT -> "🏨";
-            case SIMPLE -> "👤";
-            default -> "🎫";
-        };
+        switch (type) {
+            case GROUPE:
+                return "👥";
+            case HEBERGEMENT:
+                return "🏨";
+            case SIMPLE:
+                return "👤";
+            default:
+                return "🎫";
+        }
     }
 
     private HBox createDetailLabel(String labelText, String valueText) {
@@ -686,7 +690,9 @@ public class ParticipationViewController {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle(participation == null ? "Nouvelle participation" : "Modifier la participation");
             stage.setScene(new Scene(root));
-            stage.setResizable(false);
+            stage.setResizable(true);
+            stage.setMinWidth(750);
+            stage.setMinHeight(600);
             stage.showAndWait();
         } catch (IOException e) {
             showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ouvrir le formulaire : " + e.getMessage());

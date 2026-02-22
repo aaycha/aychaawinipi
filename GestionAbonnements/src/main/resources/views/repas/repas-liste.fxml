@@ -1,236 +1,139 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.Circle?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.*?>
+<?import java.net.URL?>
 
-<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+<ScrollPane xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.gestion.ui.repas.RepasListeController"
-            prefWidth="1300" prefHeight="900"
-            stylesheets="@../../styles/restoration-2026.css"
-            styleClass="modern-2026-root">
+            fitToWidth="false" fitToHeight="false" styleClass="modern-scroll-pane"
+            vbarPolicy="AS_NEEDED" hbarPolicy="AS_NEEDED">
+    <stylesheets>
+        <URL value="@../../styles/card-view.css" />
+        <URL value="@../../styles/nature-mood.css" />
+    </stylesheets>
 
-    <top>
-        <VBox styleClass="admin-header">
-            <padding>
-                <Insets top="15" right="40" bottom="15" left="40"/>
-            </padding>
-            <HBox alignment="CENTER_LEFT" spacing="25">
-                <!-- Duck Logo & Title -->
-                <HBox spacing="15" alignment="CENTER_LEFT" styleClass="duck-logo">
-                    <StackPane style="-fx-background-color: #CFFFEF; -fx-background-radius: 50%; -fx-padding: 8;">
-                        <Label text="🦆" style="-fx-font-size: 24px;"/>
-                    </StackPane>
-                    <VBox alignment="CENTER_LEFT">
-                        <Label text="LAMMA Voyage" style="-fx-font-size: 24px; -fx-font-weight: 900; -fx-text-fill: white;"/>
-                        <Label text="Gestion des Plats &amp; Repas" style="-fx-font-size: 11px; -fx-text-fill: #B2F2EA; -fx-font-weight: bold;"/>
-                    </VBox>
-                </HBox>
-                
-                <Region HBox.hgrow="ALWAYS"/>
-                
-                <!-- Admin Status & Toggle -->
-                <HBox spacing="20" alignment="CENTER_LEFT">
-                    <HBox spacing="10" alignment="CENTER_LEFT" styleClass="glass-panel" style="-fx-padding: 5 15; -fx-background-radius: 25;">
-                        <Label text="Espace :" style="-fx-text-fill: white; -fx-font-size: 13px;"/>
-                        <ComboBox fx:id="spaceSelector" promptText="Administrateur" style="-fx-background-color: transparent;"/>
-                    </HBox>
-                    
-                    <HBox spacing="10" alignment="CENTER_LEFT" styleClass="badge-lavender">
-                        <Label text="Admin IA Assist" style="-fx-font-size: 12px;"/>
-                        <ToggleButton fx:id="iaToggle" selected="true" styleClass="btn-ai-assist" text="ON"/>
-                    </HBox>
-                    
-                    <Circle fx:id="userAvatar" radius="20" fill="#E0E7FF" stroke="white" strokeWidth="2"/>
-                </HBox>
-            </HBox>
-        </VBox>
-    </top>
-    
-    <left>
-        <VBox styleClass="admin-sidebar" spacing="30" prefWidth="250">
-            <padding>
-                <Insets top="30" right="15" bottom="30" left="15"/>
-            </padding>
-            
-            <VBox spacing="10">
-                <Label text="NAVIGATION" styleClass="sidebar-title" />
-                
-                <HBox styleClass="nav-item, nav-item-active" onMouseClicked="#onGoDashboard">
-                    <Label text="🏠" styleClass="nav-icon"/>
-                    <Label text="Dashboard" styleClass="nav-label"/>
-                </HBox>
-                
-                <HBox styleClass="nav-item" onMouseClicked="#onGoPlats">
-                    <Label text="🍲" styleClass="nav-icon"/>
-                    <Label text="Plats &amp; Recettes" styleClass="nav-label"/>
-                </HBox>
-                
-                <HBox styleClass="nav-item" onMouseClicked="#onGoPlanner">
-                    <Label text="📅" styleClass="nav-icon"/>
-                    <Label text="Planificateur" styleClass="nav-label"/>
-                </HBox>
+    <VBox spacing="8" styleClass="modern-panel" prefWidth="1100" style="-fx-padding: 10;">
+        
+        <!-- Nature Header -->
+        <HBox spacing="12" alignment="CENTER_LEFT">
+            <StackPane style="-fx-background-color: rgba(34, 197, 94, 0.15); -fx-background-radius: 8; -fx-padding: 6;">
+                <Label text="🥘" style="-fx-font-size: 16;"/>
+            </StackPane>
+            <VBox spacing="0">
+                <Label text="Trail Recipes &amp; Fuel" styleClass="modern-title" style="-fx-text-fill: white; -fx-font-size: 16; -fx-font-weight: 800;"/>
+                <Label text="Manage high-energy meals for the mountain trek" style="-fx-text-fill: #94a3b8; -fx-font-size: 9;"/>
             </VBox>
-            
-            <VBox spacing="10">
-                <Label text="INSIGHTS" styleClass="sidebar-title" />
-                
-                <HBox styleClass="nav-item" onMouseClicked="#onGoAnalytics">
-                    <Label text="📈" styleClass="nav-icon"/>
-                    <Label text="Analytics" styleClass="nav-label"/>
-                </HBox>
-                
-                <HBox styleClass="nav-item" onMouseClicked="#onGoStock">
-                    <Label text="📦" styleClass="nav-icon"/>
-                    <Label text="Stock &amp; Inventaire" styleClass="nav-label"/>
-                </HBox>
-            </VBox>
-            
-            <Region VBox.vgrow="ALWAYS" />
-            
-            <VBox spacing="10" styleClass="glass-panel-light" style="-fx-padding: 15;">
-                <Label text="Version 2026.1" style="-fx-font-size: 10px; -fx-text-fill: #64748B;"/>
-                <Label text="Support IA Actif" style="-fx-font-size: 10px; -fx-text-fill: #00D4B4; -fx-font-weight: bold;"/>
-            </VBox>
-        </VBox>
-    </left>
-
-    <center>
-        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" style="-fx-background-color: transparent;">
-            <VBox spacing="25" style="-fx-background-color: transparent;">
-                <padding>
-                    <Insets top="30" right="40" bottom="30" left="40"/>
-                </padding>
-    
-                <!-- ACTION BAR 2.0 -->
-                <HBox spacing="12" alignment="CENTER_LEFT" styleClass="glass-panel" style="-fx-padding: 15; -fx-background-radius: 24;">
-                    <Button text="+ Nouveau..." onAction="#onNouveauRepas" styleClass="btn-turquoise" style="-fx-font-size: 14px;"/>
-                    <Button text="⊕ Actu..." onAction="#onActualiser" styleClass="btn-primary" style="-fx-background-radius: 20; -fx-background-color: #3B82F6; -fx-text-fill: white; -fx-padding: 10 20;"/>
-                    
-                    <MenuButton text="↑ Exporter..." styleClass="badge-mint" style="-fx-background-color: #CFFFEF; -fx-padding: 8 15; -fx-background-radius: 20;">
-                        <items>
-                            <MenuItem text="Format JSON" />
-                            <MenuItem text="Format CSV" />
-                            <MenuItem text="Format PDF" onAction="#onExportPDF" />
-                        </items>
-                    </MenuButton>
-                    
-                    <Button text="Importer Plats" styleClass="badge-lavender" style="-fx-background-radius: 20; -fx-padding: 8 15;"/>
-                    
-                    <Region HBox.hgrow="ALWAYS"/>
-                    
-                    <!-- Smart Search -->
-                    <HBox alignment="CENTER_LEFT" spacing="10" styleClass="search-bar-smart" prefWidth="400">
-                        <Label text="🔍" style="-fx-font-size: 16px;"/>
-                        <TextField fx:id="searchField" promptText="Rechercher par nom, ingrédient, tendance..."
-                                   style="-fx-background-color: transparent; -fx-padding: 0;"/>
-                    </HBox>
-                </HBox>
-    
-                <!-- SMART FILTERS BAR (Sticky-like) -->
-                <HBox spacing="12" alignment="CENTER_LEFT" styleClass="glass-panel" style="-fx-padding: 12 20; -fx-background-radius: 24;">
-                    <Label text="FILTRES IA" style="-fx-font-weight: 900; -fx-text-fill: #1E3A8A; -fx-font-size: 11px;"/>
-                    <ComboBox fx:id="filterRestaurantCombo" promptText="Restaurants" prefWidth="160" styleClass="modern-combo"/>
-                    <ComboBox fx:id="filterMenuCombo" promptText="Menus" prefWidth="130" styleClass="modern-combo"/>
-                    <ComboBox fx:id="filterCategorieCombo" promptText="Catégorie" prefWidth="120" styleClass="modern-combo"/>
-                    <ComboBox fx:id="filterTypePlatCombo" promptText="Type" prefWidth="100" styleClass="modern-combo"/>
-                    <ComboBox fx:id="filterDisponibleCombo" promptText="Statut" prefWidth="120" styleClass="modern-combo"/>
-                    
-                    <Separator orientation="VERTICAL" prefHeight="24" style="-fx-opacity: 0.2;"/>
-                    
-                    <HBox spacing="10" alignment="CENTER_LEFT">
-                        <Label text="TENDANCES" style="-fx-font-weight: 900; -fx-font-size: 9px; -fx-text-fill: #6366F1;"/>
-                        <Label text="VÉGAN" styleClass="health-badge" style="-fx-background-color: #CFFFEF; -fx-text-fill: #00D4B4;"/>
-                        <Label text="HALAL" styleClass="health-badge" style="-fx-background-color: #FEF9C3; -fx-text-fill: #854D0E;"/>
-                        <Label fx:id="countLabel" text="4 plats" styleClass="badge-mint" style="-fx-font-size: 10px;"/>
-                    </HBox>
-    
-                    <Region HBox.hgrow="ALWAYS"/>
-                    <Button text="Réinitialiser" onAction="#onReinitialiserFiltres" style="-fx-text-fill: #EF4444; -fx-background-color: transparent; -fx-font-size: 11px; -fx-font-weight: bold;"/>
-                </HBox>
-    
-                <!-- CORE 60/40 SPLIT -->
-                <GridPane hgap="30" VBox.vgrow="ALWAYS">
-                    <columnConstraints>
-                        <ColumnConstraints percentWidth="60"/>
-                        <ColumnConstraints percentWidth="40"/>
-                    </columnConstraints>
-                    
-                    <!-- Left: Catalogue -->
-                    <VBox GridPane.columnIndex="0" spacing="20" styleClass="glass-panel" style="-fx-padding: 25; -fx-background-radius: 32; -fx-background-color: rgba(255,255,255,0.6);">
-                        <HBox alignment="CENTER_LEFT">
-                            <Label text="Catalogue des Plats" style="-fx-font-weight: 900; -fx-font-size: 24px; -fx-text-fill: #1E3A8A;"/>
-                            <Region HBox.hgrow="ALWAYS"/>
-                            <ComboBox fx:id="sortCombo" promptText="Trier par..." prefWidth="150" style="-fx-background-radius: 15;"/>
-                        </HBox>
-                        <ListView fx:id="listView" VBox.vgrow="ALWAYS" minHeight="500" styleClass="modern-list-view" onMouseClicked="#onListClick"/>
-                    </VBox>
-                    
-                    <!-- Right: Preview & Insights -->
-                    <VBox GridPane.columnIndex="1" spacing="25">
-                        <!-- Preview Section -->
-                        <VBox fx:id="previewSidebar" spacing="20" styleClass="glass-panel" style="-fx-padding: 30; -fx-background-radius: 32; -fx-background-color: rgba(255,255,255,0.8);">
-                            <Label text="PREVIEW LIVE" style="-fx-font-weight: 900; -fx-font-size: 16px; -fx-text-fill: #1E3A8A;"/>
-                            <VBox fx:id="previewContainer" alignment="TOP_CENTER" spacing="20" style="-fx-background-color: white; -fx-background-radius: 24; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 20, 0, 0, 5); -fx-padding: 25;">
-                                <StackPane fx:id="imageContainer" prefHeight="220" style="-fx-background-color: #F8FAFC; -fx-background-radius: 20;">
-                                    <Label text="🍽️" style="-fx-font-size: 64px; -fx-opacity: 0.2;"/>
-                                    <ImageView fx:id="previewImage" fitHeight="220" fitWidth="300" preserveRatio="true"/>
-                                </StackPane>
-                                
-                                <VBox spacing="10" alignment="CENTER">
-                                    <Label fx:id="previewName" text="Sélectionnez un plat" textAlignment="CENTER" wrapText="true" style="-fx-font-weight: 900; -fx-font-size: 22px; -fx-text-fill: #1E3A8A;"/>
-                                    <Label fx:id="previewCategory" text="Catégorie" styleClass="badge-mint"/>
-                                </VBox>
-                                
-                                <HBox alignment="CENTER" spacing="30">
-                                    <VBox alignment="CENTER">
-                                        <Label text="PRIX" style="-fx-font-size: 10px; -fx-text-fill: #64748B; -fx-font-weight: 900;"/>
-                                        <Label fx:id="previewPrice" text="0.00 €" style="-fx-font-weight: 900; -fx-font-size: 24px; -fx-text-fill: #00D4B4;"/>
-                                    </VBox>
-                                    <VBox alignment="CENTER">
-                                        <Label text="STATUT" style="-fx-font-size: 10px; -fx-text-fill: #64748B; -fx-font-weight: 900;"/>
-                                        <Label fx:id="previewStatus" text="-" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
-                                    </VBox>
-                                </HBox>
-                                
-                                <Label fx:id="previewDescription" text="L'IA analysera les détails du plat après sélection." wrapText="true" style="-fx-text-fill: #64748B; -fx-font-size: 13px;" textAlignment="CENTER"/>
-                                
-                                <HBox spacing="15" alignment="CENTER">
-                                    <Button fx:id="btnModifier" text="Éditer" onAction="#onModifier" disable="true" styleClass="btn-turquoise" prefWidth="120"/>
-                                    <Button fx:id="btnSupprimer" text="Supprimer" onAction="#onSupprimer" disable="true" style="-fx-background-color: #FEE2E2; -fx-text-fill: #EF4444; -fx-background-radius: 20; -fx-padding: 10 20; -fx-font-weight: bold;" prefWidth="120"/>
-                                </HBox>
-                            </VBox>
-                        </VBox>
-                        
-                        <!-- Insights Section -->
-                        <VBox spacing="15" styleClass="glass-panel" style="-fx-padding: 25; -fx-background-radius: 32; -fx-background-color: rgba(224, 187, 228, 0.2);">
-                            <HBox alignment="CENTER_LEFT">
-                                <Label text="Insights IA" style="-fx-font-weight: 900; -fx-font-size: 16px; -fx-text-fill: #6A1B9A;"/>
-                                <Region HBox.hgrow="ALWAYS"/>
-                                <Label text="✨" style="-fx-font-size: 18px;"/>
-                            </HBox>
-                            <VBox spacing="8" style="-fx-padding: 10;">
-                                <Label text="📈 Popularité en hausse (+12%)" style="-fx-font-size: 12px; -fx-text-fill: #1E3A8A; -fx-font-weight: bold;"/>
-                                <Label text="💡 Conseil : Ajoutez des photos plus lumineuses pour ce plat." wrapText="true" style="-fx-font-size: 11px; -fx-text-fill: #64748B;"/>
-                            </VBox>
-                        </VBox>
-                    </VBox>
-                </GridPane>
-            </VBox>
-        </ScrollPane>
-    </center>
-
-    <bottom>
-        <HBox alignment="CENTER_LEFT" styleClass="sticky-footer">
-            <Label fx:id="statusLabel" text="Version 2026 Stable • LAMMA Voyager Assist Online" style="-fx-text-fill: #64748B; -fx-font-size: 12px; -fx-font-weight: bold;"/>
             <Region HBox.hgrow="ALWAYS"/>
-            <HBox spacing="10" alignment="CENTER_LEFT">
-                <Circle radius="5" fill="#00D4B4"/>
-                <Label text="API Cloud Connectée" style="-fx-font-size: 12px; -fx-text-fill: #00D4B4; -fx-font-weight: 900;"/>
+            <HBox alignment="CENTER" spacing="8" style="-fx-background-color: rgba(255,255,255,0.05); -fx-padding: 4 12; -fx-background-radius: 15; -fx-border-color: rgba(255,255,255,0.1); -fx-border-radius: 15;">
+                <Circle fill="#22c55e" radius="3"/>
+                <Label text="Kitchen Inventory: Healthy" style="-fx-text-fill: white; -fx-font-size: 10; -fx-font-weight: 600;"/>
             </HBox>
         </HBox>
-    </bottom>
-</BorderPane>
+
+        <!-- Action Bar - Capsule Style -->
+        <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 2 0;">
+            <Button text="➕ NEW" onAction="#onNouveauRepas" styleClass="button-capsule" style="-fx-padding: 8 16; -fx-font-size: 11;"/>
+            <Button text="🔄 SYNC" onAction="#onActualiser" styleClass="button-capsule-glass" style="-fx-padding: 8 16; -fx-font-size: 11;"/>
+            
+            <MenuButton text="↑ EXPORT" styleClass="button-capsule-glass" style="-fx-padding: 6 15; -fx-font-size: 11;">
+                <items>
+                    <MenuItem text="JSON Format" />
+                    <MenuItem text="CSV Format" />
+                    <MenuItem text="PDF Manifest" onAction="#onExportPDF" />
+                </items>
+            </MenuButton>
+            
+            <Region HBox.hgrow="ALWAYS"/>
+            <HBox alignment="CENTER_LEFT" spacing="8" styleClass="modern-card" style="-fx-padding: 4 12; -fx-background-radius: 15;">
+                <Label text="🔍" style="-fx-font-size: 12;"/>
+                <TextField fx:id="searchField" promptText="Scout meals..." styleClass="modern-input" prefWidth="250" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-font-size: 11;"/>
+            </HBox>
+        </HBox>
+
+        <!-- Filters Bar -->
+        <HBox spacing="10" alignment="CENTER_LEFT" styleClass="modern-card" style="-fx-padding: 10 20;">
+            <Label text="FILTERS:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 900; -fx-font-size: 10;"/>
+            <ComboBox fx:id="filterRestaurantCombo" promptText="Lodges" prefWidth="130" styleClass="modern-input" style="-fx-font-size: 11;"/>
+            <ComboBox fx:id="filterMenuCombo" promptText="Menus" prefWidth="110" styleClass="modern-input" style="-fx-font-size: 11;"/>
+            <ComboBox fx:id="filterCategorieCombo" promptText="Type" prefWidth="100" styleClass="modern-input" style="-fx-font-size: 11;"/>
+            <ComboBox fx:id="filterTypePlatCombo" promptText="Diet" prefWidth="100" styleClass="modern-input" style="-fx-font-size: 11;"/>
+            <ComboBox fx:id="filterDisponibleCombo" promptText="Status" prefWidth="100" styleClass="modern-input" style="-fx-font-size: 11;"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="countLabel" text="0 rations" style="-fx-text-fill: #22c55e; -fx-font-weight: 800; -fx-font-size: 10; -fx-background-color: rgba(34, 197, 94, 0.1); -fx-padding: 4 10; -fx-background-radius: 10;"/>
+            <Button text="RESET" onAction="#onReinitialiserFiltres" styleClass="button-capsule-glass" style="-fx-padding: 6 12; -fx-font-size: 10; -fx-text-fill: #ef4444;"/>
+        </HBox>
+
+        <!-- Main Content Split -->
+        <GridPane hgap="20" VBox.vgrow="ALWAYS">
+            <columnConstraints>
+                <ColumnConstraints percentWidth="60"/>
+                <ColumnConstraints percentWidth="40"/>
+            </columnConstraints>
+            
+            <!-- Left: Meal List -->
+            <VBox GridPane.columnIndex="0" spacing="10">
+                <Label text="🍱 Available Rations" styleClass="section-title" style="-fx-font-size: 14; -fx-text-fill: white;"/>
+                <ListView fx:id="listView" VBox.vgrow="ALWAYS" minHeight="400" styleClass="modern-list-view" onMouseClicked="#onListClick"/>
+            </VBox>
+            
+            <!-- Right: Scout Preview -->
+            <VBox GridPane.columnIndex="1" spacing="15">
+                <VBox fx:id="previewSidebar" spacing="15" styleClass="modern-card" style="-fx-padding: 20;">
+                    <Label text="RATION PREVIEW" style="-fx-font-weight: 900; -fx-text-fill: #3b82f6; -fx-font-size: 11; -fx-letter-spacing: 1px;"/>
+                    
+                    <VBox fx:id="previewContainer" alignment="TOP_CENTER" spacing="12">
+                        <StackPane fx:id="imageContainer" prefHeight="160" style="-fx-background-color: rgba(255,255,255,0.03); -fx-background-radius: 15; -fx-border-color: rgba(255,255,255,0.05); -fx-border-radius: 15;">
+                            <Label text="🍱" style="-fx-font-size: 48; -fx-opacity: 0.1;"/>
+                            <ImageView fx:id="previewImage" fitHeight="160" fitWidth="220" preserveRatio="true"/>
+                        </StackPane>
+                        
+                        <VBox spacing="4" alignment="CENTER">
+                            <Label fx:id="previewName" text="Select a ration" textAlignment="CENTER" wrapText="true" style="-fx-font-weight: 900; -fx-font-size: 18; -fx-text-fill: white;"/>
+                            <Label fx:id="previewCategory" text="Category" style="-fx-text-fill: #22c55e; -fx-font-weight: 800; -fx-background-color: rgba(34, 197, 94, 0.1); -fx-padding: 3 10; -fx-background-radius: 8; -fx-font-size: 10;"/>
+                        </VBox>
+                        
+                        <HBox alignment="CENTER" spacing="30">
+                            <VBox alignment="CENTER">
+                                <Label text="COST" style="-fx-font-size: 9; -fx-text-fill: #94a3b8; -fx-font-weight: 900;"/>
+                                <Label fx:id="previewPrice" text="0.00 €" style="-fx-font-weight: 900; -fx-font-size: 20; -fx-text-fill: #F97316;"/>
+                            </VBox>
+                            <VBox alignment="CENTER">
+                                <Label text="STOCK" style="-fx-font-size: 9; -fx-text-fill: #94a3b8; -fx-font-weight: 900;"/>
+                                <Label fx:id="previewStatus" text="-" style="-fx-font-weight: 800; -fx-font-size: 14; -fx-text-fill: white;"/>
+                            </VBox>
+                        </HBox>
+                        
+                        <Label fx:id="previewDescription" text="Scout details will appear here..." wrapText="true" style="-fx-text-fill: #94a3b8; -fx-font-size: 11; -fx-line-spacing: 2;" textAlignment="CENTER"/>
+                        
+                        <HBox spacing="12" alignment="CENTER" style="-fx-padding: 5 0 0 0;">
+                            <Button fx:id="btnModifier" text="Edit" onAction="#onModifier" disable="true" styleClass="button-capsule" prefWidth="100" style="-fx-font-size: 11;"/>
+                            <Button fx:id="btnSupprimer" text="Drop" onAction="#onSupprimer" disable="true" styleClass="button-capsule-glass" style="-fx-text-fill: #ef4444; -fx-font-size: 11;" prefWidth="100"/>
+                        </HBox>
+                    </VBox>
+                </VBox>
+
+                <!-- AI Nutrition Insight -->
+                <VBox spacing="8" styleClass="modern-card" style="-fx-padding: 12; -fx-background-color: rgba(168, 85, 247, 0.05); -fx-border-color: rgba(168, 85, 247, 0.1);">
+                    <HBox alignment="CENTER_LEFT" spacing="8">
+                        <Label text="✨" style="-fx-font-size: 14;"/>
+                        <Label text="Trail Nutrition Insight" style="-fx-font-weight: 900; -fx-text-fill: #a855f7; -fx-font-size: 10;"/>
+                    </HBox>
+                    <Label text="High-protein rations increase explorer stamina by 15.4%." wrapText="true" style="-fx-text-fill: #94a3b8; -fx-font-size: 10; -fx-font-style: italic;"/>
+                </VBox>
+            </VBox>
+        </GridPane>
+
+        <!-- Footer -->
+        <HBox alignment="CENTER_LEFT" style="-fx-padding: 5 0 0 0;">
+            <Label fx:id="statusLabel" text="Kitchen Online • LAMMA Explorer Support" style="-fx-text-fill: #64748b; -fx-font-size: 10; -fx-font-weight: 800;"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Circle radius="3" fill="#22c55e"/>
+                <Label text="Cloud Sync Active" style="-fx-font-size: 10; -fx-text-fill: #94a3b8; -fx-font-weight: 700;"/>
+            </HBox>
+        </HBox>
+    </VBox>
+</ScrollPane>

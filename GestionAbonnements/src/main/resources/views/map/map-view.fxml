@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.web.WebView?>
+<?import javafx.scene.control.Label?>
+<?import javafx.geometry.Insets?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.gestion.controllers.map.RestaurantMapController"
+            styleClass="modern-2026-root"
+            stylesheets="@../../styles/restoration-2026.css">
+    
+    <VBox spacing="15" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+        <padding><Insets top="25" right="30" bottom="25" left="30"/></padding>
+
+    <HBox alignment="CENTER_LEFT" spacing="20">
+        <VBox HBox.hgrow="ALWAYS">
+            <Label text="Restaurant Locations" style="-fx-font-size: 28px; -fx-font-weight: 900; -fx-text-fill: #1E3A8A;"/>
+            <Label text="Interactive map showing all partner restaurants and their status" style="-fx-text-fill: #64748B; -fx-font-size: 14px;"/>
+        </VBox>
+    </HBox>
+
+    <VBox styleClass="glass-panel-heavy" VBox.vgrow="ALWAYS" style="-fx-padding: 5; -fx-background-radius: 12; -fx-overflow: hidden;">
+        <WebView fx:id="mapView" VBox.vgrow="ALWAYS" />
+    </VBox>
+
+    </VBox>
+</AnchorPane>

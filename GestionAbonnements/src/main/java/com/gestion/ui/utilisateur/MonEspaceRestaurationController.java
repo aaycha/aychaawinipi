@@ -112,9 +112,15 @@ public class MonEspaceRestaurationController {
     }
 
     private void initUserSession() {
-        // Dans une vraie app, on récupérerait l'utilisateur connecté
-        // Pour la démo, on utilise l'ID 1 ou 2
-        this.currentUserId = 1L;
+        // Récupération de l'utilisateur connecté depuis la session unifiée
+        Integer sessionUserId = com.gestion.tools.Session.getInstance().getCurrentUserId();
+        if (sessionUserId != null) {
+            this.currentUserId = Long.valueOf(sessionUserId);
+        } else {
+            // Mode démo / fallback si non connecté
+            this.currentUserId = 1L;
+            System.err.println("⚠️ Aucune session active. Utilisation de l'ID par défaut: " + currentUserId);
+        }
         System.out.println("Mode MonEspaceRestauration pour utilisateur ID: " + currentUserId);
     }
 

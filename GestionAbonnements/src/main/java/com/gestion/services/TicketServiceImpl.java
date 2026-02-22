@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Implémentation du service Ticket - Version Nettoyée
@@ -32,27 +33,32 @@ public class TicketServiceImpl implements TicketService {
             t.setDateExpiration(t.getDateCreation().plusDays(7));
 
         String sql = "INSERT INTO tickets (user_id, participation_id, type, code_unique, latitude, longitude, lieu, statut, format, date_creation, date_expiration, qr_code, informations_supplementaires) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        try (Connection conn = dbConnection.getConnection();
-                PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            ps.setLong(1, t.getUserId());
-            ps.setLong(2, t.getParticipationId());
-            ps.setString(3, t.getType().name());
-            ps.setString(4, t.getCodeUnique());
-            ps.setObject(5, t.getLatitude(), Types.DOUBLE);
-            ps.setObject(6, t.getLongitude(), Types.DOUBLE);
-            ps.setString(7, t.getLieu());
-            ps.setString(8, t.getStatut().name());
-            ps.setString(9, t.getFormat().name());
-            ps.setTimestamp(10, Timestamp.valueOf(t.getDateCreation()));
-            ps.setTimestamp(11, Timestamp.valueOf(t.getDateExpiration()));
-            ps.setString(12, t.getQrCode());
-            ps.setString(13, t.getInformationsSupplementaires());
-            ps.executeUpdate();
-            try (ResultSet keys = ps.getGeneratedKeys()) {
-                if (keys.next())
-                    t.setId(keys.getLong(1));
+        try (Connection conn = dbConnection.getConnection()) {
+            if (conn == null) {
+                logger.error("Connexion à la base de données indisponible pour create ticket");
+                throw new RuntimeException("Connexion à la base de données indisponible.");
             }
-            return t;
+            try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                ps.setLong(1, t.getUserId());
+                ps.setLong(2, t.getParticipationId());
+                ps.setString(3, t.getType().name());
+                ps.setString(4, t.getCodeUnique());
+                ps.setObject(5, t.getLatitude(), Types.DOUBLE);
+                ps.setObject(6, t.getLongitude(), Types.DOUBLE);
+                ps.setString(7, t.getLieu());
+                ps.setString(8, t.getStatut().name());
+                ps.setString(9, t.getFormat().name());
+                ps.setTimestamp(10, Timestamp.valueOf(t.getDateCreation()));
+                ps.setTimestamp(11, Timestamp.valueOf(t.getDateExpiration()));
+                ps.setString(12, t.getQrCode());
+                ps.setString(13, t.getInformationsSupplementaires());
+                ps.executeUpdate();
+                try (ResultSet keys = ps.getGeneratedKeys()) {
+                    if (keys.next())
+                        t.setId(keys.getLong(1));
+                }
+                return t;
+            }
         } catch (SQLException e) {
             logger.error("Error create ticket", e);
             throw new RuntimeException(e);
@@ -92,12 +98,17 @@ public class TicketServiceImpl implements TicketService {
     @Override
     public Optional<Ticket> findById(Long id) {
         String sql = "SELECT * FROM tickets WHERE id = ?";
-        try (Connection conn = dbConnection.getConnection();
-                PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setLong(1, id);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next())
-                    return Optional.of(map(rs));
+        try (Connection conn = dbConnection.getConnection()) {
+            if (conn == null) {
+                logger.error("Connexion à la base de données indisponible pour findById ticket");
+                return Optional.empty();
+            }
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setLong(1, id);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next())
+                        return Optional.of(map(rs));
+                }
             }
         } catch (SQLException e) {
             logger.error("Error findById ticket", e);
@@ -109,11 +120,16 @@ public class TicketServiceImpl implements TicketService {
     public List<Ticket> findAll() {
         List<Ticket> list = new ArrayList<>();
         String sql = "SELECT * FROM tickets ORDER BY date_creation DESC";
-        try (Connection conn = dbConnection.getConnection();
-                PreparedStatement ps = conn.prepareStatement(sql);
-                ResultSet rs = ps.executeQuery()) {
-            while (rs.next())
-                list.add(map(rs));
+        try (Connection conn = dbConnection.getConnection()) {
+            if (conn == null) {
+                logger.error("Connexion à la base de données indisponible pour findAll tickets");
+                return list;
+            }
+            try (PreparedStatement ps = conn.prepareStatement(sql);
+                    ResultSet rs = ps.executeQuery()) {
+                while (rs.next())
+                    list.add(map(rs));
+            }
         } catch (SQLException e) {
             logger.error("Error findAll tickets", e);
         }
@@ -122,40 +138,46 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     public List<Ticket> findByParticipationId(Long participationId) {
-        return findAll().stream().filter(t -> t.getParticipationId().equals(participationId)).toList();
+        return findAll().stream().filter(t -> t.getParticipationId().equals(participationId))
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<Ticket> findByUserId(Long userId) {
-        return findAll().stream().filter(t -> t.getUserId().equals(userId)).toList();
+        return findAll().stream().filter(t -> t.getUserId().equals(userId)).collect(Collectors.toList());
     }
 
     @Override
     public List<Ticket> findByType(Ticket.TypeTicket type) {
-        return findAll().stream().filter(t -> t.getType() == type).toList();
+        return findAll().stream().filter(t -> t.getType() == type).collect(Collectors.toList());
     }
 
     @Override
     public List<Ticket> findByStatut(Ticket.StatutTicket statut) {
-        return findAll().stream().filter(t -> t.getStatut() == statut).toList();
+        return findAll().stream().filter(t -> t.getStatut() == statut).collect(Collectors.toList());
     }
 
     @Override
     public List<Ticket> findByFormat(Ticket.FormatTicket format) {
-        return findAll().stream().filter(t -> t.getFormat() == format).toList();
+        return findAll().stream().filter(t -> t.getFormat() == format).collect(Collectors.toList());
     }
 
     @Override
     public Ticket update(Ticket t) {
         String sql = "UPDATE tickets SET statut=?, format=?, informations_supplementaires=? WHERE id=?";
-        try (Connection conn = dbConnection.getConnection();
-                PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, t.getStatut().name());
-            ps.setString(2, t.getFormat().name());
-            ps.setString(3, t.getInformationsSupplementaires());
-            ps.setLong(4, t.getId());
-            ps.executeUpdate();
-            return t;
+        try (Connection conn = dbConnection.getConnection()) {
+            if (conn == null) {
+                logger.error("Connexion à la base de données indisponible pour update ticket");
+                throw new RuntimeException("Connexion à la base de données indisponible.");
+            }
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setString(1, t.getStatut().name());
+                ps.setString(2, t.getFormat().name());
+                ps.setString(3, t.getInformationsSupplementaires());
+                ps.setLong(4, t.getId());
+                ps.executeUpdate();
+                return t;
+            }
         } catch (SQLException e) {
             logger.error("Error update ticket", e);
             throw new RuntimeException(e);
@@ -165,10 +187,15 @@ public class TicketServiceImpl implements TicketService {
     @Override
     public boolean delete(Long id) {
         String sql = "DELETE FROM tickets WHERE id = ?";
-        try (Connection conn = dbConnection.getConnection();
-                PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setLong(1, id);
-            return ps.executeUpdate() > 0;
+        try (Connection conn = dbConnection.getConnection()) {
+            if (conn == null) {
+                logger.error("Connexion à la base de données indisponible pour delete ticket");
+                return false;
+            }
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setLong(1, id);
+                return ps.executeUpdate() > 0;
+            }
         } catch (SQLException e) {
             logger.error("Error delete ticket", e);
             return false;
@@ -187,7 +214,8 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     public List<Ticket> findByLieu(String lieu) {
-        return findAll().stream().filter(t -> t.getLieu() != null && t.getLieu().contains(lieu)).toList();
+        return findAll().stream().filter(t -> t.getLieu() != null && t.getLieu().contains(lieu))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -240,13 +268,13 @@ public class TicketServiceImpl implements TicketService {
     @Override
     public List<Ticket> findByDateCreationBetween(LocalDateTime debut, LocalDateTime fin) {
         return findAll().stream().filter(t -> !t.getDateCreation().isBefore(debut) && !t.getDateCreation().isAfter(fin))
-                .toList();
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<Ticket> findByDateExpirationBefore(LocalDateTime date) {
         return findAll().stream().filter(t -> t.getDateExpiration() != null && t.getDateExpiration().isBefore(date))
-                .toList();
+                .collect(Collectors.toList());
     }
 
     @Override

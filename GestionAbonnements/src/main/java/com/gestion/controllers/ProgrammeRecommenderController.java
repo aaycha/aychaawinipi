@@ -84,12 +84,10 @@ public class ProgrammeRecommenderController {
 
     public void save(ProgrammeRecommender p) {
 
-        String sql = """
-            INSERT INTO programme_recommande
-            (participation_id, activite, heure_debut, heure_fin,
-             ambiance, justification, recommande)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        """;
+        String sql = "INSERT INTO programme_recommande " +
+                     "(participation_id, activite, heure_debut, heure_fin, " +
+                     " ambiance, justification, recommande) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection c = getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
@@ -135,11 +133,9 @@ public class ProgrammeRecommenderController {
 
         List<ProgrammeRecommender> list = new ArrayList<>();
 
-        String sql = """
-            SELECT * FROM programme_recommande
-            WHERE participation_id = ?
-            ORDER BY heure_debut
-        """;
+        String sql = "SELECT * FROM programme_recommande " +
+                     "WHERE participation_id = ? " +
+                     "ORDER BY heure_debut";
 
         try (Connection c = getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
@@ -186,11 +182,9 @@ public class ProgrammeRecommenderController {
     }
 
     public void save(ProgrammeRecommender p) {
-        String sql = """
-            INSERT INTO programme_recommande
-            (participation_id, activite, heure_debut, heure_fin, ambiance, justification, recommande)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        """;
+        String sql = "INSERT INTO programme_recommande " +
+                     "(participation_id, activite, heure_debut, heure_fin, ambiance, justification, recommande) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection c = getConnection();
              PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -244,11 +238,9 @@ public class ProgrammeRecommenderController {
     public List<ProgrammeRecommender> findByParticipation(Long participationId) {
         List<ProgrammeRecommender> list = new ArrayList<>();
 
-        String sql = """
-            SELECT * FROM programme_recommande
-            WHERE participation_id = ?
-            ORDER BY heure_debut ASC
-        """;
+        String sql = "SELECT * FROM programme_recommande " +
+                     "WHERE participation_id = ? " +
+                     "ORDER BY heure_debut ASC";
 
         try (Connection c = getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
@@ -326,11 +318,9 @@ public class ProgrammeRecommenderController {
             throw new IllegalArgumentException("ProgrammeRecommender ne peut pas être null");
         }
 
-        String sql = """
-                    INSERT INTO programme_recommande
-                    (participation_id, activite, heure_debut, heure_fin, ambiance, justification, recommande)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)
-                """;
+        String sql = "INSERT INTO programme_recommande " +
+                "(participation_id, activite, heure_debut, heure_fin, ambiance, justification, recommande) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -387,11 +377,9 @@ public class ProgrammeRecommenderController {
         System.out.println("→ Début recherche pour participation_id = " + participation_id);
 
         List<ProgrammeRecommender> list = new ArrayList<>();
-        String sql = """
-                    SELECT * FROM programme_recommande
-                    WHERE participation_id = ?
-                    ORDER BY heure_debut
-                """;
+        String sql = "SELECT * FROM programme_recommande " +
+                "WHERE participation_id = ? " +
+                "ORDER BY heure_debut";
 
         try (Connection c = getConnection();
                 PreparedStatement ps = c.prepareStatement(sql)) {

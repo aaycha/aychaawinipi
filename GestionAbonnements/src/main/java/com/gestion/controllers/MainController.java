@@ -248,24 +248,62 @@ public class MainController {
     private Button backButton;
 
     // ─── Structure des modules ──────────────────────────────────────
-    private record ModuleGestion(
-            String id,
-            String titre,
-            String description,
-            String fxmlPath,
-            String icon) {
+    private static class ModuleGestion {
+        private final String id;
+        private final String titre;
+        private final String description;
+        private final String fxmlPath;
+        private final String icon;
+
+        public ModuleGestion(String id, String titre, String description, String fxmlPath, String icon) {
+            this.id = id;
+            this.titre = titre;
+            this.description = description;
+            this.fxmlPath = fxmlPath;
+            this.icon = icon;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public String getTitre() {
+            return titre;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public String getFxmlPath() {
+            return fxmlPath;
+        }
+
+        public String getIcon() {
+            return icon;
+        }
     }
 
     private final List<ModuleGestion> modules = new ArrayList<>();
 
     @FXML
     public void initialize() {
+        // Session initialization should ideally happen at login,
+        // but for safety in the main controller we just ensure the instance is ready.
         instance = this;
         initModules();
         createDashboardCards();
         setupRoleSelector();
         updateUIForRole();
         refreshDashboardVisibility();
+
+        // Finalize standard user restrictions
+        if (currentRole == Role.UTILISATEUR) {
+            if (roleCombo != null) {
+                roleCombo.setVisible(false);
+                roleCombo.setManaged(false);
+            }
+        }
 
         if (statusLabel != null) {
             statusLabel.setText("Prêt – Sélectionnez un module");
@@ -356,6 +394,11 @@ public class MainController {
                 "/views/participation/participation.fxml", "\uD83D\uDC65"));
 
         modules.add(new ModuleGestion(
+                "evenement", "Événements",
+                "Gestion des treks, soirées et séjours nature",
+                "/views/evenement/evenement-liste.fxml", "\uD83D\uDCC5"));
+
+        modules.add(new ModuleGestion(
                 "restaurants", "Restaurants",
                 "Gérer les restaurants partenaires",
                 "/views/restaurant/restaurant-liste.fxml", "\uD83C\uDF74"));
@@ -384,6 +427,11 @@ public class MainController {
                 "analytics", "Analytics",
                 "Statistiques et tableaux de bord",
                 "/views/analytics/analytics.fxml", "\uD83D\uDCC8"));
+
+        modules.add(new ModuleGestion(
+                "map", "Carte des Restaurants",
+                "Explorer les refuges et restaurants sur la carte",
+                "/views/map/map-view.fxml", "\uD83D\uDDFA"));
     }
 
     private void createDashboardCards() {
@@ -409,15 +457,15 @@ public class MainController {
         card.setOnMouseEntered(e -> card.setCursor(Cursor.HAND));
         card.setOnMouseClicked(e -> chargerModule(m));
 
-        Label icon = new Label(m.icon());
+        Label icon = new Label(m.getIcon());
         icon.getStyleClass().add("voyage-card-icon");
         icon.setStyle("-fx-font-size: 48px; -fx-text-fill: #1890ff;");
 
-        Label titre = new Label(m.titre());
+        Label titre = new Label(m.getTitre());
         titre.getStyleClass().add("voyage-card-titre");
         titre.setWrapText(true);
 
-        Label desc = new Label(m.description());
+        Label desc = new Label(m.getDescription());
         desc.getStyleClass().add("voyage-card-desc");
         desc.setWrapText(true);
         desc.setMaxWidth(260);
@@ -462,7 +510,7 @@ public class MainController {
 
     private void chargerModule(ModuleGestion module) {
         if (statusLabel != null) {
-            statusLabel.setText("Chargement du module " + module.titre() + "...");
+            statusLabel.setText("Chargement du module " + module.getTitre() + "...");
         }
         if (backButton != null) {
             backButton.setVisible(true);
@@ -473,9 +521,9 @@ public class MainController {
 
         Platform.runLater(() -> {
             try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource(module.fxmlPath()));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource(module.getFxmlPath()));
                 if (loader.getLocation() == null) {
-                    throw new IOException("FXML introuvable : " + module.fxmlPath());
+                    throw new IOException("FXML introuvable : " + module.getFxmlPath());
                 }
 
                 Parent root = loader.load();
@@ -485,7 +533,7 @@ public class MainController {
                 }
 
                 if (moduleTitleLabel != null) {
-                    moduleTitleLabel.setText(module.titre());
+                    moduleTitleLabel.setText(module.getTitre());
                 }
 
                 // Appel automatique à onActualiser() si la méthode existe
@@ -504,18 +552,18 @@ public class MainController {
                 showModuleContent(true);
 
                 if (statusLabel != null) {
-                    statusLabel.setText("Module " + module.titre() + " chargé avec succès");
+                    statusLabel.setText("Module " + module.getTitre() + " chargé avec succès");
                 }
 
             } catch (IOException e) {
                 if (statusLabel != null) {
-                    statusLabel.setText("Erreur chargement " + module.titre());
+                    statusLabel.setText("Erreur chargement " + module.getTitre());
                 }
                 showAlert(
                         Alert.AlertType.ERROR,
                         "Erreur de chargement",
-                        "Impossible de charger le module " + module.titre(),
-                        "Chemin FXML : " + module.fxmlPath() + "\n\n" + e.getMessage());
+                        "Impossible de charger le module " + module.getTitre(),
+                        "Chemin FXML : " + module.getFxmlPath() + "\n\n" + e.getMessage());
                 showModuleContent(false);
 
             } finally {

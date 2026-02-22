@@ -1,191 +1,198 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.*?>
-
-<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.layout.FlowPane?>
+<ScrollPane xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.gestion.ui.utilisateur.MonEspaceRestaurationController"
-            prefWidth="1200" prefHeight="800">
-    
-    <top>
-        <VBox styleClass="modern-header">
-            <padding>
-                <Insets top="20" right="24" bottom="20" left="24"/>
-            </padding>
-            <HBox alignment="CENTER_LEFT" spacing="16">
-                <ImageView fitHeight="40" preserveRatio="true">
-                    <image>
-                        <Image url="@../images/lamma-logo.png" />
-                    </image>
-                </ImageView>
-                <Label text="LAMMA - Mon Espace Restauration" styleClass="modern-title"/>
-                <Region HBox.hgrow="ALWAYS"/>
-                <Label text="Espace utilisateur LAMMA" styleClass="role-label"/>
-            </HBox>
-        </VBox>
-    </top>
-    
-    <center>
-        <TabPane tabClosingPolicy="UNAVAILABLE" styleClass="modern-tab-pane">
-            <Tab text="🍽️ Composer un plat">
-                <ScrollPane fitToWidth="true" styleClass="modern-scroll-pane">
-                    <VBox spacing="16" styleClass="modern-panel">
-                        <padding>
-                            <Insets top="20" right="20" bottom="20" left="20"/>
-                        </padding>
-                        <Label text="Choisissez des composants pour créer votre plat" styleClass="section-title"/>
-                        <Label text="Sélectionnez des plats ou ingrédients dans la liste, ajoutez-les à votre composition, donnez un nom à votre plat puis enregistrez."
-                               style="-fx-text-fill: #666; -fx-font-size: 13px;" wrapText="true"/>
-                        <HBox spacing="16">
-                            <VBox spacing="8" HBox.hgrow="ALWAYS">
-                                <Label text="Composants disponibles" styleClass="section-subtitle"/>
-                                <ListView fx:id="listeComposantsDispo" prefHeight="280" prefWidth="320" styleClass="modern-list"/>
-                                <Button text="➕ Ajouter à mon plat" onAction="#onAjouterComposant" styleClass="btn-success"/>
-                            </VBox>
-                            <VBox spacing="8" HBox.hgrow="ALWAYS">
-                                <Label text="Ma composition (mon plat)" styleClass="section-subtitle"/>
-                                <ListView fx:id="listeMaComposition" prefHeight="280" prefWidth="320" styleClass="modern-list"/>
-                                <Button text="🗑️ Retirer de la composition" onAction="#onRetirerComposant" styleClass="btn-danger"/>
-                            </VBox>
-                        </HBox>
-                        <Separator/>
-                        <GridPane hgap="12" vgap="12">
-                            <columnConstraints>
-                                <ColumnConstraints minWidth="120" halignment="RIGHT"/>
-                                <ColumnConstraints minWidth="280" hgrow="ALWAYS"/>
-                            </columnConstraints>
-                            <Label text="Nom de mon plat *" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-font-weight: bold;"/>
-                            <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                                <TextField fx:id="inputNomPlatCompose" promptText="Ex: Mon assiette personnalisée"
-                                           style="-fx-padding: 10 14; -fx-font-size: 14px;"/>
-                                <Label fx:id="errorNomPlatCompose" text="" visible="false" managed="false"
-                                       style="-fx-text-fill: #e74c3c; -fx-font-size: 12px;"/>
-                            </VBox>
-                            <Label text="Type" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-                            <ComboBox fx:id="comboTypePlatCompose" prefWidth="200" promptText="DEJEUNER, DINER..." GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-                        </GridPane>
-                        <HBox spacing="12">
-                            <Button text="💾 Enregistrer mon plat" onAction="#onEnregistrerPlatCompose" styleClass="btn-success"/>
-                            <Button text="🔄 Réinitialiser" onAction="#onReinitialiserComposition" styleClass="btn-secondary"/>
-                        </HBox>
-                        <Label fx:id="messagePlatCompose" text="" wrapText="true"
-                               style="-fx-text-fill: #27ae60; -fx-font-size: 13px;" visible="false" managed="false"/>
-                    </VBox>
-                </ScrollPane>
-            </Tab>
-            <Tab text="📋 Choisir un menu">
-                <ScrollPane fitToWidth="true" styleClass="modern-scroll-pane">
-                    <VBox spacing="16" styleClass="modern-panel">
-                        <padding>
-                            <Insets top="20" right="20" bottom="20" left="20"/>
-                        </padding>
+            fitToWidth="false" fitToHeight="false" styleClass="modern-scroll-pane"
+            hbarPolicy="AS_NEEDED" vbarPolicy="AS_NEEDED"
+            stylesheets="@../../styles/nature-mood.css, @../../styles/card-view.css"
+            style="-fx-background: transparent; -fx-background-color: transparent;">
 
-                        <Label text="Choisir un menu : prendre un menu existant ou composer le vôtre" styleClass="section-title"/>
+    <VBox spacing="10" styleClass="modern-panel" prefWidth="1050" style="-fx-padding: 12;">
+            
+        <!-- Trail Header -->
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <StackPane style="-fx-background-color: rgba(249, 115, 22, 0.15); -fx-background-radius: 8; -fx-padding: 6;">
+                <Label text="🍽️" style="-fx-font-size: 16;"/>
+            </StackPane>
+            <VBox spacing="0">
+                <Label text="Scout Trail Kitchen" styleClass="modern-title" style="-fx-text-fill: white; -fx-font-size: 16; -fx-font-weight: 800;"/>
+                <Label text="Command center for your mountain nutritional logistics" style="-fx-text-fill: #94a3b8; -fx-font-size: 10;"/>
+            </VBox>
+        </HBox>
 
-                        <!-- Restrictions alimentaires -->
-                        <VBox spacing="12" styleClass="form-section">
-                            <Label text="Mes Restrictions Alimentaires" styleClass="section-subtitle"/>
-                            <HBox spacing="16">
-                                <CheckBox fx:id="checkVegetarien" text="Végétarien"/>
-                                <CheckBox fx:id="checkVegan" text="Végan"/>
-                                <CheckBox fx:id="checkSansGluten" text="Sans gluten"/>
-                                <CheckBox fx:id="checkHalal" text="Halal"/>
-                            </HBox>
-                            <TextArea fx:id="inputAllergies" promptText="Listez vos allergies (séparées par des virgules)"
-                                      wrapText="true" prefRowCount="2" styleClass="input-field"/>
-                            <Button text="💾 Enregistrer mes restrictions" onAction="#onEnregistrerRestrictions" styleClass="btn-success"/>
+        <TabPane tabClosingPolicy="UNAVAILABLE" styleClass="modern-tab-pane" VBox.vgrow="ALWAYS">
+            
+            <!-- Tab 1: Scout Recipe Creator -->
+            <Tab text="🍱 Compose Ration">
+                <VBox spacing="15" styleClass="glass-panel" style="-fx-padding: 20;">
+                    <Label text="Field Ration Assembly" styleClass="hiker-label" style="-fx-text-fill: #22c55e; -fx-font-size: 10; -fx-font-weight: 900;"/>
+                    <Label text="Select individual components from the available stock to build your custom trail meal."
+                           style="-fx-text-fill: #94a3b8; -fx-font-size: 12;" wrapText="true"/>
+                    
+                    <HBox spacing="15">
+                        <VBox spacing="8" HBox.hgrow="ALWAYS">
+                            <Label text="📍 LOGISTICS STOCK" style="-fx-text-fill: #94a3b8; -fx-font-weight: 800; -fx-font-size: 10;"/>
+                            <ListView fx:id="listeComposantsDispo" prefHeight="250" styleClass="modern-list-view"/>
+                            <Button text="➕ ADD TO RATION" onAction="#addComposant" styleClass="button-capsule" style="-fx-padding: 10 20; -fx-font-size: 12;"/>
                         </VBox>
-
-                        <!-- Génération automatique -->
-                        <VBox spacing="12" styleClass="form-section">
-                            <Label text="Génération Automatique de Menu" styleClass="section-subtitle"/>
-                            <HBox spacing="12">
-                                <Label text="Événement ID:"/>
-                                <ComboBox fx:id="comboEvenement" prefWidth="250" promptText="Choisir un événement" styleClass="input-field"/>
-                                <Label text="Date:"/>
-                                <DatePicker fx:id="inputDateMenu" styleClass="input-field"/>
-                                <Button text="✨ Générer Menu" onAction="#onGenererMenu" styleClass="btn-primary"/>
-                            </HBox>
-                            <Label fx:id="menuGenereLabel" text="" wrapText="true" styleClass="info-label"/>
-                        </VBox>
-
-                        <!-- Choisir un menu : sélectionner un menu puis ajouter des repas -->
-                        <VBox spacing="12" styleClass="form-section">
-                            <Label text="Sélectionner un menu puis ajouter des plats" styleClass="section-subtitle"/>
-                            <HBox spacing="12">
-                                <Label text="Menu :"/>
-                                <ComboBox fx:id="comboMenu" prefWidth="220" promptText="Choisir un menu"/>
-                                <Label text="Plat :"/>
-                                <ComboBox fx:id="comboRepas" prefWidth="220" promptText="Choisir un plat à ajouter"/>
-                                <Button text="➕ Ajouter au menu" onAction="#onAjouterRepasAuMenu" styleClass="btn-success"/>
-                            </HBox>
-
-                            <Label text="Plats dans mon menu :" styleClass="section-subtitle"/>
-                            <ListView fx:id="listeRepasMenu" prefHeight="200" styleClass="modern-list"/>
-                            <HBox spacing="12">
-                                <Button text="🔄 Réorganiser" onAction="#onReorganiser" styleClass="btn-secondary"/>
-                                <Button text="🗑️ Supprimer sélectionné" onAction="#onSupprimerRepas" styleClass="btn-danger"/>
-                                <Button text="💾 Enregistrer mon menu" onAction="#onEnregistrerMenu" styleClass="btn-success"/>
-                            </HBox>
-                        </VBox>
-
-                        <!-- Aperçu menu -->
-                        <VBox spacing="12" styleClass="form-section">
-                            <Label text="Aperçu de Mon Menu" styleClass="section-subtitle"/>
-                            <TextArea fx:id="apercuMenu" editable="false" wrapText="true" prefRowCount="5"
-                                      styleClass="preview-area"/>
-                            <Button text="👁️ Prévisualiser" onAction="#onPrevisualiser" styleClass="btn-info"/>
-                        </VBox>
-                    </VBox>
-                </ScrollPane>
-            </Tab>
-            <Tab text="📅 Mes Menus Composés">
-                <ScrollPane fitToWidth="true" styleClass="modern-scroll-pane">
-                    <VBox spacing="16" styleClass="modern-panel">
-                        <padding>
-                            <Insets top="20" right="20" bottom="20" left="20"/>
-                        </padding>
-                        <Label text="Mes Compositions de Menu" styleClass="section-title"/>
-                        <Label text="Retrouvez ici l'historique de vos menus composés pour différents événements." 
-                               style="-fx-text-fill: #666; -fx-font-size: 13px;" wrapText="true"/>
                         
-                        <VBox spacing="12" styleClass="form-section" VBox.vgrow="ALWAYS">
-                            <ListView fx:id="listeMesCompositions" prefHeight="400" styleClass="modern-list"/>
-                            <HBox spacing="12">
-                                <Button text="🔄 Actualiser" onAction="#loadStatistics" styleClass="btn-info"/>
-                                <Button text="🗑️ Supprimer l'historique" onAction="#onSupprimerHistoriqueMenu" styleClass="btn-danger"/>
-                            </HBox>
+                        <VBox spacing="8" HBox.hgrow="ALWAYS">
+                            <Label text="📝 CURRENT ASSEMBLY" style="-fx-text-fill: #94a3b8; -fx-font-weight: 800; -fx-font-size: 10;"/>
+                            <ListView fx:id="listeMaComposition" prefHeight="250" styleClass="modern-list-view"/>
+                            <Button text="🗑️ REMOVE" onAction="#removeComposant" styleClass="button-capsule-glass" style="-fx-padding: 10 20; -fx-font-size: 12;"/>
                         </VBox>
-                    </VBox>
-                </ScrollPane>
+                    </HBox>
+
+                    <Separator style="-fx-opacity: 0.1;"/>
+
+                    <GridPane hgap="15" vgap="10" styleClass="modern-card" style="-fx-padding: 15;">
+                        <columnConstraints>
+                            <ColumnConstraints minWidth="130" halignment="LEFT"/>
+                            <ColumnConstraints hgrow="ALWAYS"/>
+                        </columnConstraints>
+                        
+                        <Label text="Ration Designation:" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 12;"/>
+                        <VBox spacing="3" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                            <TextField fx:id="inputNomPlatCompose" promptText="Enter designation..." styleClass="modern-input" style="-fx-font-size: 12;"/>
+                            <Label fx:id="errorNomPlatCompose" text="" visible="false" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 10;"/>
+                        </VBox>
+                        
+                        <Label text="Mission Timing:" GridPane.columnIndex="0" GridPane.rowIndex="1" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 12;"/>
+                        <ComboBox fx:id="comboTypePlatCompose" prefWidth="200" promptText="Select intensity..." styleClass="modern-input" style="-fx-font-size: 12;" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                    </GridPane>
+
+                    <HBox spacing="12" alignment="CENTER_LEFT">
+                        <Button text="💾 ESTABLISH RATION" onAction="#savePlatCompose" styleClass="button-capsule" style="-fx-padding: 12 30; -fx-font-size: 13;"/>
+                        <Button text="🔄 RESET" onAction="#resetComposition" styleClass="button-capsule-glass" style="-fx-padding: 12 20; -fx-font-size: 13;"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="messagePlatCompose" text="" style="-fx-text-fill: #22c55e; -fx-font-weight: 700;" visible="false" managed="false"/>
+                    </HBox>
+                </VBox>
             </Tab>
-            <Tab text="📊 Mes Statistiques">
-                <ScrollPane fitToWidth="true" styleClass="modern-scroll-pane">
-                    <VBox spacing="16" styleClass="modern-panel">
-                        <padding>
-                            <Insets top="20" right="20" bottom="20" left="20"/>
-                        </padding>
-                        <Label text="Mes Statistiques Restauration" styleClass="section-title"/>
-                        <GridPane hgap="12" vgap="12">
-                            <columnConstraints>
-                                <ColumnConstraints minWidth="200" prefWidth="300"/>
-                                <ColumnConstraints minWidth="200" prefWidth="300"/>
-                            </columnConstraints>
-                            <Label text="Total repas créés:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-                            <Label fx:id="statTotalRepas" text="0" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
-                            <Label text="Total dépensé:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-                            <Label fx:id="statTotalDepense" text="0.00 €" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-                            <Label text="Total calories:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-                            <Label fx:id="statTotalCalories" text="0" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-                            <Label text="Menus composés:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
-                            <Label fx:id="statTotalMenus" text="0" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
-                        </GridPane>
+
+            <!-- Tab 2: Mission Menu Planner -->
+            <Tab text="📋 Expedition Planner">
+                <VBox spacing="15" styleClass="glass-panel" style="-fx-padding: 20;">
+                    
+                    <!-- Dietary Restrictions -->
+                    <VBox spacing="10" styleClass="modern-card" style="-fx-padding: 15;">
+                        <Label text="SCOUT PHYSIOLOGY SYNC" styleClass="hiker-label" style="-fx-text-fill: #3b82f6; -fx-font-size: 10; -fx-font-weight: 900;"/>
+                        <HBox spacing="15">
+                            <CheckBox fx:id="checkVegetarien" text="Vegetarian" style="-fx-text-fill: white; -fx-font-size: 12;"/>
+                            <CheckBox fx:id="checkVegan" text="Vegan" style="-fx-text-fill: white; -fx-font-size: 12;"/>
+                            <CheckBox fx:id="checkSansGluten" text="GF Forest" style="-fx-text-fill: white; -fx-font-size: 12;"/>
+                            <CheckBox fx:id="checkHalal" text="Halal Pass" style="-fx-text-fill: white; -fx-font-size: 12;"/>
+                        </HBox>
+                        <TextArea fx:id="inputAllergies" promptText="List physiological triggers / allergies..." prefRowCount="2" styleClass="modern-input" style="-fx-font-size: 12;"/>
+                        <Button text="💾 SYNC SCOUT BIOMETRICS" onAction="#saveRestrictions" styleClass="button-capsule-glass" style="-fx-padding: 8 20; -fx-font-size: 12;"/>
                     </VBox>
-                </ScrollPane>
+
+                    <!-- Auto Gen -->
+                    <VBox spacing="10" styleClass="modern-card" style="-fx-padding: 15; -fx-background-color: rgba(34, 197, 94, 0.05);">
+                        <Label text="AI LOGISTICS CO-PILOT" style="-fx-text-fill: #22c55e; -fx-font-weight: 900; -fx-font-size: 10;"/>
+                        <HBox spacing="12" alignment="CENTER_LEFT">
+                            <VBox spacing="3" HBox.hgrow="ALWAYS">
+                                <Label text="MISSION SITE" style="-fx-text-fill: #94a3b8; -fx-font-size: 9; -fx-font-weight: 800;"/>
+                                <ComboBox fx:id="comboEvenement" maxWidth="Infinity" promptText="Select Base Camp" styleClass="modern-input" style="-fx-font-size: 12;"/>
+                            </VBox>
+                            <VBox spacing="3" HBox.hgrow="ALWAYS">
+                                <Label text="DEPLOYMENT DATE" style="-fx-text-fill: #94a3b8; -fx-font-size: 9; -fx-font-weight: 800;"/>
+                                <DatePicker fx:id="inputDateMenu" maxWidth="Infinity" styleClass="modern-input" style="-fx-font-size: 12;"/>
+                            </VBox>
+                            <Button text="✨ AUTO-PLAN" onAction="#generateMenu" styleClass="button-capsule" style="-fx-padding: 12 20; -fx-font-size: 12;"/>
+                        </HBox>
+                        <Label fx:id="menuGenereLabel" text="" style="-fx-text-fill: #94a3b8; -fx-font-size: 11; -fx-font-style: italic;"/>
+                    </VBox>
+
+                    <!-- Manual Build -->
+                    <VBox spacing="10" styleClass="modern-card" style="-fx-padding: 15;">
+                        <Label text="MANUAL LOGISTICS OVERRIDE" style="-fx-text-fill: #94a3b8; -fx-font-weight: 800; -fx-font-size: 10;"/>
+                        <HBox spacing="12" alignment="CENTER_LEFT">
+                            <ComboBox fx:id="comboMenu" prefWidth="150" promptText="Menu" styleClass="modern-input" style="-fx-font-size: 12;"/>
+                            <ComboBox fx:id="comboRepas" prefWidth="150" promptText="Ration" styleClass="modern-input" style="-fx-font-size: 12;"/>
+                            <Button text="➕ INSERT" onAction="#addRepasToMenu" styleClass="button-capsule" style="-fx-padding: 10 15; -fx-font-size: 12;"/>
+                        </HBox>
+                        
+                        <ListView fx:id="listeRepasMenu" prefHeight="130" styleClass="modern-list-view"/>
+                        
+                        <HBox spacing="10">
+                            <Button text="🔄 SHUFFLE" onAction="#shuffleGear" styleClass="button-capsule-glass" style="-fx-padding: 8 15; -fx-font-size: 11;"/>
+                            <Button text="🗑️ JETTISON" onAction="#deleteRepasSelectionne" styleClass="button-capsule-glass" style="-fx-padding: 8 15; -fx-text-fill: #ef4444; -fx-font-size: 11;"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Button text="💾 SEAL MENU" onAction="#saveMenu" styleClass="button-capsule" style="-fx-padding: 10 25; -fx-font-size: 12;"/>
+                        </HBox>
+                    </VBox>
+
+                    <!-- Preview -->
+                    <VBox spacing="8">
+                        <Label text="INTEL VISUALIZATION" style="-fx-text-fill: #94a3b8; -fx-font-weight: 800; -fx-font-size: 10;"/>
+                        <TextArea fx:id="apercuMenu" editable="false" prefRowCount="3" styleClass="modern-input" style="-fx-font-family: 'Courier New'; -fx-font-size: 11;"/>
+                        <Button text="👁️ SCAN PLAN" onAction="#previewMenu" styleClass="button-capsule-glass" style="-fx-padding: 8 20; -fx-font-size: 11;"/>
+                    </VBox>
+                </VBox>
+            </Tab>
+
+            <!-- Tab 3: Intel Archive -->
+            <Tab text="📅 Deployment History">
+                <VBox spacing="15" styleClass="glass-panel" style="-fx-padding: 20;">
+                    <Label text="Mission Log Archives" styleClass="hiker-label" style="-fx-text-fill: #94a3b8; -fx-font-size: 10; -fx-font-weight: 900;"/>
+                    <ListView fx:id="listeMesCompositions" VBox.vgrow="ALWAYS" minHeight="350" styleClass="modern-list-view"/>
+                    <HBox spacing="12">
+                        <Button text="🔄 RETRIEVE" onAction="#refreshArchives" styleClass="button-capsule-glass" style="-fx-padding: 10 20; -fx-font-size: 12;"/>
+                        <Button text="🗑️ WIPE" onAction="#clearArchives" styleClass="button-capsule-glass" style="-fx-padding: 10 20; -fx-text-fill: #ef4444; -fx-font-size: 12;"/>
+                    </HBox>
+                </VBox>
+            </Tab>
+
+            <!-- Tab 4: Scout Performance -->
+            <Tab text="📊 Trail Vitals">
+                <VBox spacing="20" styleClass="glass-panel" style="-fx-padding: 25;" alignment="TOP_CENTER">
+                    <Label text="Mission Nutrition Logistics Intelligence" styleClass="hiker-label" style="-fx-text-fill: #22c55e; -fx-font-size: 10; -fx-font-weight: 900;"/>
+                    
+                    <FlowPane hgap="15" vgap="15" alignment="CENTER">
+                        <VBox styleClass="modern-card" alignment="CENTER" spacing="5" prefWidth="160" style="-fx-padding: 15;">
+                            <Label text="🥘" style="-fx-font-size: 24;"/>
+                            <Label text="TOTAL RATIONS" style="-fx-text-fill: #94a3b8; -fx-font-weight: 800; -fx-font-size: 9;"/>
+                            <Label fx:id="statTotalRepas" text="0" style="-fx-font-size: 18; -fx-font-weight: 900; -fx-text-fill: white;"/>
+                        </VBox>
+                        
+                        <VBox styleClass="modern-card" alignment="CENTER" spacing="5" prefWidth="160" style="-fx-padding: 15;">
+                            <Label text="💰" style="-fx-font-size: 24;"/>
+                            <Label text="LOGISTICS BURN" style="-fx-text-fill: #94a3b8; -fx-font-weight: 800; -fx-font-size: 9;"/>
+                            <Label fx:id="statTotalDepense" text="0.00 €" style="-fx-font-size: 18; -fx-font-weight: 900; -fx-text-fill: #F97316;"/>
+                        </VBox>
+                        
+                        <VBox styleClass="modern-card" alignment="CENTER" spacing="5" prefWidth="160" style="-fx-padding: 15;">
+                            <Label text="🔥" style="-fx-font-size: 24;"/>
+                            <Label text="ENERGY CAP (CAL)" style="-fx-text-fill: #94a3b8; -fx-font-weight: 800; -fx-font-size: 9;"/>
+                            <Label fx:id="statTotalCalories" text="0" style="-fx-font-size: 18; -fx-font-weight: 900; -fx-text-fill: #FACC15;"/>
+                        </VBox>
+                    </FlowPane>
+                    
+                    <VBox spacing="8" styleClass="modern-card" style="-fx-padding: 12; -fx-background-color: rgba(34, 197, 94, 0.05);">
+                        <Label text="SCOUT RADAR STATUS" style="-fx-text-fill: #22c55e; -fx-font-weight: 900; -fx-font-size: 10;"/>
+                        <Label text="Logbook data is synchronized with the LAMMA Central Grid." style="-fx-text-fill: #94a3b8; -fx-font-size: 11;"/>
+                    </VBox>
+                </VBox>
             </Tab>
         </TabPane>
-    </center>
-</BorderPane>
+
+    </VBox>
+</ScrollPane>

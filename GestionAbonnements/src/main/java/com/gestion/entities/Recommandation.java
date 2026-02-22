@@ -54,10 +54,11 @@ public class Recommandation {
     }
 
     // Constructeurs
-    public Recommandation() {}
+    public Recommandation() {
+    }
 
-    public Recommandation(Long userId, Long evenementSuggereId, double score, 
-                         String raison, AlgorithmeReco algorithmeUsed) {
+    public Recommandation(Long userId, Long evenementSuggereId, double score,
+            String raison, AlgorithmeReco algorithmeUsed) {
         this.userId = userId;
         this.evenementSuggereId = evenementSuggereId;
         this.score = score;
@@ -66,7 +67,7 @@ public class Recommandation {
         this.dateGeneration = LocalDateTime.now();
         this.dateExpiration = dateGeneration.plusDays(7); // Expiration après 7 jours
         this.estUtilisee = false;
-        
+
         // Génération automatique du bundle d'équipements
         this.equipementBundle = genererEquipementBundle(algorithmeUsed);
     }
@@ -162,62 +163,57 @@ public class Recommandation {
 
     // Méthodes utilitaires
     private Map<String, Object> genererEquipementBundle(AlgorithmeReco algorithme) {
-        return switch (algorithme) {
-            case COLLABORATIVE -> Map.of(
-                "pour_couple", Map.of(
-                    "tente", "2p_confort_queen",
-                    "matelas", "epais_luxe",
-                    "loisirs", "spa_portable"
-                ),
-                "pour_amis", Map.of(
-                    "tente", "5p_spacieuse",
-                    "barbecue", "professionnel_grill",
-                    "boissons", "glaciere_grande"
-                )
-            );
-            case CONTENT_BASED -> Map.of(
-                "analyse_preferences", Map.of(
-                    "tente", "adaptee_climat",
-                    "equipement", "base_historique",
-                    "activites", "similaires_precedentes"
-                )
-            );
-            case NLP -> Map.of(
-                "analyse_texte", Map.of(
-                    "contexte", "extraction_description",
-                    "emotion", "ton_adapte",
-                    "suggestion", "personnalisee_ia"
-                )
-            );
-            case HYBRIDE -> Map.of(
-                "combinaison", Map.of(
-                    "collaboratif", "poids_0.4",
-                    "content", "poids_0.3",
-                    "nlp", "poids_0.3"
-                )
-            );
-            case ML_TENSORFLOW -> Map.of(
-                "prediction", Map.of(
-                    "precision", "modele_neuronal",
-                    "confiance", "score_calculé",
-                    "optimisation", "tensorflow"
-                )
-            );
-            case CLUSTERING -> Map.of(
-                "segmentation", Map.of(
-                    "groupe", "similaire_profil",
-                    "preferences", "communes_cluster",
-                    "recommandation", "groupe_specifique"
-                )
-            );
-        };
+        switch (algorithme) {
+            case COLLABORATIVE:
+                return Map.of(
+                        "pour_couple", Map.of(
+                                "tente", "2p_confort_queen",
+                                "matelas", "epais_luxe",
+                                "loisirs", "spa_portable"),
+                        "pour_amis", Map.of(
+                                "tente", "5p_spacieuse",
+                                "barbecue", "professionnel_grill",
+                                "boissons", "glaciere_grande"));
+            case CONTENT_BASED:
+                return Map.of(
+                        "analyse_preferences", Map.of(
+                                "tente", "adaptee_climat",
+                                "equipement", "base_historique",
+                                "activites", "similaires_precedentes"));
+            case NLP:
+                return Map.of(
+                        "analyse_texte", Map.of(
+                                "contexte", "extraction_description",
+                                "emotion", "ton_adapte",
+                                "suggestion", "personnalisee_ia"));
+            case HYBRIDE:
+                return Map.of(
+                        "combinaison", Map.of(
+                                "collaboratif", "poids_0.4",
+                                "content", "poids_0.3",
+                                "nlp", "poids_0.3"));
+            case ML_TENSORFLOW:
+                return Map.of(
+                        "prediction", Map.of(
+                                "precision", "modele_neuronal",
+                                "confiance", "score_calculé",
+                                "optimisation", "tensorflow"));
+            case CLUSTERING:
+                return Map.of(
+                        "segmentation", Map.of(
+                                "groupe", "similaire_profil",
+                                "preferences", "communes_cluster",
+                                "recommandation", "groupe_specifique"));
+            default:
+                return Map.of();
+        }
     }
 
     public boolean estValide() {
-        return score > 0.5 && 
-               dateExpiration != null && 
-               dateExpiration.isAfter(LocalDateTime.now()) && 
-               !estUtilisee;
+        return score > 0.5 &&
+                dateExpiration != null &&
+                dateExpiration.isAfter(LocalDateTime.now()) &&
+                !estUtilisee;
     }
 
     public boolean estPrioritaire() {
@@ -239,23 +235,23 @@ public class Recommandation {
         desc.append("Recommandation IA (Score: ").append(String.format("%.2f", score)).append("/1.0)\n");
         desc.append("Algorithme: ").append(algorithmeUsed.getLabel()).append("\n");
         desc.append("Raison: ").append(raison).append("\n");
-        
+
         if (equipementBundle != null && !equipementBundle.isEmpty()) {
             desc.append("Équipements suggérés:\n");
-            equipementBundle.forEach((key, value) -> 
-                desc.append("  - ").append(key).append(": ").append(value).append("\n"));
+            equipementBundle
+                    .forEach((key, value) -> desc.append("  - ").append(key).append(": ").append(value).append("\n"));
         }
-        
+
         if (sourceScraped != null) {
             desc.append("Source: ").append(sourceScraped).append("\n");
         }
-        
+
         return desc.toString();
     }
 
     @Override
     public String toString() {
-        return String.format("Recommandation{id=%d, userId=%d, evenementId=%d, score=%.2f, algo=%s}", 
-                           id, userId, evenementSuggereId, score, algorithmeUsed);
+        return String.format("Recommandation{id=%d, userId=%d, evenementId=%d, score=%.2f, algo=%s}",
+                id, userId, evenementSuggereId, score, algorithmeUsed);
     }
 }

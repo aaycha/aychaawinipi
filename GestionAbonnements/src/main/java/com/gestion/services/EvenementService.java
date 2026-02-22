@@ -3,6 +3,7 @@ package com.gestion.services;
 import com.gestion.entities.Evenement;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -17,7 +18,7 @@ public class EvenementService {
         LocalDateTime now = LocalDateTime.now();
         return events.stream()
                 .filter(e -> e.getDateDebut() != null && e.getDateDebut().isAfter(now))
-                .toList();
+                .collect(Collectors.toList());
     }
 
     // Filtrer: par type (SOIREE/RANDONNEE/CAMPING/SEJOUR)
@@ -25,7 +26,7 @@ public class EvenementService {
         String t = safeUpper(type);
         return events.stream()
                 .filter(e -> safeUpper(e.getType()).equals(t))
-                .toList();
+                .collect(Collectors.toList());
     }
 
     // Filtrer: par lieu (contient)
@@ -33,7 +34,7 @@ public class EvenementService {
         String k = safeLower(keyword);
         return events.stream()
                 .filter(e -> safeLower(e.getLieu()).contains(k))
-                .toList();
+                .collect(Collectors.toList());
     }
 
     // Filtrer: entre deux dates (sur dateDebut)
@@ -41,7 +42,7 @@ public class EvenementService {
         return events.stream()
                 .filter(e -> e.getDateDebut() != null)
                 .filter(e -> !e.getDateDebut().isBefore(from) && !e.getDateDebut().isAfter(to))
-                .toList();
+                .collect(Collectors.toList());
     }
 
     // ====== TRI ======
@@ -51,7 +52,7 @@ public class EvenementService {
         return events.stream()
                 .sorted(Comparator.comparing(Evenement::getDateDebut,
                         Comparator.nullsLast(Comparator.naturalOrder())))
-                .toList();
+                .collect(Collectors.toList());
     }
 
     // Trier par dateDebut desc
@@ -59,14 +60,14 @@ public class EvenementService {
         return events.stream()
                 .sorted(Comparator.comparing(Evenement::getDateDebut,
                         Comparator.nullsLast(Comparator.naturalOrder())).reversed())
-                .toList();
+                .collect(Collectors.toList());
     }
 
     // Trier par titre A-Z
     public List<Evenement> trierParTitre(List<Evenement> events) {
         return events.stream()
                 .sorted(Comparator.comparing(e -> safeLower(e.getTitre())))
-                .toList();
+                .collect(Collectors.toList());
     }
 
     // ====== RECHERCHE ======
@@ -75,12 +76,38 @@ public class EvenementService {
     public List<Evenement> rechercher(List<Evenement> events, String keyword) {
         String k = safeLower(keyword);
         return events.stream()
-                .filter(e ->
-                        safeLower(e.getTitre()).contains(k) ||
-                                safeLower(e.getDescription()).contains(k) ||
-                                safeLower(e.getLieu()).contains(k)
-                )
-                .toList();
+                .filter(e -> safeLower(e.getTitre()).contains(k) ||
+                        safeLower(e.getDescription()).contains(k) ||
+                        safeLower(e.getLieu()).contains(k))
+                .collect(Collectors.toList());
+    }
+
+    // ====== DATABASE ======
+    public List<com.gestion.entities.Evenement> findAll() {
+        List<com.gestion.entities.Evenement> list = new ArrayList<>();
+        com.gestion.tools.MyConnection db = com.gestion.tools.MyConnection.getInstance();
+        String sql = "SELECT * FROM evenement ORDER BY date_debut DESC";
+        try {
+            java.sql.Connection conn = db.getConnection();
+            if (conn == null)
+                return list;
+            try (java.sql.PreparedStatement ps = conn.prepareStatement(sql);
+                    java.sql.ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    com.gestion.entities.Evenement e = new com.gestion.entities.Evenement();
+                    e.setIdEvent(rs.getInt("id_event"));
+                    e.setTitre(rs.getString("titre"));
+                    e.setLieu(rs.getString("lieu"));
+                    java.sql.Timestamp d = rs.getTimestamp("date_debut");
+                    if (d != null)
+                        e.setDateDebut(d.toLocalDateTime());
+                    list.add(e);
+                }
+            }
+        } catch (java.sql.SQLException e) {
+            System.err.println("Erreur EvenementService.findAll: " + e.getMessage());
+        }
+        return list;
     }
 
     // ====== Helpers ======

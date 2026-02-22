@@ -1,0 +1,23 @@
+.context-menu {
+
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: #e4e6eb;
+    -fx-padding: 8;
+
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 20, 0, 0, 5);
+
+}
+
+.menu-item {
+
+    -fx-padding: 10 20 10 20;
+    -fx-font-size: 14;
+}
+
+.menu-item:hover {
+
+    -fx-background-color: #f1f3f5;
+
+}

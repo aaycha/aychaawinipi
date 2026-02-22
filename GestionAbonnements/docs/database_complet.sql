@@ -14,13 +14,17 @@ COLLATE utf8mb4_unicode_ci;
 USE lamma_db3;
 
 -- =====================================================
--- TABLE DES UTILISATEURS
+-- TABLE DES USERS
 -- =====================================================
-CREATE TABLE IF NOT EXISTS utilisateurs (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    nom VARCHAR(100) NOT NULL,
+CREATE TABLE IF NOT EXISTS users (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
     email VARCHAR(150) UNIQUE NOT NULL,
-    telephone VARCHAR(20),
+    password VARCHAR(255) NOT NULL,
+    role VARCHAR(20) DEFAULT 'USER',
+    phone VARCHAR(20),
+    motorized VARCHAR(10) DEFAULT 'NO',
+    image VARCHAR(255),
     date_naissance DATE,
     adresse TEXT,
     ville VARCHAR(100),
@@ -72,7 +76,7 @@ CREATE TABLE IF NOT EXISTS abonnements (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     
-    FOREIGN KEY (user_id) REFERENCES utilisateurs(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     INDEX idx_user_id (user_id),
     INDEX idx_type (type),
     INDEX idx_statut (statut),
@@ -102,7 +106,7 @@ CREATE TABLE IF NOT EXISTS participations (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     
-    FOREIGN KEY (user_id) REFERENCES utilisateurs(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (evenement_id) REFERENCES evenement(id_event) ON DELETE CASCADE,
     INDEX idx_user_id (user_id),
     INDEX idx_evenement_id (evenement_id),
@@ -144,7 +148,7 @@ CREATE TABLE IF NOT EXISTS tickets (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     
     FOREIGN KEY (participation_id) REFERENCES participations(id) ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES utilisateurs(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     INDEX idx_participation_id (participation_id),
     INDEX idx_user_id (user_id),
     INDEX idx_type (type),
@@ -176,7 +180,7 @@ CREATE TABLE IF NOT EXISTS recommandations (
     conversion_score FLOAT DEFAULT 0.0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     
-    FOREIGN KEY (user_id) REFERENCES utilisateurs(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (evenement_suggere_id) REFERENCES evenement(id_event) ON DELETE CASCADE,
     INDEX idx_user_id (user_id),
     INDEX idx_evenement_suggere_id (evenement_suggere_id),

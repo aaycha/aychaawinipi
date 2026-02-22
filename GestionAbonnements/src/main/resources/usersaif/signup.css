@@ -1,0 +1,259 @@
+/* ====================================
+   EXPLORE SIGNUP - STYLESHEET
+   ==================================== */
+
+/* Root Color Variables */
+.root {
+    -fx-primary-color: #000000;
+    -fx-secondary-color: #718096;
+    -fx-accent-color: #3b82f6;
+    -fx-success-color: #10b981;
+    -fx-border-color: #e2e8f0;
+    -fx-background-light: #f7fafc;
+}
+
+/* Text Field Styling */
+.text-field, .password-field {
+    -fx-background-color: white;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1.5px;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-padding: 12px;
+    -fx-font-size: 14px;
+    -fx-text-fill: #2d3748;
+}
+
+.text-field:focused, .password-field:focused {
+    -fx-border-color: #3b82f6;
+    -fx-border-width: 2px;
+    -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.1), 8, 0, 0, 0);
+}
+
+/* Button Styling */
+.button {
+    -fx-cursor: hand;
+    -fx-border-width: 0;
+}
+
+/* Primary Button (Black) */
+.button-primary {
+    -fx-background-color: #000000;
+    -fx-text-fill: white;
+    -fx-background-radius: 12px;
+    -fx-font-weight: 600;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 6, 0, 0, 2);
+}
+
+.button-primary:hover {
+    -fx-background-color: #1a1a1a;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 8, 0, 0, 3);
+}
+
+.button-primary:pressed {
+    -fx-background-color: #0a0a0a;
+    -fx-translate-y: 1px;
+}
+
+/* Social Login Buttons */
+.social-button {
+    -fx-background-radius: 22px;
+    -fx-min-width: 44px;
+    -fx-min-height: 44px;
+    -fx-max-width: 44px;
+    -fx-max-height: 44px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 4, 0, 0, 2);
+}
+
+.social-button:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 6, 0, 0, 3);
+    -fx-translate-y: -1px;
+}
+
+.social-button:pressed {
+    -fx-translate-y: 0;
+}
+
+/* Facebook Button */
+.facebook-button {
+    -fx-background-color: #1877F2;
+}
+
+.facebook-button:hover {
+    -fx-background-color: #0e6fd9;
+}
+
+/* Apple Button */
+.apple-button {
+    -fx-background-color: #000000;
+}
+
+.apple-button:hover {
+    -fx-background-color: #1a1a1a;
+}
+
+/* Google Button */
+.google-button {
+    -fx-background-color: white;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1.5px;
+    -fx-border-radius: 22px;
+}
+
+.google-button:hover {
+    -fx-border-color: #cbd5e0;
+    -fx-background-color: #f7fafc;
+}
+
+/* Toggle Buttons (Register/Login) */
+.toggle-button {
+    -fx-background-radius: 20px;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+    -fx-min-width: 120px;
+    -fx-min-height: 36px;
+}
+
+.toggle-button-active {
+    -fx-background-color: #000000;
+    -fx-text-fill: white;
+}
+
+.toggle-button-inactive {
+    -fx-background-color: transparent;
+    -fx-text-fill: #718096;
+}
+
+.toggle-button-inactive:hover {
+    -fx-text-fill: #4a5568;
+}
+
+/* CheckBox Styling */
+.check-box {
+    -fx-text-fill: #718096;
+    -fx-font-size: 13px;
+}
+
+.check-box .box {
+    -fx-background-color: white;
+    -fx-border-color: #cbd5e0;
+    -fx-border-width: 1.5px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+
+.check-box:selected .box {
+    -fx-background-color: #000000;
+    -fx-border-color: #000000;
+}
+
+.check-box:selected .mark {
+    -fx-background-color: white;
+}
+
+/* Label Styles */
+.label-title {
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1a202c;
+}
+
+.label-subtitle {
+    -fx-font-size: 13px;
+    -fx-text-fill: #718096;
+}
+
+.label-field {
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #4a5568;
+}
+
+/* Separator Styling */
+.separator .line {
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 0.5px;
+}
+
+/* Badge Styling */
+.destination-badge {
+    -fx-background-radius: 15px;
+    -fx-padding: 4px 12px;
+    -fx-font-size: 11px;
+    -fx-text-fill: white;
+}
+
+.badge-red {
+    -fx-background-color: rgba(239, 68, 68, 0.9);
+}
+
+.badge-orange {
+    -fx-background-color: rgba(245, 158, 11, 0.9);
+}
+
+.badge-blue {
+    -fx-background-color: rgba(59, 130, 246, 0.9);
+}
+
+.badge-green {
+    -fx-background-color: rgba(34, 197, 94, 0.9);
+}
+
+/* Password Strength Indicator */
+.password-strength-weak {
+    -fx-text-fill: #ef4444;
+}
+
+.password-strength-medium {
+    -fx-text-fill: #f59e0b;
+}
+
+.password-strength-strong {
+    -fx-text-fill: #10b981;
+}
+
+/* Location Card */
+.location-card {
+    -fx-background-color: rgba(255, 255, 255, 0.95);
+    -fx-background-radius: 20px;
+    -fx-padding: 8px 16px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.05), 4, 0, 0, 1);
+}
+
+/* Image Preview Card */
+.preview-card {
+    -fx-background-color: white;
+    -fx-background-radius: 12px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 10, 0, 0, 2);
+}
+
+/* Hyperlink Styling */
+.hyperlink {
+    -fx-text-fill: #3b82f6;
+    -fx-underline: false;
+    -fx-border-color: transparent;
+}
+
+.hyperlink:hover {
+    -fx-underline: true;
+}
+
+.hyperlink:pressed {
+    -fx-text-fill: #2563eb;
+}
+
+/* Navigation Buttons */
+.nav-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #4a5568;
+    -fx-font-size: 13px;
+}
+
+.nav-button:hover {
+    -fx-text-fill: #2d3748;
+}
+
+/* Smooth Transitions */
+* {
+    -fx-transition: all 0.2s ease;
+}

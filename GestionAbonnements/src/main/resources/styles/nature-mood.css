@@ -1,0 +1,127 @@
+/* ============================================================ */
+/* NATURE MOOD - GLOBAL DESIGN SYSTEM (2026 EDITION)           */
+/* ============================================================ */
+
+.root {
+    -fx-nature-bg: #0A0F0D;
+    -fx-nature-green-dark: #1E3932;
+    -fx-nature-green-light: #2D5A4C;
+    -fx-nature-accent-orange: #F97316;
+    -fx-nature-accent-yellow: #FACC15;
+    -fx-nature-accent-green: #22C55E;
+    -fx-nature-slate: #1E293B;
+    -fx-text-muted: #94A3B8;
+
+    /* Use color literals to avoid casting issues */
+    -fx-glass-card-bg: rgba(15, 23, 42, 0.75);
+    -fx-nature-glass-border: rgba(255, 255, 255, 0.15);
+}
+
+/* Base Styles */
+.nature-root {
+    -fx-background-color: -fx-nature-bg;
+    -fx-font-family: 'Segoe UI Semibold', 'Roboto', system-ui;
+}
+
+/* Glassmorphism Panels */
+.glass-panel {
+    -fx-background-color: -fx-glass-card-bg;
+    -fx-background-radius: 12;
+    -fx-border-color: -fx-nature-glass-border;
+    -fx-border-width: 1.0;
+    -fx-border-radius: 12;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0, 0, 5);
+}
+
+.glass-panel-heavy {
+    -fx-background-color: rgba(15, 23, 42, 0.85);
+    -fx-background-radius: 15;
+    -fx-border-color: rgba(255, 255, 255, 0.2);
+    -fx-border-width: 1.5;
+    -fx-border-radius: 15;
+}
+
+/* Modern Inputs */
+.modern-input {
+    -fx-background-color: rgba(255, 255, 255, 0.08);
+    -fx-border-color: rgba(255, 255, 255, 0.15);
+    -fx-border-width: 1.0;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 4 8;
+    -fx-text-fill: white;
+    -fx-font-size: 10.5px;
+    -fx-prompt-text-fill: rgba(255, 255, 255, 0.35);
+}
+
+.modern-input:focused {
+    -fx-border-color: #F97316;
+    -fx-background-color: rgba(255, 255, 255, 0.12);
+}
+
+/* Premium Buttons */
+.button-capsule {
+    -fx-background-color: #F97316;
+    -fx-text-fill: white;
+    -fx-font-size: 10.5px;
+    -fx-font-weight: 800;
+    -fx-background-radius: 25;
+    -fx-padding: 5 12;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(249, 115, 22, 0.3), 5, 0, 0, 2);
+}
+
+.button-capsule:hover {
+    -fx-background-color: #FB923C;
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}
+
+.button-capsule-glass {
+    -fx-background-color: rgba(255, 255, 255, 0.08);
+    -fx-border-color: rgba(255, 255, 255, 0.4);
+    -fx-border-width: 1.0;
+    -fx-border-radius: 25;
+    -fx-background-radius: 25;
+    -fx-text-fill: white;
+    -fx-font-weight: 700;
+    -fx-font-size: 10.5px;
+}
+
+.button-capsule-glass:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* ScrollPane Clean Style */
+.modern-scroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+}
+
+.modern-scroll>.viewport {
+    -fx-background-color: transparent;
+}
+
+.modern-scroll .scroll-bar:vertical,
+.modern-scroll .scroll-bar:horizontal {
+    -fx-opacity: 0.3;
+    -fx-background-color: transparent;
+}
+
+.modern-scroll .scroll-bar:vertical .thumb,
+.modern-scroll .scroll-bar:horizontal .thumb {
+    -fx-background-color: rgba(255, 255, 255, 0.2);
+    -fx-background-radius: 10;
+}
+
+/* Typography */
+.text-hero {
+    -fx-font-size: 18px;
+    -fx-font-weight: 900;
+    -fx-text-fill: white;
+}
+
+.text-muted {
+    -fx-font-size: 14px;
+    -fx-text-fill: #94A3B8;
+}

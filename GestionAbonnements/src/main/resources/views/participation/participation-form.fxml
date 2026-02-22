@@ -1,191 +1,149 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Text?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.StackPane?>
+<ScrollPane xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.gestion.ui.participation.ParticipationFormController"
+            fitToWidth="true" fitToHeight="true" pannable="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
+            stylesheets="@../../styles/nature-mood.css, @../../styles/card-view.css"
+            style="-fx-background-color: transparent; -fx-background: transparent; -fx-border-color: transparent; -fx-padding: 0;">
 
-<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.gestion.ui.participation.ParticipationFormController"
-      spacing="16" styleClass="modern-panel" prefWidth="660" maxWidth="700">
+    <StackPane style="-fx-background-color: transparent; -fx-padding: 15;">
+        <VBox spacing="12" styleClass="glass-panel" prefWidth="760" maxWidth="820" alignment="TOP_CENTER" style="-fx-padding: 20;">
+            
+            <!-- Hiker Title Section -->
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <StackPane style="-fx-background-color: rgba(249, 115, 22, 0.15); -fx-background-radius: 10; -fx-padding: 8;">
+                    <Label text="🏕️" style="-fx-font-size: 18;"/>
+                </StackPane>
+                <VBox spacing="0">
+                    <Label fx:id="formTitle" text="Trek Registration"
+                           style="-fx-font-size: 16px; -fx-font-weight: 800; -fx-text-fill: white;"/>
+                    <Label text="Prepare your gear and confirm expedition details" style="-fx-font-size: 10px; -fx-text-fill: #94a3b8;"/>
+                </VBox>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label text="ELITE SCOUT" style="-fx-background-color: rgba(249, 115, 22, 0.1); -fx-text-fill: #F97316; -fx-font-size: 9; -fx-font-weight: 900; -fx-padding: 4 10; -fx-background-radius: 12;"/>
+            </HBox>
 
-    <padding>
-        <Insets top="20" right="20" bottom="20" left="20"/>
-    </padding>
+            <Separator style="-fx-opacity: 0.1;"/>
 
-    <!-- ══ Titre ══════════════════════════════════════════════════════ -->
-    <Label fx:id="formTitle" text="Nouvelle participation"
-           style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #1a3c5e;"/>
-
-    <Separator/>
-
-    <!-- ══ Infos principales ══════════════════════════════════════════ -->
-    <TitledPane text="Informations principales" expanded="true" collapsible="false"
-                style="-fx-font-weight: bold;">
-        <content>
-            <GridPane hgap="12" vgap="10">
-                <padding><Insets top="8" right="4" bottom="8" left="4"/></padding>
-                <columnConstraints>
-                    <ColumnConstraints minWidth="130" prefWidth="150"/>
-                    <ColumnConstraints minWidth="160" prefWidth="200" hgrow="ALWAYS"/>
-                    <ColumnConstraints minWidth="130" prefWidth="150"/>
-                    <ColumnConstraints minWidth="160" prefWidth="200" hgrow="ALWAYS"/>
-                </columnConstraints>
-
-                <!-- Ligne 0 : User ID / Événement ID -->
-                <Label text="User ID *:" GridPane.columnIndex="0" GridPane.rowIndex="0"
-                       style="-fx-font-weight: bold;"/>
-                <TextField fx:id="inputUserId" promptText="ex: 1"
-                           GridPane.columnIndex="1" GridPane.rowIndex="0"/>
-
-                <Label text="Événement ID *:" GridPane.columnIndex="2" GridPane.rowIndex="0"
-                       style="-fx-font-weight: bold;"/>
-                <TextField fx:id="inputEvenementId" promptText="ex: 2"
-                           GridPane.columnIndex="3" GridPane.rowIndex="0"/>
-
-                <!-- Ligne 1 : Type / Contexte -->
-                <Label text="Type *:" GridPane.columnIndex="0" GridPane.rowIndex="1"
-                       style="-fx-font-weight: bold;"/>
-                <ComboBox fx:id="inputType" prefWidth="200"
-                          GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-
-                <Label text="Contexte social *:" GridPane.columnIndex="2" GridPane.rowIndex="1"
-                       style="-fx-font-weight: bold;"/>
-                <ComboBox fx:id="inputContexte" prefWidth="200"
-                          GridPane.columnIndex="3" GridPane.rowIndex="1"/>
-
-                <!-- Ligne 2 : Hébergement -->
-                <Label text="Hébergement:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-                <CheckBox fx:id="inputHebergement" text="Avec hébergement"
-                          GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-
-                <Label text="Nombre de nuits:" GridPane.columnIndex="2" GridPane.rowIndex="2"/>
-                <TextField fx:id="inputHebergementNuits" promptText="0"
-                           GridPane.columnIndex="3" GridPane.rowIndex="2"/>
-            </GridPane>
-        </content>
-    </TitledPane>
-
-    <!-- ══ Composition du groupe ══════════════════════════════════════ -->
-    <TitledPane text="Composition du groupe" expanded="true" collapsible="false"
-                style="-fx-font-weight: bold;">
-        <content>
-            <VBox spacing="10">
-                <padding><Insets top="8" right="4" bottom="8" left="4"/></padding>
-
+            <!-- Expedition Logistics Section -->
+            <VBox spacing="12" styleClass="modern-card" style="-fx-padding: 15;">
+                <Label text="📍 EXPEDITION LOGISTICS" style="-fx-font-weight: 900; -fx-text-fill: #3b82f6; -fx-font-size: 10; -fx-letter-spacing: 1px;"/>
+                
                 <GridPane hgap="12" vgap="10">
                     <columnConstraints>
-                        <ColumnConstraints minWidth="130" prefWidth="150"/>
-                        <ColumnConstraints minWidth="100" prefWidth="120"/>
-                        <ColumnConstraints minWidth="130" prefWidth="150"/>
-                        <ColumnConstraints minWidth="100" prefWidth="120"/>
+                        <ColumnConstraints minWidth="120" prefWidth="130"/>
+                        <ColumnConstraints hgrow="ALWAYS"/>
+                        <ColumnConstraints minWidth="120" prefWidth="130"/>
+                        <ColumnConstraints hgrow="ALWAYS"/>
                     </columnConstraints>
 
-                    <!-- Adultes -->
-                    <Label text="Adultes * (≥ 1):" GridPane.columnIndex="0" GridPane.rowIndex="0"
-                           style="-fx-font-weight: bold;"/>
-                    <TextField fx:id="inputNbAdultes" promptText="1"
+                    <Label text="Team Member:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 10;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                    <ComboBox fx:id="comboUser" prefWidth="300" promptText="Scout name..."
+                               editable="true" styleClass="modern-input" style="-fx-font-size: 11;"
                                GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
-                    <!-- Enfants -->
-                    <Label text="Enfants (0-8):" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
-                    <TextField fx:id="inputNbEnfants" promptText="0"
+                    <Label text="Select Trek:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 10;" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                    <ComboBox fx:id="comboEvenement" prefWidth="300" promptText="Target trek..."
+                               styleClass="modern-input" style="-fx-font-size: 11;"
                                GridPane.columnIndex="3" GridPane.rowIndex="0"/>
 
-                    <!-- Chiens -->
-                    <Label text="Chiens (0-3):" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-                    <TextField fx:id="inputNbChiens" promptText="0"
+                    <Label text="Adventurer Type:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 10;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                    <ComboBox fx:id="inputType" prefWidth="300" styleClass="modern-input" style="-fx-font-size: 11;" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                    <Label text="Base Context:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 10;" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                    <ComboBox fx:id="inputContexte" prefWidth="300" styleClass="modern-input" style="-fx-font-size: 11;" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+                </GridPane>
+            </VBox>
+
+            <!-- Base Camp & Team Section -->
+            <VBox spacing="12" styleClass="modern-card" style="-fx-padding: 15;">
+                <Label text="⛺ BASE CAMP &amp; TEAM" style="-fx-font-weight: 900; -fx-text-fill: #22c55e; -fx-font-size: 10; -fx-letter-spacing: 1px;"/>
+                
+                <GridPane hgap="12" vgap="10">
+                    <columnConstraints>
+                        <ColumnConstraints minWidth="120" prefWidth="130"/>
+                        <ColumnConstraints prefWidth="150"/>
+                        <ColumnConstraints minWidth="120" prefWidth="130"/>
+                        <ColumnConstraints prefWidth="150"/>
+                    </columnConstraints>
+
+                    <Label text="Overnight Stay:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 10;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                    <CheckBox fx:id="inputHebergement" text="Cabin Required" style="-fx-text-fill: white; -fx-font-weight: 700; -fx-font-size: 10;" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                    <Label text="Nights in Camp:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 10;" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                    <TextField fx:id="inputHebergementNuits" promptText="0" styleClass="modern-input" style="-fx-font-size: 11;"
+                               GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+
+                    <Label text="Grown-ups:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 10;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                    <TextField fx:id="inputNbAdultes" text="1" styleClass="modern-input" style="-fx-font-size: 11;"
                                GridPane.columnIndex="1" GridPane.rowIndex="1"/>
 
-                    <!-- Total -->
-                    <Label fx:id="labelTotalParticipants" text="Total participants : 1"
-                           GridPane.columnIndex="2" GridPane.rowIndex="1" GridPane.columnSpan="2"
-                           style="-fx-font-weight: bold; -fx-text-fill: #1a3c5e;"/>
+                    <Label text="Young Scouts:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 10;" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                    <TextField fx:id="inputNbEnfants" text="0" styleClass="modern-input" style="-fx-font-size: 11;"
+                               GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+
+                    <Label text="K9 Units:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 10;" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                    <TextField fx:id="inputNbChiens" text="0" styleClass="modern-input" style="-fx-font-size: 11;" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                    <VBox spacing="0" alignment="CENTER_LEFT" GridPane.columnIndex="2" GridPane.rowIndex="2" GridPane.columnSpan="2">
+                        <Label fx:id="labelTotalParticipants" text="Team: 1 Adventurer" 
+                               style="-fx-font-size: 14px; -fx-font-weight: 900; -fx-text-fill: #3b82f6;"/>
+                        <Label text="Real-time group tracking" style="-fx-font-size: 10px; -fx-text-fill: #64748b;"/>
+                    </VBox>
                 </GridPane>
-
-                <!-- Aide visuelle -->
-                <Label text="ℹ  1 adulte + enfant(s) → Pass Famille (60 €) | Adulte seul → Journée (25 €/adulte) | Chien → +8 €/chien"
-                       style="-fx-font-size: 11px; -fx-text-fill: #666; -fx-wrap-text: true;"/>
             </VBox>
-        </content>
-    </TitledPane>
 
-    <!-- ══ Tarification calculée (lecture seule) ══════════════════════ -->
-    <TitledPane text="Tarification calculée automatiquement" expanded="true" collapsible="false"
-                style="-fx-font-weight: bold;">
-        <content>
-            <GridPane hgap="12" vgap="8">
-                <padding><Insets top="8" right="4" bottom="8" left="4"/></padding>
-                <columnConstraints>
-                    <ColumnConstraints minWidth="160" prefWidth="180"/>
-                    <ColumnConstraints minWidth="200" prefWidth="240" hgrow="ALWAYS"/>
-                </columnConstraints>
+            <!-- Supplies & Contribution Section -->
+            <VBox spacing="12" styleClass="modern-card" style="-fx-padding: 15;">
+                <Label text="💰 SUPPLIES &amp; CONTRIBUTION" style="-fx-font-weight: 900; -fx-text-fill: #F97316; -fx-font-size: 10; -fx-letter-spacing: 1px;"/>
+                
+                <HBox spacing="20" alignment="CENTER_LEFT">
+                    <VBox spacing="2" alignment="CENTER_LEFT">
+                        <Label text="SELECTED PASS" style="-fx-font-size: 8px; -fx-text-fill: #64748b; -fx-font-weight: 900;"/>
+                        <Label fx:id="labelTypeAbonnement" text="DAY TRIP" style="-fx-font-weight: 800; -fx-font-size: 13px; -fx-text-fill: white;"/>
+                    </VBox>
+                    <Separator orientation="VERTICAL" style="-fx-opacity: 0.1;"/>
+                    <VBox spacing="2" alignment="CENTER_LEFT">
+                        <Label text="TREK CONTRIBUTION" style="-fx-font-size: 8px; -fx-text-fill: #64748b; -fx-font-weight: 900;"/>
+                        <Label fx:id="labelMontant" text="25.00 $" style="-fx-font-size: 16; -fx-font-weight: 900; -fx-text-fill: #22c55e;"/>
+                    </VBox>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="Options" styleClass="button-capsule-glass" style="-fx-padding: 6 15; -fx-font-size: 11;"/>
+                </HBox>
+                
+                <TextArea fx:id="inputCommentaire" prefRowCount="2" promptText="Route notes..." styleClass="modern-input" wrapText="true" visible="false" managed="false" style="-fx-font-size: 11;"/>
+                <TextArea fx:id="inputBesoinsSpeciaux" prefRowCount="2" promptText="Survival needs..." styleClass="modern-input" wrapText="true" visible="false" managed="false" style="-fx-font-size: 11;"/>
+            </VBox>
 
-                <Label text="Type d'abonnement :" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-                <Label fx:id="labelTypeAbonnement" text="journee"
-                       GridPane.columnIndex="1" GridPane.rowIndex="0"
-                       style="-fx-font-weight: bold; -fx-text-fill: #1890ff;"/>
+            <!-- Actions Section -->
+            <VBox spacing="12">
+                <Label fx:id="errorGlobal" visible="false" managed="false" wrapText="true"
+                       style="-fx-background-color: rgba(239, 68, 68, 0.1); -fx-padding: 10; -fx-background-radius: 10; -fx-text-fill: #ef4444; -fx-font-weight: 700; -fx-font-size: 11;"/>
+                <HBox spacing="12" alignment="CENTER_RIGHT">
+                    <Button text="Abort" onAction="#onAnnuler" styleClass="button-capsule-glass" style="-fx-padding: 10 20; -fx-font-size: 11;"/>
+                    <Button fx:id="btnEnregistrer" text="CONFIRM TREK" onAction="#onEnregistrer" 
+                            styleClass="button-capsule" style="-fx-padding: 10 30; -fx-font-size: 11;"/>
+                </HBox>
+            </VBox>
 
-                <Label text="Montant estimé (€) :" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-                <Label fx:id="labelMontant" text="25.00"
-                       GridPane.columnIndex="1" GridPane.rowIndex="1"
-                       style="-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #28a745;"/>
-            </GridPane>
-        </content>
-    </TitledPane>
+            <!-- Legacy Log Logic -->
+            <Label fx:id="errorUserId" visible="false" managed="false"/>
+            <Label fx:id="errorEvenementId" visible="false" managed="false"/>
+            <Label fx:id="errorGroupe" visible="false" managed="false"/>
 
-    <!-- ══ Commentaires et besoins speciaux ══════════════════════════ -->
-    <TitledPane text="Commentaires et besoins speciaux" expanded="false"
-                style="-fx-font-weight: bold;">
-        <content>
-            <GridPane hgap="12" vgap="8">
-                <padding><Insets top="8" right="4" bottom="8" left="4"/></padding>
-                <columnConstraints>
-                    <ColumnConstraints minWidth="130" prefWidth="150"/>
-                    <ColumnConstraints minWidth="280" prefWidth="340" hgrow="ALWAYS"/>
-                </columnConstraints>
-
-                <Label text="Commentaire:" GridPane.columnIndex="0" GridPane.rowIndex="0"
-                       GridPane.valignment="TOP"/>
-                <TextArea fx:id="inputCommentaire" prefRowCount="2"
-                          promptText="Ex: Enfants de 9 et 11 ans, chien berger australien tenu en laisse..."
-                          wrapText="true"
-                          GridPane.columnIndex="1" GridPane.rowIndex="0"/>
-
-                <Label text="Besoins speciaux:" GridPane.columnIndex="0" GridPane.rowIndex="1"
-                       GridPane.valignment="TOP"/>
-                <TextArea fx:id="inputBesoinsSpeciaux" prefRowCount="2"
-                          promptText="Ex: Allergie aux arachides, besoin siege auto enfant..."
-                          wrapText="true"
-                          GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-            </GridPane>
-        </content>
-    </TitledPane>
-
-    <!-- ══ Messages de validation ════════════════════════════════════ -->
-    <VBox spacing="4">
-        <Label fx:id="errorUserId"
-               style="-fx-text-fill: #dc3545; -fx-font-size: 11px;"
-               visible="false" managed="false" wrapText="true"/>
-        <Label fx:id="errorEvenementId"
-               style="-fx-text-fill: #dc3545; -fx-font-size: 11px;"
-               visible="false" managed="false" wrapText="true"/>
-        <Label fx:id="errorGroupe"
-               style="-fx-text-fill: #dc3545; -fx-font-size: 11px;"
-               visible="false" managed="false" wrapText="true"/>
-        <Label fx:id="errorGlobal"
-               style="-fx-text-fill: #dc3545; -fx-font-weight: bold; -fx-font-size: 12px;"
-               visible="false" managed="false" wrapText="true"/>
-    </VBox>
-
-    <Separator/>
-
-    <!-- ══ Boutons ════════════════════════════════════════════════════ -->
-    <HBox spacing="12" alignment="CENTER_RIGHT">
-        <Button text="Annuler" onAction="#onAnnuler"
-                style="-fx-background-color: #6c757d; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 8 20;"/>
-        <Button fx:id="btnEnregistrer" text="Enregistrer" onAction="#onEnregistrer"
-                style="-fx-background-color: #28a745; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand; -fx-padding: 8 24;"/>
-    </HBox>
-
-</VBox>
+        </VBox>
+    </StackPane>
+</ScrollPane>

@@ -4,40 +4,36 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<ScrollPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.gestion.ui.utilisateur.AbonnementChoixController"
-            fitToWidth="true" fitToHeight="true" styleClass="modern-scroll-pane"
-            vbarPolicy="AS_NEEDED" hbarPolicy="NEVER">
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.gestion.ui.utilisateur.AbonnementChoixController"
+      spacing="20" styleClass="modern-panel" prefWidth="1000">
+    <padding>
+        <Insets top="24" right="24" bottom="24" left="24"/>
+    </padding>
 
-    <VBox spacing="20" styleClass="modern-panel" prefWidth="1000">
-        <padding>
-            <Insets top="24" right="24" bottom="24" left="24"/>
-        </padding>
+    <!-- Header -->
+    <HBox spacing="16" alignment="CENTER_LEFT">
+        <Label text="📋 Mon Abonnement" styleClass="modern-title"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label fx:id="statusLabel" text="Prêt" styleClass="status-info"/>
+    </HBox>
 
-        <!-- Header -->
-        <HBox spacing="16" alignment="CENTER_LEFT">
-            <Label text="📋 Mon Abonnement" styleClass="modern-title"/>
-            <Region HBox.hgrow="ALWAYS"/>
-            <Label fx:id="statusLabel" text="Prêt" styleClass="status-info"/>
-        </HBox>
+    <Label text="Choisissez ou consultez vos abonnements LAMMA."
+           style="-fx-text-fill: #666; -fx-font-size: 13px;" wrapText="true"/>
 
-        <Label text="Choisissez ou consultez vos abonnements LAMMA."
-               style="-fx-text-fill: #666; -fx-font-size: 13px;" wrapText="true"/>
-
-        <!-- Tableau des abonnements de l'utilisateur -->
-        <VBox spacing="8" VBox.vgrow="ALWAYS">
-            <Label text="Mes abonnements" styleClass="section-title"/>
-            <ListView fx:id="listView" VBox.vgrow="ALWAYS"
-                       styleClass="modern-list-view" stylesheets="@../../styles/card-view.css">
-                <placeholder>
-                    <VBox alignment="CENTER" spacing="12">
-                        <Label text="📭 Aucun abonnement trouvé" styleClass="placeholder-text"/>
-                        <Label text="Contactez un administrateur pour souscrire un abonnement."
-                               style="-fx-text-fill: #888; -fx-font-size: 11px;"/>
-                    </VBox>
-                </placeholder>
-            </ListView>
-        </VBox>
+    <!-- Tableau des abonnements de l'utilisateur -->
+    <VBox spacing="8" VBox.vgrow="ALWAYS">
+        <Label text="Mes abonnements" styleClass="section-title"/>
+        <ListView fx:id="listView" VBox.vgrow="ALWAYS"
+                   styleClass="modern-list-view" stylesheets="@../../styles/card-view.css">
+            <placeholder>
+                <VBox alignment="CENTER" spacing="12">
+                    <Label text="📭 Aucun abonnement trouvé" styleClass="placeholder-text"/>
+                    <Label text="Contactez un administrateur pour souscrire un abonnement."
+                           style="-fx-text-fill: #888; -fx-font-size: 11px;"/>
+                </VBox>
+            </placeholder>
+        </ListView>
     </VBox>
-</ScrollPane>
+</VBox>
 

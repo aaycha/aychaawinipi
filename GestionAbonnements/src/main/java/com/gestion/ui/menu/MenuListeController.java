@@ -373,22 +373,11 @@ public class MenuListeController implements Initializable {
         loadMenus();
     }
 
-    private String getMenuDetails(Menu m) {
-        return String.format("""
-                Nom: %s
-                Restaurant: %s
-                Prix: %.2f €
-                Description: %s
-                Période: %s
-                Statut: %s
-                """,
-                m.getNom(),
-                m.getRestaurantNom() != null ? m.getRestaurantNom() : "N/A",
-                m.getPrix() != null ? m.getPrix() : 0,
-                m.getDescription() != null ? m.getDescription() : "Non renseignée",
-                m.getDateDebut() != null || m.getDateFin() != null ? (m.getDateDebut() + " → " + m.getDateFin())
-                        : "Permanent",
-                m.isActif() ? "Actif" : "Inactif");
+    private String getMenuDetails(com.gestion.entities.Menu m) {
+        return "Nom: " + m.getNom() + "\n" +
+                "Description: " + (m.getDescription() != null ? m.getDescription() : "Non renseignée") + "\n" +
+                "Prix: " + m.getPrix() + " €\n" +
+                "Statut: " + (m.isActif() ? "Disponible" : "Indisponible") + "\n";
     }
 
     private void showAlert(Alert.AlertType type, String title, String header, String content) {

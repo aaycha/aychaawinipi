@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.shape.Circle?>
+
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.gestion.controllers.chatbot.ChatbotController"
+      prefWidth="350" prefHeight="500" spacing="0"
+      style="-fx-background-color: white; -fx-background-radius: 20; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 20, 0, 0, 10); -fx-border-color: #e2e8f0; -fx-border-radius: 20; -fx-border-width: 1;">
+    
+    <!-- Header -->
+    <HBox alignment="CENTER_LEFT" spacing="12" style="-fx-background-color: #7B5FF5; -fx-background-radius: 20 20 0 0; -fx-padding: 15;">
+        <StackPane>
+            <Circle fill="white" radius="18"/>
+            <Label text="🤖" style="-fx-font-size: 20;"/>
+        </StackPane>
+        <VBox>
+            <Label text="LAMMA AI Assistant" style="-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14;"/>
+            <Label text="Online • Always ready to help" style="-fx-text-fill: rgba(255,255,255,0.8); -fx-font-size: 11;"/>
+        </VBox>
+    </HBox>
+
+    <!-- Chat Area -->
+    <ScrollPane fx:id="scrollPane" VBox.vgrow="ALWAYS" fitToWidth="true" hbarPolicy="NEVER" 
+                style="-fx-background-color: transparent; -fx-background: transparent; -fx-padding: 15;">
+        <VBox fx:id="chatContainer" spacing="12" />
+    </ScrollPane>
+
+    <!-- Input Area -->
+    <HBox spacing="10" style="-fx-padding: 15; -fx-border-color: #f1f5f9; -fx-border-width: 1 0 0 0;">
+        <TextField fx:id="inputField" HBox.hgrow="ALWAYS" promptText="Type your message..." 
+                   onAction="#handleSendMessage"
+                   style="-fx-background-color: #f8fafc; -fx-background-radius: 20; -fx-padding: 8 15; -fx-border-color: #e2e8f0; -fx-border-radius: 20;"/>
+        <Button onAction="#handleSendMessage" style="-fx-background-color: #7B5FF5; -fx-text-fill: white; -fx-background-radius: 20; -fx-padding: 8 15; -fx-cursor: hand;" text="Send"/>
+    </HBox>
+
+</VBox>

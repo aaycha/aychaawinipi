@@ -32,6 +32,13 @@ public class CheckoutController {
     @FXML
     public void initialize() {
         amountLabel.setText(String.format("Total: %.2f €", cartService.getTotalPrice()));
+
+        // Pré-remplissage de l'email depuis la session
+        com.gestion.entities.User user = com.gestion.tools.Session.getInstance().getCurrentUser();
+        if (user != null && emailField != null) {
+            emailField.setText(user.getEmail());
+        }
+
         if (countryCombo != null) {
             countryCombo.getItems().addAll("France", "Belgique", "Suisse", "Canada", "Maroc", "Tunisie");
             countryCombo.setValue("France");

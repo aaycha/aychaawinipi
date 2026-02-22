@@ -106,12 +106,21 @@ import java.util.stream.Collectors;
     }
 
     private List<ProgrammeRecommender> sortProgrammes(List<ProgrammeRecommender> list, String sortBy, String sortOrder) {
-        Comparator<ProgrammeRecommender> cmp = switch (sortBy != null ? sortBy.toLowerCase() : "debut") {
-            case "titre" -> Comparator.comparing(ProgrammeRecommender::getTitre);
-            case "fin" -> Comparator.comparing(ProgrammeRecommender::getFin, Comparator.nullsLast(Comparator.naturalOrder()));
-            case "eventid" -> Comparator.comparing(ProgrammeRecommender::getEventId);
-            default -> Comparator.comparing(ProgrammeRecommender::getDebut, Comparator.nullsLast(Comparator.naturalOrder()));
-        };
+        Comparator<ProgrammeRecommender> cmp;
+        switch (sortBy != null ? sortBy.toLowerCase() : "debut") {
+            case "titre":
+                cmp = Comparator.comparing(ProgrammeRecommender::getTitre);
+                break;
+            case "fin":
+                cmp = Comparator.comparing(ProgrammeRecommender::getFin, Comparator.nullsLast(Comparator.naturalOrder()));
+                break;
+            case "eventid":
+                cmp = Comparator.comparing(ProgrammeRecommender::getEventId);
+                break;
+            default:
+                cmp = Comparator.comparing(ProgrammeRecommender::getDebut, Comparator.nullsLast(Comparator.naturalOrder()));
+                break;
+        }
         if ("DESC".equalsIgnoreCase(sortOrder)) cmp = cmp.reversed();
         return list.stream().sorted(cmp).collect(Collectors.toList());
     }
@@ -380,26 +389,46 @@ public class ProgrammeRecommenderService implements ProgrammeService {
         List<ProgrammeRecommender> programmes = new ArrayList<>();
 
         switch (participation.getContexteSocial()) {
-            case COUPLE -> {
-                programmes.add(creerProgramme(participation.getId(), "Dîner romantique aux chandelles", LocalTime.of(19, 30), LocalTime.of(22, 0), ProgrammeRecommender.Ambiance.CALME, "Moment privilégié pour les couples – ambiance intime et romantique"));
-                programmes.add(creerProgramme(participation.getId(), "Balade nocturne & observation des étoiles", LocalTime.of(22, 30), LocalTime.of(23, 30), ProgrammeRecommender.Ambiance.CALME, "Activité douce et romantique en fin de soirée"));
-            }
-            case AMIS -> {
-                programmes.add(creerProgramme(participation.getId(), "Barbecue géant & playlist collaborative", LocalTime.of(17, 0), LocalTime.of(20, 0), ProgrammeRecommender.Ambiance.FESTIVE, "Activité collective et conviviale par excellence"));
-                programmes.add(creerProgramme(participation.getId(), "Karaoké ou jeux d'ambiance", LocalTime.of(20, 30), LocalTime.of(23, 0), ProgrammeRecommender.Ambiance.FESTIVE, "Rires garantis et bonne humeur entre amis"));
-            }
-            case FAMILLE -> {
-                programmes.add(creerProgramme(participation.getId(), "Pique-nique familial & jeux pour tous", LocalTime.of(11, 30), LocalTime.of(14, 30), ProgrammeRecommender.Ambiance.SOCIALE, "Activité adaptée à tous les âges"));
-                programmes.add(creerProgramme(participation.getId(), "Atelier créatif ou chasse au trésor", LocalTime.of(15, 0), LocalTime.of(17, 0), ProgrammeRecommender.Ambiance.SOCIALE, "Moment de partage et de créativité familiale"));
-            }
-            case SOLO -> {
-                programmes.add(creerProgramme(participation.getId(), "Moment détente & lecture / méditation", LocalTime.of(14, 30), LocalTime.of(16, 30), ProgrammeRecommender.Ambiance.CALME, "Espace personnel de ressourcement"));
-                programmes.add(creerProgramme(participation.getId(), "Balade contemplative ou séance photo personnelle", LocalTime.of(17, 0), LocalTime.of(18, 30), ProgrammeRecommender.Ambiance.CALME, "Activité introspective et apaisante"));
-            }
-            case PROFESSIONNEL -> {
-                programmes.add(creerProgramme(participation.getId(), "Session networking & échanges de cartes", LocalTime.of(16, 30), LocalTime.of(18, 0), ProgrammeRecommender.Ambiance.SOCIALE, "Favorise les rencontres professionnelles utiles"));
-                programmes.add(creerProgramme(participation.getId(), "Mini-conférence ou pitch rapide", LocalTime.of(18, 15), LocalTime.of(19, 30), ProgrammeRecommender.Ambiance.SOCIALE, "Présentation et visibilité professionnelle"));
-            }
+            case COUPLE:
+                programmes.add(creerProgramme(participation.getId(), "Dîner romantique aux chandelles",
+                        LocalTime.of(19, 30), LocalTime.of(22, 0), ProgrammeRecommender.Ambiance.CALME,
+                        "Moment privilégié pour les couples – ambiance intime et romantique"));
+                programmes.add(creerProgramme(participation.getId(), "Balade nocturne & observation des étoiles",
+                        LocalTime.of(22, 30), LocalTime.of(23, 30), ProgrammeRecommender.Ambiance.CALME,
+                        "Activité douce et romantique en fin de soirée"));
+                break;
+            case AMIS:
+                programmes.add(creerProgramme(participation.getId(), "Barbecue géant & playlist collaborative",
+                        LocalTime.of(17, 0), LocalTime.of(20, 0), ProgrammeRecommender.Ambiance.FESTIVE,
+                        "Activité collective et conviviale par excellence"));
+                programmes.add(creerProgramme(participation.getId(), "Karaoké ou jeux d'ambiance", LocalTime.of(20, 30),
+                        LocalTime.of(23, 0), ProgrammeRecommender.Ambiance.FESTIVE,
+                        "Rires garantis et bonne humeur entre amis"));
+                break;
+            case FAMILLE:
+                programmes.add(creerProgramme(participation.getId(), "Pique-nique familial & jeux pour tous",
+                        LocalTime.of(11, 30), LocalTime.of(14, 30), ProgrammeRecommender.Ambiance.SOCIALE,
+                        "Activité adaptée à tous les âges"));
+                programmes.add(creerProgramme(participation.getId(), "Atelier créatif ou marque-page",
+                        LocalTime.of(15, 0), LocalTime.of(17, 0), ProgrammeRecommender.Ambiance.SOCIALE,
+                        "Moment de partage et de créativité familiale"));
+                break;
+            case SOLO:
+                programmes.add(creerProgramme(participation.getId(), "Moment détente & lecture / méditation",
+                        LocalTime.of(14, 30), LocalTime.of(16, 30), ProgrammeRecommender.Ambiance.CALME,
+                        "Espace personnel de ressourcement"));
+                programmes.add(creerProgramme(participation.getId(), "Balade contemplative ou séance photo personnelle",
+                        LocalTime.of(17, 0), LocalTime.of(18, 30), ProgrammeRecommender.Ambiance.CALME,
+                        "Activité introspective et apaisante"));
+                break;
+            case PROFESSIONNEL:
+                programmes.add(creerProgramme(participation.getId(), "Session networking & échanges de cartes",
+                        LocalTime.of(16, 30), LocalTime.of(18, 0), ProgrammeRecommender.Ambiance.SOCIALE,
+                        "Favorise les rencontres professionnelles utiles"));
+                programmes.add(creerProgramme(participation.getId(), "Mini-conférence ou pitch rapide",
+                        LocalTime.of(18, 15), LocalTime.of(19, 30), ProgrammeRecommender.Ambiance.SOCIALE,
+                        "Présentation et visibilité professionnelle"));
+                break;
         }
 
         return programmes;
@@ -429,7 +458,7 @@ public class ProgrammeRecommenderService implements ProgrammeService {
     }
 
     private ProgrammeRecommender creerProgramme(Long participationId, String activite, LocalTime debut, LocalTime fin,
-                                                ProgrammeRecommender.Ambiance ambiance, String justification) {
+            ProgrammeRecommender.Ambiance ambiance, String justification) {
         return new ProgrammeRecommender(participationId, activite, debut, fin, ambiance, justification);
     }
 }

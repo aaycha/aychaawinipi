@@ -27,9 +27,13 @@ public class AbonnementServiceImpl implements AbonnementService {
 
     @Override
     public Abonnement create(Abonnement a) {
+        Connection conn = dbConnection.getConnection();
+        if (conn == null) {
+            logger.error("Cannot create abonnement: database connection is null");
+            throw new RuntimeException("Database connection unavailable");
+        }
         String sql = "INSERT INTO abonnements (user_id, type, date_debut, date_fin, prix, statut, avantages, auto_renew, points_accumules, churn_score) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        try (Connection conn = dbConnection.getConnection();
-                PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setLong(1, a.getUserId());
             ps.setString(2, a.getType().name());
             ps.setDate(3, Date.valueOf(a.getDateDebut()));
@@ -75,9 +79,13 @@ public class AbonnementServiceImpl implements AbonnementService {
 
     @Override
     public Optional<Abonnement> findById(Long id) {
+        Connection conn = dbConnection.getConnection();
+        if (conn == null) {
+            logger.error("Cannot findById abonnement: database connection is null");
+            return Optional.empty();
+        }
         String sql = "SELECT * FROM abonnements WHERE id = ?";
-        try (Connection conn = dbConnection.getConnection();
-                PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setLong(1, id);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next())
@@ -92,9 +100,13 @@ public class AbonnementServiceImpl implements AbonnementService {
     @Override
     public List<Abonnement> findAll() {
         List<Abonnement> list = new ArrayList<>();
+        Connection conn = dbConnection.getConnection();
+        if (conn == null) {
+            logger.error("Cannot findAll abonnements: database connection is null");
+            return list;
+        }
         String sql = "SELECT * FROM abonnements ORDER BY id DESC";
-        try (Connection conn = dbConnection.getConnection();
-                PreparedStatement ps = conn.prepareStatement(sql);
+        try (PreparedStatement ps = conn.prepareStatement(sql);
                 ResultSet rs = ps.executeQuery()) {
             while (rs.next())
                 list.add(map(rs));
@@ -106,14 +118,19 @@ public class AbonnementServiceImpl implements AbonnementService {
 
     @Override
     public List<Abonnement> findByUserId(Long userId) {
-        return findAll().stream().filter(a -> a.getUserId().equals(userId)).toList();
+        return findAll().stream().filter(a -> a.getUserId().equals(userId))
+                .collect(java.util.stream.Collectors.toList());
     }
 
     @Override
     public Abonnement update(Abonnement a) {
+        Connection conn = dbConnection.getConnection();
+        if (conn == null) {
+            logger.error("Cannot update abonnement: database connection is null");
+            throw new RuntimeException("Database connection unavailable");
+        }
         String sql = "UPDATE abonnements SET type=?, date_debut=?, date_fin=?, prix=?, statut=?, auto_renew=?, points_accumules=?, churn_score=? WHERE id=?";
-        try (Connection conn = dbConnection.getConnection();
-                PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, a.getType().name());
             ps.setDate(2, Date.valueOf(a.getDateDebut()));
             ps.setDate(3, Date.valueOf(a.getDateFin()));
@@ -133,9 +150,13 @@ public class AbonnementServiceImpl implements AbonnementService {
 
     @Override
     public boolean delete(Long id) {
+        Connection conn = dbConnection.getConnection();
+        if (conn == null) {
+            logger.error("Cannot delete abonnement: database connection is null");
+            return false;
+        }
         String sql = "DELETE FROM abonnements WHERE id = ?";
-        try (Connection conn = dbConnection.getConnection();
-                PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setLong(1, id);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -166,22 +187,24 @@ public class AbonnementServiceImpl implements AbonnementService {
 
     @Override
     public List<Abonnement> findByStatut(Abonnement.StatutAbonnement statut) {
-        return findAll().stream().filter(a -> a.getStatut() == statut).toList();
+        return findAll().stream().filter(a -> a.getStatut() == statut).collect(java.util.stream.Collectors.toList());
     }
 
     @Override
     public List<Abonnement> findByType(Abonnement.TypeAbonnement type) {
-        return findAll().stream().filter(a -> a.getType() == type).toList();
+        return findAll().stream().filter(a -> a.getType() == type).collect(java.util.stream.Collectors.toList());
     }
 
     @Override
     public List<Abonnement> findByDateFinBefore(LocalDate date) {
-        return findAll().stream().filter(a -> a.getDateFin().isBefore(date)).toList();
+        return findAll().stream().filter(a -> a.getDateFin().isBefore(date))
+                .collect(java.util.stream.Collectors.toList());
     }
 
     @Override
     public List<Abonnement> findByDateFinBetween(LocalDate debut, LocalDate fin) {
-        return findAll().stream().filter(a -> !a.getDateFin().isBefore(debut) && !a.getDateFin().isAfter(fin)).toList();
+        return findAll().stream().filter(a -> !a.getDateFin().isBefore(debut) && !a.getDateFin().isAfter(fin))
+                .collect(java.util.stream.Collectors.toList());
     }
 
     @Override
@@ -191,12 +214,14 @@ public class AbonnementServiceImpl implements AbonnementService {
 
     @Override
     public List<Abonnement> findByAutoRenew(boolean autoRenew) {
-        return findAll().stream().filter(a -> a.isAutoRenew() == autoRenew).toList();
+        return findAll().stream().filter(a -> a.isAutoRenew() == autoRenew)
+                .collect(java.util.stream.Collectors.toList());
     }
 
     @Override
     public List<Abonnement> findByPointsMinimum(int pointsMin) {
-        return findAll().stream().filter(a -> a.getPointsAccumules() >= pointsMin).toList();
+        return findAll().stream().filter(a -> a.getPointsAccumules() >= pointsMin)
+                .collect(java.util.stream.Collectors.toList());
     }
 
     @Override
@@ -271,9 +296,9 @@ public class AbonnementServiceImpl implements AbonnementService {
     }
 
     @Override
-    public List<Abonnement> findTopUtilisateursParPoints(int limite) {
+    public List<Abonnement> findTopUsersParPoints(int limite) {
         return findAll().stream().sorted(Comparator.comparingInt(Abonnement::getPointsAccumules).reversed())
-                .limit(limite).toList();
+                .limit(limite).collect(java.util.stream.Collectors.toList());
     }
 
     @Override
@@ -298,7 +323,7 @@ public class AbonnementServiceImpl implements AbonnementService {
 
     @Override
     public List<Abonnement> findAbonnementsRisqueChurn(double seuil) {
-        return findAll().stream().filter(a -> a.getChurnScore() >= seuil).toList();
+        return findAll().stream().filter(a -> a.getChurnScore() >= seuil).collect(java.util.stream.Collectors.toList());
     }
 
     @Override

@@ -35,11 +35,11 @@ public class RecommandationServiceImpl implements RecommandationService {
         }
 
         String sql = "INSERT INTO recommandations (user_id, evenement_suggere_id, score, raison, " +
-                    "algorithme_used, equipement_bundle, source_scraped, date_generation, date_expiration, est_utilisee) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "algorithme_used, equipement_bundle, source_scraped, date_generation, date_expiration, est_utilisee) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = dbConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             pstmt.setLong(1, recommandation.getUserId());
             pstmt.setLong(2, recommandation.getEvenementSuggereId());
@@ -61,12 +61,12 @@ public class RecommandationServiceImpl implements RecommandationService {
                 if (generatedKeys.next()) {
                     recommandation.setId(generatedKeys.getLong(1));
                     logger.info("Recommandation créée avec succès: ID {}", recommandation.getId());
-                    
+
                     // Envoyer notification si score élevé
                     if (recommandation.estPrioritaire()) {
                         envoyerNotificationPush(recommandation);
                     }
-                    
+
                     return recommandation;
                 } else {
                     throw new SQLException("Création de recommandation échouée, aucun ID obtenu.");
@@ -81,12 +81,12 @@ public class RecommandationServiceImpl implements RecommandationService {
     @Override
     public Optional<Recommandation> findById(Long id) {
         String sql = "SELECT * FROM recommandations WHERE id = ?";
-        
+
         try (Connection conn = dbConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
             pstmt.setLong(1, id);
-            
+
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     return Optional.of(mapResultSetToRecommandation(rs));
@@ -95,7 +95,7 @@ public class RecommandationServiceImpl implements RecommandationService {
         } catch (SQLException e) {
             logger.error("Erreur lors de la recherche de recommandation par ID {}: {}", id, e.getMessage());
         }
-        
+
         return Optional.empty();
     }
 
@@ -109,8 +109,8 @@ public class RecommandationServiceImpl implements RecommandationService {
         List<Recommandation> list = new ArrayList<>();
         String sql = "SELECT * FROM recommandations";
         try (Connection conn = dbConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql);
-             ResultSet rs = pstmt.executeQuery()) {
+                PreparedStatement pstmt = conn.prepareStatement(sql);
+                ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
                 list.add(mapResultSetToRecommandation(rs));
             }
@@ -118,7 +118,8 @@ public class RecommandationServiceImpl implements RecommandationService {
             logger.error("Erreur lors de la récupération de toutes les recommandations: {}", e.getMessage());
             return list;
         }
-        return sortRecommandations(list, sortBy != null ? sortBy : "dateGeneration", sortOrder != null ? sortOrder : "DESC");
+        return sortRecommandations(list, sortBy != null ? sortBy : "dateGeneration",
+                sortOrder != null ? sortOrder : "DESC");
     }
 
     @Override
@@ -127,17 +128,19 @@ public class RecommandationServiceImpl implements RecommandationService {
                 .filter(r -> r.getScore() >= 0.5)
                 .filter(r -> r.getDateExpiration() == null || r.getDateExpiration().isAfter(LocalDateTime.now()))
                 .filter(r -> !r.isEstUtilisee())
-                .filter(r -> contexte == null || contexte.isBlank() || (r.getEquipementBundle() != null && r.getEquipementBundle().keySet().stream()
-                        .anyMatch(k -> k.toLowerCase().contains(contexte.toLowerCase()))))
+                .filter(r -> contexte == null || contexte.isBlank()
+                        || (r.getEquipementBundle() != null && r.getEquipementBundle().keySet().stream()
+                                .anyMatch(k -> k.toLowerCase().contains(contexte.toLowerCase()))))
                 .sorted(Comparator.comparingDouble(Recommandation::getScore).reversed())
                 .limit(limite > 0 ? limite : 5)
-                .toList();
+                .collect(Collectors.toList());
         return list;
     }
 
     @Override
     public List<Recommandation> search(RecommandationCriteria criteria) {
-        if (criteria == null) return findAll();
+        if (criteria == null)
+            return findAll();
         List<Recommandation> list = criteria.getUserId() != null ? findByUserId(criteria.getUserId()) : findAll();
         Stream<Recommandation> stream = list.stream();
         if (criteria.getScoreMinimum() != null) {
@@ -154,44 +157,58 @@ public class RecommandationServiceImpl implements RecommandationService {
             stream = stream.filter(r -> r.getEquipementBundle() != null && r.getEquipementBundle().keySet().stream()
                     .anyMatch(k -> k.toLowerCase().contains(ctx)));
         }
-        list = stream.toList();
+        list = stream.collect(java.util.stream.Collectors.toList());
         list = sortRecommandations(list, criteria.getSortBy(), criteria.getSortOrder());
         if (criteria.getLimite() != null && criteria.getLimite() > 0) {
-            list = list.stream().limit(criteria.getLimite()).toList();
+            list = list.stream().limit(criteria.getLimite()).collect(java.util.stream.Collectors.toList());
         }
         return list;
     }
 
     private List<Recommandation> sortRecommandations(List<Recommandation> list, String sortBy, String sortOrder) {
-        Comparator<Recommandation> cmp = switch (sortBy != null ? sortBy.toLowerCase() : "score") {
-            case "dategeneration" -> Comparator.comparing(Recommandation::getDateGeneration, Comparator.nullsLast(Comparator.naturalOrder()));
-            case "dateexpiration" -> Comparator.comparing(Recommandation::getDateExpiration, Comparator.nullsLast(Comparator.naturalOrder()));
-            case "algorithme" -> Comparator.comparing(r -> r.getAlgorithmeUsed().name());
-            default -> Comparator.comparingDouble(Recommandation::getScore);
-        };
-        if ("DESC".equalsIgnoreCase(sortOrder)) cmp = cmp.reversed();
-        return list.stream().sorted(cmp).toList();
+        String key = sortBy != null ? sortBy.toLowerCase() : "score";
+        Comparator<Recommandation> cmp;
+        switch (key) {
+            case "dategeneration":
+                cmp = Comparator.comparing(Recommandation::getDateGeneration,
+                        Comparator.nullsLast(Comparator.naturalOrder()));
+                break;
+            case "dateexpiration":
+                cmp = Comparator.comparing(Recommandation::getDateExpiration,
+                        Comparator.nullsLast(Comparator.naturalOrder()));
+                break;
+            case "algorithme":
+                cmp = Comparator.comparing(r -> r.getAlgorithmeUsed().name());
+                break;
+            default:
+                cmp = Comparator.comparingDouble(Recommandation::getScore);
+                break;
+        }
+        if ("DESC".equalsIgnoreCase(sortOrder))
+            cmp = cmp.reversed();
+        return list.stream().sorted(cmp).collect(java.util.stream.Collectors.toList());
     }
 
     @Override
     public List<Recommandation> findByUserId(Long userId) {
         String sql = "SELECT * FROM recommandations WHERE user_id = ? ORDER BY score DESC, date_generation DESC";
         List<Recommandation> recommandations = new ArrayList<>();
-        
+
         try (Connection conn = dbConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
             pstmt.setLong(1, userId);
-            
+
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
                     recommandations.add(mapResultSetToRecommandation(rs));
                 }
             }
         } catch (SQLException e) {
-            logger.error("Erreur lors de la recherche de recommandations pour l'utilisateur {}: {}", userId, e.getMessage());
+            logger.error("Erreur lors de la recherche de recommandations pour l'utilisateur {}: {}", userId,
+                    e.getMessage());
         }
-        
+
         return recommandations;
     }
 
@@ -219,37 +236,36 @@ public class RecommandationServiceImpl implements RecommandationService {
     @Override
     public List<Recommandation> genererRecommandationsCollaboratives(Long userId, int limite) {
         logger.info("Génération de recommandations collaboratives pour l'utilisateur {}", userId);
-        
+
         List<Recommandation> recommandations = new ArrayList<>();
-        
+
         try {
             // Trouver des utilisateurs similaires
-            List<Long> utilisateursSimilaires = trouverUtilisateursSimilaires(userId, 10);
-            
+            List<Long> usersSimilaires = trouverUsersSimilaires(userId, 10);
+
             // Pour chaque utilisateur similaire, trouver leurs participations
-            for (Long similarUser : utilisateursSimilaires) {
-                List<Long> evenementsSimilaires = getEvenementsUtilisateur(similarUser);
-                
+            for (Long similarUser : usersSimilaires) {
+                List<Long> evenementsSimilaires = getEvenementsUser(similarUser);
+
                 for (Long evenementId : evenementsSimilaires) {
                     double score = calculerScoreCollaboratif(userId, evenementId);
-                    
+
                     if (score > 0.5) { // Seuil minimum
                         String raison = genererRaisonCollaborative(userId, evenementId, score);
                         Recommandation reco = new Recommandation(
-                            userId, evenementId, score, raison, 
-                            Recommandation.AlgorithmeReco.COLLABORATIVE
-                        );
+                                userId, evenementId, score, raison,
+                                Recommandation.AlgorithmeReco.COLLABORATIVE);
                         recommandations.add(reco);
                     }
                 }
             }
-            
+
             // Limiter et trier par score
             return recommandations.stream()
                     .sorted((r1, r2) -> Double.compare(r2.getScore(), r1.getScore()))
                     .limit(limite)
                     .collect(Collectors.toList());
-                    
+
         } catch (Exception e) {
             logger.error("Erreur lors de la génération de recommandations collaboratives", e);
             return new ArrayList<>();
@@ -258,37 +274,37 @@ public class RecommandationServiceImpl implements RecommandationService {
 
     @Override
     public List<Recommandation> genererRecommandationsNLP(Long userId, String description, int limite) {
-        logger.info("Génération de recommandations NLP pour l'utilisateur {} avec description: {}", userId, description);
-        
+        logger.info("Génération de recommandations NLP pour l'utilisateur {} avec description: {}", userId,
+                description);
+
         List<Recommandation> recommandations = new ArrayList<>();
-        
+
         try {
             // Analyse NLP de la description
             String contexteSocial = analyserContexteSocial(description);
             List<String> motsCles = extraireMotsCles(description);
             boolean emotionPositive = detecterEmotion(description);
-            
+
             // Trouver des événements correspondants
             List<Long> evenementsCandidats = trouverEvenementsParMotsCles(motsCles);
-            
+
             for (Long evenementId : evenementsCandidats) {
                 double score = calculerScoreNLP(userId, description, evenementId);
-                
+
                 if (score > 0.4) { // Seuil plus bas pour NLP
                     String raison = genererRaisonNLP(contexteSocial, motsCles, score);
                     Recommandation reco = new Recommandation(
-                        userId, evenementId, score, raison, 
-                        Recommandation.AlgorithmeReco.NLP
-                    );
+                            userId, evenementId, score, raison,
+                            Recommandation.AlgorithmeReco.NLP);
                     recommandations.add(reco);
                 }
             }
-            
+
             return recommandations.stream()
                     .sorted((r1, r2) -> Double.compare(r2.getScore(), r1.getScore()))
                     .limit(limite)
                     .collect(Collectors.toList());
-                    
+
         } catch (Exception e) {
             logger.error("Erreur lors de la génération de recommandations NLP", e);
             return new ArrayList<>();
@@ -297,21 +313,22 @@ public class RecommandationServiceImpl implements RecommandationService {
 
     @Override
     public String analyserContexteSocial(String description) {
-        if (description == null) return "SOLO";
-        
+        if (description == null)
+            return "SOLO";
+
         String lowerDesc = description.toLowerCase();
-        
-        if (lowerDesc.contains("copine") || lowerDesc.contains("couple") || 
-            lowerDesc.contains("romantique") || lowerDesc.contains("amoureux")) {
+
+        if (lowerDesc.contains("copine") || lowerDesc.contains("couple") ||
+                lowerDesc.contains("romantique") || lowerDesc.contains("amoureux")) {
             return "COUPLE";
-        } else if (lowerDesc.contains("amis") || lowerDesc.contains("groupe") || 
-                   lowerDesc.contains("équipe") || lowerDesc.contains("bande")) {
+        } else if (lowerDesc.contains("amis") || lowerDesc.contains("groupe") ||
+                lowerDesc.contains("équipe") || lowerDesc.contains("bande")) {
             return "AMIS";
-        } else if (lowerDesc.contains("famille") || lowerDesc.contains("enfants") || 
-                   lowerDesc.contains("parents")) {
+        } else if (lowerDesc.contains("famille") || lowerDesc.contains("enfants") ||
+                lowerDesc.contains("parents")) {
             return "FAMILLE";
-        } else if (lowerDesc.contains("travail") || lowerDesc.contains("professionnel") || 
-                   lowerDesc.contains("collègues")) {
+        } else if (lowerDesc.contains("travail") || lowerDesc.contains("professionnel") ||
+                lowerDesc.contains("collègues")) {
             return "PROFESSIONNEL";
         } else {
             return "SOLO";
@@ -320,57 +337,61 @@ public class RecommandationServiceImpl implements RecommandationService {
 
     @Override
     public List<String> extraireMotsCles(String description) {
-        if (description == null) return new ArrayList<>();
-        
+        if (description == null)
+            return new ArrayList<>();
+
         // Mots-clés prédéfinis pour les événements de loisirs
         String[] motsClesPotentiels = {
-            "camping", "randonnée", "nature", "montagne", "mer", "plage",
-            "barbecue", "musique", "festival", "sport", "aventure",
-            "détente", "spa", "bien-être", "culture", "visite",
-            "gastronomie", "vin", "dégustation", "jeux", "animation"
+                "camping", "randonnée", "nature", "montagne", "mer", "plage",
+                "barbecue", "musique", "festival", "sport", "aventure",
+                "détente", "spa", "bien-être", "culture", "visite",
+                "gastronomie", "vin", "dégustation", "jeux", "animation"
         };
-        
+
         String lowerDesc = description.toLowerCase();
         List<String> motsClesTrouves = new ArrayList<>();
-        
+
         for (String mot : motsClesPotentiels) {
             if (lowerDesc.contains(mot)) {
                 motsClesTrouves.add(mot);
             }
         }
-        
+
         return motsClesTrouves;
     }
 
     @Override
     public boolean detecterEmotion(String texte) {
-        if (texte == null) return false;
-        
+        if (texte == null)
+            return false;
+
         String lowerText = texte.toLowerCase();
-        
+
         // Mots positifs
         String[] motsPositifs = {
-            "heureux", "content", "excellent", "super", "génial", "fantastique",
-            "amusant", "excitant", "passionnant", "magnifique", "wonderful"
+                "heureux", "content", "excellent", "super", "génial", "fantastique",
+                "amusant", "excitant", "passionnant", "magnifique", "wonderful"
         };
-        
+
         // Mots négatifs
         String[] motsNegatifs = {
-            "triste", "déçu", "mauvais", "horrible", "terrible",
-            "ennuyeux", "frustrant", "stressant", "difficile", "problème"
+                "triste", "déçu", "mauvais", "horrible", "terrible",
+                "ennuyeux", "frustrant", "stressant", "difficile", "problème"
         };
-        
+
         int scorePositif = 0;
         int scoreNegatif = 0;
-        
+
         for (String mot : motsPositifs) {
-            if (lowerText.contains(mot)) scorePositif++;
+            if (lowerText.contains(mot))
+                scorePositif++;
         }
-        
+
         for (String mot : motsNegatifs) {
-            if (lowerText.contains(mot)) scoreNegatif++;
+            if (lowerText.contains(mot))
+                scoreNegatif++;
         }
-        
+
         return scorePositif > scoreNegatif;
     }
 
@@ -379,9 +400,9 @@ public class RecommandationServiceImpl implements RecommandationService {
         // Implémentation simplifiée du collaborative filtering
         try {
             // Similarité cosinus basée sur les participations passées
-            List<Long> evenementsUser = getEvenementsUtilisateur(userId);
+            List<Long> evenementsUser = getEvenementsUser(userId);
             List<Long> evenementsSimilaires = getEvenementsSimilaires(evenementId);
-            
+
             // Calculer l'intersection
             int intersection = 0;
             for (Long evenement : evenementsSimilaires) {
@@ -389,17 +410,18 @@ public class RecommandationServiceImpl implements RecommandationService {
                     intersection++;
                 }
             }
-            
+
             // Score basé sur la similarité
-            if (evenementsSimilaires.isEmpty()) return 0.0;
-            
+            if (evenementsSimilaires.isEmpty())
+                return 0.0;
+
             double similarite = (double) intersection / evenementsSimilaires.size();
-            
+
             // Ajuster selon la popularité de l'événement
             double popularite = getPopulariteEvenement(evenementId);
-            
+
             return Math.min(1.0, similarite * 0.7 + popularite * 0.3);
-            
+
         } catch (Exception e) {
             logger.error("Erreur lors du calcul du score collaboratif", e);
             return 0.0;
@@ -412,14 +434,14 @@ public class RecommandationServiceImpl implements RecommandationService {
             // Score basé sur l'analyse NLP
             String contexte = analyserContexteSocial(description);
             List<String> motsCles = extraireMotsCles(description);
-            
+
             double scoreContexte = getScoreContexteEvenement(evenementId, contexte);
             double scoreMotsCles = getScoreMotsClesEvenement(evenementId, motsCles);
             double scorePopularite = getPopulariteEvenement(evenementId);
-            
+
             // Pondération: 40% contexte, 40% mots-clés, 20% popularité
             return Math.min(1.0, scoreContexte * 0.4 + scoreMotsCles * 0.4 + scorePopularite * 0.2);
-            
+
         } catch (Exception e) {
             logger.error("Erreur lors du calcul du score NLP", e);
             return 0.0;
@@ -427,54 +449,60 @@ public class RecommandationServiceImpl implements RecommandationService {
     }
 
     @Override
-    public List<Long> trouverUtilisateursSimilaires(Long userId, int limite) {
+    public List<Long> trouverUsersSimilaires(Long userId, int limite) {
         // Implémentation simplifiée
-        List<Long> utilisateursSimilaires = new ArrayList<>();
-        
+        List<Long> usersSimilaires = new ArrayList<>();
+
         try {
             // Trouver des utilisateurs avec des participations similaires
-            List<Long> evenementsUser = getEvenementsUtilisateur(userId);
-            
+            List<Long> evenementsUser = getEvenementsUser(userId);
+
             String sql = "SELECT DISTINCT user_id FROM participations WHERE evenement_id IN " +
-                        "(SELECT evenement_id FROM participations WHERE user_id = ?) AND user_id != ? " +
-                        "LIMIT ?";
-            
+                    "(SELECT evenement_id FROM participations WHERE user_id = ?) AND user_id != ? " +
+                    "LIMIT ?";
+
             try (Connection conn = dbConnection.getConnection();
-                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                
+                    PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
                 pstmt.setLong(1, userId);
                 pstmt.setLong(2, userId);
                 pstmt.setInt(3, limite);
-                
+
                 try (ResultSet rs = pstmt.executeQuery()) {
                     while (rs.next()) {
-                        utilisateursSimilaires.add(rs.getLong("user_id"));
+                        usersSimilaires.add(rs.getLong("user_id"));
                     }
                 }
             }
         } catch (SQLException e) {
             logger.error("Erreur lors de la recherche d'utilisateurs similaires", e);
         }
-        
-        return utilisateursSimilaires;
+
+        return usersSimilaires;
     }
 
     @Override
     public boolean validerRecommandation(Recommandation recommandation) {
-        if (recommandation == null) return false;
-        if (recommandation.getUserId() == null || recommandation.getUserId() <= 0) return false;
-        if (recommandation.getEvenementSuggereId() == null || recommandation.getEvenementSuggereId() <= 0) return false;
-        if (recommandation.getScore() < 0 || recommandation.getScore() > 1) return false;
-        if (recommandation.getAlgorithmeUsed() == null) return false;
-        if (recommandation.getRaison() == null || recommandation.getRaison().trim().isEmpty()) return false;
-        
+        if (recommandation == null)
+            return false;
+        if (recommandation.getUserId() == null || recommandation.getUserId() <= 0)
+            return false;
+        if (recommandation.getEvenementSuggereId() == null || recommandation.getEvenementSuggereId() <= 0)
+            return false;
+        if (recommandation.getScore() < 0 || recommandation.getScore() > 1)
+            return false;
+        if (recommandation.getAlgorithmeUsed() == null)
+            return false;
+        if (recommandation.getRaison() == null || recommandation.getRaison().trim().isEmpty())
+            return false;
+
         return true;
     }
 
     @Override
     public void envoyerNotificationPush(Recommandation recommandation) {
-        logger.info("Notification push envoyée pour la recommandation {} à l'utilisateur {}", 
-                   recommandation.getId(), recommandation.getUserId());
+        logger.info("Notification push envoyée pour la recommandation {} à l'utilisateur {}",
+                recommandation.getId(), recommandation.getUserId());
         // TODO: Implémenter l'envoi réel de notifications push
     }
 
@@ -496,7 +524,8 @@ public class RecommandationServiceImpl implements RecommandationService {
     }
 
     private String convertEquipementBundleToString(java.util.Map<String, Object> bundle) {
-        if (bundle == null) return "{}";
+        if (bundle == null)
+            return "{}";
         try {
             return new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(bundle);
         } catch (Exception e) {
@@ -506,7 +535,8 @@ public class RecommandationServiceImpl implements RecommandationService {
 
     @SuppressWarnings("unchecked")
     private java.util.Map<String, Object> parseEquipementBundleFromString(String bundleStr) {
-        if (bundleStr == null || bundleStr.trim().isEmpty()) return new java.util.HashMap<>();
+        if (bundleStr == null || bundleStr.trim().isEmpty())
+            return new java.util.HashMap<>();
         try {
             return new com.fasterxml.jackson.databind.ObjectMapper().readValue(bundleStr, java.util.Map.class);
         } catch (Exception e) {
@@ -514,15 +544,15 @@ public class RecommandationServiceImpl implements RecommandationService {
         }
     }
 
-    private List<Long> getEvenementsUtilisateur(Long userId) {
+    private List<Long> getEvenementsUser(Long userId) {
         List<Long> evenements = new ArrayList<>();
         String sql = "SELECT DISTINCT evenement_id FROM participations WHERE user_id = ?";
-        
+
         try (Connection conn = dbConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
             pstmt.setLong(1, userId);
-            
+
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
                     evenements.add(rs.getLong("evenement_id"));
@@ -531,7 +561,7 @@ public class RecommandationServiceImpl implements RecommandationService {
         } catch (SQLException e) {
             logger.error("Erreur lors de la récupération des événements de l'utilisateur {}", userId, e);
         }
-        
+
         return evenements;
     }
 
@@ -539,14 +569,14 @@ public class RecommandationServiceImpl implements RecommandationService {
         // Implémentation simplifiée - retourne des événements de la même catégorie
         List<Long> similaires = new ArrayList<>();
         String sql = "SELECT id FROM evenements WHERE categorie = " +
-                    "(SELECT categorie FROM evenements WHERE id = ?) AND id != ? LIMIT 10";
-        
+                "(SELECT categorie FROM evenements WHERE id = ?) AND id != ? LIMIT 10";
+
         try (Connection conn = dbConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
             pstmt.setLong(1, evenementId);
             pstmt.setLong(2, evenementId);
-            
+
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
                     similaires.add(rs.getLong("id"));
@@ -555,18 +585,18 @@ public class RecommandationServiceImpl implements RecommandationService {
         } catch (SQLException e) {
             logger.error("Erreur lors de la recherche d'événements similaires", e);
         }
-        
+
         return similaires;
     }
 
     private double getPopulariteEvenement(Long evenementId) {
         String sql = "SELECT COUNT(*) as participations FROM participations WHERE evenement_id = ?";
-        
+
         try (Connection conn = dbConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
             pstmt.setLong(1, evenementId);
-            
+
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     int participations = rs.getInt("participations");
@@ -577,60 +607,66 @@ public class RecommandationServiceImpl implements RecommandationService {
         } catch (SQLException e) {
             logger.error("Erreur lors du calcul de popularité", e);
         }
-        
+
         return 0.0;
     }
 
     private double getScoreContexteEvenement(Long evenementId, String contexte) {
         // Score basé sur la pertinence du contexte pour l'événement
-        return switch (contexte) {
-            case "COUPLE" -> 0.8; // Les événements sont généralement bons pour les couples
-            case "AMIS" -> 0.9; // Très pertinent pour les groupes d'amis
-            case "FAMILLE" -> 0.7;
-            case "PROFESSIONNEL" -> 0.6;
-            default -> 0.5;
-        };
+        switch (contexte) {
+            case "COUPLE":
+                return 0.8;
+            case "AMIS":
+                return 0.9;
+            case "FAMILLE":
+                return 0.7;
+            case "PROFESSIONNEL":
+                return 0.6;
+            default:
+                return 0.5;
+        }
     }
 
     private double getScoreMotsClesEvenement(Long evenementId, List<String> motsCles) {
-        if (motsCles.isEmpty()) return 0.3;
-        
+        if (motsCles.isEmpty())
+            return 0.3;
+
         // Récupérer la description de l'événement et calculer la correspondance
         String sql = "SELECT description, titre FROM evenements WHERE id = ?";
-        
+
         try (Connection conn = dbConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
             pstmt.setLong(1, evenementId);
-            
+
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     String texte = (rs.getString("titre") + " " + rs.getString("description")).toLowerCase();
                     long correspondances = motsCles.stream()
                             .mapToLong(mot -> texte.contains(mot.toLowerCase()) ? 1 : 0)
                             .sum();
-                    
+
                     return Math.min(1.0, (double) correspondances / motsCles.size());
                 }
             }
         } catch (SQLException e) {
             logger.error("Erreur lors du calcul de score mots-clés", e);
         }
-        
+
         return 0.0;
     }
 
     private List<Long> trouverEvenementsParMotsCles(List<String> motsCles) {
         List<Long> evenements = new ArrayList<>();
-        
+
         if (motsCles.isEmpty()) {
             // Retourner les événements les plus populaires
             String sql = "SELECT id FROM evenements ORDER BY popularite DESC LIMIT 20";
-            
+
             try (Connection conn = dbConnection.getConnection();
-                 PreparedStatement pstmt = conn.prepareStatement(sql);
-                 ResultSet rs = pstmt.executeQuery()) {
-                
+                    PreparedStatement pstmt = conn.prepareStatement(sql);
+                    ResultSet rs = pstmt.executeQuery()) {
+
                 while (rs.next()) {
                     evenements.add(rs.getLong("id"));
                 }
@@ -640,15 +676,16 @@ public class RecommandationServiceImpl implements RecommandationService {
         } else {
             // Rechercher par mots-clés
             String sql = "SELECT DISTINCT id FROM evenements WHERE " +
-                        motsCles.stream()
-                                .map(mot -> "LOWER(description) LIKE '%" + mot.toLowerCase() + "%'")
-                                .collect(Collectors.joining(" OR ")) +
-                        " LIMIT 50";
-            
+                    motsCles.stream()
+                            .map(mot -> "LOWER(description) LIKE '%" + mot.toLowerCase() + "%'")
+                            .collect(Collectors.joining(" OR "))
+                    +
+                    " LIMIT 50";
+
             try (Connection conn = dbConnection.getConnection();
-                 PreparedStatement pstmt = conn.prepareStatement(sql);
-                 ResultSet rs = pstmt.executeQuery()) {
-                
+                    PreparedStatement pstmt = conn.prepareStatement(sql);
+                    ResultSet rs = pstmt.executeQuery()) {
+
                 while (rs.next()) {
                     evenements.add(rs.getLong("id"));
                 }
@@ -656,21 +693,21 @@ public class RecommandationServiceImpl implements RecommandationService {
                 logger.error("Erreur lors de la recherche d'événements par mots-clés", e);
             }
         }
-        
+
         return evenements;
     }
 
     private String genererRaisonCollaborative(Long userId, Long evenementId, double score) {
         return String.format("Recommandé basé sur vos préférences et celles d'utilisateurs similaires " +
-                          "(score de confiance: %.1f%%)", score * 100);
+                "(score de confiance: %.1f%%)", score * 100);
     }
 
     private String genererRaisonNLP(String contexte, List<String> motsCles, double score) {
         return String.format("Parfait pour %s avec %s " +
-                          "(score IA: %.1f%%)", 
-                          contexte.toLowerCase(), 
-                          motsCles.stream().collect(Collectors.joining(", ")),
-                          score * 100);
+                "(score IA: %.1f%%)",
+                contexte.toLowerCase(),
+                motsCles.stream().collect(Collectors.joining(", ")),
+                score * 100);
     }
 
     @Override
@@ -681,7 +718,7 @@ public class RecommandationServiceImpl implements RecommandationService {
         String sql = "UPDATE recommandations SET user_id = ?, evenement_suggere_id = ?, score = ?, raison = ?, " +
                 "algorithme_used = ?, equipement_bundle = ?, source_scraped = ?, date_expiration = ?, est_utilisee = ? WHERE id = ?";
         try (Connection conn = dbConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setLong(1, recommandation.getUserId());
             pstmt.setLong(2, recommandation.getEvenementSuggereId());
             pstmt.setDouble(3, recommandation.getScore());
@@ -689,7 +726,9 @@ public class RecommandationServiceImpl implements RecommandationService {
             pstmt.setString(5, recommandation.getAlgorithmeUsed().name());
             pstmt.setString(6, convertEquipementBundleToString(recommandation.getEquipementBundle()));
             pstmt.setString(7, recommandation.getSourceScraped());
-            pstmt.setTimestamp(8, recommandation.getDateExpiration() != null ? Timestamp.valueOf(recommandation.getDateExpiration()) : null);
+            pstmt.setTimestamp(8,
+                    recommandation.getDateExpiration() != null ? Timestamp.valueOf(recommandation.getDateExpiration())
+                            : null);
             pstmt.setBoolean(9, recommandation.isEstUtilisee());
             pstmt.setLong(10, recommandation.getId());
             if (pstmt.executeUpdate() > 0) {
@@ -705,13 +744,15 @@ public class RecommandationServiceImpl implements RecommandationService {
 
     @Override
     public boolean delete(Long id) {
-        if (id == null) return false;
+        if (id == null)
+            return false;
         String sql = "DELETE FROM recommandations WHERE id = ?";
         try (Connection conn = dbConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setLong(1, id);
             boolean deleted = pstmt.executeUpdate() > 0;
-            if (deleted) logger.info("Recommandation supprimée (obsolète): ID {}", id);
+            if (deleted)
+                logger.info("Recommandation supprimée (obsolète): ID {}", id);
             return deleted;
         } catch (SQLException e) {
             logger.error("Erreur suppression recommandation {}: {}", id, e.getMessage());
@@ -720,56 +761,244 @@ public class RecommandationServiceImpl implements RecommandationService {
     }
 
     // Implémentations par défaut des autres méthodes
-    @Override public List<Recommandation> findByAlgorithme(Recommandation.AlgorithmeReco algorithme) { return new ArrayList<>(); }
-    @Override public List<Recommandation> findByDateGenerationBetween(LocalDateTime debut, LocalDateTime fin) { return new ArrayList<>(); }
-    @Override public List<Recommandation> findRecommandationsExpirees() { return new ArrayList<>(); }
-    @Override public List<Recommandation> findRecommandationsNonUtilisees() { return new ArrayList<>(); }
-    @Override public List<Recommandation> genererRecommandationsContentBased(Long userId, int limite) { return new ArrayList<>(); }
-    @Override public List<Recommandation> genererRecommandationsHybrides(Long userId, int limite) { return new ArrayList<>(); }
-    @Override public List<Recommandation> genererRecommandationsTensorFlow(Long userId, int limite) { return new ArrayList<>(); }
-    @Override public List<Recommandation> genererRecommandationsParClustering(Long userId, int limite) { return new ArrayList<>(); }
-    @Override public double calculerScoreContentBased(Long userId, Long evenementId) { return 0.0; }
-    @Override public double calculerScoreHybride(Long userId, Long evenementId) { return 0.0; }
-    @Override public List<Long> trouverEvenementsSimilaires(Long evenementId, int limite) { return new ArrayList<>(); }
-    @Override public String extrairePreferences(String texte) { return ""; }
-    @Override public String genererRaisonPersonnalisee(Long userId, Long evenementId, double score) { return ""; }
-    @Override public void entrainerModeleTensorFlow() {}
-    @Override public double predireConversion(Long userId, Long evenementId) { return 0.0; }
-    @Override public double predireChurnAbonnement(Long userId) { return 0.0; }
-    @Override public void mettreAJourModeleML() {}
-    @Override public List<Recommandation> optimiserHyperparametres() { return new ArrayList<>(); }
-    @Override public List<Recommandation> scraperPrixEquipements(String query) { return new ArrayList<>(); }
-    @Override public void mettreAJourPrixEnTempsReel() {}
-    @Override public String scraperDisponibilites(String urlEquipement) { return ""; }
-    @Override public boolean validerSourceScraped(String source) { return false; }
-    @Override public List<String> getSourcesScrapingActives() { return new ArrayList<>(); }
-    @Override public Recommandation creerBundlePersonnalise(Long userId, Long evenementId, String contexte) { return null; }
-    @Override public List<Recommandation> genererBundlesContextuels(Long userId) { return new ArrayList<>(); }
-    @Override public void mettreAJourEquipementsRecommandes(Long id, String contexte) {}
-    @Override public List<Recommandation> findRecommandationsAvecBundle(String typeBundle) { return new ArrayList<>(); }
-    @Override public void creerTestAB(String nomTest, List<Recommandation> groupeA, List<Recommandation> groupeB) {}
-    @Override public double mesurerConversionTestAB(String nomTest) { return 0.0; }
-    @Override public List<Recommandation> getGroupeTestAB(String nomTest, char groupe) { return new ArrayList<>(); }
-    @Override public void conclureTestAB(String nomTest) {}
-    @Override public double calculerTauxClicRecommandations(Long userId) { return 0.0; }
-    @Override public double calculerTauxConversionRecommandations() { return 0.0; }
-    @Override public List<Recommandation> getTopRecommandationsPerformantes(int limite) { return new ArrayList<>(); }
-    @Override public double calculerScoreMoyenAlgorithme(Recommandation.AlgorithmeReco algorithme) { return 0.0; }
-    @Override public List<Recommandation> findRecommandationsLowPerformance() { return new ArrayList<>(); }
-    @Override public void nettoyerRecommandationsExpirees() {}
-    @Override public void supprimerRecommandationsObsolètes() {}
-    @Override public boolean verifierCoherenceDonnees() { return false; }
-    @Override public void envoyerRecommandationEmail(Long userId, List<Recommandation> recommandations) {}
-    @Override public void programmerNotificationDifferée(Recommandation recommandation, LocalDateTime dateEnvoi) {}
-    @Override public void suivreInteractionRecommandation(Long id, String typeInteraction) {}
-    @Override public List<Recommandation> synchroniserAvecEvenements() { return new ArrayList<>(); }
-    @Override public List<Recommandation> synchroniserAvecParticipations(Long userId) { return new ArrayList<>(); }
-    @Override public boolean integrerAvecTransport(Long recommandationId) { return false; }
-    @Override public List<Recommandation> getRecommandationsCrossModule(Long userId) { return new ArrayList<>(); }
-    @Override public String exporterRecommandationsJSON(Long userId) { return ""; }
-    @Override public List<Recommandation> importerRecommandationsAPI(String urlAPI) { return new ArrayList<>(); }
-    @Override public boolean synchroniserAvecAPIExterne(String endpoint) { return false; }
-    @Override public List<Recommandation> getRecommandationsParRegion(String region) { return new ArrayList<>(); }
+    @Override
+    public List<Recommandation> findByAlgorithme(Recommandation.AlgorithmeReco algorithme) {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public List<Recommandation> findByDateGenerationBetween(LocalDateTime debut, LocalDateTime fin) {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public List<Recommandation> findRecommandationsExpirees() {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public List<Recommandation> findRecommandationsNonUtilisees() {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public List<Recommandation> genererRecommandationsContentBased(Long userId, int limite) {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public List<Recommandation> genererRecommandationsHybrides(Long userId, int limite) {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public List<Recommandation> genererRecommandationsTensorFlow(Long userId, int limite) {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public List<Recommandation> genererRecommandationsParClustering(Long userId, int limite) {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public double calculerScoreContentBased(Long userId, Long evenementId) {
+        return 0.0;
+    }
+
+    @Override
+    public double calculerScoreHybride(Long userId, Long evenementId) {
+        return 0.0;
+    }
+
+    @Override
+    public List<Long> trouverEvenementsSimilaires(Long evenementId, int limite) {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public String extrairePreferences(String texte) {
+        return "";
+    }
+
+    @Override
+    public String genererRaisonPersonnalisee(Long userId, Long evenementId, double score) {
+        return "";
+    }
+
+    @Override
+    public void entrainerModeleTensorFlow() {
+    }
+
+    @Override
+    public double predireConversion(Long userId, Long evenementId) {
+        return 0.0;
+    }
+
+    @Override
+    public double predireChurnAbonnement(Long userId) {
+        return 0.0;
+    }
+
+    @Override
+    public void mettreAJourModeleML() {
+    }
+
+    @Override
+    public List<Recommandation> optimiserHyperparametres() {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public List<Recommandation> scraperPrixEquipements(String query) {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public void mettreAJourPrixEnTempsReel() {
+    }
+
+    @Override
+    public String scraperDisponibilites(String urlEquipement) {
+        return "";
+    }
+
+    @Override
+    public boolean validerSourceScraped(String source) {
+        return false;
+    }
+
+    @Override
+    public List<String> getSourcesScrapingActives() {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public Recommandation creerBundlePersonnalise(Long userId, Long evenementId, String contexte) {
+        return null;
+    }
+
+    @Override
+    public List<Recommandation> genererBundlesContextuels(Long userId) {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public void mettreAJourEquipementsRecommandes(Long id, String contexte) {
+    }
+
+    @Override
+    public List<Recommandation> findRecommandationsAvecBundle(String typeBundle) {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public void creerTestAB(String nomTest, List<Recommandation> groupeA, List<Recommandation> groupeB) {
+    }
+
+    @Override
+    public double mesurerConversionTestAB(String nomTest) {
+        return 0.0;
+    }
+
+    @Override
+    public List<Recommandation> getGroupeTestAB(String nomTest, char groupe) {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public void conclureTestAB(String nomTest) {
+    }
+
+    @Override
+    public double calculerTauxClicRecommandations(Long userId) {
+        return 0.0;
+    }
+
+    @Override
+    public double calculerTauxConversionRecommandations() {
+        return 0.0;
+    }
+
+    @Override
+    public List<Recommandation> getTopRecommandationsPerformantes(int limite) {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public double calculerScoreMoyenAlgorithme(Recommandation.AlgorithmeReco algorithme) {
+        return 0.0;
+    }
+
+    @Override
+    public List<Recommandation> findRecommandationsLowPerformance() {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public void nettoyerRecommandationsExpirees() {
+    }
+
+    @Override
+    public void supprimerRecommandationsObsolètes() {
+    }
+
+    @Override
+    public boolean verifierCoherenceDonnees() {
+        return false;
+    }
+
+    @Override
+    public void envoyerRecommandationEmail(Long userId, List<Recommandation> recommandations) {
+    }
+
+    @Override
+    public void programmerNotificationDifferée(Recommandation recommandation, LocalDateTime dateEnvoi) {
+    }
+
+    @Override
+    public void suivreInteractionRecommandation(Long id, String typeInteraction) {
+    }
+
+    @Override
+    public List<Recommandation> synchroniserAvecEvenements() {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public List<Recommandation> synchroniserAvecParticipations(Long userId) {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public boolean integrerAvecTransport(Long recommandationId) {
+        return false;
+    }
+
+    @Override
+    public List<Recommandation> getRecommandationsCrossModule(Long userId) {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public String exporterRecommandationsJSON(Long userId) {
+        return "";
+    }
+
+    @Override
+    public List<Recommandation> importerRecommandationsAPI(String urlAPI) {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public boolean synchroniserAvecAPIExterne(String endpoint) {
+        return false;
+    }
+
+    @Override
+    public List<Recommandation> getRecommandationsParRegion(String region) {
+        return new ArrayList<>();
+    }
 
     @Override
     public void marquerCommeUtilisee(Long id) {

@@ -1,146 +1,140 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.collections.FXCollections?>
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.image.*?>
 
-<ScrollPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+<ScrollPane xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.gestion.ui.abonnement.AbonnementViewController"
-            fitToWidth="true" styleClass="modern-scroll-pane"
-            vbarPolicy="AS_NEEDED" hbarPolicy="NEVER"
-            stylesheets="@../../styles/card-view.css">
+            fitToWidth="false" fitToHeight="false" styleClass="modern-scroll-pane"
+            vbarPolicy="AS_NEEDED" hbarPolicy="AS_NEEDED"
+            stylesheets="@../../styles/card-view.css, @../../styles/nature-mood.css">
 
-    <VBox spacing="20" styleClass="modern-panel" prefWidth="1000">
-        <padding>
-            <Insets top="24" right="24" bottom="24" left="24"/>
-        </padding>
-
-        <!-- Header -->
-        <HBox spacing="16" alignment="CENTER_LEFT">
-            <ImageView fitHeight="32" preserveRatio="true">
-                <image>
-                    <Image url="@../images/lamma-logo.png" />
-                </image>
-            </ImageView>
-            <Label text="📋 Gestion des Abonnements" styleClass="modern-title"/>
+    <VBox spacing="10" styleClass="modern-panel" prefWidth="1000" style="-fx-padding: 12;">
+        
+        <!-- Nature Header -->
+        <HBox spacing="12" alignment="CENTER_LEFT">
+            <StackPane style="-fx-background-color: rgba(249, 115, 22, 0.15); -fx-background-radius: 8; -fx-padding: 6;">
+                <Label text="🎫" style="-fx-font-size: 16;"/>
+            </StackPane>
+            <VBox spacing="0">
+                <Label text="Expedition Passes" styleClass="modern-title" style="-fx-text-fill: white; -fx-font-size: 16; -fx-font-weight: 800;"/>
+                <Label text="Manage trail access and memberships" style="-fx-text-fill: #94a3b8; -fx-font-size: 9;"/>
+            </VBox>
             <Region HBox.hgrow="ALWAYS"/>
-            <Label fx:id="statusInfoLabel" text="Prêt" styleClass="status-info"/>
+            <HBox alignment="CENTER" spacing="8" style="-fx-background-color: rgba(255,255,255,0.05); -fx-padding: 4 12; -fx-background-radius: 15; -fx-border-color: rgba(255,255,255,0.1); -fx-border-radius: 15;">
+                <Circle fill="#22c55e" radius="3"/>
+                <Label fx:id="statusInfoLabel" text="Base Camp Ready" style="-fx-text-fill: white; -fx-font-size: 10; -fx-font-weight: 600;"/>
+            </HBox>
         </HBox>
 
-        <!-- Barre d'actions principales -->
-        <HBox spacing="12" alignment="CENTER_LEFT" styleClass="action-bar">
-            <Button text="➕ Nouveau" onAction="#onNouveau" styleClass="btn-primary"/>
-            <Button text="🔄 Actualiser" onAction="#onActualiser" styleClass="btn-secondary"/>
-            <Button text="✏️ Modifier" onAction="#onModifier" styleClass="btn-warning" disable="true" fx:id="btnModifier"/>
-            <Button text="🗑️ Supprimer" onAction="#onSupprimer" styleClass="btn-danger" disable="true" fx:id="btnSupprimer"/>
+        <!-- Action Bar - Capsule Style -->
+        <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 2 0;">
+            <Button text="➕ NEW" onAction="#onNouveau" styleClass="button-capsule" style="-fx-padding: 8 16; -fx-font-size: 11;"/>
+            <Button text="🔄 SYNC" onAction="#onActualiser" styleClass="button-capsule-glass" style="-fx-padding: 8 16; -fx-font-size: 11;"/>
+            <Button text="✏️ EDIT" onAction="#onModifier" styleClass="button-capsule-glass" fx:id="btnModifier" disable="true" style="-fx-padding: 8 16; -fx-font-size: 11;"/>
+            <Button text="🗑️ REMOVE" onAction="#onSupprimer" styleClass="button-capsule-glass" fx:id="btnSupprimer" disable="true" style="-fx-padding: 8 16; -fx-text-fill: #ef4444; -fx-font-size: 11;"/>
             <Region HBox.hgrow="ALWAYS"/>
-            <Button text="📊 Statistiques" onAction="#onStatistiques" styleClass="btn-info"/>
+            <Button text="📊 STATS" onAction="#onStatistiques" styleClass="button-capsule-glass" style="-fx-padding: 8 16; -fx-font-size: 11;"/>
         </HBox>
 
-        <!-- Section Recherche et Filtres -->
-        <VBox spacing="12" styleClass="filter-section">
-            <Label text="🔍 Recherche et Filtres" styleClass="section-title"/>
-            <GridPane hgap="12" vgap="12">
+        <!-- Filters Section - Glass Grid -->
+        <VBox spacing="10" styleClass="modern-card" style="-fx-padding: 15;">
+            <Label text="🔍 Scout Search" styleClass="section-title" style="-fx-font-size: 14; -fx-text-fill: white;"/>
+            <GridPane hgap="12" vgap="10">
                 <columnConstraints>
                     <ColumnConstraints minWidth="100" prefWidth="120"/>
-                    <ColumnConstraints minWidth="150" prefWidth="200" hgrow="ALWAYS"/>
+                    <ColumnConstraints hgrow="ALWAYS"/>
                     <ColumnConstraints minWidth="100" prefWidth="120"/>
-                    <ColumnConstraints minWidth="150" prefWidth="200" hgrow="ALWAYS"/>
+                    <ColumnConstraints hgrow="ALWAYS"/>
                 </columnConstraints>
 
-                <Label text="Statut:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-                <ComboBox fx:id="filterStatut" prefWidth="200" promptText="Tous les statuts"
-                          onAction="#onFiltrer" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                <Label text="Pass Status:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 11;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                <ComboBox fx:id="filterStatut" prefWidth="300" promptText="All Statuses"
+                          styleClass="modern-input" onAction="#onFiltrer" style="-fx-font-size: 11;" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
-                <Label text="Type:" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
-                <ComboBox fx:id="filterType" prefWidth="200" promptText="Tous les types"
-                          onAction="#onFiltrer" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+                <Label text="Adventure Type:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 11;" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                <ComboBox fx:id="filterType" prefWidth="300" promptText="All Types"
+                          styleClass="modern-input" onAction="#onFiltrer" style="-fx-font-size: 11;" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
 
-                <Label text="User ID:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-                <TextField fx:id="filterUserId" promptText="ID utilisateur"
-                           onKeyReleased="#onFiltrer" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                <Label text="Member ID:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 11;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                <TextField fx:id="filterUserId" promptText="Search ID..."
+                           styleClass="modern-input" onKeyReleased="#onFiltrer" style="-fx-font-size: 11;" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
 
-                <Label text="Recherche:" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
-                <TextField fx:id="searchField" promptText="Rechercher..."
-                           onKeyReleased="#onRechercher" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+                <Label text="Pass Detail:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 11;" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                <TextField fx:id="searchField" promptText="Scout everything..."
+                           styleClass="modern-input" onKeyReleased="#onRechercher" style="-fx-font-size: 11;" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
             </GridPane>
-            <HBox spacing="8">
-                <Button text="🔍 Rechercher" onAction="#onRechercher" styleClass="btn-primary"/>
-                <Button text="❌ Réinitialiser" onAction="#onReinitialiserFiltres" styleClass="btn-secondary"/>
-            </HBox>
         </VBox>
 
-        <!-- ListView avec Cards -->
-        <VBox spacing="8" VBox.vgrow="ALWAYS">
+        <!-- Results Section -->
+        <VBox spacing="10" VBox.vgrow="ALWAYS">
             <HBox spacing="8" alignment="CENTER_LEFT">
-                <Label text="📊 Liste des Abonnements" styleClass="section-title"/>
+                <Label text="📍 Active Expeditions" styleClass="section-title" style="-fx-font-size: 14; -fx-text-fill: white;"/>
                 <Region HBox.hgrow="ALWAYS"/>
-                <Label fx:id="countLabel" text="0 abonnements" styleClass="count-label"/>
+                <Label fx:id="countLabel" text="0 passes tracked" style="-fx-text-fill: #F97316; -fx-font-weight: 800; -fx-font-size: 10; -fx-background-color: rgba(249, 115, 22, 0.1); -fx-padding: 3 10; -fx-background-radius: 10;"/>
             </HBox>
-            <ListView fx:id="listView" VBox.vgrow="ALWAYS" minHeight="350" prefHeight="400"
+            <ListView fx:id="listView" VBox.vgrow="ALWAYS" minHeight="250"
                        styleClass="modern-list-view" onMouseClicked="#onListClick">
                 <placeholder>
-                    <VBox alignment="CENTER" spacing="12">
-                        <Label text="📭 Aucune donnée disponible" styleClass="placeholder-text"/>
-                        <Label text="Cliquez sur 'Actualiser' pour charger les données" styleClass="placeholder-hint"/>
+                    <VBox alignment="CENTER" spacing="10" style="-fx-padding: 30;">
+                        <Label text="⛰️" style="-fx-font-size: 32;"/>
+                        <Label text="No records found in the wild" style="-fx-text-fill: #94a3b8; -fx-font-size: 14; -fx-font-weight: 600;"/>
+                        <Label text="Refresh the sync or start a new expedition" style="-fx-text-fill: #64748b; -fx-font-size: 11;"/>
                     </VBox>
                 </placeholder>
             </ListView>
         </VBox>
 
-        <!-- Section Formulaire -->
-        <VBox spacing="12" styleClass="form-section">
-            <Label text="✏️ Formulaire" styleClass="section-title"/>
-            <GridPane hgap="12" vgap="12">
+        <!-- Expedition Form -->
+        <VBox spacing="10" styleClass="modern-card" style="-fx-padding: 15;">
+            <Label text="📝 Expedition Logs" styleClass="section-title" style="-fx-font-size: 14; -fx-text-fill: white;"/>
+            <GridPane hgap="15" vgap="12">
                 <columnConstraints>
-                    <ColumnConstraints minWidth="100" prefWidth="120"/>
-                    <ColumnConstraints minWidth="150" prefWidth="200" hgrow="ALWAYS"/>
-                    <ColumnConstraints minWidth="100" prefWidth="120"/>
-                    <ColumnConstraints minWidth="150" prefWidth="200" hgrow="ALWAYS"/>
+                    <ColumnConstraints minWidth="110" prefWidth="130"/>
+                    <ColumnConstraints hgrow="ALWAYS"/>
+                    <ColumnConstraints minWidth="110" prefWidth="130"/>
+                    <ColumnConstraints hgrow="ALWAYS"/>
                 </columnConstraints>
 
-                <Label text="User ID *:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-                <TextField fx:id="inputUserId" promptText="ID utilisateur"
-                           styleClass="input-field" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                <Label text="Adventurer ID:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 11;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                <TextField fx:id="inputUserId" promptText="Enter member ID..."
+                           styleClass="modern-input" style="-fx-font-size: 11;" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
-                <Label text="Type *:" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
-                <ComboBox fx:id="inputType" prefWidth="200"
-                          styleClass="input-field" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+                <Label text="Pass Type:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 11;" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                <ComboBox fx:id="inputType" prefWidth="300"
+                          styleClass="modern-input" style="-fx-font-size: 11;" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
 
-                <Label text="Date Début *:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-                <DatePicker fx:id="inputDateDebut" prefWidth="200"
-                            styleClass="input-field" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                <Label text="Start Date:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 11;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                <DatePicker fx:id="inputDateDebut" prefWidth="300"
+                            styleClass="modern-input" style="-fx-font-size: 11;" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
 
-                <Label text="Date Fin:" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
-                <DatePicker fx:id="inputDateFin" prefWidth="200"
-                            styleClass="input-field" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+                <Label text="End Date:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 11;" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                <DatePicker fx:id="inputDateFin" prefWidth="300"
+                            styleClass="modern-input" style="-fx-font-size: 11;" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
 
-                <Label text="Prix *:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-                <TextField fx:id="inputPrix" promptText="29.99"
-                           styleClass="input-field" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                <Label text="Pass Cost ($):" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 11;" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                <TextField fx:id="inputPrix" promptText="0.00"
+                           styleClass="modern-input" style="-fx-font-size: 11;" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
 
-                <Label text="Statut:" GridPane.columnIndex="2" GridPane.rowIndex="2"/>
-                <ComboBox fx:id="inputStatut" prefWidth="200"
-                          styleClass="input-field" GridPane.columnIndex="3" GridPane.rowIndex="2"/>
+                <Label text="Current Status:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 11;" GridPane.columnIndex="2" GridPane.rowIndex="2"/>
+                <ComboBox fx:id="inputStatut" prefWidth="300"
+                          styleClass="modern-input" style="-fx-font-size: 11;" GridPane.columnIndex="3" GridPane.rowIndex="2"/>
 
-                <Label text="AutoRenew:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
-                <CheckBox fx:id="inputAutoRenew" text="Renouvellement automatique"
+                <Label text="Auto-Prolong:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 11;" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                <CheckBox fx:id="inputAutoRenew" text="Enable auto-renewal" style="-fx-text-fill: white; -fx-font-weight: 600; -fx-font-size: 11;"
                           selected="true" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
             </GridPane>
 
-            <!-- Messages de validation -->
-            <Label fx:id="validationMessage" text="" styleClass="validation-message" visible="false" managed="false"/>
+            <Label fx:id="validationMessage" style="-fx-text-fill: #ef4444; -fx-font-weight: 700; -fx-padding: 5 0; -fx-font-size: 10;" visible="false" managed="false"/>
 
-            <!-- Boutons d'action formulaire -->
-            <HBox spacing="12" alignment="CENTER_LEFT">
-                <Button text="💾 Enregistrer" onAction="#onEnregistrer" styleClass="btn-success" fx:id="btnEnregistrer"/>
-                <Button text="✏️ Modifier" onAction="#onModifier" styleClass="btn-warning" fx:id="btnModifierForm" disable="true"/>
-                <Button text="❌ Annuler" onAction="#onAnnuler" styleClass="btn-secondary"/>
+            <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 8 0 0 0;">
+                <Button text="💾 SAVE" onAction="#onEnregistrer" styleClass="button-capsule" fx:id="btnEnregistrer" style="-fx-padding: 8 20; -fx-font-size: 11;"/>
+                <Button text="✏️ UPDATE" onAction="#onModifier" styleClass="button-capsule-glass" fx:id="btnModifierForm" disable="true" style="-fx-padding: 8 20; -fx-font-size: 11;"/>
+                <Button text="❌ CANCEL" onAction="#onAnnuler" styleClass="button-capsule-glass" style="-fx-padding: 8 20; -fx-font-size: 11;"/>
                 <Region HBox.hgrow="ALWAYS"/>
-                <Button text="🔄 Réinitialiser" onAction="#onNouveau" styleClass="btn-secondary"/>
+                <Button text="🔄 RESET" onAction="#onNouveau" styleClass="button-capsule-glass" style="-fx-padding: 8 20; -fx-font-size: 11;"/>
             </HBox>
         </VBox>
     </VBox>
