@@ -1,6 +1,7 @@
 package com.gestion.ui.utilisateur;
 
 import com.gestion.entities.Participation;
+import com.gestion.services.TicketBadgeGenerator;
 import com.gestion.ui.participation.ParticipationFormController;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -13,10 +14,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.geometry.Pos;
 
+import java.io.File;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 
@@ -109,13 +112,19 @@ public class MesParticipationsController {
 
         content.getChildren().addAll(header, details);
 
-        // Right side: Price
-        VBox rightSide = new VBox(5);
+        // Right side: Price + Badge button
+        VBox rightSide = new VBox(8);
         rightSide.setAlignment(Pos.CENTER_RIGHT);
         String priceStr = String.format("%.2f €", item.getMontantCalcule() != null ? item.getMontantCalcule() : 0.0);
         Label price = new Label(priceStr);
         price.getStyleClass().add("card-price");
-        rightSide.getChildren().add(price);
+
+        Button badgeBtn = new Button("📥 Badge");
+        badgeBtn.setStyle("-fx-background-color: rgba(99,102,241,0.85); -fx-text-fill: white;"
+                + " -fx-font-size: 11; -fx-font-weight: bold; -fx-padding: 6 14;"
+                + " -fx-background-radius: 20; -fx-cursor: hand;");
+        badgeBtn.setOnAction(e -> downloadBadgeForParticipation(item));
+        rightSide.getChildren().addAll(price, badgeBtn);
 
         card.getChildren().addAll(iconPane, content, rightSide);
         return card;
@@ -206,6 +215,89 @@ public class MesParticipationsController {
             a.setHeaderText("Impossible d'ouvrir le formulaire de participation");
             a.setContentText(e.getMessage());
             a.showAndWait();
+        }
+    }
+
+    // ─── BADGE PDF ─────────────────────────────────────────────────────────
+
+    /**
+     * Handler du bouton global : télécharge le badge de la participation
+     * sélectionnée dans la liste.
+     */
+    @FXML
+    public void onTelechargerBadge() {
+        Participation selected = listView.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            Alert info = new Alert(Alert.AlertType.INFORMATION);
+            info.setTitle("Sélection requise");
+            info.setHeaderText(null);
+            info.setContentText("Veuillez d'abord sélectionner une participation dans la liste.");
+            info.showAndWait();
+            return;
+        }
+        downloadBadgeForParticipation(selected);
+    }
+
+    /**
+     * Ouvre un FileChooser, génère et sauvegarde le badge PDF.
+     */
+    private void downloadBadgeForParticipation(Participation item) {
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Enregistrer le badge PDF");
+        chooser.setInitialFileName("badge_participation_" + item.getId() + ".pdf");
+        chooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Fichiers PDF", "*.pdf"));
+
+        Stage stage = (Stage) listView.getScene().getWindow();
+        File dest = chooser.showSaveDialog(stage);
+        if (dest == null)
+            return; // annulé
+
+        // Préparer les données
+        String ticketCode = item.getBadgeAssocie() != null && !item.getBadgeAssocie().isEmpty()
+                ? "TKT-" + item.getId() + "-" + item.getBadgeAssocie()
+                : "TKT-" + item.getId() + "-" + System.currentTimeMillis();
+
+        // Nom utilisateur depuis la session
+        String userName = "Utilisateur #" + (currentUserId != null ? currentUserId : "?");
+        try {
+            com.gestion.tools.Session session = com.gestion.tools.Session.getInstance();
+            if (session.getCurrentUser() != null && session.getCurrentUser().getName() != null) {
+                userName = session.getCurrentUser().getName();
+            }
+        } catch (Exception ignored) {
+        }
+
+        String eventName = "Événement #" + item.getEvenementId();
+        String statut = item.getStatut() != null ? item.getStatut().getLabel() : "N/A";
+        String type = item.getType() != null ? item.getType().getLabel() : "N/A";
+        String montant = item.getMontantCalcule() != null
+                ? String.format("%.2f %s", item.getMontantCalcule(),
+                        item.getDevise() != null ? item.getDevise() : "EUR")
+                : "Gratuit";
+
+        try {
+            TicketBadgeGenerator.generateBadge(
+                    dest, ticketCode, userName, eventName,
+                    item.getId() != null ? item.getId() : 0L,
+                    item.getDateInscription(),
+                    item.getBadgeAssocie() != null ? item.getBadgeAssocie() : "N/A",
+                    statut, type,
+                    item.getTotalParticipants(),
+                    montant);
+
+            Alert ok = new Alert(Alert.AlertType.INFORMATION);
+            ok.setTitle("Badge généré !");
+            ok.setHeaderText(null);
+            ok.setContentText("✅ Badge PDF sauvegardé :\n" + dest.getAbsolutePath());
+            ok.showAndWait();
+
+        } catch (Exception ex) {
+            Alert err = new Alert(Alert.AlertType.ERROR);
+            err.setTitle("Erreur de génération");
+            err.setHeaderText("Impossible de générer le badge");
+            err.setContentText(ex.getMessage());
+            err.showAndWait();
         }
     }
 }

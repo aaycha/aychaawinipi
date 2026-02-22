@@ -1,7 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 <?import java.net.URL?>
@@ -29,8 +28,59 @@
             <Region HBox.hgrow="ALWAYS"/>
         </HBox>
 
+        <!-- ═══ GLOBAL ERROR CONTAINER ═══ -->
+        <VBox fx:id="errorContainer" spacing="4" visible="false" managed="false"
+              style="-fx-background-color: rgba(239,68,68,0.12); -fx-border-color: rgba(239,68,68,0.4); -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 10;">
+            <Label text="⚠ Erreurs de validation" style="-fx-font-weight: bold; -fx-text-fill: #ef4444; -fx-font-size: 11px;"/>
+            <Label fx:id="globalErrorMessage" text="" wrapText="true"
+                   style="-fx-text-fill: #fca5a5; -fx-font-size: 10px;"/>
+        </VBox>
+
+        <!-- ═══ SECTION IA ═══════════════════════════════════════════════════ -->
+        <VBox spacing="8" styleClass="glass-panel" style="-fx-padding: 12; -fx-background-color: rgba(99,102,241,0.08); -fx-border-color: rgba(99,102,241,0.3); -fx-border-radius: 10; -fx-background-radius: 10;">
+            <HBox spacing="6" alignment="CENTER_LEFT">
+                <Label text="🤖" style="-fx-font-size: 16px;"/>
+                <VBox spacing="0">
+                    <Label text="Génération IA depuis image" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #a5b4fc;"/>
+                    <Label text="Uploadez une photo du plat — l'IA remplit les champs automatiquement" style="-fx-font-size: 9px; -fx-text-fill: #64748b;"/>
+                </VBox>
+            </HBox>
+
+            <HBox spacing="12" alignment="CENTER_LEFT">
+                <!-- Aperçu image -->
+                <StackPane fx:id="imageContainer" prefWidth="120" prefHeight="90"
+                           style="-fx-background-color: rgba(15,23,42,0.6); -fx-background-radius: 8; -fx-border-color: rgba(99,102,241,0.4); -fx-border-radius: 8; -fx-border-width: 1.5;">
+                    <Label fx:id="imagePlaceholder" text="📷 Aucune image" wrapText="true" textAlignment="CENTER"
+                           style="-fx-text-fill: #475569; -fx-font-size: 9px;"/>
+                    <ImageView fx:id="imagePreview" fitWidth="118" fitHeight="88" preserveRatio="true"
+                               visible="false" managed="false" style="-fx-background-radius: 8;"/>
+                </StackPane>
+
+                <!-- Boutons et statut -->
+                <VBox spacing="8" HBox.hgrow="ALWAYS">
+                    <HBox spacing="8">
+                        <Button fx:id="btnChoisirImage" text="📷 Choisir une image" onAction="#onChoisirImage"
+                                style="-fx-background-color: rgba(71,85,105,0.8); -fx-text-fill: white; -fx-font-size: 10px; -fx-font-weight: bold;
+                                       -fx-padding: 7 14; -fx-background-radius: 20; -fx-cursor: hand;"/>
+                        <Button fx:id="btnAnalyser" text="🤖 Analyser avec l'IA" onAction="#onAnalyserImage"
+                                disable="true"
+                                style="-fx-background-color: rgba(99,102,241,0.85); -fx-text-fill: white; -fx-font-size: 10px; -fx-font-weight: bold;
+                                       -fx-padding: 7 14; -fx-background-radius: 20; -fx-cursor: hand;"/>
+                        <ProgressIndicator fx:id="aiProgress" visible="false" managed="false"
+                                           prefWidth="22" prefHeight="22"
+                                           style="-fx-progress-color: #6366f1;"/>
+                    </HBox>
+                    <Label fx:id="aiStatusLabel" text="Sélectionnez une image pour commencer l'analyse."
+                           wrapText="true"
+                           style="-fx-text-fill: #64748b; -fx-font-size: 9.5px; -fx-font-style: italic;"/>
+                </VBox>
+            </HBox>
+        </VBox>
+        <!-- ════════════════════════════════════════════════════════════════ -->
+
         <!-- Form Card -->
         <VBox spacing="10" styleClass="glass-panel" style="-fx-padding: 12;">
+
             <!-- Section: Informations du Menu -->
             <VBox spacing="8">
                 <HBox spacing="6" alignment="CENTER_LEFT">
@@ -72,6 +122,43 @@
                         <Label fx:id="errorPrix" text="" visible="false" managed="false"
                                style="-fx-text-fill: #ef4444; -fx-font-size: 10px;"/>
                     </VBox>
+
+                    <!-- Statut Actif -->
+                    <Label text="Statut :" GridPane.columnIndex="0" GridPane.rowIndex="3" style="-fx-font-weight: bold; -fx-text-fill: #94a3b8; -fx-font-size: 10;"/>
+                    <CheckBox fx:id="checkActif" text="Menu actif (visible aux clients)"
+                              GridPane.columnIndex="1" GridPane.rowIndex="3"
+                              style="-fx-text-fill: #e2e8f0; -fx-font-size: 10px;"/>
+                </GridPane>
+            </VBox>
+
+            <Separator style="-fx-opacity: 0.1;"/>
+
+            <!-- Section: Dates -->
+            <VBox spacing="8">
+                <HBox spacing="6" alignment="CENTER_LEFT">
+                    <Label text="📅" style="-fx-font-size: 14px;"/>
+                    <Label text="Période de validité" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+                </HBox>
+
+                <GridPane hgap="12" vgap="8">
+                    <columnConstraints>
+                        <ColumnConstraints minWidth="100" prefWidth="120" halignment="RIGHT"/>
+                        <ColumnConstraints hgrow="ALWAYS" minWidth="250"/>
+                    </columnConstraints>
+
+                    <Label text="Date début :" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-text-fill: #94a3b8; -fx-font-size: 10;"/>
+                    <DatePicker fx:id="inputDateDebut" promptText="Date de début"
+                                GridPane.columnIndex="1" GridPane.rowIndex="0"
+                                styleClass="modern-input" style="-fx-font-size: 10px;" maxWidth="Infinity"/>
+
+                    <Label text="Date fin :" GridPane.columnIndex="0" GridPane.rowIndex="1" style="-fx-text-fill: #94a3b8; -fx-font-size: 10;"/>
+                    <DatePicker fx:id="inputDateFin" promptText="Date de fin"
+                                GridPane.columnIndex="1" GridPane.rowIndex="1"
+                                styleClass="modern-input" style="-fx-font-size: 10px;" maxWidth="Infinity"/>
+
+                    <Label fx:id="errorDates" text="" visible="false" managed="false"
+                           GridPane.columnIndex="1" GridPane.rowIndex="2"
+                           style="-fx-text-fill: #ef4444; -fx-font-size: 10px;"/>
                 </GridPane>
             </VBox>
 
@@ -93,8 +180,10 @@
                     <Label text="Description :" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-text-fill: #94a3b8; -fx-font-size: 10;"/>
                     <VBox spacing="2" GridPane.columnIndex="1" GridPane.rowIndex="0">
                         <TextArea fx:id="inputDescription" promptText="Ex: Détails du menu..."
-                                  wrapText="true" prefRowCount="2"
+                                  wrapText="true" prefRowCount="3"
                                   styleClass="modern-input" style="-fx-font-size: 10px;"/>
+                        <Label fx:id="errorDescription" text="" visible="false" managed="false"
+                               style="-fx-text-fill: #ef4444; -fx-font-size: 10px;"/>
                     </VBox>
                 </GridPane>
             </VBox>
