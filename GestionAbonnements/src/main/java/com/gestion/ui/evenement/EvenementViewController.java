@@ -37,6 +37,8 @@ public class EvenementViewController {
     private Button btnModifier;
     @FXML
     private Button btnSupprimer;
+    @FXML
+    private Button btnNouvelEvent;
 
     private final EvenementDAO dao = new EvenementDAO();
     private final ObservableList<Evenement> data = FXCollections.observableArrayList();
@@ -63,7 +65,21 @@ public class EvenementViewController {
             updateCount();
         });
 
+        applyRoleRestrictions();
         onActualiser();
+    }
+
+    private void applyRoleRestrictions() {
+        boolean isAdmin = com.gestion.controllers.MainController
+                .getCurrentRole() == com.gestion.controllers.MainController.Role.ADMIN;
+        btnModifier.setVisible(isAdmin);
+        btnModifier.setManaged(isAdmin);
+        btnSupprimer.setVisible(isAdmin);
+        btnSupprimer.setManaged(isAdmin);
+        if (btnNouvelEvent != null) {
+            btnNouvelEvent.setVisible(isAdmin);
+            btnNouvelEvent.setManaged(isAdmin);
+        }
     }
 
     private void setupListView() {
@@ -83,8 +99,10 @@ public class EvenementViewController {
 
         listView.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             selectedEvent = newVal;
-            btnModifier.setDisable(newVal == null);
-            btnSupprimer.setDisable(newVal == null);
+            boolean isAdmin = com.gestion.controllers.MainController
+                    .getCurrentRole() == com.gestion.controllers.MainController.Role.ADMIN;
+            btnModifier.setDisable(!isAdmin || newVal == null);
+            btnSupprimer.setDisable(!isAdmin || newVal == null);
         });
     }
 
@@ -112,15 +130,49 @@ public class EvenementViewController {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        VBox side = new VBox(5);
+        VBox side = new VBox(8);
         side.setAlignment(Pos.CENTER_RIGHT);
         Label typeBadge = new Label(item.getType());
         typeBadge.setStyle(
                 "-fx-background-color: rgba(59, 130, 246, 0.2); -fx-text-fill: #60a5fa; -fx-padding: 2 10; -fx-background-radius: 10; -fx-font-size: 11px;");
         side.getChildren().add(typeBadge);
 
+        // Bouton Participer pour les utilisateurs
+        if (com.gestion.controllers.MainController
+                .getCurrentRole() == com.gestion.controllers.MainController.Role.UTILISATEUR) {
+            Button btnParticiper = new Button("PARTICIPER");
+            btnParticiper.setStyle(
+                    "-fx-background-color: #3b82f6; -fx-text-fill: white; -fx-font-size: 10px; -fx-font-weight: bold; -fx-background-radius: 20;");
+            btnParticiper.setOnAction(e -> onParticiper(item));
+            side.getChildren().add(btnParticiper);
+        }
+
         card.getChildren().addAll(iconPane, info, spacer, side);
         return card;
+    }
+
+    private void onParticiper(Evenement item) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/participation/participation-form.fxml"));
+            Parent root = loader.load();
+            com.gestion.ui.participation.ParticipationFormController ctrl = loader.getController();
+
+            ctrl.setAdminMode(false);
+            ctrl.setCurrentUserId(Long.valueOf(com.gestion.tools.Session.getInstance().getCurrentUserId()));
+
+            // Créer une participation blanche liée à l'événement
+            com.gestion.entities.Participation p = new com.gestion.entities.Participation();
+            p.setEvenementId(Long.valueOf(item.getIdEvent()));
+            ctrl.setParticipation(p);
+
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Participer à " + item.getTitre());
+            stage.setScene(new Scene(root));
+            stage.showAndWait();
+        } catch (java.io.IOException ex) {
+            ex.printStackTrace();
+        }
     }
 
     @FXML

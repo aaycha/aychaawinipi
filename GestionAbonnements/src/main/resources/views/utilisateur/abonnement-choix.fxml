@@ -21,19 +21,99 @@
     <Label text="Choisissez ou consultez vos abonnements LAMMA."
            style="-fx-text-fill: #666; -fx-font-size: 13px;" wrapText="true"/>
 
-    <!-- Tableau des abonnements de l'utilisateur -->
-    <VBox spacing="8" VBox.vgrow="ALWAYS">
-        <Label text="Mes abonnements" styleClass="section-title"/>
-        <ListView fx:id="listView" VBox.vgrow="ALWAYS"
-                   styleClass="modern-list-view" stylesheets="@../../styles/card-view.css">
-            <placeholder>
-                <VBox alignment="CENTER" spacing="12">
-                    <Label text="📭 Aucun abonnement trouvé" styleClass="placeholder-text"/>
-                    <Label text="Contactez un administrateur pour souscrire un abonnement."
-                           style="-fx-text-fill: #888; -fx-font-size: 11px;"/>
+    <!-- Content Area with Tabs -->
+    <TabPane fx:id="mainTabPane" VBox.vgrow="ALWAYS" tabClosingPolicy="UNAVAILABLE" styleClass="modern-tab-pane"
+             stylesheets="@../../styles/nature-mood.css">
+        
+        <!-- Tab 1: Mes Abonnements -->
+        <Tab text="Mes Abonnements">
+            <VBox spacing="16" style="-fx-padding: 15 0 0 0;">
+                <HBox alignment="CENTER_LEFT">
+                    <Label text="Mes abonnements récents" styleClass="section-title"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="🔄 Actualiser" onAction="#onActualiser" styleClass="btn-secondary"/>
+                </HBox>
+                
+                <ListView fx:id="listView" VBox.vgrow="ALWAYS"
+                           styleClass="modern-list-view" stylesheets="@../../styles/card-view.css">
+                    <placeholder>
+                        <VBox alignment="CENTER" spacing="12">
+                            <Label text="📭 Aucun abonnement trouvé" styleClass="placeholder-text"/>
+                            <Label text="Consultez l'onglet « Offres Disponibles » pour souscrire."
+                                   style="-fx-text-fill: #888; -fx-font-size: 11px;"/>
+                        </VBox>
+                    </placeholder>
+                </ListView>
+            </VBox>
+        </Tab>
+        
+        <!-- Tab 2: Offres Disponibles -->
+        <Tab text="Offres Disponibles">
+            <ScrollPane fitToWidth="true" style="-fx-background: transparent; -fx-background-color: transparent;">
+                <VBox spacing="20" style="-fx-padding: 20 0 0 0;">
+                    <Label text="Nos forfaits 2026" styleClass="section-title"/>
+                    
+                    <FlowPane hgap="20" vgap="20" alignment="CENTER">
+                        <!-- Plan MENSUEL -->
+                        <VBox spacing="15" styleClass="modern-card" prefWidth="280" style="-fx-padding: 24; -fx-border-color: rgba(0,0,0,0.1); -fx-border-radius: 12;">
+                            <VBox spacing="5" alignment="CENTER">
+                                <Label text="📅" style="-fx-font-size: 32px;"/>
+                                <Label text="MENSUEL" style="-fx-font-weight: bold; -fx-font-size: 18px;"/>
+                                <Label text="Flexibilité totale" style="-fx-text-fill: #666; -fx-font-size: 12px;"/>
+                            </VBox>
+                            <HBox alignment="CENTER_LEFT">
+                                <Label text="14.99 €" style="-fx-font-size: 24px; -fx-font-weight: 800; -fx-text-fill: #1890ff;"/>
+                                <Label text="/ mois" style="-fx-text-fill: #888;"/>
+                            </HBox>
+                            <VBox spacing="8">
+                                <Label text="• Accès à tous les événements"/>
+                                <Label text="• Annulation sans frais"/>
+                                <Label text="• Support standard"/>
+                            </VBox>
+                            <Button text="S'abonner →" onAction="#onSubscribeMensuel" maxWidth="Infinity" styleClass="btn-primary" style="-fx-background-radius: 20;"/>
+                        </VBox>
+                        
+                        <!-- Plan ANNUEL -->
+                        <VBox spacing="15" styleClass="modern-card" prefWidth="280" style="-fx-padding: 24; -fx-border-color: #1890ff; -fx-border-width: 2; -fx-border-radius: 12;">
+                            <VBox spacing="5" alignment="CENTER">
+                                <Label text="🚀" style="-fx-font-size: 32px;"/>
+                                <Label text="ANNUEL" style="-fx-font-weight: bold; -fx-font-size: 18px;"/>
+                                <Label text="Meilleur rapport qualité/prix" style="-fx-text-fill: #666; -fx-font-size: 12px;"/>
+                            </VBox>
+                            <HBox alignment="CENTER_LEFT">
+                                <Label text="149.99 €" style="-fx-font-size: 24px; -fx-font-weight: 800; -fx-text-fill: #1890ff;"/>
+                                <Label text="/ an" style="-fx-text-fill: #888;"/>
+                            </HBox>
+                            <VBox spacing="8">
+                                <Label text="• Équivalent à 12.50€/mois"/>
+                                <Label text="• Priorité sur les réservations"/>
+                                <Label text="• Badge Adhérant Argent"/>
+                            </VBox>
+                            <Button text="S'abonner →" onAction="#onSubscribeAnnuel" maxWidth="Infinity" styleClass="btn-primary" style="-fx-background-radius: 20;"/>
+                        </VBox>
+                        
+                        <!-- Plan PREMIUM -->
+                        <VBox spacing="15" styleClass="modern-card" prefWidth="280" style="-fx-padding: 24; -fx-border-color: #fadb14; -fx-border-width: 2; -fx-border-radius: 12;">
+                            <VBox spacing="5" alignment="CENTER">
+                                <Label text="🌟" style="-fx-font-size: 32px;"/>
+                                <Label text="PREMIUM" style="-fx-font-weight: bold; -fx-font-size: 18px;"/>
+                                <Label text="L'expérience LAMMA ultime" style="-fx-text-fill: #666; -fx-font-size: 12px;"/>
+                            </VBox>
+                            <HBox alignment="CENTER_LEFT">
+                                <Label text="299.99 €" style="-fx-font-size: 24px; -fx-font-weight: 800; -fx-text-fill: #1890ff;"/>
+                                <Label text="/ an" style="-fx-text-fill: #888;"/>
+                            </HBox>
+                            <VBox spacing="8">
+                                <Label text="• Tous les avantages Annuel"/>
+                                <Label text="• Accès Salons VIP"/>
+                                <Label text="• Badge Adhérant Or"/>
+                            </VBox>
+                            <Button text="Devenir VIP 👑" onAction="#onSubscribePremium" maxWidth="Infinity" styleClass="btn-primary" style="-fx-background-color: #fadb14; -fx-text-fill: black; -fx-background-radius: 20;"/>
+                        </VBox>
+                    </FlowPane>
                 </VBox>
-            </placeholder>
-        </ListView>
-    </VBox>
+            </ScrollPane>
+        </Tab>
+    </TabPane>
 </VBox>
 

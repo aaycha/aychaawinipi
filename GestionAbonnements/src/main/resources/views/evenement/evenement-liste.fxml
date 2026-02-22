@@ -27,7 +27,7 @@
 
         <!-- Action Bar -->
         <HBox spacing="10" alignment="CENTER_LEFT">
-            <Button text="➕ NEW" onAction="#onNouvelEvenement" styleClass="button-capsule" style="-fx-padding: 8 16; -fx-font-size: 11;"/>
+            <Button fx:id="btnNouvelEvent" text="➕ NEW" onAction="#onNouvelEvenement" styleClass="button-capsule" style="-fx-padding: 8 16; -fx-font-size: 11;"/>
             <Button text="🔄 SYNC" onAction="#onActualiser" styleClass="button-capsule-glass" style="-fx-padding: 8 16; -fx-font-size: 11;"/>
             <Button fx:id="btnModifier" text="✏️ EDIT" onAction="#onModifier" disable="true" styleClass="button-capsule-glass" style="-fx-padding: 8 16; -fx-font-size: 11;"/>
             <Button fx:id="btnSupprimer" text="🗑️ DELETE" onAction="#onSupprimer" disable="true" styleClass="button-capsule-glass" style="-fx-padding: 8 16; -fx-text-fill: #ef4444; -fx-font-size: 11;" />

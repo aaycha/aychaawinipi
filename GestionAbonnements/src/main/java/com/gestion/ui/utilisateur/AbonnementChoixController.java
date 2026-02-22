@@ -22,6 +22,8 @@ import java.util.stream.Collectors;
 public class AbonnementChoixController {
 
     @FXML
+    private TabPane mainTabPane;
+    @FXML
     private ListView<Abonnement> listView;
     @FXML
     private Label statusLabel;
@@ -50,6 +52,57 @@ public class AbonnementChoixController {
                 } else {
                     setGraphic(createAbonnementCard(item));
                     setStyle("-fx-background-color: transparent; -fx-padding: 5 10 5 10;");
+                }
+            }
+        });
+    }
+
+    // Handlers pour les nouveaux boutons d'abonnement
+    @FXML
+    private void onSubscribeMensuel() {
+        subscribe(Abonnement.TypeAbonnement.MENSUEL, 14.99);
+    }
+
+    @FXML
+    private void onSubscribeAnnuel() {
+        subscribe(Abonnement.TypeAbonnement.ANNUEL, 149.99);
+    }
+
+    @FXML
+    private void onSubscribePremium() {
+        subscribe(Abonnement.TypeAbonnement.PREMIUM, 299.99);
+    }
+
+    private void subscribe(Abonnement.TypeAbonnement type, double prix) {
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Confirmer l'abonnement");
+        confirm.setHeaderText("Souscrire au forfait " + type.getLabel() + " ?");
+        confirm.setContentText("Montant à régler : " + String.format("%.2f €", prix));
+
+        confirm.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                try {
+                    Abonnement a = new Abonnement(currentUserId, type, java.time.LocalDate.now(),
+                            java.math.BigDecimal.valueOf(prix), true);
+                    controller.create(a);
+
+                    Alert success = new Alert(Alert.AlertType.INFORMATION);
+                    success.setTitle("Succès");
+                    success.setHeaderText("Abonnement activé !");
+                    success.setContentText("Votre abonnement " + type.getLabel() + " est maintenant actif.");
+                    success.show();
+
+                    onActualiser();
+                    // Revenir à l'onglet "Mes Abonnements"
+                    if (mainTabPane != null) {
+                        mainTabPane.getSelectionModel().select(0);
+                    }
+                } catch (Exception e) {
+                    Alert error = new Alert(Alert.AlertType.ERROR);
+                    error.setTitle("Erreur");
+                    error.setHeaderText("Échec de la souscription");
+                    error.setContentText(e.getMessage());
+                    error.show();
                 }
             }
         });

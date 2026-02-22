@@ -69,24 +69,27 @@ public class EspaceUtilisateurController {
     }
 
     private static final List<UserSection> SECTIONS = List.of(
+            new UserSection("evenement", "Découvrir Événements",
+                    "Explorer les treks, soirées et séjours nature de 2026",
+                    "/views/evenement/evenement-liste.fxml", "🏔️"),
             new UserSection("participation", "Mes Participations",
                     "Consulter et gérer mes inscriptions aux événements",
-                    "/views/utilisateur/mes-participations.fxml", "\uD83D\uDC65"),
+                    "/views/utilisateur/mes-participations.fxml", "👥"),
             new UserSection("repas", "Mes Repas",
                     "Voir mes plats et compositions",
-                    "/views/repas/repas-liste.fxml", "\uD83C\uDF55"),
+                    "/views/repas/repas-liste.fxml", "🍕"),
             new UserSection("restauration", "Restauration",
                     "Menus, repas et personnalisation 2026",
-                    "/views/utilisateur/restauration-2026.fxml", "\uD83C\uDF74"),
+                    "/views/utilisateur/restauration-2026.fxml", "🍴"),
             new UserSection("abonnement", "Mon Abonnement",
                     "Gérer mon abonnement LAMMA",
-                    "/views/utilisateur/abonnement-choix.fxml", "\uD83D\uDCCB"),
+                    "/views/utilisateur/abonnement-choix.fxml", "📋"),
             new UserSection("chatbot", "Assistant LAMMA",
                     "Discuter avec l'IA pour obtenir de l'aide",
-                    "/views/chatbot/chatbot-modal.fxml", "\uD83E\uDD16"),
+                    "/views/chatbot/chatbot-modal.fxml", "🤖"),
             new UserSection("map", "Carte Interactive",
                     "Explorer les refuges et restaurants sur la carte",
-                    "/views/map/map-view.fxml", "\uD83D\uDDFA"));
+                    "/views/map/map-view.fxml", "🗺️"));
 
     @FXML
     public void initialize() {

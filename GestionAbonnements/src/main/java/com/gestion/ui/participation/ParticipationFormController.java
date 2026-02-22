@@ -473,6 +473,17 @@ public class ParticipationFormController {
                 target.setBesoinsSpeciaux(inputBesoinsSpeciaux.getText());
             }
 
+            // Persistence de l'abonnement utilisé
+            if (labelTypeAbonnement != null) {
+                target.setTypeAbonnementChoisi(labelTypeAbonnement.getText());
+            }
+            if (labelMontant != null) {
+                try {
+                    target.setMontantCalcule(new java.math.BigDecimal(labelMontant.getText()));
+                } catch (Exception ignored) {
+                }
+            }
+
             if (participationController == null) {
                 participationController = new ParticipationController();
             }
@@ -513,29 +524,60 @@ public class ParticipationFormController {
             labelTotalParticipants.setText("Total participants : " + total);
         }
 
-        // Logique de tarification alignée sur le service (valeurs par défaut)
+        // 1. Calcul de base
         BigDecimal tarifAdulte = new BigDecimal("25.00");
         BigDecimal tarifEnfant = new BigDecimal("15.00");
         BigDecimal tarifChien = new BigDecimal("8.00");
         BigDecimal forfaitFamille = new BigDecimal("60.00");
 
         BigDecimal montant;
-        String typeAbonnement;
+        String typeLabel = "Standard";
 
         if (nbAdultes >= 1 && nbEnfants >= 1) {
             montant = forfaitFamille;
-            typeAbonnement = "pass_famille";
+            typeLabel = "Pass Famille";
         } else {
             montant = tarifAdulte.multiply(BigDecimal.valueOf(Math.max(1, nbAdultes)))
                     .add(tarifEnfant.multiply(BigDecimal.valueOf(Math.max(0, nbEnfants))))
                     .add(tarifChien.multiply(BigDecimal.valueOf(Math.max(0, nbChiens))));
-            typeAbonnement = "journee";
+            typeLabel = "Individuel";
+        }
+
+        // 2. Application de la réduction Abonnement
+        Object userVal = comboUser != null ? comboUser.getValue() : null;
+        if (userVal instanceof User) {
+            User selectedUser = (User) userVal;
+            try {
+                com.gestion.controllers.AbonnementController abonnementController = new com.gestion.controllers.AbonnementController();
+                List<com.gestion.entities.Abonnement> plans = abonnementController.getAll().stream()
+                        .filter(a -> a.getUserId().equals(Long.valueOf(selectedUser.getId())) && a.estActif())
+                        .collect(java.util.stream.Collectors.toList());
+
+                if (!plans.isEmpty()) {
+                    com.gestion.entities.Abonnement activePlan = plans.get(0);
+                    typeLabel = activePlan.getType().getLabel() + " (Actif)";
+
+                    // Récupération du taux de réduction (defaut: 10%)
+                    int discountPercent = 10;
+                    if (activePlan.getAvantages() != null && activePlan.getAvantages().containsKey("discounts")) {
+                        Object disc = activePlan.getAvantages().get("discounts");
+                        if (disc instanceof Number)
+                            discountPercent = ((Number) disc).intValue();
+                    }
+
+                    BigDecimal discountMultiplier = BigDecimal.ONE.subtract(
+                            BigDecimal.valueOf(discountPercent).divide(new BigDecimal("100"), 2, RoundingMode.HALF_UP));
+                    montant = montant.multiply(discountMultiplier);
+                }
+            } catch (Exception e) {
+                System.err.println("Erreur check abonnement: " + e.getMessage());
+            }
         }
 
         montant = montant.setScale(2, RoundingMode.HALF_UP);
 
         if (labelTypeAbonnement != null) {
-            labelTypeAbonnement.setText(typeAbonnement);
+            labelTypeAbonnement.setText(typeLabel);
         }
         if (labelMontant != null) {
             labelMontant.setText(montant.toPlainString());
