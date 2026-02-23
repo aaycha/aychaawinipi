@@ -17,8 +17,8 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-
 <?import javafx.scene.layout.Region?>
+
 <BorderPane prefHeight="750.0" prefWidth="1100.0" styleClass="nature-root" stylesheets="@../styles/nature-mood.css" xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gestion.controllers.Logincontroller">
 
     <!-- Title Bar -->
@@ -44,58 +44,58 @@
             <!-- Main Scrollable Content -->
             <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="modern-scroll">
                 <content>
-                    <VBox alignment="CENTER" spacing="40" style="-fx-padding: 80 0 80 0;">
+                    <VBox alignment="CENTER" spacing="20" style="-fx-padding: 30 0 30 0;">
                         
                         <!-- Hero Section -->
-                        <VBox alignment="CENTER" spacing="15">
-                             <ImageView fitHeight="120.0" fitWidth="120.0" pickOnBounds="true" preserveRatio="true">
+                        <VBox alignment="CENTER" spacing="10">
+                             <ImageView fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
                                 <image>
                                     <Image url="@logo.png" />
                                 </image>
                                 <effect>
-                                    <javafx.scene.effect.DropShadow color="rgba(0,0,0,0.5)" radius="20" />
+                                    <javafx.scene.effect.DropShadow color="rgba(0,0,0,0.5)" radius="15" />
                                 </effect>
                             </ImageView>
-                            <Label styleClass="text-hero" text="LAMMA ADVENTURE" />
-                            <Label styleClass="text-muted" text="Your gateway to the great outdoors 🌲" />
+                            <Label styleClass="text-hero" text="LAMMA ADVENTURE" style="-fx-font-size: 24;"/>
+                            <Label styleClass="text-muted" text="Your gateway to the great outdoors 🌲" style="-fx-font-size: 13;"/>
                         </VBox>
 
                         <!-- Login Card -->
-                        <VBox maxWidth="450" spacing="25" styleClass="glass-panel" style="-fx-padding: 45;">
+                        <VBox maxWidth="400" spacing="15" styleClass="glass-panel" style="-fx-padding: 25;">
                             
-                            <VBox spacing="8">
-                                <Label styleClass="text-hero" text="Welcome back" style="-fx-font-size: 28;"/>
-                                <Label styleClass="text-muted" text="Enter your trail credentials below" />
+                            <VBox spacing="5">
+                                <Label styleClass="text-hero" text="Welcome back" style="-fx-font-size: 22;"/>
+                                <Label styleClass="text-muted" text="Enter your trail credentials below" style="-fx-font-size: 13;"/>
                             </VBox>
 
                             <!-- Social Login -->
-                            <HBox alignment="CENTER" spacing="15">
-                                <Button prefHeight="50" prefWidth="180" styleClass="button-capsule-glass" text="f  FACEBOOK" />
-                                <Button prefHeight="50" prefWidth="180" styleClass="button-capsule-glass" text="G  GOOGLE" />
+                            <HBox alignment="CENTER" spacing="12">
+                                <Button prefHeight="40" prefWidth="160" styleClass="button-capsule-glass" text="f  FACEBOOK" style="-fx-font-size: 12;"/>
+                                <Button prefHeight="40" prefWidth="160" styleClass="button-capsule-glass" text="G  GOOGLE" style="-fx-font-size: 12;"/>
                             </HBox>
 
-                            <HBox alignment="CENTER" spacing="15">
-                                <Separator HBox.hgrow="ALWAYS" opacity="0.2" />
-                                <Label styleClass="text-muted" text="OR" />
-                                <Separator HBox.hgrow="ALWAYS" opacity="0.2" />
+                            <HBox alignment="CENTER" spacing="12">
+                                <Separator HBox.hgrow="ALWAYS" opacity="0.1" />
+                                <Label styleClass="text-muted" text="OR" style="-fx-font-size: 11;"/>
+                                <Separator HBox.hgrow="ALWAYS" opacity="0.1" />
                             </HBox>
 
-                            <VBox spacing="15">
-                                <VBox spacing="8">
-                                    <Label style="-fx-text-fill: white; -fx-font-weight: 700;" text="EMAIL ADDRESS" />
-                                    <TextField fx:id="emailField" promptText="explorer@hiking.com" styleClass="modern-input" />
+                            <VBox spacing="10">
+                                <VBox spacing="5">
+                                    <Label style="-fx-text-fill: white; -fx-font-weight: 700; -fx-font-size: 11;" text="EMAIL ADDRESS" />
+                                    <TextField fx:id="emailField" promptText="explorer@hiking.com" styleClass="modern-input" prefHeight="40"/>
                                 </VBox>
                                 
-                                <VBox spacing="8">
-                                    <Label style="-fx-text-fill: white; -fx-font-weight: 700;" text="PASSWORD" />
-                                    <HBox spacing="10" alignment="CENTER_LEFT">
+                                <VBox spacing="5">
+                                    <Label style="-fx-text-fill: white; -fx-font-weight: 700; -fx-font-size: 11;" text="PASSWORD" />
+                                    <HBox spacing="8" alignment="CENTER_LEFT">
                                         <StackPane HBox.hgrow="ALWAYS">
-                                            <PasswordField fx:id="passwordField" promptText="Your secret path" styleClass="modern-input" maxWidth="Infinity"/>
-                                            <TextField fx:id="passwordVisible" visible="false" promptText="Your secret path" styleClass="modern-input" maxWidth="Infinity"/>
+                                            <PasswordField fx:id="passwordField" promptText="Your secret path" styleClass="modern-input" maxWidth="Infinity" prefHeight="40"/>
+                                            <TextField fx:id="passwordVisible" visible="false" promptText="Your secret path" styleClass="modern-input" maxWidth="Infinity" prefHeight="40"/>
                                         </StackPane>
-                                        <Button fx:id="togglePasswordBtn" onAction="#togglePasswordVisibility" styleClass="button-capsule-glass" prefHeight="50" prefWidth="50" style="-fx-padding: 0;">
+                                        <Button fx:id="togglePasswordBtn" onAction="#togglePasswordVisibility" styleClass="button-capsule-glass" prefHeight="40" prefWidth="40" style="-fx-padding: 0;">
                                             <graphic>
-                                                <Label fx:id="eyeIcon" text="👁" style="-fx-text-fill: white; -fx-font-size: 18;"/>
+                                                <Label fx:id="eyeIcon" text="👁" style="-fx-text-fill: white; -fx-font-size: 16;"/>
                                             </graphic>
                                         </Button>
                                     </HBox>
@@ -103,19 +103,19 @@
                             </VBox>
 
                             <HBox alignment="CENTER_LEFT">
-                                <CheckBox styleClass="check-box" text="Keep me signed in" style="-fx-text-fill: #94A3B8;"/>
+                                <CheckBox styleClass="check-box" text="Keep me signed in" style="-fx-text-fill: #94A3B8; -fx-font-size: 11;"/>
                                 <Region HBox.hgrow="ALWAYS" />
-                                <Hyperlink text="Lost your map?" style="-fx-text-fill: #F97316; -fx-font-weight: 700;"/>
+                                <Hyperlink text="Lost your map?" style="-fx-text-fill: #F97316; -fx-font-weight: 700; -fx-font-size: 11;"/>
                             </HBox>
 
-                            <Button fx:id="loginBtn" maxWidth="Infinity" onAction="#handleLogin" prefHeight="55" styleClass="button-capsule" text="START EXPLORING" />
-
-                            <HBox alignment="CENTER" spacing="5">
-                                <Label styleClass="text-muted" text="New hiker?" />
-                                <Hyperlink fx:id="signupLink" onAction="#goToSignup" style="-fx-text-fill: white; -fx-font-weight: 900;" text="Join our team" />
-                            </HBox>
+                            <VBox spacing="10" alignment="CENTER">
+                                <HBox alignment="CENTER" spacing="5">
+                                    <Label styleClass="text-muted" text="New hiker?" style="-fx-font-size: 12;"/>
+                                    <Hyperlink fx:id="signupLink" onAction="#goToSignup" style="-fx-text-fill: white; -fx-font-weight: 900; -fx-font-size: 12;" text="Join our team" />
+                                </HBox>
+                                <Button fx:id="loginBtn" maxWidth="Infinity" onAction="#handleLogin" prefHeight="45" styleClass="button-capsule" text="START EXPLORING" />
+                            </VBox>
                         </VBox>
-
                     </VBox>
                 </content>
             </ScrollPane>

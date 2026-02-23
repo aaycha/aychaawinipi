@@ -410,23 +410,28 @@ public class MainController {
 
         modules.add(new ModuleGestion(
                 "repas", "Plats",
-                "Gérer les plats et leur composition",
-                "/views/repas/repas-liste.fxml", "\uD83C\uDF55"));
+                "Gérer les plats disponibles",
+                "/views/repas/repas-liste.fxml", "🍕"));
 
         modules.add(new ModuleGestion(
-                "restauration", "Restauration (Legacy)",
-                "Menus, repas, restrictions et présences (Ancienne version)",
-                "/views/restauration/restauration-main.fxml", "\uD83C\uDF74"));
+                "composition", "Composition",
+                "Planifier les menus hebdomadaires",
+                "/views/repas/admin-menu-planner.fxml", "📅"));
 
         modules.add(new ModuleGestion(
-                "recommandations", "Recommandations IA",
-                "Suggestions personnalisées pour vos aventures",
-                "/views/recommandations/recommandations.fxml", "\uD83E\uDD16"));
+                "promo", "Codes Promo",
+                "Gérer les remises et offres",
+                "/views/admin/promo-list.fxml", "🎟️"));
+
+        modules.add(new ModuleGestion(
+                "inventaire", "Ingrédients",
+                "Gérer les stocks et l'inventaire",
+                "/views/admin/inventaire.fxml", "📦"));
 
         modules.add(new ModuleGestion(
                 "analytics", "Analytics",
-                "Statistiques et tableaux de bord",
-                "/views/analytics/analytics.fxml", "\uD83D\uDCC8"));
+                "Statistiques et performances",
+                "/views/analytics/analytics.fxml", "📈"));
 
         modules.add(new ModuleGestion(
                 "map", "Carte des Restaurants",
@@ -449,17 +454,17 @@ public class MainController {
         VBox card = new VBox(12);
         card.getStyleClass().add("voyage-card");
         card.setAlignment(Pos.TOP_LEFT);
-        card.setPadding(new Insets(24));
-        card.setPrefWidth(300);
-        card.setMinHeight(160);
-        card.setMaxWidth(320);
+        card.setPadding(new Insets(10));
+        card.setPrefWidth(150);
+        card.setMinHeight(100);
+        card.setMaxWidth(160);
 
         card.setOnMouseEntered(e -> card.setCursor(Cursor.HAND));
         card.setOnMouseClicked(e -> chargerModule(m));
 
         Label icon = new Label(m.getIcon());
         icon.getStyleClass().add("voyage-card-icon");
-        icon.setStyle("-fx-font-size: 48px; -fx-text-fill: #1890ff;");
+        icon.setStyle("-fx-font-size: 24px;");
 
         Label titre = new Label(m.getTitre());
         titre.getStyleClass().add("voyage-card-titre");
@@ -468,7 +473,7 @@ public class MainController {
         Label desc = new Label(m.getDescription());
         desc.getStyleClass().add("voyage-card-desc");
         desc.setWrapText(true);
-        desc.setMaxWidth(260);
+        desc.setMaxWidth(130);
 
         Button btn = new Button("Accéder →");
         btn.getStyleClass().addAll("voyage-card-btn", "btn-primary");

@@ -29,7 +29,9 @@ public class IngredientServiceImpl implements IngredientService {
                 "    prix_supplement DECIMAL(10,2) DEFAULT 0.00," +
                 "    calories INT DEFAULT 0," +
                 "    icon_url VARCHAR(255)," +
-                "    actif BOOLEAN DEFAULT TRUE" +
+                "    actif BOOLEAN DEFAULT TRUE," +
+                "    stock_quantite INT DEFAULT 100," +
+                "    stock_seuil_alerte INT DEFAULT 10" +
                 ")";
         try {
             Connection c = dbConnection.getConnection();
@@ -91,7 +93,7 @@ public class IngredientServiceImpl implements IngredientService {
 
     @Override
     public Ingredient create(Ingredient ingredient) {
-        String sql = "INSERT INTO ingredients (nom, categorie, prix_supplement, calories, icon_url, actif) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO ingredients (nom, categorie, prix_supplement, calories, icon_url, actif, stock_quantite, stock_seuil_alerte) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try {
             Connection c = dbConnection.getConnection();
             if (c == null)
@@ -103,6 +105,8 @@ public class IngredientServiceImpl implements IngredientService {
                 ps.setInt(4, ingredient.getCalories());
                 ps.setString(5, ingredient.getIconUrl());
                 ps.setBoolean(6, ingredient.isActif());
+                ps.setInt(7, ingredient.getStockQuantite());
+                ps.setInt(8, ingredient.getStockSeuilAlerte());
                 ps.executeUpdate();
                 try (ResultSet keys = ps.getGeneratedKeys()) {
                     if (keys.next())
@@ -143,7 +147,7 @@ public class IngredientServiceImpl implements IngredientService {
             if (c == null)
                 return list;
             try (Statement st = c.createStatement();
-                    ResultSet rs = st.executeQuery("SELECT * FROM ingredients WHERE actif = 1")) {
+                    ResultSet rs = st.executeQuery("SELECT * FROM ingredients")) {
                 while (rs.next())
                     list.add(map(rs));
             }
@@ -176,7 +180,7 @@ public class IngredientServiceImpl implements IngredientService {
 
     @Override
     public Ingredient update(Ingredient ingredient) {
-        String sql = "UPDATE ingredients SET nom=?, categorie=?, prix_supplement=?, calories=?, icon_url=?, actif=? WHERE id=?";
+        String sql = "UPDATE ingredients SET nom=?, categorie=?, prix_supplement=?, calories=?, icon_url=?, actif=?, stock_quantite=?, stock_seuil_alerte=? WHERE id=?";
         try {
             Connection c = dbConnection.getConnection();
             if (c == null)
@@ -188,7 +192,9 @@ public class IngredientServiceImpl implements IngredientService {
                 ps.setInt(4, ingredient.getCalories());
                 ps.setString(5, ingredient.getIconUrl());
                 ps.setBoolean(6, ingredient.isActif());
-                ps.setLong(7, ingredient.getId());
+                ps.setInt(7, ingredient.getStockQuantite());
+                ps.setInt(8, ingredient.getStockSeuilAlerte());
+                ps.setLong(9, ingredient.getId());
                 ps.executeUpdate();
             }
         } catch (SQLException e) {
@@ -222,6 +228,15 @@ public class IngredientServiceImpl implements IngredientService {
         i.setCalories(rs.getInt("calories"));
         i.setIconUrl(rs.getString("icon_url"));
         i.setActif(rs.getBoolean("actif"));
+
+        // Safety check for stock columns to prevent crashes if migration hasn't run
+        try {
+            i.setStockQuantite(rs.getInt("stock_quantite"));
+            i.setStockSeuilAlerte(rs.getInt("stock_seuil_alerte"));
+        } catch (SQLException e) {
+            i.setStockQuantite(100); // Default fallback
+            i.setStockSeuilAlerte(10);
+        }
         return i;
     }
 }

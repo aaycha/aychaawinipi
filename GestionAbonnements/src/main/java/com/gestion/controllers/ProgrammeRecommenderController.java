@@ -289,6 +289,7 @@ private static final ProgrammeRecommenderController programmeRecommenderControll
 package com.gestion.controllers;
 
 import com.gestion.entities.ProgrammeRecommender;
+import com.gestion.tools.MyConnection;
 
 import java.sql.*;
 import java.time.LocalTime;
@@ -301,12 +302,8 @@ import java.util.List;
  */
 public class ProgrammeRecommenderController {
 
-    private static final String URL = "jdbc:mysql://localhost:3306/lamma_db";
-    private static final String USER = "root";
-    private static final String PASSWORD = "";
-
     private Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(URL, USER, PASSWORD);
+        return MyConnection.getConnectionStatic();
     }
 
     /**

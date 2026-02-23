@@ -1,5 +1,7 @@
 package com.gestion.controllers;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gestion.entities.User;
 import com.gestion.services.UserService;
 import com.gestion.tools.PasswordHasher;
@@ -19,6 +21,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -69,6 +76,17 @@ public class DashboardController {
     private Label apiStatusLabel;
     @FXML
     private Circle apiStatusCircle;
+    @FXML
+    private Label weatherTemp;
+    @FXML
+    private Label weatherCondition;
+    @FXML
+    private Label weatherLocation;
+
+    private static final String GEMINI_API_KEY = "AIzaSyDsEq2TiVuJPoFhaTMUFI6NcELBiJePwNc";
+    private static final String WEATHER_API_KEY = "PMxJCjIOARDqkE9u";
+    private final HttpClient httpClient = HttpClient.newHttpClient();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     private final UserService userService = new UserService();
     private User currentUser;
@@ -79,6 +97,7 @@ public class DashboardController {
         loadUsers();
         updateStatistics();
         startApiMonitoring();
+        fetchWeather();
 
         if (searchField != null) {
             searchField.textProperty().addListener((obs, oldVal, newVal) -> {
@@ -115,12 +134,16 @@ public class DashboardController {
 
     private boolean checkApiSignal() {
         try {
-            java.net.URI uri = java.net.URI.create("http://localhost:8081/api/chatbot?q=ping");
-            java.net.URL url = uri.toURL();
-            java.net.HttpURLConnection con = (java.net.HttpURLConnection) url.openConnection();
-            con.setConnectTimeout(2000);
-            con.connect();
-            return (con.getResponseCode() == 200);
+            String url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key="
+                    + GEMINI_API_KEY;
+            String body = "{\"contents\":[{\"parts\":[{\"text\":\"ping\"}]}],\"generationConfig\":{\"maxOutputTokens\":5}}";
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(url))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(body, StandardCharsets.UTF_8))
+                    .build();
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            return (response.statusCode() == 200);
         } catch (Exception e) {
             return false;
         }
@@ -129,15 +152,67 @@ public class DashboardController {
     private void updateApiStatusUI(boolean online) {
         if (apiStatusLabel != null && apiStatusCircle != null) {
             if (online) {
-                apiStatusLabel.setText("API: SIGNAL ESTABLISHED (ONLINE)");
+                apiStatusLabel.setText("GEMINI AI: ONLINE");
                 apiStatusLabel.setStyle("-fx-text-fill: #22c55e; -fx-font-size: 11; -fx-font-weight: 800;");
                 apiStatusCircle.setFill(Color.web("#22c55e"));
             } else {
-                apiStatusLabel.setText("API: SEARCHING... (OFFLINE)");
-                apiStatusLabel.setStyle("-fx-text-fill: #94a3b8; -fx-font-size: 11; -fx-font-weight: 800;");
-                apiStatusCircle.setFill(Color.web("#94a3b8"));
+                apiStatusLabel.setText("GEMINI AI: OFFLINE");
+                apiStatusLabel.setStyle("-fx-text-fill: #f87171; -fx-font-size: 11; -fx-font-weight: 800;");
+                apiStatusCircle.setFill(Color.web("#f87171"));
             }
         }
+    }
+
+    /**
+     * Fetches current weather from weatherapi.com and updates the dashboard widget.
+     */
+    private void fetchWeather() {
+        Thread weatherThread = new Thread(() -> {
+            try {
+                String url = "http://api.weatherapi.com/v1/current.json?key=" + WEATHER_API_KEY + "&q=Tunis&lang=fr";
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(URI.create(url))
+                        .GET()
+                        .build();
+                HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+                if (response.statusCode() == 200) {
+                    JsonNode root = objectMapper.readTree(response.body());
+                    JsonNode current = root.get("current");
+                    JsonNode location = root.get("location");
+
+                    String temp = String.valueOf(current.get("temp_c").asDouble()) + "\u00B0C";
+                    String condition = current.get("condition").get("text").asText();
+                    String city = location.get("name").asText();
+
+                    Platform.runLater(() -> {
+                        if (weatherTemp != null)
+                            weatherTemp.setText(temp);
+                        if (weatherCondition != null)
+                            weatherCondition.setText(condition);
+                        if (weatherLocation != null)
+                            weatherLocation.setText("\uD83D\uDCCD " + city);
+                    });
+                } else {
+                    System.err.println("Weather API returned status: " + response.statusCode());
+                    Platform.runLater(() -> {
+                        if (weatherTemp != null)
+                            weatherTemp.setText("--\u00B0C");
+                        if (weatherCondition != null)
+                            weatherCondition.setText("Unavailable");
+                    });
+                }
+            } catch (Exception e) {
+                System.err.println("Weather fetch failed: " + e.getMessage());
+                Platform.runLater(() -> {
+                    if (weatherTemp != null)
+                        weatherTemp.setText("--\u00B0C");
+                    if (weatherCondition != null)
+                        weatherCondition.setText("Offline");
+                });
+            }
+        });
+        weatherThread.setDaemon(true);
+        weatherThread.start();
     }
 
     private void updateStatistics() {
@@ -367,6 +442,16 @@ public class DashboardController {
     }
 
     @FXML
+    private void loadPromoCodes() {
+        loadModule("/views/admin/promo-list.fxml", "Codes Promo");
+    }
+
+    @FXML
+    private void loadInventory() {
+        loadModule("/views/admin/inventaire.fxml", "Inventaire");
+    }
+
+    @FXML
     private void loadAnalytics() {
         loadModule("/views/analytics/analytics.fxml", "Analytics");
     }
@@ -432,7 +517,7 @@ public class DashboardController {
             try {
                 User u = new User(nameField.getText(), emailField.getText(),
                         PasswordHasher.hashPassword(passField.getText()), roleBox.getValue(), phoneField.getText(),
-                        "NO", null);
+                        "NO", null, 0);
                 userService.ajouter(u);
                 loadUsers();
                 updateStatistics();

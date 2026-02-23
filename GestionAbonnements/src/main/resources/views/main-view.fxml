@@ -41,13 +41,13 @@
 
             <StackPane fx:id="contentPane">
                 <!-- Dashboard Admin - Liste des gestions -->
-                <ScrollPane fx:id="dashboardScroll" fitToWidth="true" hbarPolicy="AS_NEEDED" styleClass="modern-scroll">
-                    <VBox fx:id="dashboardBox" spacing="35" style="-fx-padding: 40 60; -fx-background-color: transparent;">
-                        <VBox spacing="5">
-                            <Label text="Base Camp Dashboard" styleClass="section-title" style="-fx-font-size: 32; -fx-text-fill: white;"/>
-                            <Label text="Select an expedition module to manage logbooks" styleClass="section-subtitle" style="-fx-text-fill: rgba(255,255,255,0.6);"/>
+                <ScrollPane fx:id="dashboardScroll" fitToWidth="false" hbarPolicy="ALWAYS" vbarPolicy="ALWAYS" styleClass="modern-scroll">
+                    <VBox fx:id="dashboardBox" spacing="8" style="-fx-padding: 10 15; -fx-background-color: transparent;">
+                        <VBox spacing="1">
+                            <Label text="Base Camp Dashboard" styleClass="section-title" style="-fx-font-size: 14; -fx-text-fill: white;"/>
+                            <Label text="Select an expedition module" styleClass="section-subtitle" style="-fx-text-fill: rgba(255,255,255,0.6); -fx-font-size: 8;"/>
                         </VBox>
-                        <FlowPane fx:id="cardsContainer" hgap="30" vgap="30" prefWrapLength="1100"/>
+                        <FlowPane fx:id="cardsContainer" hgap="8" vgap="8" prefWrapLength="2000"/>
                     </VBox>
                 </ScrollPane>
                 <!-- Espace Utilisateur - Liste scrollable (Mes Participations, Mes Repas, Restauration, Abonnement) -->

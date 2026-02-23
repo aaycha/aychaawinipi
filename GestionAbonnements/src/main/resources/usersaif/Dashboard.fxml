@@ -14,16 +14,14 @@
             fx:controller="com.gestion.controllers.DashboardController"
             style="-fx-background-color: transparent;">
 
-    <!-- Immersion Layer -->
     <center>
         <StackPane style="-fx-background-color: transparent;">
-            <!-- Nature Camping Background (same as Login) -->
+            <!-- Nature Camping Background -->
             <ImageView fitHeight="1080" fitWidth="1920" preserveRatio="false">
                 <image>
-                    <Image url="@roaming_revolution-camping-6626537_1920.jpg" />
+                    <Image url="@../usersaif/roaming_revolution-camping-6626537_1920.jpg" />
                 </image>
             </ImageView>
-            <!-- Dark overlay for mood -->
             <StackPane style="-fx-background-color: rgba(10, 15, 13, 0.75);" />
 
             <!-- Main Dashboard Layout -->
@@ -39,18 +37,18 @@
                         </HBox>
 
                         <!-- Clean Top Bar -->
-                        <HBox alignment="CENTER_LEFT" prefHeight="50.0">
+                        <HBox alignment="CENTER_LEFT" prefHeight="40.0">
                             <padding>
-                                <Insets left="220" right="20" />
+                                <Insets left="150" right="15" />
                             </padding>
 
                             <!-- Search Bar - Nature Style -->
-                            <HBox alignment="CENTER_LEFT" prefWidth="350" spacing="10" styleClass="search-container">
+                            <HBox alignment="CENTER_LEFT" prefWidth="250" spacing="8" styleClass="search-container">
                                 <padding>
-                                    <Insets left="12" right="12" />
+                                    <Insets left="10" right="10" />
                                 </padding>
-                                <Label style="-fx-text-fill: #94a3b8; -fx-font-size: 14;" text="🔍" />
-                                <TextField fx:id="searchField" promptText="Scout the application..." style="-fx-background-color: transparent; -fx-border-width: 0; -fx-font-size: 13; -fx-text-fill: white;">
+                                <Label style="-fx-text-fill: #94a3b8; -fx-font-size: 11;" text="🔍" />
+                                <TextField fx:id="searchField" promptText="Scout the application..." style="-fx-background-color: transparent; -fx-border-width: 0; -fx-font-size: 10; -fx-text-fill: white;">
                                     <HBox.hgrow>ALWAYS</HBox.hgrow>
                                 </TextField>
                             </HBox>
@@ -64,13 +62,13 @@
                              <Region HBox.hgrow="ALWAYS" />
 
                             <!-- User Profile - Glass -->
-                            <HBox alignment="CENTER" spacing="15" style="-fx-background-color: rgba(255,255,255,0.08); -fx-background-radius: 25; -fx-padding: 8 20 8 8; -fx-cursor: hand; -fx-border-color: rgba(255,255,255,0.1); -fx-border-radius: 25;">
-                                <Circle fill="#F97316" radius="20" />
-                                <VBox spacing="1">
-                                    <Label fx:id="topBarUserName" style="-fx-text-fill: white; -fx-font-size: 14; -fx-font-weight: 700;" text="Admin" />
-                                    <Label style="-fx-text-fill: #94a3b8; -fx-font-size: 11; -fx-font-weight: 600;" text="EXPEDITION LEADER" />
+                            <HBox alignment="CENTER" spacing="10" style="-fx-background-color: rgba(255,255,255,0.08); -fx-background-radius: 20; -fx-padding: 4 15 4 6; -fx-cursor: hand; -fx-border-color: rgba(255,255,255,0.1); -fx-border-radius: 20;">
+                                <Circle fill="#F97316" radius="15" />
+                                <VBox spacing="0">
+                                    <Label fx:id="topBarUserName" style="-fx-text-fill: white; -fx-font-size: 11; -fx-font-weight: 700;" text="Admin" />
+                                    <Label style="-fx-text-fill: #94a3b8; -fx-font-size: 8; -fx-font-weight: 600;" text="LEADER" />
                                 </VBox>
-                                <Label style="-fx-text-fill: #94a3b8; -fx-font-size: 10;" text="▼" />
+                                <Label style="-fx-text-fill: #94a3b8; -fx-font-size: 8;" text="▼" />
                             </HBox>
                         </HBox>
                     </VBox>
@@ -79,16 +77,16 @@
                 <!-- LEFT SIDEBAR - Hiker Duck Brand -->
                 <left>
                     <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="modern-scroll"
-                                style="-fx-background: transparent; -fx-background-color: transparent; -fx-pref-width: 200;">
-                    <VBox prefWidth="200" styleClass="sidebar-container" style="-fx-background-color: rgba(10, 15, 13, 0.6);">
+                                style="-fx-background: transparent; -fx-background-color: transparent; -fx-pref-width: 140;">
+                    <VBox prefWidth="140" styleClass="sidebar-container" style="-fx-background-color: rgba(10, 15, 13, 0.6);">
                         <!-- Logo Section -->
-                        <VBox alignment="CENTER" spacing="10" style="-fx-padding: 25 20;">
-                            <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                        <VBox alignment="CENTER" spacing="5" style="-fx-padding: 15 10;">
+                            <ImageView fitHeight="35.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
                                 <image>
-                                    <Image url="@logo.png" />
+                                    <Image url="@../images/lamma-logo.png" />
                                 </image>
                             </ImageView>
-                            <Label style="-fx-text-fill: white; -fx-font-size: 18; -fx-font-weight: 900; -fx-letter-spacing: 2;" text="LAMMA" />
+                            <Label style="-fx-text-fill: white; -fx-font-size: 14; -fx-font-weight: 900; -fx-letter-spacing: 1.5;" text="LAMMA" />
                         </VBox>
 
                         <!-- Main Navigation -->
@@ -106,6 +104,8 @@
                             <Button onAction="#loadRepas" prefHeight="40" prefWidth="210" styleClass="nav-button" text="🍱  Repas" />
                             <Button onAction="#loadMenus" prefHeight="40" prefWidth="210" styleClass="nav-button" text="📜  Menus" />
                             <Button onAction="#loadPlanner" prefHeight="40" prefWidth="210" styleClass="nav-button" text="🗓️  Planificateur" />
+                            <Button onAction="#loadPromoCodes" prefHeight="40" prefWidth="210" styleClass="nav-button" text="🎟️  Codes Promo" />
+                            <Button onAction="#loadInventory" prefHeight="40" prefWidth="210" styleClass="nav-button" text="📦  Inventaire" />
                             <Button onAction="#loadRecommandations" prefHeight="40" prefWidth="210" styleClass="nav-button" text="🤖  AI Recommends" />
                             <Button onAction="#loadAnalytics" prefHeight="35" prefWidth="180" styleClass="nav-button" text="📈  Analytics" />
                             <Button onAction="#loadMap" prefHeight="35" prefWidth="180" styleClass="nav-button" text="🚩  Restaurant Map" />
@@ -113,17 +113,16 @@
 
                         <Region VBox.vgrow="ALWAYS" />
 
-                        <VBox spacing="8" style="-fx-padding: 10 20 40 20;">
+                        <VBox spacing="5" style="-fx-padding: 5 10 20 10;">
                             <Label styleClass="nav-label" text="SYSTEM" />
-                            <Button onAction="#logout" prefHeight="50" prefWidth="240" styleClass="nav-button" style="-fx-text-fill: #f87171;" text="🚪  Logout" />
+                            <Button onAction="#logout" prefHeight="35" prefWidth="140" styleClass="nav-button" style="-fx-text-fill: #f87171;" text="🚪  Logout" />
                         </VBox>
                     </VBox>
                     </ScrollPane>
                 </left>
 
-                <!-- MAIN CONTENT AREA - Translucent -->
                 <center>
-                    <ScrollPane fitToWidth="false" fitToHeight="false" hbarPolicy="AS_NEEDED" vbarPolicy="AS_NEEDED" styleClass="modern-scroll" style="-fx-background: transparent; -fx-background-color: transparent;">
+                    <ScrollPane fitToWidth="false" fitToHeight="false" hbarPolicy="ALWAYS" vbarPolicy="ALWAYS" styleClass="modern-scroll" style="-fx-background: transparent; -fx-background-color: transparent;">
                         <StackPane fx:id="mainContentArea" style="-fx-background-color: transparent;">
                             <BorderPane fx:id="dashboardOverview" style="-fx-background-color: transparent;">
                                 <center>
@@ -161,6 +160,21 @@
                                                         <Label styleClass="stat-title" text="REGULAR USERS" style="-fx-font-size: 9;"/>
                                                         <Label fx:id="regularUsersLabel" styleClass="stat-value" text="0" style="-fx-font-size: 16;"/>
                                                     </VBox>
+                                                </HBox>
+                                            </VBox>
+                                            <VBox spacing="8" styleClass="stat-card" HBox.hgrow="ALWAYS" style="-fx-padding: 12;">
+                                                <HBox alignment="CENTER_LEFT" spacing="10">
+                                                    <StackPane styleClass="stat-icon-container" style="-fx-background-color: rgba(14, 165, 233, 0.15); -fx-padding: 8;">
+                                                        <Label style="-fx-font-size: 16; -fx-text-fill: #0ea5e9;" text="🌤" />
+                                                    </StackPane>
+                                                    <VBox spacing="0">
+                                                        <Label styleClass="stat-title" text="WEATHER" style="-fx-font-size: 9;"/>
+                                                        <Label fx:id="weatherTemp" styleClass="stat-value" text="--°C" style="-fx-font-size: 16;"/>
+                                                    </VBox>
+                                                </HBox>
+                                                <HBox spacing="6" alignment="CENTER_LEFT">
+                                                    <Label fx:id="weatherCondition" style="-fx-text-fill: #94a3b8; -fx-font-size: 10;" text="Loading..." />
+                                                    <Label fx:id="weatherLocation" style="-fx-text-fill: #64748b; -fx-font-size: 9;" text="" />
                                                 </HBox>
                                             </VBox>
                                         </HBox>

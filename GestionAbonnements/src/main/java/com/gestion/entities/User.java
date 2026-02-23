@@ -13,13 +13,15 @@ public class User {
     private String phone; // ✅ NEW: Phone number
     private String motorized; // "YES" or "NO"
     private String image; // Profile image path
+    private int loyaltyPoints; // ✅ NEW: Loyalty points accumulation
 
     // Default Constructor
     public User() {
     }
 
     // Constructor without ID (for new users)
-    public User(String name, String email, String password, String role, String phone, String motorized, String image) {
+    public User(String name, String email, String password, String role, String phone, String motorized, String image,
+            int loyaltyPoints) {
         this.name = name;
         this.email = email;
         this.password = password;
@@ -27,10 +29,12 @@ public class User {
         this.phone = phone;
         this.motorized = motorized;
         this.image = image;
+        this.loyaltyPoints = loyaltyPoints;
     }
 
     // Constructor with ID (for existing users)
-    public User(int id, String name, String email, String password, String role, String phone, String motorized, String image) {
+    public User(int id, String name, String email, String password, String role, String phone, String motorized,
+            String image, int loyaltyPoints) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -39,6 +43,7 @@ public class User {
         this.phone = phone;
         this.motorized = motorized;
         this.image = image;
+        this.loyaltyPoints = loyaltyPoints;
     }
 
     // --- Getters and Setters ---
@@ -105,6 +110,14 @@ public class User {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public int getLoyaltyPoints() {
+        return loyaltyPoints;
+    }
+
+    public void setLoyaltyPoints(int loyaltyPoints) {
+        this.loyaltyPoints = loyaltyPoints;
     }
 
     // --- toString ---

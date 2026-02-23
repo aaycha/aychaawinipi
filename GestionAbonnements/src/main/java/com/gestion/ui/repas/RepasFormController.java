@@ -1,6 +1,5 @@
 package com.gestion.ui.repas;
 
-import com.gestion.controllers.RepasController;
 import com.gestion.entities.Menu;
 import com.gestion.entities.Repas;
 import com.gestion.entities.Restaurant;
@@ -13,6 +12,12 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.scene.layout.FlowPane;
+import com.gestion.entities.Ingredient;
+import com.gestion.services.IngredientServiceImpl;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import java.math.BigDecimal;
 import java.net.URL;
@@ -94,17 +99,22 @@ public class RepasFormController implements Initializable {
     private Label mockCalories;
     @FXML
     private Label mockProteins;
+    @FXML
+    private FlowPane ingredientChips;
+    @FXML
+    private ComboBox<Ingredient> comboAddIngredient;
 
     private static final int MAX_NOM = 120;
     private static final int MAX_DESCRIPTION = 1000;
     private static final int MAX_IMAGE_URL = 255;
 
-    private RepasController controller = new RepasController();
-    private RepasListeController listeController;
+    private final com.gestion.controllers.RepasController repasController = new com.gestion.controllers.RepasController();
+    private IngredientServiceImpl ingredientService = new IngredientServiceImpl();
     private ObservableList<Restaurant> restaurants;
     private ObservableList<Menu> menus;
     private Repas repas;
     private boolean isEditMode = false;
+    private List<String> selectedIngredients = new ArrayList<>();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -117,6 +127,50 @@ public class RepasFormController implements Initializable {
         updateHintDescription();
         updateHintImageUrl();
         updateHintTempsPrep();
+        loadAvailableIngredients();
+    }
+
+    private void loadAvailableIngredients() {
+        if (comboAddIngredient != null) {
+            comboAddIngredient
+                    .setItems(javafx.collections.FXCollections.observableArrayList(ingredientService.findAll()));
+        }
+    }
+
+    private void renderIngredientChips() {
+        if (ingredientChips == null)
+            return;
+        ingredientChips.getChildren().clear();
+        for (String ing : selectedIngredients) {
+            HBox chip = new HBox(5);
+            chip.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+            chip.setStyle(
+                    "-fx-background-color: rgba(34, 197, 94, 0.15); -fx-padding: 3 8; -fx-background-radius: 15; -fx-border-color: rgba(34, 197, 94, 0.3); -fx-border-radius: 15;");
+
+            Label name = new Label(ing);
+            name.setStyle("-fx-font-size: 10px; -fx-text-fill: white; -fx-font-weight: bold;");
+
+            Label x = new Label("✕");
+            x.setStyle("-fx-font-size: 10px; -fx-text-fill: #ef4444; -fx-cursor: hand; -fx-font-weight: 900;");
+            x.setOnMouseClicked(e -> {
+                selectedIngredients.remove(ing);
+                renderIngredientChips();
+            });
+
+            chip.getChildren().addAll(name, x);
+            ingredientChips.getChildren().add(chip);
+        }
+    }
+
+    @FXML
+    private void onAddIngredient() {
+        Ingredient selected = comboAddIngredient.getValue();
+        if (selected != null && !selectedIngredients.contains(selected.getNom())) {
+            selectedIngredients.add(selected.getNom());
+            renderIngredientChips();
+            comboAddIngredient.setValue(null);
+            statusMessage.setText("Ingrédient " + selected.getNom() + " ajouté");
+        }
     }
 
     private void setupTooltips() {
@@ -308,18 +362,12 @@ public class RepasFormController implements Initializable {
         }
     }
 
-    public void setListeController(RepasListeController controller) {
-        this.listeController = controller;
-    }
-
     /**
      * Utilise le même contrôleur que la liste pour que la sauvegarde soit visible
      * dans la liste (même stockage).
      */
-    public void setController(RepasController controller) {
-        if (controller != null) {
-            this.controller = controller;
-        }
+    public void setController(com.gestion.controllers.RepasController controller) {
+        // Method kept for compatibility, we use repasController field
     }
 
     public void setRestaurants(ObservableList<Restaurant> restaurants) {
@@ -367,6 +415,12 @@ public class RepasFormController implements Initializable {
                     break;
                 }
             }
+        }
+
+        // Set ingredients
+        if (repas.getIngredients() != null && !repas.getIngredients().isEmpty()) {
+            selectedIngredients = new ArrayList<>(Arrays.asList(repas.getIngredients().split(",")));
+            renderIngredientChips();
         }
     }
 
@@ -424,6 +478,7 @@ public class RepasFormController implements Initializable {
         r.setDescription(inputDescription.getText().trim());
         r.setImageUrl(inputImageUrl.getText().trim());
         r.setDisponible(checkDisponible.isSelected());
+        r.setIngredients(String.join(",", selectedIngredients));
 
         ValidationResult validation = r.validate();
         if (validation.hasErrors()) {
@@ -433,11 +488,11 @@ public class RepasFormController implements Initializable {
 
         try {
             if (isEditMode) {
-                controller.updateRepas(r);
+                repasController.updateRepas(r);
                 showAlert(Alert.AlertType.INFORMATION, "Succès", "Plat mis à jour",
                         "Le plat a été modifié avec succès.");
             } else {
-                controller.createRepas(r);
+                repasController.createRepas(r);
                 showAlert(Alert.AlertType.INFORMATION, "Succès", "Plat créé",
                         "Le plat a été créé avec succès.");
             }

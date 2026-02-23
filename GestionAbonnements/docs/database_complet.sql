@@ -7,11 +7,11 @@
 -- Création de la base de données
 -- NOTE: Si vous utilisez une base existante avec un autre nom, modifiez le nom ici
 -- et dans MyConnection.java pour correspondre
-CREATE DATABASE IF NOT EXISTS lamma_db3 
+CREATE DATABASE IF NOT EXISTS lamma_db 
 CHARACTER SET utf8mb4 
 COLLATE utf8mb4_unicode_ci;
 
-USE lamma_db3;
+USE lamma_db;
 
 -- =====================================================
 -- TABLE DES USERS
@@ -213,7 +213,7 @@ CREATE TABLE IF NOT EXISTS paiements (
     notes TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     
-    FOREIGN KEY (user_id) REFERENCES utilisateurs(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (abonnement_id) REFERENCES abonnements(id) ON DELETE SET NULL,
     FOREIGN KEY (participation_id) REFERENCES participations(id) ON DELETE SET NULL,
     INDEX idx_user_id (user_id),
@@ -245,7 +245,7 @@ CREATE TABLE IF NOT EXISTS notifications (
     date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     date_lecture TIMESTAMP,
     
-    FOREIGN KEY (user_id) REFERENCES utilisateurs(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     INDEX idx_user_id (user_id),
     INDEX idx_type (type),
     INDEX idx_est_lue (est_lue),
@@ -266,7 +266,7 @@ CREATE TABLE IF NOT EXISTS activite_logs (
     user_agent TEXT,
     date_action TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     
-    FOREIGN KEY (user_id) REFERENCES utilisateurs(id) ON DELETE SET NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL,
     INDEX idx_user_id (user_id),
     INDEX idx_action (action),
     INDEX idx_entite (entite),
@@ -403,7 +403,7 @@ DELIMITER ;
 -- =====================================================
 
 -- Insertion d'utilisateurs de test
-INSERT IGNORE INTO utilisateurs (id, nom, email, ville, telephone) VALUES
+INSERT IGNORE INTO users (id, name, email, ville, phone) VALUES
 (1, 'Admin Système', 'admin@lamma.com', 'Tunis', '+21612345678'),
 (2, 'Mohamed Ben Ali', 'mohamed.benali@email.com', 'Sfax', '+21698765432'),
 (3, 'Sonia Trabelsi', 'sonia.trabelsi@email.com', 'Sousse', '+21611111111'),

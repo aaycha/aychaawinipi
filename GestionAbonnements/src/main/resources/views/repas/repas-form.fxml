@@ -13,14 +13,15 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.layout.FlowPane?>
 <ScrollPane xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.gestion.ui.repas.RepasFormController"
-            fitToWidth="true" fitToHeight="true" pannable="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
+            fitToWidth="false" fitToHeight="false" pannable="true" hbarPolicy="ALWAYS" vbarPolicy="ALWAYS"
             stylesheets="@../../styles/nature-mood.css, @../../styles/card-view.css"
             style="-fx-background-color: transparent; -fx-background: transparent; -fx-border-color: transparent; -fx-padding: 0;">
 
-    <StackPane style="-fx-background-color: transparent; -fx-padding: 10;">
-        <VBox spacing="10" styleClass="glass-panel" prefWidth="900" maxWidth="950" alignment="TOP_CENTER" style="-fx-padding: 15;">
+    <StackPane style="-fx-background-color: transparent; -fx-padding: 5;">
+        <VBox spacing="8" styleClass="glass-panel" prefWidth="800" maxWidth="850" alignment="TOP_CENTER" style="-fx-padding: 10;">
             
             <!-- Hiker Title Section -->
             <HBox alignment="CENTER_LEFT" spacing="10">
@@ -29,11 +30,11 @@
                 </StackPane>
                 <VBox spacing="0">
                     <Label fx:id="formTitle" text="New Ration Manifest"
-                           style="-fx-font-size: 16px; -fx-font-weight: 800; -fx-text-fill: white;"/>
-                    <Label text="Assistant Scout v2.0 • Optimizing expedition calories" style="-fx-font-size: 9px; -fx-text-fill: #94a3b8;"/>
+                           style="-fx-font-size: 14px; -fx-font-weight: 800; -fx-text-fill: white;"/>
+                    <Label text="Assistant Scout v2.0 • Optimizing expedition calories" style="-fx-font-size: 8px; -fx-text-fill: #94a3b8;"/>
                 </VBox>
                 <Region HBox.hgrow="ALWAYS"/>
-                <ToggleButton fx:id="iaToggleInForm" selected="true" text="SCOUT IA ACTIVE" styleClass="button-capsule-glass" style="-fx-text-fill: #22c55e; -fx-font-size: 10; -fx-font-weight: 900; -fx-padding: 6 15;"/>
+                <ToggleButton fx:id="iaToggleInForm" selected="true" text="SCOUT IA ACTIVE" styleClass="button-capsule-glass" style="-fx-text-fill: #22c55e; -fx-font-size: 9; -fx-font-weight: 900; -fx-padding: 4 12;"/>
             </HBox>
 
             <Separator style="-fx-opacity: 0.1;"/>
@@ -55,13 +56,13 @@
                     </VBox>
 
                     <!-- Identity Section -->
-                    <VBox spacing="12" styleClass="modern-card" style="-fx-padding: 15;">
-                        <Label text="🍲 RATION IDENTIFICATION" style="-fx-font-weight: 900; -fx-text-fill: #3b82f6; -fx-font-size: 11; -fx-letter-spacing: 1px;"/>
+                        <VBox spacing="8" styleClass="modern-card" style="-fx-padding: 10;">
+                        <Label text="🍲 RATION IDENTIFICATION" style="-fx-font-weight: 900; -fx-text-fill: #3b82f6; -fx-font-size: 9; -fx-letter-spacing: 0.5px;"/>
                         
-                        <VBox spacing="10">
-                            <VBox spacing="3">
-                                <TextField fx:id="inputNom" promptText="Enter dish name (e.g., Trail Mix Plus)..." styleClass="modern-input" style="-fx-font-size: 14px; -fx-font-weight: 800;"/>
-                                <Label fx:id="errorNom" visible="false" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 10px;"/>
+                        <VBox spacing="6">
+                            <VBox spacing="2">
+                                <TextField fx:id="inputNom" promptText="Enter dish name..." styleClass="modern-input" style="-fx-font-size: 12px; -fx-font-weight: 800;"/>
+                                <Label fx:id="errorNom" visible="false" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 9px;"/>
                             </VBox>
                             <VBox spacing="3">
                                 <HBox spacing="10">
@@ -74,25 +75,38 @@
                     </VBox>
 
                     <!-- Metrics Section -->
-                    <VBox spacing="12" styleClass="modern-card" style="-fx-padding: 15;">
-                        <Label text="📊 EXPLOITATION METRICS" style="-fx-font-weight: 900; -fx-text-fill: #FACC15; -fx-font-size: 11; -fx-letter-spacing: 1px;"/>
+                    <VBox spacing="8" styleClass="modern-card" style="-fx-padding: 10;">
+                        <Label text="📊 EXPLOITATION METRICS" style="-fx-font-weight: 900; -fx-text-fill: #FACC15; -fx-font-size: 9; -fx-letter-spacing: 0.5px;"/>
                         
-                        <HBox spacing="15">
-                            <VBox spacing="8" HBox.hgrow="ALWAYS">
-                                <Label text="Scout Classification:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 10;"/>
-                                <ComboBox fx:id="comboCategorie" promptText="Ration Category" maxWidth="Infinity" styleClass="modern-input" style="-fx-font-size: 11;"/>
-                                <Label fx:id="errorCategorie" visible="false" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 9px;"/>
-                                <ComboBox fx:id="comboTypePlat" promptText="Serving Type" maxWidth="Infinity" styleClass="modern-input" style="-fx-font-size: 11;"/>
-                                <Label fx:id="errorTypePlat" visible="false" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 9px;"/>
+                        <HBox spacing="12">
+                            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                <Label text="Scout Classification:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 9;"/>
+                                <ComboBox fx:id="comboCategorie" promptText="Ration Category" maxWidth="Infinity" styleClass="modern-input" style="-fx-font-size: 10;"/>
+                                <Label fx:id="errorCategorie" visible="false" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 8px;"/>
+                                <ComboBox fx:id="comboTypePlat" promptText="Serving Type" maxWidth="Infinity" styleClass="modern-input" style="-fx-font-size: 10;"/>
+                                <Label fx:id="errorTypePlat" visible="false" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 8px;"/>
                             </VBox>
-                            <VBox spacing="8" HBox.hgrow="ALWAYS">
-                                <Label text="Mission Logistics:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 10;"/>
-                                <TextField fx:id="inputPrix" promptText="Price (€)" styleClass="modern-input" style="-fx-font-size: 11;"/>
-                                <Label fx:id="errorPrix" visible="false" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 9px;"/>
-                                <TextField fx:id="inputTempsPreparation" promptText="Prep Time (min)" styleClass="modern-input" style="-fx-font-size: 11;"/>
-                                <Label fx:id="errorTempsPreparation" visible="false" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 9px;"/>
+                            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                <Label text="Mission Logistics:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 9;"/>
+                                <TextField fx:id="inputPrix" promptText="Price (€)" styleClass="modern-input" style="-fx-font-size: 10;"/>
+                                <Label fx:id="errorPrix" visible="false" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 8px;"/>
+                                <TextField fx:id="inputTempsPreparation" promptText="Prep Time (min)" styleClass="modern-input" style="-fx-font-size: 10;"/>
+                                <Label fx:id="errorTempsPreparation" visible="false" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 8px;"/>
                             </VBox>
                         </HBox>
+                    </VBox>
+
+                    <!-- Composition Section -->
+                    <VBox spacing="12" styleClass="modern-card" style="-fx-padding: 15;">
+                        <Label text="🥗 RATION COMPOSITION (INGRÉDIENTS)" style="-fx-font-weight: 900; -fx-text-fill: #22c55e; -fx-font-size: 11; -fx-letter-spacing: 1px;"/>
+                        <VBox spacing="8">
+                            <Label text="Selected Ingredients (click to remove):" style="-fx-text-fill: #94a3b8; -fx-font-size: 9;"/>
+                            <FlowPane fx:id="ingredientChips" hgap="5" vgap="5" style="-fx-background-color: rgba(255,255,255,0.02); -fx-padding: 5; -fx-background-radius: 5;"/>
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <ComboBox fx:id="comboAddIngredient" promptText="Add Ingredient..." HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="modern-input" style="-fx-font-size: 11;"/>
+                                <Button text="➕ ADD" onAction="#onAddIngredient" styleClass="button-capsule-glass" style="-fx-text-fill: #22c55e; -fx-font-size: 10;"/>
+                            </HBox>
+                        </VBox>
                     </VBox>
 
                     <!-- AI Intel Section -->
@@ -114,25 +128,25 @@
                     </VBox>
 
                     <!-- Visuals -->
-                    <VBox spacing="12" styleClass="modern-card" style="-fx-padding: 15;">
-                        <Label text="🖼️ VISUAL FEED" style="-fx-font-weight: 900; -fx-text-fill: #F97316; -fx-font-size: 11; -fx-letter-spacing: 1px;"/>
+                    <VBox spacing="8" styleClass="modern-card" style="-fx-padding: 10;">
+                        <Label text="🖼️ VISUAL FEED" style="-fx-font-weight: 900; -fx-text-fill: #F97316; -fx-font-size: 9; -fx-letter-spacing: 0.5px;"/>
                         
-                        <HBox spacing="12" alignment="BOTTOM_LEFT">
-                            <VBox spacing="5" HBox.hgrow="ALWAYS">
-                                <TextField fx:id="inputImageUrl" promptText="Signal URL or local feed path..." styleClass="modern-input" style="-fx-font-size: 11;"/>
-                                <Label fx:id="errorImageUrl" visible="false" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 9px;"/>
+                        <HBox spacing="10" alignment="BOTTOM_LEFT">
+                            <VBox spacing="4" HBox.hgrow="ALWAYS">
+                                <TextField fx:id="inputImageUrl" promptText="Signal URL or local feed path..." styleClass="modern-input" style="-fx-font-size: 10;"/>
+                                <Label fx:id="errorImageUrl" visible="false" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 8px;"/>
                             </VBox>
-                            <Button text="📁 FILES" onAction="#onUploadImage" styleClass="button-capsule-glass" style="-fx-padding: 8 20; -fx-font-size: 11;"/>
-                            <CheckBox fx:id="checkDisponible" text="LIVE" selected="true" style="-fx-text-fill: #22c55e; -fx-font-weight: 900; -fx-font-size: 11;"/>
+                            <Button text="📁 FILES" onAction="#onUploadImage" styleClass="button-capsule-glass" style="-fx-padding: 6 15; -fx-font-size: 10;"/>
+                            <CheckBox fx:id="checkDisponible" text="LIVE" selected="true" style="-fx-text-fill: #22c55e; -fx-font-weight: 900; -fx-font-size: 10;"/>
                         </HBox>
                     </VBox>
 
                     <!-- Actions -->
-                    <HBox spacing="12" alignment="CENTER_RIGHT">
-                        <Button text="💾 CONFIRM RATION" onAction="#onEnregistrer" styleClass="button-capsule" style="-fx-padding: 10 30; -fx-font-size: 12;"/>
-                        <Button text="❌ ABORT" onAction="#onAnnuler" styleClass="button-capsule-glass" style="-fx-padding: 10 25; -fx-font-size: 12;"/>
+                    <HBox spacing="10" alignment="CENTER_RIGHT">
+                        <Button text="💾 CONFIRM RATION" onAction="#onEnregistrer" styleClass="button-capsule" style="-fx-padding: 8 20; -fx-font-size: 11;"/>
+                        <Button text="❌ ABORT" onAction="#onAnnuler" styleClass="button-capsule-glass" style="-fx-padding: 8 18; -fx-font-size: 11;"/>
                         <Region HBox.hgrow="ALWAYS"/>
-                        <Label fx:id="statusMessage" text="Awaiting scout input..." style="-fx-text-fill: #64748b; -fx-font-size: 10px; -fx-font-style: italic;"/>
+                        <Label fx:id="statusMessage" text="Awaiting scout input..." style="-fx-text-fill: #64748b; -fx-font-size: 9px; -fx-font-style: italic;"/>
                     </HBox>
                 </VBox>
 

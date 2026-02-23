@@ -75,7 +75,7 @@ public class Logincontroller {
             if (user != null) {
                 // ✅ LOGIN SUCCESSFUL
 
-                // ✅ NEW: Store user in Session
+                // ✅ Store user in Session
                 Session.getInstance().setCurrentUser(user);
 
                 showSuccess("Welcome back, " + user.getName() + "! 🎉");

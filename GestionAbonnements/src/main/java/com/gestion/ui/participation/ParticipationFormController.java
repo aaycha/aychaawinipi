@@ -1,13 +1,12 @@
 package com.gestion.ui.participation;
 
-import com.gestion.tools.Session;
-
 import com.gestion.controllers.ParticipationController;
 import com.gestion.entities.Evenement;
 import com.gestion.entities.User;
 import com.gestion.entities.Participation;
 import com.gestion.services.EvenementService;
 import com.gestion.services.UserService;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -18,6 +17,12 @@ import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import com.gestion.entities.Abonnement;
+import com.gestion.ui.abonnement.AbonnementFormController;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Modality;
 
 /**
  * Formulaire dédié pour la création / modification d'une participation,
@@ -30,9 +35,15 @@ public class ParticipationFormController {
     private Label formTitle;
 
     @FXML
-    private ComboBox<User> comboUser;
+    private TextField inputUserName;
+    @FXML
+    private TextField inputUserId;
     @FXML
     private ComboBox<Evenement> comboEvenement;
+    @FXML
+    private TextField inputPromoCode;
+    @FXML
+    private ComboBox<Participation.MealOption> comboRepas;
     @FXML
     private ComboBox<Participation.TypeParticipation> inputType;
     @FXML
@@ -76,10 +87,9 @@ public class ParticipationFormController {
     private ParticipationController participationController;
     private Participation participation;
     private boolean editMode = false;
-    private boolean adminMode = true;
     private Runnable onSaved;
+    private BigDecimal currentPromoDiscount = BigDecimal.ZERO;
 
-    private boolean isFilteringUser = false;
     private boolean isFilteringEvent = false;
 
     private final UserService userService = new UserService();
@@ -87,92 +97,13 @@ public class ParticipationFormController {
 
     @FXML
     public void initialize() {
+        if (comboRepas != null) {
+            comboRepas.getItems().addAll(Participation.MealOption.values());
+            comboRepas.setValue(Participation.MealOption.SANS_REPAS);
+        }
+
         // Chargement initial des données
-        List<User> users;
-        try {
-            users = userService.recuperer();
-        } catch (java.sql.SQLException e) {
-            users = new ArrayList<>();
-            e.printStackTrace();
-        }
         List<Evenement> events = eventService.findAll();
-
-        if (comboUser != null) {
-            javafx.collections.ObservableList<User> userList = javafx.collections.FXCollections
-                    .observableArrayList(users);
-            javafx.collections.transformation.FilteredList<User> filteredUsers = new javafx.collections.transformation.FilteredList<>(
-                    userList, p -> true);
-
-            // Ajout d'un StringConverter pour gérer l'édition textuelle sans
-            // ClassCastException
-            comboUser.setConverter(new javafx.util.StringConverter<User>() {
-                @Override
-                public String toString(User u) {
-                    return u == null ? "" : u.getName();
-                }
-
-                @Override
-                public User fromString(String string) {
-                    if (string == null || string.isBlank())
-                        return null;
-                    return comboUser.getItems().stream()
-                            .filter(u -> u.getName().equalsIgnoreCase(string.trim()))
-                            .findFirst().orElse(null);
-                }
-            });
-
-            comboUser.getEditor().textProperty().addListener((obs, oldValue, newValue) -> {
-                if (isFilteringUser)
-                    return;
-                isFilteringUser = true;
-
-                final String filter = newValue == null ? "" : newValue.trim().toLowerCase();
-
-                javafx.application.Platform.runLater(() -> {
-                    try {
-                        filteredUsers.setPredicate(u -> {
-                            if (filter.isEmpty())
-                                return true;
-                            return u.getName().toLowerCase().contains(filter);
-                        });
-
-                        if (!filter.isEmpty() && !comboUser.isShowing()) {
-                            comboUser.show();
-                        }
-                    } finally {
-                        isFilteringUser = false;
-                    }
-                });
-            });
-
-            comboUser.setItems(filteredUsers);
-
-            // Auto-identification pour les nouvelles participations
-            if (!editMode) {
-                Integer currentId = Session.getInstance().getCurrentUserId();
-                if (currentId != null) {
-                    userList.stream()
-                            .filter(u -> Integer.valueOf(u.getId()).equals(currentId))
-                            .findFirst()
-                            .ifPresent(u -> {
-                                comboUser.setValue(u);
-                                // Si on n'est pas admin, on verrouille
-                                if (!adminMode) {
-                                    comboUser.setDisable(true);
-                                }
-                            });
-                }
-            }
-
-            // Listener pour la sélection
-            comboUser.valueProperty().addListener((obs, oldVal, newVal) -> {
-                if (isFilteringUser)
-                    return; // Ignorer les changements pendant le filtrage
-                if (newVal != null) {
-                    clearError(errorUserId);
-                }
-            });
-        }
 
         if (comboEvenement != null) {
             comboEvenement.setEditable(true);
@@ -226,8 +157,6 @@ public class ParticipationFormController {
 
             // Listener pour la sélection
             comboEvenement.valueProperty().addListener((obs, oldVal, newVal) -> {
-                if (isFilteringEvent)
-                    return; // Ignorer les changements pendant le filtrage
                 if (newVal != null) {
                     clearError(errorEvenementId);
                     updatePreviewFromFields();
@@ -266,6 +195,8 @@ public class ParticipationFormController {
             inputType.valueProperty().addListener(recalc);
         if (inputContexte != null)
             inputContexte.valueProperty().addListener(recalc);
+        if (comboRepas != null)
+            comboRepas.valueProperty().addListener(recalc);
     }
 
     private void clearError(Label label) {
@@ -281,7 +212,7 @@ public class ParticipationFormController {
     }
 
     public void setAdminMode(boolean adminMode) {
-        this.adminMode = adminMode;
+        // Method kept for compatibility with other controllers
     }
 
     public void setParticipation(Participation participation) {
@@ -293,11 +224,9 @@ public class ParticipationFormController {
         }
 
         if (participation != null) {
-            if (comboUser != null && participation.getUserId() != null) {
-                comboUser.getItems().stream()
-                        .filter(u -> Integer.valueOf(u.getId()).equals(participation.getUserId().intValue()))
-                        .findFirst()
-                        .ifPresent(u -> comboUser.setValue(u));
+            if (participation.getUserId() != null) {
+                inputUserId.setText(String.valueOf(participation.getUserId()));
+                resolveUserName(participation.getUserId().intValue());
             }
             if (comboEvenement != null && participation.getEvenementId() != null) {
                 comboEvenement.getItems().stream()
@@ -309,6 +238,8 @@ public class ParticipationFormController {
                 inputType.setValue(participation.getType());
             if (inputContexte != null)
                 inputContexte.setValue(participation.getContexteSocial());
+            if (comboRepas != null)
+                comboRepas.setValue(participation.getMealOption());
             if (inputHebergement != null)
                 inputHebergement.setSelected(participation.getHebergementNuits() > 0);
             if (inputHebergementNuits != null) {
@@ -342,14 +273,20 @@ public class ParticipationFormController {
     }
 
     public void setCurrentUserId(Long userId) {
-        if (userId != null && comboUser != null && !adminMode) {
-            comboUser.getItems().stream()
-                    .filter(u -> Long.valueOf(u.getId()).equals(userId))
-                    .findFirst()
-                    .ifPresent(u -> {
-                        comboUser.setValue(u);
-                        comboUser.setDisable(true);
-                    });
+        if (userId != null) {
+            inputUserId.setText(String.valueOf(userId));
+            inputUserId.setDisable(true);
+            resolveUserName(userId.intValue());
+        }
+    }
+
+    private void resolveUserName(int userId) {
+        try {
+            User u = userService.getUserById(userId);
+            if (u != null)
+                inputUserName.setText(u.getName());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -358,28 +295,18 @@ public class ParticipationFormController {
         clearErrors();
         List<String> errors = new ArrayList<>();
 
-        Object userVal = comboUser != null ? comboUser.getValue() : null;
-        User selectedUser = null;
-        if (userVal instanceof User) {
-            selectedUser = (User) userVal;
-        } else if (userVal instanceof String) {
-            String str = ((String) userVal).trim();
-            if (!str.isEmpty()) {
-                // Tentative de résolution intelligente par nom
-                selectedUser = comboUser.getItems().stream()
-                        .filter(u -> u.getName().equalsIgnoreCase(str))
-                        .findFirst()
-                        .orElseGet(() ->
-                        // Deuxième tentative : contient (si unique ou premier match)
-                        comboUser.getItems().stream()
-                                .filter(u -> u.getName().toLowerCase().contains(str.toLowerCase()))
-                                .findFirst().orElse(null));
+        Long userId = resolveUserId();
+        if (userId == null)
+            return;
 
-                // Si trouvé via String, on met à jour la valeur de la combo pour éviter les
-                // ambiguïtés
-                if (selectedUser != null) {
-                    comboUser.setValue(selectedUser);
-                }
+        // --- CHECK PARTICIPATION LIMIT (Max 3) ---
+        if (!editMode) {
+            if (participationController == null)
+                participationController = new ParticipationController();
+            List<Participation> existing = participationController.getByUserId(userId);
+            if (existing.size() >= 3) {
+                showError(errorGlobal, "Limite atteinte : Chaque utilisateur est limité à 3 participations.");
+                return;
             }
         }
 
@@ -396,16 +323,13 @@ public class ParticipationFormController {
             }
         }
 
-        Long userId = selectedUser != null ? Long.valueOf(selectedUser.getId()) : null;
         Long evenementId = selectedEvent != null ? Long.valueOf(selectedEvent.getIdEvent()) : null;
 
         Participation.TypeParticipation type = inputType != null ? inputType.getValue() : null;
         Participation.ContexteSocial contexte = inputContexte != null ? inputContexte.getValue() : null;
+        Participation.MealOption mealOption = comboRepas != null ? comboRepas.getValue()
+                : Participation.MealOption.SANS_REPAS;
 
-        if (userId == null) {
-            errors.add("Sélection de l'utilisateur obligatoire.");
-            showError(errorUserId, "Veuillez sélectionner un utilisateur dans la liste.");
-        }
         if (evenementId == null) {
             errors.add("Sélection de l'événement obligatoire.");
             showError(errorEvenementId, "Veuillez sélectionner un événement dans la liste.");
@@ -469,11 +393,30 @@ public class ParticipationFormController {
             if (inputCommentaire != null) {
                 target.setCommentaire(inputCommentaire.getText());
             }
-            if (inputBesoinsSpeciaux != null) {
-                target.setBesoinsSpeciaux(inputBesoinsSpeciaux.getText());
-            }
+            target.setBesoinsSpeciaux(inputBesoinsSpeciaux.getText());
+            target.setMealOption(mealOption);
+
+            // --- LOYALTY POINTS ---
+            int points = 10; // Base points
+            if (mealOption != Participation.MealOption.SANS_REPAS)
+                points += 5;
+            target.setPointsEarned(points);
 
             // Persistence de l'abonnement utilisé
+            Long activeAbonnementId = null;
+            try {
+                com.gestion.controllers.AbonnementController abCont = new com.gestion.controllers.AbonnementController();
+                List<com.gestion.entities.Abonnement> activePlans = abCont.getAll().stream()
+                        .filter(a -> a.getUserId().equals(userId) && a.estActif())
+                        .collect(java.util.stream.Collectors.toList());
+                if (!activePlans.isEmpty()) {
+                    activeAbonnementId = activePlans.get(0).getId();
+                }
+            } catch (Exception e) {
+            }
+
+            target.setAbonnementId(activeAbonnementId);
+
             if (labelTypeAbonnement != null) {
                 target.setTypeAbonnementChoisi(labelTypeAbonnement.getText());
             }
@@ -501,9 +444,127 @@ public class ParticipationFormController {
             }
             closeWindow();
         } catch (IllegalArgumentException ex) {
-            showError(errorGlobal, ex.getMessage());
+            if (ex.getMessage().contains("Accès refusé")) {
+                showRedirectionDialog(userId, evenementId);
+            } else {
+                showError(errorGlobal, ex.getMessage());
+            }
         } catch (Exception ex) {
             showError(errorGlobal, "Erreur lors de l'enregistrement : " + ex.getMessage());
+        }
+    }
+
+    private void showRedirectionDialog(Long userId, Long eventId) {
+        // Calculate the base amount from the UI labels
+        BigDecimal baseAmount = BigDecimal.ZERO;
+        try {
+            if (labelMontant != null && !labelMontant.getText().isEmpty()) {
+                baseAmount = new BigDecimal(labelMontant.getText());
+            }
+        } catch (Exception e) {
+            baseAmount = new BigDecimal("25.00"); // Fallback
+        }
+
+        BigDecimal passPrice = baseAmount;
+        BigDecimal abonnementPrice = baseAmount.multiply(new BigDecimal("3.00")).setScale(2, RoundingMode.HALF_UP);
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Accès Refusé - Aventurier");
+        alert.setHeaderText("Vous n'avez pas d'accès valide pour cet événement.");
+        alert.setContentText("Choisissez une option pour continuer :\n\n" +
+                "• Pass Unique : " + passPrice + " TND (Prix de la participation)\n" +
+                "• Abonnement Mensuel : " + abonnementPrice + " TND (3x le prix de la participation)");
+
+        ButtonType btnPass = new ButtonType("Prendre un Pass Unique");
+        ButtonType btnAbonnement = new ButtonType("S'abonner (Global)");
+        ButtonType btnCancel = new ButtonType("Annuler", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+        alert.getButtonTypes().setAll(btnPass, btnAbonnement, btnCancel);
+
+        final BigDecimal finalPassPrice = passPrice;
+        final BigDecimal finalAbonnementPrice = abonnementPrice;
+
+        alert.showAndWait().ifPresent(response -> {
+            if (response == btnPass) {
+                openAbonnementForm(new Abonnement(userId, eventId, Abonnement.TypeAbonnement.EVENEMENT_PASS,
+                        java.time.LocalDate.now(), finalPassPrice, false), true);
+            } else if (response == btnAbonnement) {
+                openAbonnementChoix();
+            }
+        });
+    }
+
+    private void openAbonnementChoix() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/utilisateur/abonnement-choix.fxml"));
+            Parent root = loader.load();
+            com.gestion.ui.utilisateur.AbonnementChoixController ctrl = loader.getController();
+
+            // Setup a callback for when an appointment is confirmed in the choice view
+            ctrl.setOnSuccess(() -> {
+                Platform.runLater(() -> {
+                    showInfo("Abonnement activé ! Nous confirmons votre participation...");
+                    onEnregistrer(); // Auto-confirm
+                });
+            });
+
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Choisir un Abonnement");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+            showError(errorGlobal, "Impossible d'ouvrir la liste des abonnements.");
+        }
+    }
+
+    private void openAbonnementForm(Abonnement template, boolean readOnly) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/abonnement/abonnement-form.fxml"));
+            Parent root = loader.load();
+            AbonnementFormController ctrl = loader.getController();
+
+            ctrl.setAbonnement(template);
+            ctrl.setReadOnly(readOnly);
+            ctrl.setOnSave(() -> {
+                Platform.runLater(() -> {
+                    showInfo("Accès obtenu ! Confirmation de votre participation en cours...");
+                    onEnregistrer(); // Auto-confirm
+                });
+            });
+
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle(readOnly ? "Facturation Pass Unique" : "Obtention d'Accès");
+            stage.setScene(new Scene(root));
+            stage.showAndWait();
+        } catch (Exception e) {
+            e.printStackTrace();
+            showError(errorGlobal, "Impossible d'ouvrir le formulaire d'abonnement.");
+        }
+    }
+
+    @FXML
+    void onApplyPromo() {
+        String code = inputPromoCode.getText().trim();
+        if (code.isEmpty())
+            return;
+        try {
+            com.gestion.services.PromoCodeService service = new com.gestion.services.PromoCodeService();
+            com.gestion.entities.PromoCode promo = service.getByCode(code);
+            if (promo != null && promo.canBeUsed()) {
+                currentPromoDiscount = BigDecimal.valueOf(promo.getDiscountPercentage())
+                        .divide(new BigDecimal("100"), 2, RoundingMode.HALF_UP);
+                showInfo("Code promo '" + code + "' appliqué : -" + promo.getDiscountPercentage() + "%");
+                updatePreviewFromFields();
+            } else {
+                showError(errorGlobal, "Code promo invalide ou expiré.");
+                currentPromoDiscount = BigDecimal.ZERO;
+                updatePreviewFromFields();
+            }
+        } catch (Exception e) {
+            showError(errorGlobal, "Erreur lors de l'application du code promo.");
         }
     }
 
@@ -518,6 +579,8 @@ public class ParticipationFormController {
         int nbAdultes = parseInt(inputNbAdultes != null ? inputNbAdultes.getText() : null, 1);
         int nbEnfants = parseInt(inputNbEnfants != null ? inputNbEnfants.getText() : null, 0);
         int nbChiens = parseInt(inputNbChiens != null ? inputNbChiens.getText() : null, 0);
+        Participation.MealOption mealOption = comboRepas != null ? comboRepas.getValue()
+                : Participation.MealOption.SANS_REPAS;
 
         int total = Math.max(1, nbAdultes) + Math.max(0, nbEnfants);
         if (labelTotalParticipants != null) {
@@ -529,6 +592,7 @@ public class ParticipationFormController {
         BigDecimal tarifEnfant = new BigDecimal("15.00");
         BigDecimal tarifChien = new BigDecimal("8.00");
         BigDecimal forfaitFamille = new BigDecimal("60.00");
+        BigDecimal tarifRepas = new BigDecimal("12.00");
 
         BigDecimal montant;
         String typeLabel = "Standard";
@@ -543,35 +607,61 @@ public class ParticipationFormController {
             typeLabel = "Individuel";
         }
 
-        // 2. Application de la réduction Abonnement
-        Object userVal = comboUser != null ? comboUser.getValue() : null;
-        if (userVal instanceof User) {
-            User selectedUser = (User) userVal;
+        // Ajout du coût du repas
+        if (mealOption != Participation.MealOption.SANS_REPAS) {
+            montant = montant.add(tarifRepas.multiply(BigDecimal.valueOf(total)));
+        }
+
+        // 2. Application des réductions
+        Long userId = resolveUserIdSilent();
+        if (userId != null) {
+            // Check for second participation discount (25%)
+            try {
+                if (participationController == null)
+                    participationController = new ParticipationController();
+                List<Participation> list = participationController.getByUserId(userId);
+                // If this is the second participation for the user and not in edit mode
+                if (list.size() == 1 && !editMode) {
+                    montant = montant.multiply(new BigDecimal("0.75"));
+                    typeLabel = "Early Booking (-25%)";
+                }
+            } catch (Exception ignored) {
+            }
+
+            // Check for official subscription discount (e.g. 10%)
             try {
                 com.gestion.controllers.AbonnementController abonnementController = new com.gestion.controllers.AbonnementController();
                 List<com.gestion.entities.Abonnement> plans = abonnementController.getAll().stream()
-                        .filter(a -> a.getUserId().equals(Long.valueOf(selectedUser.getId())) && a.estActif())
+                        .filter(a -> a.getUserId().equals(userId) && a.estActif())
                         .collect(java.util.stream.Collectors.toList());
 
                 if (!plans.isEmpty()) {
                     com.gestion.entities.Abonnement activePlan = plans.get(0);
-                    typeLabel = activePlan.getType().getLabel() + " (Actif)";
+                    if (!typeLabel.contains("%")) { // Prefer Early Booking if both apply or stack? User said
+                                                    // "regardless of type".
+                        typeLabel = activePlan.getType().getLabel() + " (Actif)";
+                        // Récupération du taux de réduction (defaut: 10%)
+                        int discountPercent = 10;
+                        if (activePlan.getAvantages() != null && activePlan.getAvantages().containsKey("discounts")) {
+                            Object disc = activePlan.getAvantages().get("discounts");
+                            if (disc instanceof Number)
+                                discountPercent = ((Number) disc).intValue();
+                        }
 
-                    // Récupération du taux de réduction (defaut: 10%)
-                    int discountPercent = 10;
-                    if (activePlan.getAvantages() != null && activePlan.getAvantages().containsKey("discounts")) {
-                        Object disc = activePlan.getAvantages().get("discounts");
-                        if (disc instanceof Number)
-                            discountPercent = ((Number) disc).intValue();
+                        BigDecimal discountMultiplier = BigDecimal.ONE.subtract(
+                                BigDecimal.valueOf(discountPercent).divide(new BigDecimal("100"), 2,
+                                        RoundingMode.HALF_UP));
+                        montant = montant.multiply(discountMultiplier);
                     }
-
-                    BigDecimal discountMultiplier = BigDecimal.ONE.subtract(
-                            BigDecimal.valueOf(discountPercent).divide(new BigDecimal("100"), 2, RoundingMode.HALF_UP));
-                    montant = montant.multiply(discountMultiplier);
                 }
             } catch (Exception e) {
                 System.err.println("Erreur check abonnement: " + e.getMessage());
             }
+        }
+
+        // 3. Application du code promo
+        if (currentPromoDiscount.compareTo(BigDecimal.ZERO) > 0) {
+            montant = montant.multiply(BigDecimal.ONE.subtract(currentPromoDiscount));
         }
 
         montant = montant.setScale(2, RoundingMode.HALF_UP);
@@ -623,6 +713,49 @@ public class ParticipationFormController {
         } catch (NumberFormatException e) {
             return defaultValue;
         }
+    }
+
+    private Long resolveUserId() {
+        String idText = inputUserId != null ? inputUserId.getText().trim() : "";
+        String nameText = inputUserName != null ? inputUserName.getText().trim() : "";
+
+        try {
+            if (!idText.isEmpty()) {
+                int id = Integer.parseInt(idText);
+                User u = userService.getUserById(id);
+                if (u != null)
+                    return (long) id;
+                showError(errorUserId, "Utilisateur introuvable.");
+                return null;
+            } else if (!nameText.isEmpty()) {
+                User u = userService.getUserByName(nameText);
+                if (u != null) {
+                    inputUserId.setText(String.valueOf(u.getId()));
+                    return (long) u.getId();
+                }
+                showError(errorUserId, "Utilisateur introuvable.");
+                return null;
+            }
+        } catch (Exception e) {
+        }
+        showError(errorUserId, "ID ou Nom requis.");
+        return null;
+    }
+
+    private Long resolveUserIdSilent() {
+        String idText = inputUserId != null ? inputUserId.getText().trim() : "";
+        String nameText = inputUserName != null ? inputUserName.getText().trim() : "";
+        try {
+            if (!idText.isEmpty()) {
+                return (long) Integer.parseInt(idText);
+            } else if (!nameText.isEmpty()) {
+                User u = userService.getUserByName(nameText);
+                if (u != null)
+                    return (long) u.getId();
+            }
+        } catch (Exception e) {
+        }
+        return null;
     }
 
     private void closeWindow() {

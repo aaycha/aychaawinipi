@@ -57,6 +57,7 @@ public class Repas {
     private TypePlat typePlat;
     private Integer tempsPreparation; // en minutes
     private String imageUrl;
+    private String ingredients; // Comma-separated list of ingredients
     private boolean disponible = true;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -129,50 +130,133 @@ public class Repas {
 
     // ================= GETTERS / SETTERS =================
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public Long getRestaurantId() { return restaurantId; }
-    public void setRestaurantId(Long restaurantId) { this.restaurantId = restaurantId; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getRestaurantNom() { return restaurantNom; }
-    public void setRestaurantNom(String restaurantNom) { this.restaurantNom = restaurantNom; }
+    public Long getRestaurantId() {
+        return restaurantId;
+    }
 
-    public Long getMenuId() { return menuId; }
-    public void setMenuId(Long menuId) { this.menuId = menuId; }
+    public void setRestaurantId(Long restaurantId) {
+        this.restaurantId = restaurantId;
+    }
 
-    public String getMenuNom() { return menuNom; }
-    public void setMenuNom(String menuNom) { this.menuNom = menuNom; }
+    public String getRestaurantNom() {
+        return restaurantNom;
+    }
 
-    public String getNom() { return nom; }
-    public void setNom(String nom) { this.nom = nom; }
+    public void setRestaurantNom(String restaurantNom) {
+        this.restaurantNom = restaurantNom;
+    }
 
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+    public Long getMenuId() {
+        return menuId;
+    }
 
-    public BigDecimal getPrix() { return prix; }
-    public void setPrix(BigDecimal prix) { this.prix = prix; }
+    public void setMenuId(Long menuId) {
+        this.menuId = menuId;
+    }
 
-    public Categorie getCategorie() { return categorie; }
-    public void setCategorie(Categorie categorie) { this.categorie = categorie; }
+    public String getMenuNom() {
+        return menuNom;
+    }
 
-    public TypePlat getTypePlat() { return typePlat; }
-    public void setTypePlat(TypePlat typePlat) { this.typePlat = typePlat; }
+    public void setMenuNom(String menuNom) {
+        this.menuNom = menuNom;
+    }
 
-    public Integer getTempsPreparation() { return tempsPreparation; }
-    public void setTempsPreparation(Integer tempsPreparation) { this.tempsPreparation = tempsPreparation; }
+    public String getNom() {
+        return nom;
+    }
 
-    public String getImageUrl() { return imageUrl; }
-    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
 
-    public boolean isDisponible() { return disponible; }
-    public void setDisponible(boolean disponible) { this.disponible = disponible; }
+    public String getDescription() {
+        return description;
+    }
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-    public LocalDateTime getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+    public BigDecimal getPrix() {
+        return prix;
+    }
+
+    public void setPrix(BigDecimal prix) {
+        this.prix = prix;
+    }
+
+    public Categorie getCategorie() {
+        return categorie;
+    }
+
+    public void setCategorie(Categorie categorie) {
+        this.categorie = categorie;
+    }
+
+    public TypePlat getTypePlat() {
+        return typePlat;
+    }
+
+    public void setTypePlat(TypePlat typePlat) {
+        this.typePlat = typePlat;
+    }
+
+    public Integer getTempsPreparation() {
+        return tempsPreparation;
+    }
+
+    public void setTempsPreparation(Integer tempsPreparation) {
+        this.tempsPreparation = tempsPreparation;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public String getIngredients() {
+        return ingredients;
+    }
+
+    public void setIngredients(String ingredients) {
+        this.ingredients = ingredients;
+    }
+
+    public boolean isDisponible() {
+        return disponible;
+    }
+
+    public void setDisponible(boolean disponible) {
+        this.disponible = disponible;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 
     @Override
     public String toString() {

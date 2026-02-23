@@ -19,7 +19,7 @@ public class UserService implements IService<User> {
     @Override
     public void ajouter(User user) throws SQLException {
 
-        String sql = "INSERT INTO users (name, email, password, role, phone, motorized, image) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO users (name, email, password, role, phone, motorized, image, loyalty_point) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         Connection connection = MyConnection.getConnectionStatic();
         if (connection == null)
             throw new SQLException("Connexion à la base de données indisponible.");
@@ -31,6 +31,7 @@ public class UserService implements IService<User> {
         preparedStatement.setString(5, user.getPhone()); // ✅ NEW
         preparedStatement.setString(6, user.getMotorized());
         preparedStatement.setString(7, user.getImage());
+        preparedStatement.setInt(8, user.getLoyaltyPoints());
 
         preparedStatement.executeUpdate();
         System.out.println("✅ User added successfully!");
@@ -40,7 +41,7 @@ public class UserService implements IService<User> {
     @Override
     public void modifier(User user) throws SQLException {
 
-        String sql = "UPDATE users SET name=?, email=?, password=?, role=?, phone=?, motorized=?, image=? WHERE id=?";
+        String sql = "UPDATE users SET name=?, email=?, password=?, role=?, phone=?, motorized=?, image=?, loyalty_point=? WHERE id=?";
         Connection connection = MyConnection.getConnectionStatic();
         if (connection == null)
             throw new SQLException("Connexion à la base de données indisponible.");
@@ -52,7 +53,8 @@ public class UserService implements IService<User> {
         preparedStatement.setString(5, user.getPhone()); // ✅ NEW
         preparedStatement.setString(6, user.getMotorized());
         preparedStatement.setString(7, user.getImage());
-        preparedStatement.setInt(8, user.getId());
+        preparedStatement.setInt(8, user.getLoyaltyPoints());
+        preparedStatement.setInt(9, user.getId());
 
         preparedStatement.executeUpdate();
         System.out.println("✅ User updated successfully!");
@@ -97,6 +99,7 @@ public class UserService implements IService<User> {
             user.setPhone(rs.getString("phone")); // ✅ NEW
             user.setMotorized(rs.getString("motorized"));
             user.setImage(rs.getString("image"));
+            user.setLoyaltyPoints(rs.getInt("loyalty_point"));
 
             users.add(user);
         }
@@ -132,6 +135,7 @@ public class UserService implements IService<User> {
                 user.setPhone(rs.getString("phone")); // ✅ NEW
                 user.setMotorized(rs.getString("motorized"));
                 user.setImage(rs.getString("image"));
+                user.setLoyaltyPoints(rs.getInt("loyalty_point"));
 
                 System.out.println("✅ Login successful for: " + user.getName());
                 return user;
@@ -143,6 +147,59 @@ public class UserService implements IService<User> {
         }
 
         return null;
+    }
+
+    // ------------------ GET USER BY EMAIL ------------------
+    public User getUserByEmail(String email) throws SQLException {
+        String sql = "SELECT * FROM users WHERE email = ?";
+        Connection connection = MyConnection.getConnectionStatic();
+        PreparedStatement ps = connection.prepareStatement(sql);
+        ps.setString(1, email);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            return mapResultSetToUser(rs);
+        }
+        return null;
+    }
+
+    // ------------------ GET USER BY ID ------------------
+    public User getUserById(int id) throws SQLException {
+        String sql = "SELECT * FROM users WHERE id = ?";
+        Connection connection = MyConnection.getConnectionStatic();
+        PreparedStatement ps = connection.prepareStatement(sql);
+        ps.setInt(1, id);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            return mapResultSetToUser(rs);
+        }
+        return null;
+    }
+
+    // ------------------ GET USER BY NAME ------------------
+    public User getUserByName(String name) throws SQLException {
+        String sql = "SELECT * FROM users WHERE name = ? LIMIT 1";
+        Connection connection = MyConnection.getConnectionStatic();
+        PreparedStatement ps = connection.prepareStatement(sql);
+        ps.setString(1, name);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            return mapResultSetToUser(rs);
+        }
+        return null;
+    }
+
+    private User mapResultSetToUser(ResultSet rs) throws SQLException {
+        User user = new User();
+        user.setId(rs.getInt("id"));
+        user.setName(rs.getString("name"));
+        user.setEmail(rs.getString("email"));
+        user.setPassword(rs.getString("password"));
+        user.setRole(rs.getString("role"));
+        user.setPhone(rs.getString("phone"));
+        user.setMotorized(rs.getString("motorized"));
+        user.setImage(rs.getString("image"));
+        user.setLoyaltyPoints(rs.getInt("loyalty_point"));
+        return user;
     }
 
     // ------------------ CHECK IF EMAIL EXISTS ------------------

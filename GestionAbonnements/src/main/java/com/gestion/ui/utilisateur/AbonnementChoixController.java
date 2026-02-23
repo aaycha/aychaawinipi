@@ -2,6 +2,7 @@ package com.gestion.ui.utilisateur;
 
 import com.gestion.controllers.AbonnementController;
 import com.gestion.entities.Abonnement;
+import com.gestion.ui.abonnement.FactureController;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -11,7 +12,13 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.geometry.Pos;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,6 +40,12 @@ public class AbonnementChoixController {
     private Long currentUserId = com.gestion.tools.Session.getInstance().getCurrentUserId() != null
             ? Long.valueOf(com.gestion.tools.Session.getInstance().getCurrentUserId())
             : 1L;
+
+    private Runnable onSuccess;
+
+    public void setOnSuccess(Runnable onSuccess) {
+        this.onSuccess = onSuccess;
+    }
 
     @FXML
     public void initialize() {
@@ -74,38 +87,45 @@ public class AbonnementChoixController {
     }
 
     private void subscribe(Abonnement.TypeAbonnement type, double prix) {
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-        confirm.setTitle("Confirmer l'abonnement");
-        confirm.setHeaderText("Souscrire au forfait " + type.getLabel() + " ?");
-        confirm.setContentText("Montant à régler : " + String.format("%.2f €", prix));
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/abonnement/abonnement-form.fxml"));
+            Parent root = loader.load();
+            com.gestion.ui.abonnement.AbonnementFormController ctrl = loader.getController();
 
-        confirm.showAndWait().ifPresent(response -> {
-            if (response == ButtonType.OK) {
-                try {
-                    Abonnement a = new Abonnement(currentUserId, type, java.time.LocalDate.now(),
-                            java.math.BigDecimal.valueOf(prix), true);
-                    controller.create(a);
+            Abonnement template = new Abonnement(currentUserId, null, type, java.time.LocalDate.now(),
+                    java.math.BigDecimal.valueOf(prix), true);
 
-                    Alert success = new Alert(Alert.AlertType.INFORMATION);
-                    success.setTitle("Succès");
-                    success.setHeaderText("Abonnement activé !");
-                    success.setContentText("Votre abonnement " + type.getLabel() + " est maintenant actif.");
-                    success.show();
-
+            ctrl.setAbonnement(template);
+            ctrl.setReadOnly(true); // Mandatory validation for subscription through this list
+            ctrl.setOnSave(() -> {
+                Platform.runLater(() -> {
                     onActualiser();
-                    // Revenir à l'onglet "Mes Abonnements"
                     if (mainTabPane != null) {
                         mainTabPane.getSelectionModel().select(0);
                     }
-                } catch (Exception e) {
-                    Alert error = new Alert(Alert.AlertType.ERROR);
-                    error.setTitle("Erreur");
-                    error.setHeaderText("Échec de la souscription");
-                    error.setContentText(e.getMessage());
-                    error.show();
-                }
-            }
-        });
+                    if (onSuccess != null) {
+                        onSuccess.run();
+                    }
+                    // Close the choice window if it's still open
+                    if (statusLabel != null && statusLabel.getScene() != null) {
+                        ((Stage) statusLabel.getScene().getWindow()).close();
+                    }
+                });
+            });
+
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Confirmation de votre Abonnement");
+            stage.setScene(new Scene(root));
+            stage.showAndWait();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Alert error = new Alert(Alert.AlertType.ERROR);
+            error.setTitle("Erreur");
+            error.setHeaderText("Échec de l'ouverture du formulaire");
+            error.setContentText(e.getMessage());
+            error.show();
+        }
     }
 
     private javafx.scene.Node createAbonnementCard(Abonnement item) {
@@ -198,5 +218,24 @@ public class AbonnementChoixController {
                 }
             }
         });
+    }
+
+    private void showFacture(Abonnement a) {
+        if (a == null)
+            return;
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/abonnement/facture.fxml"));
+            Parent root = loader.load();
+            FactureController ctrl = loader.getController();
+            ctrl.setData(a);
+
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Facture LAMMA");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

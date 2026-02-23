@@ -557,7 +557,6 @@ public class RepasListeController implements Initializable {
 
             RepasFormController formController = loader.getController();
             formController.setRepas(repas);
-            formController.setListeController(this);
             formController.setController(controller);
             formController.setRestaurants(restaurants);
             formController.setMenus(menus);
@@ -622,8 +621,10 @@ public class RepasListeController implements Initializable {
 
     @FXML
     private void onGoStock() {
-        statusLabel.setText("Navigation : Stock & Inventaire");
-        showAlert(Alert.AlertType.INFORMATION, "Stock", "Gestion des Stocks",
-                "Le suivi des stocks en temps réel avec alertes de seuil arrive bientôt.");
+        if (com.gestion.controllers.MainController.getInstance() != null) {
+            com.gestion.controllers.MainController.getInstance()
+                    .loadInternalView("/views/admin/inventaire.fxml", "Gestion des Stocks");
+            statusLabel.setText("Inventaire des ingrédients chargé");
+        }
     }
 }

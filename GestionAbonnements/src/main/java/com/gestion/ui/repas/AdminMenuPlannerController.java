@@ -153,9 +153,9 @@ public class AdminMenuPlannerController implements Initializable {
                     (col >= 5 ? "#FEE2E2" : "#E0E7FF") + "; -fx-background-radius: 12;");
 
             Label l1 = new Label(dayFmt.format(dayDate).toUpperCase());
-            l1.setStyle("-fx-font-weight: 900; -fx-font-size: 11px;");
+            l1.setStyle("-fx-font-weight: 900; -fx-font-size: 9px;");
             Label l2 = new Label(dateFmt.format(dayDate));
-            l2.setStyle("-fx-font-size: 10px; -fx-opacity: 0.7;");
+            l2.setStyle("-fx-font-size: 8px; -fx-opacity: 0.7;");
 
             header.getChildren().addAll(l1, l2);
             plannerGrid.add(header, col, 0);
@@ -181,12 +181,12 @@ public class AdminMenuPlannerController implements Initializable {
     private VBox createSlot(LocalDate date, String type) {
         VBox slot = new VBox(8);
         slot.getStyleClass().add("glass-panel-light");
-        slot.setStyle("-fx-min-height: 120; -fx-min-width: 140; -fx-padding: 10; " +
-                "-fx-background-color: rgba(255,255,255,0.4); -fx-background-radius: 15; " +
-                "-fx-border-color: rgba(0,0,0,0.05); -fx-border-radius: 15;");
+        slot.setStyle("-fx-min-height: 75; -fx-min-width: 95; -fx-padding: 5; " +
+                "-fx-background-color: rgba(255,255,255,0.4); -fx-background-radius: 10; " +
+                "-fx-border-color: rgba(0,0,0,0.05); -fx-border-radius: 10;");
 
         Label typeLabel = new Label(type.replace("_", " "));
-        typeLabel.setStyle("-fx-font-size: 9px; -fx-text-fill: #94A3B8; -fx-font-weight: 800;");
+        typeLabel.setStyle("-fx-font-size: 8px; -fx-text-fill: #94A3B8; -fx-font-weight: 800;");
         slot.getChildren().add(typeLabel);
 
         // DROP TARGET: Slot
@@ -244,11 +244,11 @@ public class AdminMenuPlannerController implements Initializable {
         HBox chip = new HBox(5);
         chip.setAlignment(Pos.CENTER_LEFT);
         chip.getStyleClass().add("dish-chip");
-        chip.setStyle("-fx-background-color: white; -fx-padding: 5 8; -fx-background-radius: 10; " +
-                "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 2);");
+        chip.setStyle("-fx-background-color: white; -fx-padding: 2 5; -fx-background-radius: 6; " +
+                "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 3, 0, 0, 1);");
 
         Label name = new Label(dish.getNom());
-        name.setStyle("-fx-font-size: 11px; -fx-font-weight: bold;");
+        name.setStyle("-fx-font-size: 9px; -fx-font-weight: bold;");
 
         Button del = new Button("×");
         del.setStyle(

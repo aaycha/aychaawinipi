@@ -16,6 +16,8 @@ public class Ingredient {
     private BigDecimal prixSupplement;
     private Integer calories;
     private String iconUrl;
+    private int stockQuantite;
+    private int stockSeuilAlerte;
     private boolean actif = true;
 
     public Ingredient() {
@@ -83,6 +85,30 @@ public class Ingredient {
 
     public void setActif(boolean actif) {
         this.actif = actif;
+    }
+
+    public int getStockQuantite() {
+        return stockQuantite;
+    }
+
+    public void setStockQuantite(int stockQuantite) {
+        this.stockQuantite = stockQuantite;
+    }
+
+    public int getStockSeuilAlerte() {
+        return stockSeuilAlerte;
+    }
+
+    public void setStockSeuilAlerte(int stockSeuilAlerte) {
+        this.stockSeuilAlerte = stockSeuilAlerte;
+    }
+
+    public boolean estEnRupture() {
+        return stockQuantite <= 0;
+    }
+
+    public boolean estSousSeuil() {
+        return stockQuantite <= stockSeuilAlerte;
     }
 
     @Override

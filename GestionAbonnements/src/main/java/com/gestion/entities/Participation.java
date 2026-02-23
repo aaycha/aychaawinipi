@@ -12,45 +12,10 @@ import java.time.LocalDateTime;
 
 /**
  * Entité représentant une participation à un événement
- * Gère les inscriptions individuelles ou groupées avec hébergements et
- * équipements
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Participation {
-    private Long id;
-    private Long userId;
-    private Long evenementId;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    private LocalDateTime dateInscription;
-    private TypeParticipation type;
-    private StatutParticipation statut;
-    private int hebergementNuits;
-    private ContexteSocial contexteSocial;
-    private String badgeAssocie;
 
-    // ─── Nouvelle version : composition du groupe et tarification ─────────────
-    // Nombre d'adultes/enfants/chiens pour cette participation
-    private int nbAdultes; // ≥ 1
-    private int nbEnfants; // ≥ 0
-    private int nbChiens; // ≥ 0
-
-    // Total calculé (adultes + enfants)
-    private int totalParticipants;
-
-    // Abonnement / tarif choisi et montant final
-    private String typeAbonnementChoisi; // gratuit | adherent | pass_famille | journee | reduit_enfant
-    private BigDecimal montantCalcule;
-    private String devise = "EUR";
-
-    // Infos complémentaires pour l'admin / paiement
-    private String commentaire;
-    private String besoinsSpeciaux;
-
-    /**
-     * Types de participation possibles
-     */
     public enum TypeParticipation {
         SIMPLE("Simple"),
         HEBERGEMENT("Avec hébergement"),
@@ -67,9 +32,6 @@ public class Participation {
         }
     }
 
-    /**
-     * Statuts possibles pour une participation
-     */
     public enum StatutParticipation {
         EN_ATTENTE("En attente"),
         CONFIRME("Confirmé"),
@@ -87,9 +49,6 @@ public class Participation {
         }
     }
 
-    /**
-     * Contextes sociaux pour les recommandations personnalisées
-     */
     public enum ContexteSocial {
         COUPLE("Couple"),
         AMIS("Amis"),
@@ -108,12 +67,52 @@ public class Participation {
         }
     }
 
-    // Constructeurs
+    public enum MealOption {
+        SANS_REPAS("Sans repas"),
+        AVEC_REPAS("Avec repas"),
+        AVEC_MENU("Avec menu complet"),
+        COMPOSITION_SUR_PLACE("Composition sur place");
+
+        private final String label;
+
+        MealOption(String label) {
+            this.label = label;
+        }
+
+        public String getLabel() {
+            return label;
+        }
+    }
+
+    private Long id;
+    private Long userId;
+    private Long evenementId;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    private LocalDateTime dateInscription;
+    private TypeParticipation type;
+    private StatutParticipation statut;
+    private int hebergementNuits;
+    private ContexteSocial contexteSocial;
+    private String badgeAssocie;
+    private int nbAdultes;
+    private int nbEnfants;
+    private int nbChiens;
+    private int totalParticipants;
+    private String typeAbonnementChoisi;
+    private BigDecimal montantCalcule;
+    private String devise = "EUR";
+    private String commentaire;
+    private String besoinsSpeciaux;
+    private MealOption mealOption;
+    private int pointsEarned;
+    private Long abonnementId;
+
     public Participation() {
     }
 
-    public Participation(Long userId, Long evenementId, TypeParticipation type,
-            ContexteSocial contexteSocial) {
+    public Participation(Long userId, Long evenementId, TypeParticipation type, ContexteSocial contexteSocial) {
         this.userId = userId;
         this.evenementId = evenementId;
         this.type = type;
@@ -123,7 +122,7 @@ public class Participation {
         this.hebergementNuits = type == TypeParticipation.HEBERGEMENT ? 1 : 0;
     }
 
-    // Getters et Setters
+    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -195,8 +194,6 @@ public class Participation {
     public void setBadgeAssocie(String badgeAssocie) {
         this.badgeAssocie = badgeAssocie;
     }
-
-    // ─── Getters / setters nouveaux champs ────────────────────────────────────
 
     public int getNbAdultes() {
         return nbAdultes;
@@ -270,23 +267,32 @@ public class Participation {
         this.besoinsSpeciaux = besoinsSpeciaux;
     }
 
-    // Méthodes utilitaires
-    public boolean estConfirmee() {
-        return statut == StatutParticipation.CONFIRME;
+    public MealOption getMealOption() {
+        return mealOption;
     }
 
-    public boolean estEnAttente() {
-        return statut == StatutParticipation.EN_ATTENTE ||
-                statut == StatutParticipation.EN_LISTE_ATTENTE;
+    public void setMealOption(MealOption mealOption) {
+        this.mealOption = mealOption;
     }
 
-    public boolean requiertHebergement() {
-        return type == TypeParticipation.HEBERGEMENT || type == TypeParticipation.GROUPE;
+    public int getPointsEarned() {
+        return pointsEarned;
+    }
+
+    public void setPointsEarned(int pointsEarned) {
+        this.pointsEarned = pointsEarned;
+    }
+
+    public Long getAbonnementId() {
+        return abonnementId;
+    }
+
+    public void setAbonnementId(Long abonnementId) {
+        this.abonnementId = abonnementId;
     }
 
     public void confirmer() {
         this.statut = StatutParticipation.CONFIRME;
-        // Attribution automatique d'un badge selon le contexte
         this.badgeAssocie = attribuerBadge();
     }
 
@@ -295,6 +301,8 @@ public class Participation {
     }
 
     private String attribuerBadge() {
+        if (contexteSocial == null)
+            return "Explorateur_Standard";
         switch (contexteSocial) {
             case COUPLE:
                 return "Romantique_Aventure";
@@ -309,11 +317,5 @@ public class Participation {
             default:
                 return "Explorateur_Standard";
         }
-    }
-
-    @Override
-    public String toString() {
-        return String.format("Participation{id=%d, userId=%d, evenementId=%d, type=%s, statut=%s, contexte=%s}",
-                id, userId, evenementId, type, statut, contexteSocial);
     }
 }

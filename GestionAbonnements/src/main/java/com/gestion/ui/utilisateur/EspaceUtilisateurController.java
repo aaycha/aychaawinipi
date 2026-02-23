@@ -89,7 +89,10 @@ public class EspaceUtilisateurController {
                     "/views/chatbot/chatbot-modal.fxml", "🤖"),
             new UserSection("map", "Carte Interactive",
                     "Explorer les refuges et restaurants sur la carte",
-                    "/views/map/map-view.fxml", "🗺️"));
+                    "/views/map/map-view.fxml", "🗺️"),
+            new UserSection("composition", "Mon Menu Hebdomadaire",
+                    "Consulter le planning des repas de la semaine",
+                    "/views/repas/admin-menu-planner.fxml", "📅"));
 
     @FXML
     public void initialize() {

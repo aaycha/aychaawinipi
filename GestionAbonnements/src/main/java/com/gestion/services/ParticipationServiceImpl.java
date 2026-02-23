@@ -25,6 +25,8 @@ public class ParticipationServiceImpl implements ParticipationService {
     private static final Logger logger = LoggerFactory.getLogger(ParticipationServiceImpl.class);
     private final MyConnection dbConnection;
     private final AbonnementService abonnementService;
+    private final NotificationService notificationService = new NotificationService();
+    private final UserService userService = new UserService();
 
     public ParticipationServiceImpl() {
         this.dbConnection = MyConnection.getInstance();
@@ -70,11 +72,42 @@ public class ParticipationServiceImpl implements ParticipationService {
         if (p.getContexteSocial() == null)
             errors.add("Contexte social obligatoire");
 
-        if (!isUpdate && isAlreadyParticipating(p.getUserId(), p.getEvenementId())) {
-            errors.add("L'utilisateur est déjà inscrit à cet événement.");
+        if (!isUpdate) {
+            if (isAlreadyParticipating(p.getUserId(), p.getEvenementId())) {
+                errors.add("L'utilisateur est déjà inscrit à cet événement.");
+            }
+
+            // Règle métier : l'utilisateur doit acheter un abonnement/pass avant la
+            // participation
+            if (!hasValidAccess(p.getUserId(), p.getEvenementId())) {
+                errors.add(
+                        "Accès refusé. L'utilisateur doit posséder un abonnement actif ou un Pass pour cet événement.");
+            }
         }
 
         return errors.isEmpty() ? ValidationResult.valid() : ValidationResult.invalid(errors.toArray(new String[0]));
+    }
+
+    private boolean hasValidAccess(Long userId, Long eventId) {
+        try {
+            List<Abonnement> abs = abonnementService.findByUserId(userId);
+            return abs.stream().anyMatch(a -> {
+                if (!a.estActif())
+                    return false;
+
+                // Si c'est un abonnement global (MENSUEL, ANNUEL, PREMIUM), il donne accès à
+                // tout
+                if (a.getType() != Abonnement.TypeAbonnement.EVENEMENT_PASS) {
+                    return true;
+                }
+
+                // Si c'est un pass, il doit correspondre à l'événement spécifique
+                return a.getEvenementId() != null && a.getEvenementId().equals(eventId);
+            });
+        } catch (Exception e) {
+            logger.error("Erreur lors de la vérification de l'accès", e);
+            return false;
+        }
     }
 
     private void enrichirTarification(Participation p) {
@@ -85,9 +118,14 @@ public class ParticipationServiceImpl implements ParticipationService {
         p.setTotalParticipants(p.getNbAdultes() + p.getNbEnfants());
 
         boolean estAdherent = false;
+        Long activeAbonnementId = null;
         try {
             List<Abonnement> abs = abonnementService.findByUserId(p.getUserId());
-            estAdherent = abs.stream().anyMatch(Abonnement::estActif);
+            Optional<Abonnement> activeAbs = abs.stream().filter(Abonnement::estActif).findFirst();
+            if (activeAbs.isPresent()) {
+                estAdherent = true;
+                activeAbonnementId = activeAbs.get().getId();
+            }
         } catch (Exception e) {
             logger.warn("Erreur check abonnement", e);
         }
@@ -100,6 +138,7 @@ public class ParticipationServiceImpl implements ParticipationService {
 
         p.setMontantCalcule(montant.setScale(2, RoundingMode.HALF_UP));
         p.setTypeAbonnementChoisi(estAdherent ? "ADHERENT" : "STANDARD");
+        p.setAbonnementId(activeAbonnementId);
         if (p.getDevise() == null)
             p.setDevise("TND");
         if (p.getDateInscription() == null)
@@ -115,49 +154,82 @@ public class ParticipationServiceImpl implements ParticipationService {
         if (!vr.valid)
             throw new IllegalArgumentException(vr.getMessage());
 
-        String sql = "INSERT INTO participations (user_id, evenement_id, date_inscription, type, statut, hebergement_nuits, contexte_social, badge_associe, nb_adultes, nb_enfants, nb_chiens, total_participants, type_abonnement, montant_calcule, devise, commentaire, besoins_speciaux) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sqlWithAb = "INSERT INTO participations (user_id, evenement_id, date_inscription, type, statut, hebergement_nuits, contexte_social, badge_associe, nb_adultes, nb_enfants, nb_chiens, total_participants, type_abonnement, montant_calcule, devise, commentaire, besoins_speciaux, abonnement_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sqlWithoutAb = "INSERT INTO participations (user_id, evenement_id, date_inscription, type, statut, hebergement_nuits, contexte_social, badge_associe, nb_adultes, nb_enfants, nb_chiens, total_participants, type_abonnement, montant_calcule, devise, commentaire, besoins_speciaux) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = dbConnection.getConnection()) {
             if (conn == null) {
                 logger.error("Connexion à la base de données indisponible pour create");
                 throw new RuntimeException("Connexion à la base de données indisponible.");
             }
-            try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-                ps.setLong(1, p.getUserId());
-                ps.setLong(2, p.getEvenementId());
-                ps.setTimestamp(3, Timestamp.valueOf(p.getDateInscription()));
-                ps.setString(4, p.getType().name());
-                ps.setString(5, p.getStatut().name());
-                ps.setInt(6, p.getHebergementNuits());
-                ps.setString(7, p.getContexteSocial().name());
-                ps.setString(8, p.getBadgeAssocie());
-                ps.setInt(9, p.getNbAdultes());
-                ps.setInt(10, p.getNbEnfants());
-                ps.setInt(11, p.getNbChiens());
-                ps.setInt(12, p.getTotalParticipants());
-                ps.setString(13, p.getTypeAbonnementChoisi());
-                ps.setBigDecimal(14, p.getMontantCalcule());
-                ps.setString(15, p.getDevise());
-                ps.setString(16, p.getCommentaire());
-                ps.setString(17, p.getBesoinsSpeciaux());
 
+            // Tentative avec abonnement_id
+            try (PreparedStatement ps = conn.prepareStatement(sqlWithAb, Statement.RETURN_GENERATED_KEYS)) {
+                fillPreparedStatement(ps, p, true);
                 ps.executeUpdate();
                 try (ResultSet keys = ps.getGeneratedKeys()) {
                     if (keys.next())
                         p.setId(keys.getLong(1));
                 }
                 return p;
+            } catch (SQLException e) {
+                if (e.getMessage().contains("abonnement_id")) {
+                    logger.warn("Colonne 'abonnement_id' absente, repli sur la requête simplifiée.");
+                    try (PreparedStatement ps = conn.prepareStatement(sqlWithoutAb, Statement.RETURN_GENERATED_KEYS)) {
+                        fillPreparedStatement(ps, p, false);
+                        ps.executeUpdate();
+                        try (ResultSet keys = ps.getGeneratedKeys()) {
+                            if (keys.next())
+                                p.setId(keys.getLong(1));
+                        }
+                        return p;
+                    }
+                }
+                throw e;
             }
         } catch (SQLException e) {
-            String msg = e.getMessage();
-            logger.error("Erreur critique lors de l'ajout de participation: {}", msg);
-            if (msg.contains("Unknown column")) {
-                throw new RuntimeException(
-                        "Erreur de base de données : certaines colonnes (ex: nb_adultes) manquent dans la table 'participations'. Veuillez vérifier le schéma SQL.",
-                        e);
-            }
-            throw new RuntimeException("Impossible d'ajouter la participation : " + msg, e);
+            handleSqlError(e, "create");
+            return null;
         }
+    }
+
+    private void fillPreparedStatement(PreparedStatement ps, Participation p, boolean withAbonnement)
+            throws SQLException {
+        ps.setLong(1, p.getUserId());
+        ps.setLong(2, p.getEvenementId());
+        ps.setTimestamp(3, Timestamp.valueOf(p.getDateInscription()));
+        ps.setString(4, p.getType().name());
+        ps.setString(5, p.getStatut().name());
+        ps.setInt(6, p.getHebergementNuits());
+        ps.setString(7, p.getContexteSocial().name());
+        ps.setString(8, p.getBadgeAssocie());
+        ps.setInt(9, p.getNbAdultes());
+        ps.setInt(10, p.getNbEnfants());
+        ps.setInt(11, p.getNbChiens());
+        ps.setInt(12, p.getTotalParticipants());
+        ps.setString(13, p.getTypeAbonnementChoisi());
+        ps.setBigDecimal(14, p.getMontantCalcule());
+        ps.setString(15, p.getDevise());
+        ps.setString(16, p.getCommentaire());
+        ps.setString(17, p.getBesoinsSpeciaux());
+        if (withAbonnement) {
+            if (p.getAbonnementId() != null) {
+                ps.setLong(18, p.getAbonnementId());
+            } else {
+                ps.setNull(18, Types.BIGINT);
+            }
+        }
+    }
+
+    private void handleSqlError(SQLException e, String method) {
+        String msg = e.getMessage();
+        logger.error("Erreur critique lors de {}: {}", method, msg);
+        if (msg.contains("Unknown column")) {
+            throw new RuntimeException(
+                    "Erreur de base de données : certaines colonnes manquent dans la table 'participations'. Veuillez vérifier le schéma SQL.",
+                    e);
+        }
+        throw new RuntimeException("Impossible d'effectuer l'opération " + method + " : " + msg, e);
     }
 
     private Participation map(ResultSet rs) throws SQLException {
@@ -189,6 +261,19 @@ public class ParticipationServiceImpl implements ParticipationService {
         p.setDevise(rs.getString("devise"));
         p.setCommentaire(rs.getString("commentaire"));
         p.setBesoinsSpeciaux(rs.getString("besoins_speciaux"));
+
+        // Gestion sécurisée de la colonne abonnement_id (évite le crash si la migration
+        // n'est pas faite)
+        try {
+            long abId = rs.getLong("abonnement_id");
+            if (!rs.wasNull()) {
+                p.setAbonnementId(abId);
+            }
+        } catch (SQLException e) {
+            // La colonne n'existe probablement pas encore, on ignore sans crasher
+            logger.debug("Colonne abonnement_id non trouvée dans le ResultSet, liaison ignorée.");
+        }
+
         return p;
     }
 
@@ -265,33 +350,61 @@ public class ParticipationServiceImpl implements ParticipationService {
     public Participation update(Participation p) {
         if (p.getId() == null)
             throw new IllegalArgumentException("ID manquant");
-        String sql = "UPDATE participations SET statut=?, hebergement_nuits=?, contexte_social=?, badge_associe=?, nb_adultes=?, nb_enfants=?, nb_chiens=?, total_participants=?, type_abonnement=?, montant_calcule=?, devise=?, commentaire=?, besoins_speciaux=? WHERE id=?";
+
+        String sqlWithAb = "UPDATE participations SET statut=?, hebergement_nuits=?, contexte_social=?, badge_associe=?, nb_adultes=?, nb_enfants=?, nb_chiens=?, total_participants=?, type_abonnement=?, montant_calcule=?, devise=?, commentaire=?, besoins_speciaux=?, abonnement_id=? WHERE id=?";
+        String sqlWithoutAb = "UPDATE participations SET statut=?, hebergement_nuits=?, contexte_social=?, badge_associe=?, nb_adultes=?, nb_enfants=?, nb_chiens=?, total_participants=?, type_abonnement=?, montant_calcule=?, devise=?, commentaire=?, besoins_speciaux=? WHERE id=?";
+
         try (Connection conn = dbConnection.getConnection()) {
             if (conn == null) {
                 logger.error("Connexion à la base de données indisponible pour update");
                 throw new RuntimeException("Connexion à la base de données indisponible.");
             }
-            try (PreparedStatement ps = conn.prepareStatement(sql)) {
-                ps.setString(1, p.getStatut().name());
-                ps.setInt(2, p.getHebergementNuits());
-                ps.setString(3, p.getContexteSocial().name());
-                ps.setString(4, p.getBadgeAssocie());
-                ps.setInt(5, p.getNbAdultes());
-                ps.setInt(6, p.getNbEnfants());
-                ps.setInt(7, p.getNbChiens());
-                ps.setInt(8, p.getTotalParticipants());
-                ps.setString(9, p.getTypeAbonnementChoisi());
-                ps.setBigDecimal(10, p.getMontantCalcule());
-                ps.setString(11, p.getDevise());
-                ps.setString(12, p.getCommentaire());
-                ps.setString(13, p.getBesoinsSpeciaux());
-                ps.setLong(14, p.getId());
+
+            try (PreparedStatement ps = conn.prepareStatement(sqlWithAb)) {
+                fillUpdatePreparedStatement(ps, p, true);
                 ps.executeUpdate();
                 return p;
+            } catch (SQLException e) {
+                if (e.getMessage().contains("abonnement_id")) {
+                    logger.warn("Colonne 'abonnement_id' absente lors de l'update, repli sur la requête simplifiée.");
+                    try (PreparedStatement ps = conn.prepareStatement(sqlWithoutAb)) {
+                        fillUpdatePreparedStatement(ps, p, false);
+                        ps.executeUpdate();
+                        return p;
+                    }
+                }
+                throw e;
             }
         } catch (SQLException e) {
-            logger.error("Error update", e);
-            throw new RuntimeException(e);
+            handleSqlError(e, "update");
+            return null;
+        }
+    }
+
+    private void fillUpdatePreparedStatement(PreparedStatement ps, Participation p, boolean withAbonnement)
+            throws SQLException {
+        ps.setString(1, p.getStatut().name());
+        ps.setInt(2, p.getHebergementNuits());
+        ps.setString(3, p.getContexteSocial().name());
+        ps.setString(4, p.getBadgeAssocie());
+        ps.setInt(5, p.getNbAdultes());
+        ps.setInt(6, p.getNbEnfants());
+        ps.setInt(7, p.getNbChiens());
+        ps.setInt(8, p.getTotalParticipants());
+        ps.setString(9, p.getTypeAbonnementChoisi());
+        ps.setBigDecimal(10, p.getMontantCalcule());
+        ps.setString(11, p.getDevise());
+        ps.setString(12, p.getCommentaire());
+        ps.setString(13, p.getBesoinsSpeciaux());
+        if (withAbonnement) {
+            if (p.getAbonnementId() != null) {
+                ps.setLong(14, p.getAbonnementId());
+            } else {
+                ps.setNull(14, Types.BIGINT);
+            }
+            ps.setLong(15, p.getId());
+        } else {
+            ps.setLong(14, p.getId());
         }
     }
 
@@ -382,7 +495,27 @@ public class ParticipationServiceImpl implements ParticipationService {
     public Participation confirmerParticipation(Long id) {
         return findById(id).map(p -> {
             p.setStatut(Participation.StatutParticipation.CONFIRME);
-            return update(p);
+            Participation updated = update(p);
+            if (updated != null) {
+                try {
+                    // Send Notification
+                    notificationService.create(new com.gestion.entities.Notification(
+                            p.getUserId(),
+                            "Participation Confirmée",
+                            "Votre participation à l'événement a été approuvée par l'administrateur.",
+                            com.gestion.entities.Notification.NotificationType.SUCCESS));
+
+                    // Award Loyalty Points
+                    com.gestion.entities.User user = userService.getUserById(p.getUserId().intValue());
+                    if (user != null) {
+                        user.setLoyaltyPoints(user.getLoyaltyPoints() + p.getPointsEarned());
+                        userService.modifier(user);
+                    }
+                } catch (Exception e) {
+                    logger.error("Erreur lors de la notification/fidélité: " + e.getMessage());
+                }
+            }
+            return updated;
         }).orElse(null);
     }
 
@@ -391,7 +524,19 @@ public class ParticipationServiceImpl implements ParticipationService {
         return findById(id).map(p -> {
             p.setStatut(Participation.StatutParticipation.ANNULE);
             p.setCommentaire(p.getCommentaire() + " [Annulé: " + raison + "]");
-            return update(p);
+            Participation updated = update(p);
+            if (updated != null) {
+                try {
+                    notificationService.create(new com.gestion.entities.Notification(
+                            p.getUserId(),
+                            "Participation Refusée/Annulée",
+                            "Votre participation a été annulée. Raison: " + raison,
+                            com.gestion.entities.Notification.NotificationType.WARNING));
+                } catch (Exception e) {
+                    logger.error("Erreur notification annulation: " + e.getMessage());
+                }
+            }
+            return updated;
         }).orElse(null);
     }
 

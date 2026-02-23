@@ -220,6 +220,7 @@ public class SignupController {
     private void validatePhone(String phoneText) {
         if (phoneText.isEmpty()) {
             phoneError.setVisible(false);
+            phoneError.setManaged(false);
             phone.setStyle(
                     "-fx-background-color: white;" +
                             "-fx-border-color: #e2e8f0;" +
@@ -231,6 +232,7 @@ public class SignupController {
         } else if (!PHONE_PATTERN.matcher(phoneText).matches()) {
             phoneError.setText("Phone must be 8-15 digits");
             phoneError.setVisible(true);
+            phoneError.setManaged(true);
             phone.setStyle(
                     "-fx-background-color: white;" +
                             "-fx-border-color: #fc8181;" +
@@ -241,6 +243,7 @@ public class SignupController {
                             "-fx-font-size: 13;");
         } else {
             phoneError.setVisible(false);
+            phoneError.setManaged(false);
             phone.setStyle(
                     "-fx-background-color: white;" +
                             "-fx-border-color: #48bb78;" +
@@ -255,6 +258,7 @@ public class SignupController {
     private void validateUsername(String username) {
         if (username.isEmpty()) {
             usernameError.setVisible(false);
+            usernameError.setManaged(false);
             UserName.setStyle(
                     "-fx-background-color: white;" +
                             "-fx-border-color: #e2e8f0;" +
@@ -266,6 +270,7 @@ public class SignupController {
         } else if (username.length() < 5) {
             usernameError.setText("Username must be at least 5 characters");
             usernameError.setVisible(true);
+            usernameError.setManaged(true);
             UserName.setStyle(
                     "-fx-background-color: white;" +
                             "-fx-border-color: #fc8181;" +
@@ -276,6 +281,7 @@ public class SignupController {
                             "-fx-font-size: 13;");
         } else {
             usernameError.setVisible(false);
+            usernameError.setManaged(false);
             UserName.setStyle(
                     "-fx-background-color: white;" +
                             "-fx-border-color: #48bb78;" +
@@ -290,6 +296,7 @@ public class SignupController {
     private void validateEmail(String emailText) {
         if (emailText.isEmpty()) {
             emailError.setVisible(false);
+            emailError.setManaged(false);
             email.setStyle(
                     "-fx-background-color: white;" +
                             "-fx-border-color: #e2e8f0;" +
@@ -301,6 +308,7 @@ public class SignupController {
         } else if (!EMAIL_PATTERN.matcher(emailText).matches()) {
             emailError.setText("Invalid email format");
             emailError.setVisible(true);
+            emailError.setManaged(true);
             email.setStyle(
                     "-fx-background-color: white;" +
                             "-fx-border-color: #fc8181;" +
@@ -311,6 +319,7 @@ public class SignupController {
                             "-fx-font-size: 13;");
         } else {
             emailError.setVisible(false);
+            emailError.setManaged(false);
             email.setStyle(
                     "-fx-background-color: white;" +
                             "-fx-border-color: #48bb78;" +
@@ -328,6 +337,7 @@ public class SignupController {
 
         if (passwordText.isEmpty()) {
             passwordError.setVisible(false);
+            passwordError.setManaged(false);
             borderStyle = "-fx-background-color: white;" +
                     "-fx-border-color: #e2e8f0;" +
                     "-fx-border-width: 1.5;" +
@@ -338,6 +348,7 @@ public class SignupController {
         } else if (!PASSWORD_PATTERN.matcher(passwordText).matches()) {
             passwordError.setText("Must have uppercase, lowercase, special char, min 6 chars");
             passwordError.setVisible(true);
+            passwordError.setManaged(true);
             borderStyle = "-fx-background-color: white;" +
                     "-fx-border-color: #fc8181;" +
                     "-fx-border-width: 1.5;" +
@@ -348,6 +359,7 @@ public class SignupController {
         } else if (!username.isEmpty() && passwordText.toLowerCase().contains(username.toLowerCase())) {
             passwordError.setText("Password must not contain username");
             passwordError.setVisible(true);
+            passwordError.setManaged(true);
             borderStyle = "-fx-background-color: white;" +
                     "-fx-border-color: #fc8181;" +
                     "-fx-border-width: 1.5;" +
@@ -357,6 +369,7 @@ public class SignupController {
                     "-fx-font-size: 13;";
         } else {
             passwordError.setVisible(false);
+            passwordError.setManaged(false);
             borderStyle = "-fx-background-color: white;" +
                     "-fx-border-color: #48bb78;" +
                     "-fx-border-width: 1.5;" +
@@ -447,7 +460,8 @@ public class SignupController {
                 "USER", // Default role
                 userPhone, // ✅ NEW
                 motorized, // ✅ NEW
-                selectedImagePath // ✅ NEW
+                selectedImagePath, // ✅ NEW
+                0 // ✅ NEW: Initial loyalty points
         );
 
         try {

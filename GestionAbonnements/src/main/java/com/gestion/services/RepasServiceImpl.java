@@ -51,14 +51,18 @@ public class RepasServiceImpl implements RepasService {
             try (Statement st = c.createStatement()) {
                 st.execute(createSql);
 
-                // Check if updated_at exists (it might be missing if table was created in an
-                // older version)
+                // Check if updated_at exists
                 try {
                     st.executeQuery("SELECT updated_at FROM " + TABLE + " LIMIT 1").close();
                 } catch (SQLException e) {
-                    // Column probably missing, add it
                     st.execute("ALTER TABLE " + TABLE
                             + " ADD COLUMN updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP");
+                }
+                // Check if ingredients exists
+                try {
+                    st.executeQuery("SELECT ingredients FROM " + TABLE + " LIMIT 1").close();
+                } catch (SQLException e) {
+                    st.execute("ALTER TABLE " + TABLE + " ADD COLUMN ingredients TEXT");
                 }
             }
         } catch (SQLException e) {
@@ -75,7 +79,7 @@ public class RepasServiceImpl implements RepasService {
             throw new IllegalArgumentException(validation.getAllErrorsAsString());
 
         String sql = "INSERT INTO " + TABLE
-                + " (restaurant_id, restaurant_nom, menu_id, menu_nom, nom, description, prix, categorie, type_plat, temps_preparation, image_url, disponible) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                + " (restaurant_id, restaurant_nom, menu_id, menu_nom, nom, description, prix, categorie, type_plat, temps_preparation, image_url, ingredients, disponible) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try {
             Connection c = db.getConnection();
             if (c == null)
@@ -93,6 +97,7 @@ public class RepasServiceImpl implements RepasService {
                 ps.setInt(10, repas.getTempsPreparation());
                 ps.setString(11, repas.getImageUrl());
                 ps.setBoolean(12, repas.isDisponible());
+                ps.setString(13, repas.getIngredients());
                 ps.executeUpdate();
                 try (ResultSet keys = ps.getGeneratedKeys()) {
                     if (keys.next())
@@ -115,7 +120,7 @@ public class RepasServiceImpl implements RepasService {
             throw new IllegalArgumentException(validation.getAllErrorsAsString());
 
         String sql = "UPDATE " + TABLE
-                + " SET restaurant_id=?, restaurant_nom=?, menu_id=?, menu_nom=?, nom=?, description=?, prix=?, categorie=?, type_plat=?, temps_preparation=?, image_url=?, disponible=?, updated_at=CURRENT_TIMESTAMP WHERE id=?";
+                + " SET restaurant_id=?, restaurant_nom=?, menu_id=?, menu_nom=?, nom=?, description=?, prix=?, categorie=?, type_plat=?, temps_preparation=?, image_url=?, ingredients=?, disponible=?, updated_at=CURRENT_TIMESTAMP WHERE id=?";
         try {
             Connection c = db.getConnection();
             if (c == null)
@@ -133,7 +138,8 @@ public class RepasServiceImpl implements RepasService {
                 ps.setInt(10, repas.getTempsPreparation());
                 ps.setString(11, repas.getImageUrl());
                 ps.setBoolean(12, repas.isDisponible());
-                ps.setLong(13, repas.getId());
+                ps.setString(13, repas.getIngredients());
+                ps.setLong(14, repas.getId());
                 int updated = ps.executeUpdate();
                 if (updated == 0)
                     throw new IllegalArgumentException("Repas non trouvé avec l'ID: " + repas.getId());
@@ -387,6 +393,7 @@ public class RepasServiceImpl implements RepasService {
         r.setTempsPreparation(rs.getInt("temps_preparation"));
         r.setImageUrl(rs.getString("image_url"));
         r.setDisponible(rs.getBoolean("disponible"));
+        r.setIngredients(rs.getString("ingredients"));
         return r;
     }
 }

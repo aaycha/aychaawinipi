@@ -3,6 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import java.net.URL?>
+<?import javafx.geometry.Insets?>
 
 <ScrollPane xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.gestion.ui.abonnement.AbonnementFormController"
@@ -12,49 +13,147 @@
         <URL value="@../../styles/nature-mood.css" />
     </stylesheets>
     
-    <VBox spacing="15" styleClass="modern-panel" style="-fx-padding: 20; -fx-background-color: #0f172a; -fx-background-radius: 15;">
+    <VBox spacing="35" styleClass="glass-panel-deep" style="-fx-padding: 40; -fx-background-color: rgba(13, 18, 16, 0.98); -fx-background-radius: 24; -fx-border-color: rgba(255,255,255,0.08); -fx-border-radius: 24; -fx-max-width: 950; -fx-alignment: TOP_CENTER;">
+        <children>
+            <!-- Header Section -->
+            <VBox spacing="10">
+                <HBox alignment="CENTER_LEFT" spacing="15">
+                    <StackPane style="-fx-background-color: rgba(250, 146, 68, 0.15); -fx-background-radius: 15; -fx-padding: 12;">
+                        <Label style="-fx-text-fill: -fx-nature-accent-orange; -fx-font-size: 28;" text="🎫" />
+                    </StackPane>
+                    <VBox>
+                        <Label fx:id="mainTitle" text="Nouvelle Expédition" styleClass="text-hero" 
+                               style="-fx-font-size: 32; -fx-font-weight: bold; -fx-text-fill: white; -fx-letter-spacing: 0.8;"/>
+                        <Label text="Lien entre l'explorateur et son aventure" 
+                               style="-fx-text-fill: #9ca3af; -fx-font-size: 14; -fx-font-style: italic;"/>
+                    </VBox>
+                </HBox>
+            </VBox>
 
-        <Label fx:id="mainTitle" text="Nouvelle Expédition" styleClass="modern-title" 
-               style="-fx-text-fill: white; -fx-font-size: 18; -fx-font-weight: 800;"/>
+            <Separator style="-fx-opacity: 0.05;" />
 
-        <GridPane hgap="15" vgap="12">
-            <columnConstraints>
-                <ColumnConstraints minWidth="120" prefWidth="140"/>
-                <ColumnConstraints hgrow="ALWAYS"/>
-            </columnConstraints>
+            <!-- Main Content Area -->
+            <HBox spacing="40" alignment="TOP_CENTER">
+                <!-- LEFT COLUMN: Input Fields -->
+                <VBox spacing="25" HBox.hgrow="ALWAYS" maxWidth="600">
+                    <!-- Section: Explorateur -->
+                    <VBox spacing="15" styleClass="glass-panel-light" style="-fx-padding: 25; -fx-background-radius: 20; -fx-background-color: rgba(255,255,255,0.02);">
+                        <HBox alignment="CENTER_LEFT" spacing="12">
+                            <Label text="👤" style="-fx-font-size: 18;"/>
+                            <Label text="IDENTITÉ DE L'AVENTURIER" style="-fx-text-fill: -fx-nature-accent-orange; -fx-font-size: 12; -fx-font-weight: bold; -fx-letter-spacing: 1.2;"/>
+                        </HBox>
+                        
+                        <GridPane hgap="25" vgap="20">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="45"/>
+                                <ColumnConstraints percentWidth="55"/>
+                            </columnConstraints>
 
-            <Label text="ID Aventurier:" style="-fx-text-fill: #94A3B8; -fx-font-size: 11; -fx-font-weight: bold;" GridPane.rowIndex="0"/>
-            <TextField fx:id="inputUserId" promptText="ID du membre" styleClass="modern-input" style="-fx-font-size: 11;" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                            <VBox spacing="8" GridPane.columnIndex="0">
+                                <Label text="Nom ou Pseudo" style="-fx-text-fill: #9ca3af; -fx-font-size: 13;"/>
+                                <TextField fx:id="inputUserName" promptText="L'Eclaireur..." styleClass="modern-input" prefHeight="50"/>
+                            </VBox>
+                            
+                            <VBox spacing="8" GridPane.columnIndex="1">
+                                <Label text="ID Numérique" style="-fx-text-fill: #9ca3af; -fx-font-size: 13;"/>
+                                <TextField fx:id="inputUserId" promptText="ID unique..." styleClass="modern-input" prefHeight="50"/>
+                            </VBox>
+                        </GridPane>
+                    </VBox>
 
-            <Label text="Type de Pass:" style="-fx-text-fill: #94A3B8; -fx-font-size: 11; -fx-font-weight: bold;" GridPane.rowIndex="1"/>
-            <ComboBox fx:id="inputType" prefWidth="Infinity" styleClass="modern-input" style="-fx-font-size: 11;" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                    <!-- Section: Configuration -->
+                    <VBox spacing="20" styleClass="glass-panel-light" style="-fx-padding: 25; -fx-background-radius: 20; -fx-background-color: rgba(255,255,255,0.02);">
+                        <HBox alignment="CENTER_LEFT" spacing="12">
+                            <Label text="⚙️" style="-fx-font-size: 18;"/>
+                            <Label text="CONFIGURATION DE L'ACCÈS" style="-fx-text-fill: -fx-nature-accent-orange; -fx-font-size: 12; -fx-font-weight: bold; -fx-letter-spacing: 1.2;"/>
+                        </HBox>
 
-            <Label text="Date de Début:" style="-fx-text-fill: #94A3B8; -fx-font-size: 11; -fx-font-weight: bold;" GridPane.rowIndex="2"/>
-            <DatePicker fx:id="inputDateDebut" prefWidth="Infinity" styleClass="modern-input" style="-fx-font-size: 11;" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                        <GridPane hgap="20" vgap="20">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="50"/>
+                                <ColumnConstraints percentWidth="50"/>
+                            </columnConstraints>
 
-            <Label text="Date de Fin:" style="-fx-text-fill: #94A3B8; -fx-font-size: 11; -fx-font-weight: bold;" GridPane.rowIndex="3"/>
-            <DatePicker fx:id="inputDateFin" prefWidth="Infinity" styleClass="modern-input" style="-fx-font-size: 11;" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                            <!-- Row 0: Type -->
+                            <VBox spacing="8" GridPane.columnSpan="2">
+                                <Label text="Type d'Engagement" style="-fx-text-fill: #9ca3af; -fx-font-size: 13;"/>
+                                <ComboBox fx:id="inputType" prefWidth="Infinity" styleClass="modern-input" prefHeight="50"/>
+                            </VBox>
 
-            <Label text="Coût ($):" style="-fx-text-fill: #94A3B8; -fx-font-size: 11; -fx-font-weight: bold;" GridPane.rowIndex="4"/>
-            <TextField fx:id="inputPrix" promptText="0.00" styleClass="modern-input" style="-fx-font-size: 11;" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+                            <!-- Row 1: Event (Managed dynamically) -->
+                            <VBox fx:id="eventSelectionContainer" spacing="8" GridPane.rowIndex="1" GridPane.columnSpan="2" visible="false" managed="false">
+                                <Label fx:id="labelEvent" text="Expédition Ciblée" style="-fx-text-fill: #9ca3af; -fx-font-size: 13;"/>
+                                <ComboBox fx:id="comboEvent" prefWidth="Infinity" styleClass="modern-input" prefHeight="50" promptText="Choisir une aventure..."/>
+                            </VBox>
 
-            <Label text="Statut Actuel:" style="-fx-text-fill: #94A3B8; -fx-font-size: 11; -fx-font-weight: bold;" GridPane.rowIndex="5"/>
-            <ComboBox fx:id="inputStatut" prefWidth="Infinity" styleClass="modern-input" style="-fx-font-size: 11;" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+                            <!-- Row 2: Dates -->
+                            <VBox spacing="8" GridPane.rowIndex="2" GridPane.columnIndex="0">
+                                <Label text="Début" style="-fx-text-fill: #9ca3af; -fx-font-size: 13;"/>
+                                <DatePicker fx:id="inputDateDebut" prefWidth="Infinity" maxWidth="Infinity" styleClass="modern-input" prefHeight="50"/>
+                            </VBox>
+                            <VBox spacing="8" GridPane.rowIndex="2" GridPane.columnIndex="1">
+                                <Label text="Fin" style="-fx-text-fill: #9ca3af; -fx-font-size: 13;"/>
+                                <DatePicker fx:id="inputDateFin" prefWidth="Infinity" maxWidth="Infinity" styleClass="modern-input" prefHeight="50"/>
+                            </VBox>
 
-            <Label text="Prolongation Auto:" style="-fx-text-fill: #94A3B8; -fx-font-size: 11; -fx-font-weight: bold;" GridPane.rowIndex="6"/>
-            <CheckBox fx:id="inputAutoRenew" text="Activer le renouvellement automatique" 
-                      style="-fx-text-fill: white; -fx-font-size: 11;" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
-        </GridPane>
+                            <!-- Row 3: Prix & Statut -->
+                            <VBox spacing="8" GridPane.rowIndex="3" GridPane.columnIndex="0">
+                                <Label text="Budget (€)" style="-fx-text-fill: #9ca3af; -fx-font-size: 13;"/>
+                                <TextField fx:id="inputPrix" promptText="0.00" styleClass="modern-input" prefHeight="50" style="-fx-font-size: 18; -fx-font-weight: bold;"/>
+                            </VBox>
+                            <VBox spacing="8" GridPane.rowIndex="3" GridPane.columnIndex="1">
+                                <Label text="Statut" style="-fx-text-fill: #9ca3af; -fx-font-size: 13;"/>
+                                <ComboBox fx:id="inputStatut" prefWidth="Infinity" styleClass="modern-input" prefHeight="50"/>
+                            </VBox>
+                        </GridPane>
+                    </VBox>
+                </VBox>
 
-        <Label fx:id="validationMessage" style="-fx-text-fill: #ef4444; -fx-font-weight: bold; -fx-font-size: 11;" 
-               visible="false" managed="false"/>
+                <!-- RIGHT COLUMN: Summary -->
+                <VBox spacing="25" prefWidth="300">
+                    <VBox spacing="20" style="-fx-background-color: rgba(250, 146, 68, 0.05); -fx-padding: 30; -fx-background-radius: 24; -fx-border-color: rgba(250, 146, 68, 0.2); -fx-border-width: 1.5; -fx-border-radius: 24;">
+                        <Label text="RÉCAPITULATIF" style="-fx-text-fill: -fx-nature-accent-orange; -fx-font-size: 12; -fx-font-weight: bold; -fx-letter-spacing: 2;"/>
+                        
+                        <VBox spacing="15">
+                            <VBox spacing="6">
+                                <Label text="Couverture" style="-fx-text-fill: #9ca3af; -fx-font-size: 12;"/>
+                                <Label fx:id="summaryType" text="Accès Global" style="-fx-text-fill: white; -fx-font-size: 18; -fx-font-weight: bold;"/>
+                            </VBox>
+                            
+                            <Separator style="-fx-opacity: 0.1;" />
+                            
+                            <VBox spacing="8">
+                                <Label text="Avantages" style="-fx-text-fill: #9ca3af; -fx-font-size: 12;"/>
+                                <Label text="• Accès prioritaire illimité" style="-fx-text-fill: #d1d5db; -fx-font-size: 13;"/>
+                                <Label text="• Assurance incluse" style="-fx-text-fill: #d1d5db; -fx-font-size: 13;"/>
+                                <Label text="• Bonus XP &amp; Récompenses" style="-fx-text-fill: #d1d5db; -fx-font-size: 13;"/>
+                            </VBox>
 
-        <HBox spacing="10" alignment="CENTER_RIGHT" style="-fx-padding: 10 0 0 0;">
-            <Button text="Annuler" onAction="#onCancel" styleClass="button-capsule-glass" 
-                    prefWidth="100" style="-fx-font-size: 11; -fx-padding: 8 15;"/>
-            <Button text="Enregistrer" onAction="#onSave" styleClass="button-capsule" 
-                    prefWidth="120" style="-fx-font-size: 11; -fx-padding: 8 20;"/>
-        </HBox>
+                            <Region VBox.vgrow="ALWAYS" minHeight="30"/>
+                            
+                            <CheckBox fx:id="inputAutoRenew" text="Reconduction Auto" selected="true"
+                                      style="-fx-text-fill: #9ca3af; -fx-font-size: 13; -fx-cursor: hand;"/>
+                        </VBox>
+                    </VBox>
+                    
+                    <!-- Error/Validation Message -->
+                    <Label fx:id="validationMessage" style="-fx-text-fill: #fca5a5; -fx-font-weight: bold; -fx-font-size: 14; -fx-background-color: rgba(239, 68, 68, 0.1); -fx-padding: 15; -fx-background-radius: 12; -fx-border-color: rgba(239, 68, 68, 0.3); -fx-border-radius: 12;" 
+                           visible="false" managed="false" wrapText="true" maxWidth="Infinity" />
+                </VBox>
+            </HBox>
 
+            <Separator style="-fx-opacity: 0.05;" />
+
+            <!-- Footer Section -->
+            <HBox spacing="25" alignment="CENTER_RIGHT" style="-fx-padding: 0 0 10 0;">
+                <Button text="Abandonner" onAction="#onCancel" styleClass="button-capsule-glass" 
+                        prefWidth="180" style="-fx-font-size: 15; -fx-cursor: hand;"/>
+                <Button fx:id="btnSave" text="Confirmer l'Engagement" onAction="#onSave" styleClass="button-capsule" 
+                        prefWidth="300" style="-fx-font-size: 16; -fx-font-weight: bold; -fx-cursor: hand;"/>
+            </HBox>
+        </children>
+        <padding>
+            <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+        </padding>
     </VBox>
 </ScrollPane>

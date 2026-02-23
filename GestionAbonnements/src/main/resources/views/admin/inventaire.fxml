@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox spacing="15" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" 
+      fx:controller="com.gestion.ui.admin.IngredientManagementController" 
+      styleClass="glass-panel" style="-fx-padding: 20;">
+    
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Inventaire Restauration" styleClass="section-title"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="Actualiser" onAction="#onActualiser" styleClass="button-capsule-glass"/>
+    </HBox>
+
+    <HBox spacing="20" VBox.vgrow="ALWAYS">
+        <!-- TableView -->
+        <TableView fx:id="tableView" HBox.hgrow="ALWAYS" styleClass="modern-table">
+            <columns>
+                <TableColumn fx:id="colNom" text="Ingrédient" prefWidth="150"/>
+                <TableColumn fx:id="colCategorie" text="Catégorie" prefWidth="100"/>
+                <TableColumn fx:id="colStock" text="Stock" prefWidth="80"/>
+                <TableColumn fx:id="colSeuil" text="Seuil Alerte" prefWidth="100"/>
+                <TableColumn fx:id="colActif" text="Actif" prefWidth="70"/>
+            </columns>
+        </TableView>
+
+        <!-- Formulaire -->
+        <VBox spacing="10" prefWidth="280" styleClass="glass-panel" style="-fx-padding: 15;">
+            <Label text="Édition Ingrédient" style="-fx-font-weight: bold; -fx-text-fill: white;"/>
+            
+            <VBox spacing="5">
+                <Label text="Nom" styleClass="card-label"/>
+                <TextField fx:id="inputNom" promptText="EX: Poulet grillé" styleClass="modern-input"/>
+            </VBox>
+            
+            <VBox spacing="5">
+                <Label text="Catégorie" styleClass="card-label"/>
+                <ComboBox fx:id="inputCategorie" styleClass="modern-input" maxWidth="Infinity"/>
+            </VBox>
+            
+            <VBox spacing="5">
+                <Label text="Prix Supplément" styleClass="card-label"/>
+                <TextField fx:id="inputPrix" promptText="0.00" styleClass="modern-input"/>
+            </VBox>
+
+            <HBox spacing="10">
+                <VBox spacing="5" HBox.hgrow="ALWAYS">
+                    <Label text="Stock" styleClass="card-label"/>
+                    <TextField fx:id="inputStock" promptText="100" styleClass="modern-input"/>
+                </VBox>
+                <VBox spacing="5" HBox.hgrow="ALWAYS">
+                    <Label text="Seuil Alerte" styleClass="card-label"/>
+                    <TextField fx:id="inputSeuil" promptText="10" styleClass="modern-input"/>
+                </VBox>
+            </HBox>
+            
+            <CheckBox fx:id="inputActif" text="Ingrédient disponible" styleClass="card-label"/>
+
+            <Region VBox.vgrow="ALWAYS"/>
+            
+            <HBox spacing="10">
+                <Button text="Nouveau" onAction="#onNouveau" styleClass="button-capsule-glass" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                <Button text="Enregistrer" onAction="#onEnregistrer" styleClass="button-capsule" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+            </HBox>
+            <Button text="Supprimer" onAction="#onSupprimer" style="-fx-background-color: #ef4444; -fx-text-fill: white;" 
+                    styleClass="button-capsule" maxWidth="Infinity"/>
+        </VBox>
+    </HBox>
+</VBox>

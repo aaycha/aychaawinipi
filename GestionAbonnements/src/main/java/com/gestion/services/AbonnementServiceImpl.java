@@ -32,8 +32,58 @@ public class AbonnementServiceImpl implements AbonnementService {
             logger.error("Cannot create abonnement: database connection is null");
             throw new RuntimeException("Database connection unavailable");
         }
-        String sql = "INSERT INTO abonnements (user_id, type, date_debut, date_fin, prix, statut, avantages, auto_renew, points_accumules, churn_score) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+        String sqlWithEv = "INSERT INTO abonnements (user_id, evenement_id, type, date_debut, date_fin, prix, statut, avantages, auto_renew, points_accumules, churn_score) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sqlWithoutEv = "INSERT INTO abonnements (user_id, type, date_debut, date_fin, prix, statut, avantages, auto_renew, points_accumules, churn_score) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try {
+            // Tentative avec evenement_id
+            try (PreparedStatement ps = conn.prepareStatement(sqlWithEv, Statement.RETURN_GENERATED_KEYS)) {
+                fillPreparedStatement(ps, a, true);
+                ps.executeUpdate();
+                try (ResultSet keys = ps.getGeneratedKeys()) {
+                    if (keys.next())
+                        a.setId(keys.getLong(1));
+                }
+                return a;
+            } catch (SQLException e) {
+                if (e.getMessage().contains("evenement_id")) {
+                    logger.warn("Colonne 'evenement_id' absente, repli sur la requête simplifiée.");
+                    try (PreparedStatement ps = conn.prepareStatement(sqlWithoutEv, Statement.RETURN_GENERATED_KEYS)) {
+                        fillPreparedStatement(ps, a, false);
+                        ps.executeUpdate();
+                        try (ResultSet keys = ps.getGeneratedKeys()) {
+                            if (keys.next())
+                                a.setId(keys.getLong(1));
+                        }
+                        return a;
+                    }
+                }
+                throw e;
+            }
+        } catch (SQLException e) {
+            handleSqlError(e, "create");
+            return null;
+        }
+    }
+
+    private void fillPreparedStatement(PreparedStatement ps, Abonnement a, boolean withEvenement) throws SQLException {
+        if (withEvenement) {
+            ps.setLong(1, a.getUserId());
+            if (a.getEvenementId() != null)
+                ps.setLong(2, a.getEvenementId());
+            else
+                ps.setNull(2, Types.BIGINT);
+            ps.setString(3, a.getType().name());
+            ps.setDate(4, Date.valueOf(a.getDateDebut()));
+            ps.setDate(5, Date.valueOf(a.getDateFin()));
+            ps.setBigDecimal(6, a.getPrix());
+            ps.setString(7, a.getStatut().name());
+            ps.setString(8, "{}");
+            ps.setBoolean(9, a.isAutoRenew());
+            ps.setInt(10, a.getPointsAccumules());
+            ps.setDouble(11, a.getChurnScore());
+        } else {
             ps.setLong(1, a.getUserId());
             ps.setString(2, a.getType().name());
             ps.setDate(3, Date.valueOf(a.getDateDebut()));
@@ -44,22 +94,35 @@ public class AbonnementServiceImpl implements AbonnementService {
             ps.setBoolean(8, a.isAutoRenew());
             ps.setInt(9, a.getPointsAccumules());
             ps.setDouble(10, a.getChurnScore());
-            ps.executeUpdate();
-            try (ResultSet keys = ps.getGeneratedKeys()) {
-                if (keys.next())
-                    a.setId(keys.getLong(1));
-            }
-            return a;
-        } catch (SQLException e) {
-            logger.error("Error create abonnement", e);
-            throw new RuntimeException(e);
         }
+    }
+
+    private void handleSqlError(SQLException e, String method) {
+        String msg = e.getMessage();
+        logger.error("Error {}: {}", method, msg);
+        if (msg.contains("Unknown column")) {
+            throw new RuntimeException(
+                    "Erreur SQL : certaines colonnes manquent. Veuillez exécuter la migration SQL fournie dans le walkthrough.",
+                    e);
+        }
+        throw new RuntimeException("Impossible de " + method + " l'abonnement : " + msg, e);
     }
 
     private Abonnement map(ResultSet rs) throws SQLException {
         Abonnement a = new Abonnement();
         a.setId(rs.getLong("id"));
         a.setUserId(rs.getLong("user_id"));
+
+        // Gestion sécurisée de evenement_id (évite le crash si la migration n'est pas
+        // faite)
+        try {
+            long evId = rs.getLong("evenement_id");
+            if (!rs.wasNull())
+                a.setEvenementId(evId);
+        } catch (SQLException e) {
+            logger.debug("Colonne evenement_id non trouvée dans le ResultSet, liaison ignorée.");
+        }
+
         String typeStr = rs.getString("type");
         if (typeStr != null)
             a.setType(Abonnement.TypeAbonnement.valueOf(typeStr));
@@ -129,22 +192,50 @@ public class AbonnementServiceImpl implements AbonnementService {
             logger.error("Cannot update abonnement: database connection is null");
             throw new RuntimeException("Database connection unavailable");
         }
-        String sql = "UPDATE abonnements SET type=?, date_debut=?, date_fin=?, prix=?, statut=?, auto_renew=?, points_accumules=?, churn_score=? WHERE id=?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, a.getType().name());
-            ps.setDate(2, Date.valueOf(a.getDateDebut()));
-            ps.setDate(3, Date.valueOf(a.getDateFin()));
-            ps.setBigDecimal(4, a.getPrix());
-            ps.setString(5, a.getStatut().name());
-            ps.setBoolean(6, a.isAutoRenew());
-            ps.setInt(7, a.getPointsAccumules());
-            ps.setDouble(8, a.getChurnScore());
-            ps.setLong(9, a.getId());
-            ps.executeUpdate();
-            return a;
+
+        String sqlWithEv = "UPDATE abonnements SET type=?, date_debut=?, date_fin=?, prix=?, statut=?, auto_renew=?, points_accumules=?, churn_score=?, evenement_id=? WHERE id=?";
+        String sqlWithoutEv = "UPDATE abonnements SET type=?, date_debut=?, date_fin=?, prix=?, statut=?, auto_renew=?, points_accumules=?, churn_score=? WHERE id=?";
+
+        try {
+            try (PreparedStatement ps = conn.prepareStatement(sqlWithEv)) {
+                fillUpdatePreparedStatement(ps, a, true);
+                ps.executeUpdate();
+                return a;
+            } catch (SQLException e) {
+                if (e.getMessage().contains("evenement_id")) {
+                    logger.warn("Colonne 'evenement_id' absente lors de l'update, repli sur la requête simplifiée.");
+                    try (PreparedStatement ps = conn.prepareStatement(sqlWithoutEv)) {
+                        fillUpdatePreparedStatement(ps, a, false);
+                        ps.executeUpdate();
+                        return a;
+                    }
+                }
+                throw e;
+            }
         } catch (SQLException e) {
-            logger.error("Error update abonnement", e);
-            throw new RuntimeException(e);
+            handleSqlError(e, "update");
+            return null;
+        }
+    }
+
+    private void fillUpdatePreparedStatement(PreparedStatement ps, Abonnement a, boolean withEvenement)
+            throws SQLException {
+        ps.setString(1, a.getType().name());
+        ps.setDate(2, Date.valueOf(a.getDateDebut()));
+        ps.setDate(3, Date.valueOf(a.getDateFin()));
+        ps.setBigDecimal(4, a.getPrix());
+        ps.setString(5, a.getStatut().name());
+        ps.setBoolean(6, a.isAutoRenew());
+        ps.setInt(7, a.getPointsAccumules());
+        ps.setDouble(8, a.getChurnScore());
+        if (withEvenement) {
+            if (a.getEvenementId() != null)
+                ps.setLong(9, a.getEvenementId());
+            else
+                ps.setNull(9, Types.BIGINT);
+            ps.setLong(10, a.getId());
+        } else {
+            ps.setLong(9, a.getId());
         }
     }
 

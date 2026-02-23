@@ -1,27 +1,38 @@
-/* ================= DASHBOARD PREMIUM NATURE MOOD 2026 ================= */
-
 .dashboard-root {
+    font-family: 'Segoe UI Semibold', 'Roboto', system-ui;
     -fx-font-family: 'Segoe UI Semibold', 'Roboto', system-ui;
+    background-color: transparent;
     -fx-background-color: transparent;
 }
 
-/* Sidebar Styling - Glassmorphic Hiking Style */
 .sidebar-container {
+    background-color: rgba(15, 23, 42, 0.85);
     -fx-background-color: rgba(15, 23, 42, 0.85);
+    border-color: rgba(255, 255, 255, 0.1);
     -fx-border-color: rgba(255, 255, 255, 0.1);
+    border-width: 0 1 0 0;
     -fx-border-width: 0 1 0 0;
 }
 
 .nav-button {
+    background-color: transparent;
     -fx-background-color: transparent;
+    color: #cbd5e1;
     -fx-text-fill: #cbd5e1;
-    -fx-font-size: 12px;
+    font-size: 8px;
+    -fx-font-size: 8px;
+    font-weight: 500;
     -fx-font-weight: 500;
-    -fx-background-radius: 10;
+    border-radius: 6;
+    -fx-background-radius: 6;
+    cursor: hand;
     -fx-cursor: hand;
-    -fx-padding: 8 15;
+    padding: 2 6;
+    -fx-padding: 2 6;
+    text-align: left;
     -fx-alignment: CENTER_LEFT;
-    -fx-transition: all 0.3s ease;
+    transition: all 0.2s ease;
+    -fx-transition: all 0.2s ease;
 }
 
 .nav-button:hover {
@@ -40,20 +51,20 @@
 
 .nav-label {
     -fx-text-fill: #64748b;
-    -fx-font-size: 11px;
-    -fx-font-weight: 800;
-    -fx-letter-spacing: 1px;
-    -fx-padding: 15 20 5 20;
+    -fx-font-size: 8px;
+    -fx-font-weight: 900;
+    -fx-letter-spacing: 0.5px;
+    -fx-padding: 8 10 2 10;
 }
 
 /* Statistics Cards - Glass Panels */
 .stat-card {
     -fx-background-color: rgba(255, 255, 255, 0.08);
-    -fx-background-radius: 16;
-    -fx-padding: 15;
+    -fx-background-radius: 8;
+    -fx-padding: 4;
     -fx-border-color: rgba(255, 255, 255, 0.1);
-    -fx-border-width: 1.2;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0, 0, 4);
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 5, 0, 0, 2);
 }
 
 .stat-card:hover {
@@ -64,21 +75,21 @@
 
 .stat-icon-container {
     -fx-background-radius: 12;
-    -fx-pref-width: 40;
-    -fx-pref-height: 40;
+    -fx-pref-width: 30;
+    -fx-pref-height: 30;
     -fx-alignment: CENTER;
 }
 
 .stat-value {
-    -fx-font-size: 24px;
-    -fx-font-weight: 800;
+    -fx-font-size: 12px;
+    -fx-font-weight: 900;
     -fx-text-fill: white;
 }
 
 .stat-title {
-    -fx-font-size: 12px;
+    -fx-font-size: 7px;
     -fx-text-fill: #94a3b8;
-    -fx-font-weight: 700;
+    -fx-font-weight: 800;
 }
 
 /* Glass Panels */
@@ -126,7 +137,7 @@
 }
 
 .section-subtitle {
-    -fx-font-size: 14px;
+    -fx-font-size: 11px;
     -fx-text-fill: #94a3b8;
     -fx-font-weight: 500;
 }
@@ -134,13 +145,57 @@
 /* User Card in Grid */
 .user-card-glass {
     -fx-background-color: rgba(255, 255, 255, 0.05);
-    -fx-background-radius: 15;
+    -fx-background-radius: 10;
     -fx-border-color: rgba(255, 255, 255, 0.1);
-    -fx-border-width: 1;
-    -fx-padding: 12;
+    -fx-border-width: 0.8;
+    -fx-padding: 4;
 }
 
 .user-card-glass:hover {
     -fx-background-color: rgba(255, 255, 255, 0.1);
     -fx-border-color: #F97316;
+}
+
+/* ================= VOYAGE CARDS (DASHBOARD) ================= */
+.voyage-card {
+    -fx-background-color: rgba(255, 255, 255, 0.08);
+    -fx-background-radius: 10;
+    -fx-padding: 8;
+    -fx-pref-width: 150;
+    -fx-min-height: 100;
+    -fx-spacing: 5;
+    -fx-border-color: rgba(255, 255, 255, 0.1);
+    -fx-border-width: 0.8;
+    -fx-cursor: hand;
+}
+
+.voyage-card:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.15);
+    -fx-border-color: #F97316;
+    -fx-translate-y: -2;
+}
+
+.voyage-card-icon {
+    -fx-font-size: 24px;
+    -fx-text-fill: #F97316;
+}
+
+.voyage-card-titre {
+    -fx-font-size: 10px;
+    -fx-font-weight: 800;
+    -fx-text-fill: white;
+}
+
+.voyage-card-desc {
+    -fx-font-size: 8px;
+    -fx-text-fill: #94A3B8;
+}
+
+.voyage-card-btn {
+    -fx-background-color: rgba(249, 115, 22, 0.8);
+    -fx-text-fill: white;
+    -fx-font-size: 8px;
+    -fx-font-weight: 700;
+    -fx-background-radius: 12;
+    -fx-padding: 2 6;
 }

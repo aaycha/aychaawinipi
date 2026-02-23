@@ -13,12 +13,14 @@ import java.util.Map;
 
 /**
  * Entité représentant un abonnement utilisateur
- * Gère les memberships récurrents pour accès privilégié à des événements de loisirs
+ * Gère les memberships récurrents pour accès privilégié à des événements de
+ * loisirs
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Abonnement {
     private Long id;
     private Long userId;
+    private Long evenementId; // Facultatif, utilisé si type == EVENEMENT_PASS
     private TypeAbonnement type;
     @JsonFormat(pattern = "yyyy-MM-dd")
     @JsonSerialize(using = LocalDateSerializer.class)
@@ -41,7 +43,8 @@ public class Abonnement {
     public enum TypeAbonnement {
         MENSUEL("Mensuel"),
         ANNUEL("Annuel"),
-        PREMIUM("Premium");
+        PREMIUM("Premium"),
+        EVENEMENT_PASS("Pass Événement");
 
         private final String label;
 
@@ -75,21 +78,33 @@ public class Abonnement {
     }
 
     // Constructeurs
-    public Abonnement() {}
+    public Abonnement() {
+    }
 
-    public Abonnement(Long userId, TypeAbonnement type, LocalDate dateDebut, 
-                     BigDecimal prix, boolean autoRenew) {
+    public Abonnement(Long userId, TypeAbonnement type, LocalDate dateDebut,
+            BigDecimal prix, boolean autoRenew) {
+        this(userId, null, type, dateDebut, prix, autoRenew);
+    }
+
+    public Abonnement(Long userId, Long evenementId, TypeAbonnement type, LocalDate dateDebut,
+            BigDecimal prix, boolean autoRenew) {
         this.userId = userId;
+        this.evenementId = evenementId;
         this.type = type;
         this.dateDebut = dateDebut;
         this.prix = prix;
         this.autoRenew = autoRenew;
-        this.statut = StatutAbonnement.ACTIF;
+        this.statut = StatutAbonnement.EN_ATTENTE;
         this.pointsAccumules = 0;
         this.churnScore = 0.0;
-        
+
         // Calcul automatique de la date de fin selon le type
         switch (type) {
+            case EVENEMENT_PASS:
+                // Pour un pass, la validité est généralement plus courte ou liée à l'event
+                // Par défaut on met 7 jours si pas précisé, mais ce sera ajusté via l'evenement
+                this.dateFin = dateDebut.plusDays(7);
+                break;
             case MENSUEL:
                 this.dateFin = dateDebut.plusMonths(1);
                 break;
@@ -100,13 +115,12 @@ public class Abonnement {
                 this.dateFin = dateDebut.plusYears(1);
                 break;
         }
-        
+
         // Configuration des avantages par défaut
         this.avantages = Map.of(
-            "discounts", type == TypeAbonnement.PREMIUM ? 20 : 10,
-            "prioriteWaiting", type == TypeAbonnement.PREMIUM,
-            "accesEvenementsExclusifs", type == TypeAbonnement.PREMIUM
-        );
+                "discounts", (type == TypeAbonnement.PREMIUM) ? 30 : 10,
+                "prioriteWaiting", type == TypeAbonnement.PREMIUM,
+                "accesEvenementsExclusifs", type == TypeAbonnement.PREMIUM || type == TypeAbonnement.EVENEMENT_PASS);
     }
 
     // Getters et Setters
@@ -124,6 +138,14 @@ public class Abonnement {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public Long getEvenementId() {
+        return evenementId;
+    }
+
+    public void setEvenementId(Long evenementId) {
+        this.evenementId = evenementId;
     }
 
     public TypeAbonnement getType() {
@@ -200,15 +222,15 @@ public class Abonnement {
 
     // Méthodes utilitaires
     public boolean estActif() {
-        return statut == StatutAbonnement.ACTIF && 
-               dateFin != null && 
-               dateFin.isAfter(LocalDate.now());
+        return statut == StatutAbonnement.ACTIF &&
+                dateFin != null &&
+                dateFin.isAfter(LocalDate.now());
     }
 
     public boolean estProcheExpiration(int jours) {
-        return dateFin != null && 
-               dateFin.minusDays(jours).isBefore(LocalDate.now()) || 
-               dateFin.minusDays(jours).isEqual(LocalDate.now());
+        return dateFin != null &&
+                dateFin.minusDays(jours).isBefore(LocalDate.now()) ||
+                dateFin.minusDays(jours).isEqual(LocalDate.now());
     }
 
     public void ajouterPoints(int points) {
@@ -225,7 +247,7 @@ public class Abonnement {
 
     @Override
     public String toString() {
-        return String.format("Abonnement{id=%d, userId=%d, type=%s, statut=%s, prix=%.2f, points=%d}", 
-                           id, userId, type, statut, prix, pointsAccumules);
+        return String.format("Abonnement{id=%d, userId=%d, type=%s, statut=%s, prix=%.2f, points=%d}",
+                id, userId, type, statut, prix, pointsAccumules);
     }
 }
