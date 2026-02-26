@@ -1,7 +1,5 @@
 package com.gestion.controllers;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gestion.entities.User;
 import com.gestion.services.UserService;
 import com.gestion.tools.PasswordHasher;
@@ -84,9 +82,9 @@ public class DashboardController {
     private Label weatherLocation;
 
     private static final String GEMINI_API_KEY = "AIzaSyDsEq2TiVuJPoFhaTMUFI6NcELBiJePwNc";
-    private static final String WEATHER_API_KEY = "PMxJCjIOARDqkE9u";
     private final HttpClient httpClient = HttpClient.newHttpClient();
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final com.gestion.services.WeatherService weatherService = com.gestion.services.WeatherService
+            .getInstance();
 
     private final UserService userService = new UserService();
     private User currentUser;
@@ -168,48 +166,15 @@ public class DashboardController {
      */
     private void fetchWeather() {
         Thread weatherThread = new Thread(() -> {
-            try {
-                String url = "http://api.weatherapi.com/v1/current.json?key=" + WEATHER_API_KEY + "&q=Tunis&lang=fr";
-                HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create(url))
-                        .GET()
-                        .build();
-                HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-                if (response.statusCode() == 200) {
-                    JsonNode root = objectMapper.readTree(response.body());
-                    JsonNode current = root.get("current");
-                    JsonNode location = root.get("location");
-
-                    String temp = String.valueOf(current.get("temp_c").asDouble()) + "\u00B0C";
-                    String condition = current.get("condition").get("text").asText();
-                    String city = location.get("name").asText();
-
-                    Platform.runLater(() -> {
-                        if (weatherTemp != null)
-                            weatherTemp.setText(temp);
-                        if (weatherCondition != null)
-                            weatherCondition.setText(condition);
-                        if (weatherLocation != null)
-                            weatherLocation.setText("\uD83D\uDCCD " + city);
-                    });
-                } else {
-                    System.err.println("Weather API returned status: " + response.statusCode());
-                    Platform.runLater(() -> {
-                        if (weatherTemp != null)
-                            weatherTemp.setText("--\u00B0C");
-                        if (weatherCondition != null)
-                            weatherCondition.setText("Unavailable");
-                    });
-                }
-            } catch (Exception e) {
-                System.err.println("Weather fetch failed: " + e.getMessage());
-                Platform.runLater(() -> {
-                    if (weatherTemp != null)
-                        weatherTemp.setText("--\u00B0C");
-                    if (weatherCondition != null)
-                        weatherCondition.setText("Offline");
-                });
-            }
+            com.gestion.services.WeatherService.WeatherInfo info = weatherService.getCurrentWeather("Tunis");
+            Platform.runLater(() -> {
+                if (weatherTemp != null)
+                    weatherTemp.setText(info.temp);
+                if (weatherCondition != null)
+                    weatherCondition.setText(info.condition);
+                if (weatherLocation != null)
+                    weatherLocation.setText("\uD83D\uDCCD " + info.city);
+            });
         });
         weatherThread.setDaemon(true);
         weatherThread.start();

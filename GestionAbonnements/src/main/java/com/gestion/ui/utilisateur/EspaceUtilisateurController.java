@@ -23,6 +23,15 @@ public class EspaceUtilisateurController {
     private FlowPane cardsContainer;
     @FXML
     private Label sectionLabel;
+    @FXML
+    private Label weatherTemp;
+    @FXML
+    private Label weatherCondition;
+    @FXML
+    private Label weatherLocation;
+
+    private final com.gestion.services.WeatherService weatherService = com.gestion.services.WeatherService
+            .getInstance();
 
     private static byte[] readImageBytes(String imagePath) {
         try {
@@ -103,6 +112,23 @@ public class EspaceUtilisateurController {
             VBox card = createCard(section);
             cardsContainer.getChildren().add(card);
         }
+        fetchWeather();
+    }
+
+    private void fetchWeather() {
+        javafx.application.Platform.runLater(() -> {
+            new Thread(() -> {
+                com.gestion.services.WeatherService.WeatherInfo info = weatherService.getCurrentWeather("Tunis");
+                javafx.application.Platform.runLater(() -> {
+                    if (weatherTemp != null)
+                        weatherTemp.setText(info.temp);
+                    if (weatherCondition != null)
+                        weatherCondition.setText(info.condition);
+                    if (weatherLocation != null)
+                        weatherLocation.setText("\uD83D\uDCCD " + info.city);
+                });
+            }).start();
+        });
     }
 
     private VBox createCard(UserSection section) {

@@ -23,6 +23,20 @@
                 </ImageView>
                 <Label text="LAMA EXPEDITION" styleClass="section-title" style="-fx-font-size: 28; -fx-text-fill: white;"/>
                 <Region HBox.hgrow="ALWAYS"/>
+                <!-- Weather Widget -->
+                <VBox spacing="2" alignment="CENTER_LEFT">
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <VBox spacing="0">
+                            <Label styleClass="stat-title" text="WEATHER" style="-fx-font-size: 9;"/>
+                            <Label fx:id="weatherTemp" styleClass="stat-value" text="--°C" style="-fx-font-size: 16;"/>
+                        </VBox>
+                    </HBox>
+                    <HBox spacing="6" alignment="CENTER_LEFT">
+                        <Label fx:id="weatherCondition" style="-fx-text-fill: #94a3b8; -fx-font-size: 10;" text="Loading..." />
+                        <Label fx:id="weatherLocation" style="-fx-text-fill: #64748b; -fx-font-size: 9;" text="" />
+                    </HBox>
+                </VBox>
+                <Region minWidth="10"/>
                 <ComboBox fx:id="roleCombo" prefWidth="160" styleClass="modern-input" promptText="Select Role"/>
                 <Region minWidth="20"/>
                 <Label fx:id="userLabel" text="Active Scout: Explorer" styleClass="section-subtitle" style="-fx-text-fill: #3b82f6;"/>
@@ -49,6 +63,10 @@
                         </VBox>
                         <FlowPane fx:id="cardsContainer" hgap="8" vgap="8" prefWrapLength="2000"/>
                     </VBox>
+
+
+
+
                 </ScrollPane>
                 <!-- Espace Utilisateur - Liste scrollable (Mes Participations, Mes Repas, Restauration, Abonnement) -->
                 <ScrollPane fx:id="userDashboardScroll" fitToWidth="true" styleClass="modern-scroll" visible="false" managed="false" style="-fx-background: transparent; -fx-background-color: transparent;" hbarPolicy="AS_NEEDED">

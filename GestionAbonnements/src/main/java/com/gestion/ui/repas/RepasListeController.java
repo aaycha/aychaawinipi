@@ -466,58 +466,307 @@ public class RepasListeController implements Initializable {
     }
 
     private void generatePDF(java.io.File file) throws Exception {
-        com.lowagie.text.Document document = new com.lowagie.text.Document(com.lowagie.text.PageSize.A4);
-        com.lowagie.text.pdf.PdfWriter.getInstance(document, new java.io.FileOutputStream(file));
+        // ── Couleurs premium ──────────────────────────────────────────
+        java.awt.Color cBgDark = new java.awt.Color(10, 15, 30);
+        java.awt.Color cAccent = new java.awt.Color(56, 189, 147);
+        java.awt.Color cAccent2 = new java.awt.Color(99, 102, 241);
+        java.awt.Color cWhite = new java.awt.Color(255, 255, 255);
+        java.awt.Color cLightGray = new java.awt.Color(200, 210, 225);
+        java.awt.Color cMidGray = new java.awt.Color(148, 163, 184);
+        java.awt.Color cCardBg = new java.awt.Color(22, 30, 55);
+        java.awt.Color cCardAlt = new java.awt.Color(28, 38, 65);
+        java.awt.Color cSep = new java.awt.Color(40, 55, 85);
+
+        // ── Fonts ─────────────────────────────────────────────────────
+        com.lowagie.text.Font fBrand = new com.lowagie.text.Font(com.lowagie.text.Font.HELVETICA, 9,
+                com.lowagie.text.Font.BOLD, cAccent);
+        com.lowagie.text.Font fTitle = new com.lowagie.text.Font(com.lowagie.text.Font.HELVETICA, 22,
+                com.lowagie.text.Font.BOLD, cWhite);
+        com.lowagie.text.Font fSub = new com.lowagie.text.Font(com.lowagie.text.Font.HELVETICA, 9,
+                com.lowagie.text.Font.NORMAL, cMidGray);
+        com.lowagie.text.Font fSection = new com.lowagie.text.Font(com.lowagie.text.Font.HELVETICA, 11,
+                com.lowagie.text.Font.BOLD, cAccent);
+        com.lowagie.text.Font fLabel = new com.lowagie.text.Font(com.lowagie.text.Font.HELVETICA, 8,
+                com.lowagie.text.Font.BOLD, cLightGray);
+        com.lowagie.text.Font fValue = new com.lowagie.text.Font(com.lowagie.text.Font.HELVETICA, 16,
+                com.lowagie.text.Font.BOLD, cWhite);
+        com.lowagie.text.Font fHeader = new com.lowagie.text.Font(com.lowagie.text.Font.HELVETICA, 10,
+                com.lowagie.text.Font.BOLD, cWhite);
+        com.lowagie.text.Font fCell = new com.lowagie.text.Font(com.lowagie.text.Font.HELVETICA, 9,
+                com.lowagie.text.Font.NORMAL, cLightGray);
+        com.lowagie.text.Font fFooter = new com.lowagie.text.Font(com.lowagie.text.Font.HELVETICA, 7,
+                com.lowagie.text.Font.ITALIC, cMidGray);
+
+        com.lowagie.text.Document document = new com.lowagie.text.Document(
+                com.lowagie.text.PageSize.A4, 40, 40, 40, 40);
+        com.lowagie.text.pdf.PdfWriter writer = com.lowagie.text.pdf.PdfWriter.getInstance(document,
+                new java.io.FileOutputStream(file));
         document.open();
 
-        // Header
-        com.lowagie.text.Font titleFont = com.lowagie.text.FontFactory
-                .getFont(com.lowagie.text.FontFactory.HELVETICA_BOLD, 22, new java.awt.Color(30, 58, 138));
-        com.lowagie.text.Paragraph title = new com.lowagie.text.Paragraph("CATALOGUE DES PLATS - LAMMA VOYAGE",
-                titleFont);
-        title.setAlignment(com.lowagie.text.Element.ALIGN_CENTER);
-        title.setSpacingAfter(20);
-        document.add(title);
+        com.lowagie.text.pdf.PdfContentByte canvas = writer.getDirectContent();
+        com.lowagie.text.pdf.PdfContentByte under = writer.getDirectContentUnder();
+        float pw = com.lowagie.text.PageSize.A4.getWidth();
+        float ph = com.lowagie.text.PageSize.A4.getHeight();
 
-        com.lowagie.text.Paragraph info = new com.lowagie.text.Paragraph("Généré le : " + java.time.LocalDateTime.now()
-                .format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
-        info.setSpacingAfter(30);
-        document.add(info);
+        // ── 1. Fond sombre ────────────────────────────────────────────
+        under.setColorFill(cBgDark);
+        under.rectangle(0, 0, pw, ph);
+        under.fill();
 
-        // Table
-        com.lowagie.text.pdf.PdfPTable table = new com.lowagie.text.pdf.PdfPTable(5);
-        table.setWidthPercentage(100);
-        table.setSpacingBefore(10);
-        table.setWidths(new float[] { 30, 20, 20, 15, 15 });
+        // ── 2. Filigrane ──────────────────────────────────────────────
+        under.saveState();
+        com.lowagie.text.pdf.PdfGState gs = new com.lowagie.text.pdf.PdfGState();
+        gs.setFillOpacity(0.03f);
+        under.setGState(gs);
+        com.lowagie.text.pdf.BaseFont bf = com.lowagie.text.pdf.BaseFont.createFont(
+                com.lowagie.text.pdf.BaseFont.HELVETICA_BOLD,
+                com.lowagie.text.pdf.BaseFont.CP1252, false);
+        under.setColorFill(cWhite);
+        under.beginText();
+        under.setFontAndSize(bf, 60);
+        under.showTextAligned(com.lowagie.text.Element.ALIGN_CENTER,
+                "LAMA EXPEDITION", pw / 2, ph / 2, 35);
+        under.endText();
+        under.restoreState();
 
-        String[] headers = { "Nom du Plat", "Catégorie", "Restaurant", "Prix", "Statut" };
-        com.lowagie.text.Font headerFont = com.lowagie.text.FontFactory
-                .getFont(com.lowagie.text.FontFactory.HELVETICA_BOLD, 12, java.awt.Color.WHITE);
+        // ── 3. Cadre décoratif ────────────────────────────────────────
+        canvas.setColorStroke(cAccent2);
+        canvas.setLineWidth(1.5f);
+        canvas.roundRectangle(20, 20, pw - 40, ph - 40, 8);
+        canvas.stroke();
+        canvas.setColorStroke(cAccent);
+        canvas.setLineWidth(0.5f);
+        canvas.roundRectangle(24, 24, pw - 48, ph - 48, 6);
+        canvas.stroke();
 
-        for (String h : headers) {
-            com.lowagie.text.pdf.PdfPCell cell = new com.lowagie.text.pdf.PdfPCell(
-                    new com.lowagie.text.Paragraph(h, headerFont));
-            cell.setBackgroundColor(new java.awt.Color(59, 130, 246));
-            cell.setPadding(8);
-            cell.setHorizontalAlignment(com.lowagie.text.Element.ALIGN_CENTER);
-            table.addCell(cell);
+        // ── 4. Bandes accent haut ─────────────────────────────────────
+        canvas.setColorFill(cAccent);
+        canvas.rectangle(20, ph - 26, pw - 40, 6);
+        canvas.fill();
+        canvas.setColorFill(cAccent2);
+        canvas.rectangle(20, ph - 30, (pw - 40) * 0.6f, 4);
+        canvas.fill();
+
+        // ── 5. Bandes accent bas ──────────────────────────────────────
+        canvas.setColorFill(cAccent2);
+        canvas.rectangle(20, 20, pw - 40, 6);
+        canvas.fill();
+        canvas.setColorFill(cAccent);
+        canvas.rectangle(20 + (pw - 40) * 0.4f, 20, (pw - 40) * 0.6f, 4);
+        canvas.fill();
+
+        // ── 6. Logo ───────────────────────────────────────────────────
+        try {
+            java.io.InputStream logoStream = getClass().getResourceAsStream("/images/lamma-logo.png");
+            if (logoStream != null) {
+                java.io.ByteArrayOutputStream buf = new java.io.ByteArrayOutputStream();
+                byte[] tmp = new byte[4096];
+                int n;
+                while ((n = logoStream.read(tmp)) != -1)
+                    buf.write(tmp, 0, n);
+                buf.flush();
+                com.lowagie.text.Image logo = com.lowagie.text.Image.getInstance(buf.toByteArray());
+                logo.scaleToFit(70, 70);
+                logo.setAlignment(com.lowagie.text.Image.ALIGN_CENTER);
+                document.add(logo);
+            }
+        } catch (Exception ignored) {
         }
 
-        com.lowagie.text.Font cellFont = com.lowagie.text.FontFactory.getFont(com.lowagie.text.FontFactory.HELVETICA,
-                10);
+        // ── 7. En-tête ────────────────────────────────────────────────
+        com.lowagie.text.Paragraph brand = new com.lowagie.text.Paragraph("LAMA EXPEDITION", fBrand);
+        brand.setAlignment(com.lowagie.text.Element.ALIGN_CENTER);
+        document.add(brand);
+
+        document.add(
+                new com.lowagie.text.Paragraph(" ", new com.lowagie.text.Font(com.lowagie.text.Font.HELVETICA, 3)));
+
+        com.lowagie.text.Paragraph title = new com.lowagie.text.Paragraph("CATALOGUE DES PLATS", fTitle);
+        title.setAlignment(com.lowagie.text.Element.ALIGN_CENTER);
+        document.add(title);
+
+        String dateStr = java.time.LocalDateTime.now().format(
+                java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy à HH:mm"));
+        com.lowagie.text.Paragraph sub = new com.lowagie.text.Paragraph(
+                "Document officiel — Généré le " + dateStr, fSub);
+        sub.setAlignment(com.lowagie.text.Element.ALIGN_CENTER);
+        document.add(sub);
+
+        document.add(com.lowagie.text.Chunk.NEWLINE);
+
+        // ── 8. Statistiques résumé ────────────────────────────────────
+        int totalPlats = filteredRepas.size();
+        long disponibles = 0;
+        double totalPrix = 0;
+        for (Repas r : filteredRepas) {
+            if (r.isDisponible())
+                disponibles++;
+            if (r.getPrix() != null)
+                totalPrix += r.getPrix().doubleValue();
+        }
+        double prixMoyen = totalPlats > 0 ? totalPrix / totalPlats : 0;
+
+        com.lowagie.text.Paragraph statTitle = new com.lowagie.text.Paragraph(
+                "▪  RÉSUMÉ", fSection);
+        document.add(statTitle);
+        document.add(
+                new com.lowagie.text.Paragraph(" ", new com.lowagie.text.Font(com.lowagie.text.Font.HELVETICA, 3)));
+
+        com.lowagie.text.pdf.PdfPTable statsTable = new com.lowagie.text.pdf.PdfPTable(3);
+        statsTable.setWidthPercentage(100);
+        statsTable.setSpacingBefore(4f);
+
+        // Helper: create stat cell
+        String[][] stats = {
+                { "TOTAL PLATS", String.valueOf(totalPlats) },
+                { "DISPONIBLES", String.valueOf(disponibles) },
+                { "PRIX MOYEN", String.format("%.2f €", prixMoyen) }
+        };
+        for (String[] st : stats) {
+            com.lowagie.text.pdf.PdfPCell sc = new com.lowagie.text.pdf.PdfPCell();
+            sc.setBackgroundColor(cCardBg);
+            sc.setBorderColor(cSep);
+            sc.setBorderWidth(1f);
+            sc.setPadding(10f);
+            sc.addElement(new com.lowagie.text.Paragraph(st[0], fLabel));
+            sc.addElement(new com.lowagie.text.Paragraph(st[1], fValue));
+            statsTable.addCell(sc);
+        }
+        document.add(statsTable);
+
+        document.add(com.lowagie.text.Chunk.NEWLINE);
+
+        // ── 9. Séparateur ─────────────────────────────────────────────
+        com.lowagie.text.pdf.PdfPTable sep = new com.lowagie.text.pdf.PdfPTable(1);
+        sep.setWidthPercentage(100);
+        com.lowagie.text.pdf.PdfPCell sepCell = new com.lowagie.text.pdf.PdfPCell();
+        sepCell.setBackgroundColor(cSep);
+        sepCell.setBorder(com.lowagie.text.Rectangle.NO_BORDER);
+        sepCell.setFixedHeight(2f);
+        sep.addCell(sepCell);
+        document.add(sep);
+        document.add(
+                new com.lowagie.text.Paragraph(" ", new com.lowagie.text.Font(com.lowagie.text.Font.HELVETICA, 4)));
+
+        // ── 10. Table des plats ───────────────────────────────────────
+        com.lowagie.text.Paragraph tableTitle = new com.lowagie.text.Paragraph(
+                "▪  LISTE DES PLATS", fSection);
+        document.add(tableTitle);
+        document.add(
+                new com.lowagie.text.Paragraph(" ", new com.lowagie.text.Font(com.lowagie.text.Font.HELVETICA, 3)));
+
+        com.lowagie.text.pdf.PdfPTable table = new com.lowagie.text.pdf.PdfPTable(5);
+        table.setWidthPercentage(100);
+        table.setSpacingBefore(4f);
+        table.setWidths(new float[] { 30, 18, 22, 15, 15 });
+
+        String[] headers = { "Nom du Plat", "Catégorie", "Restaurant", "Prix", "Statut" };
+        for (String h : headers) {
+            com.lowagie.text.pdf.PdfPCell hc = new com.lowagie.text.pdf.PdfPCell(
+                    new com.lowagie.text.Paragraph(h, fHeader));
+            hc.setBackgroundColor(cAccent2);
+            hc.setBorderColor(cSep);
+            hc.setBorderWidth(0.5f);
+            hc.setPadding(8);
+            hc.setHorizontalAlignment(com.lowagie.text.Element.ALIGN_CENTER);
+            table.addCell(hc);
+        }
+
+        int row = 0;
         for (Repas p : filteredRepas) {
-            table.addCell(new com.lowagie.text.pdf.PdfPCell(new com.lowagie.text.Paragraph(p.getNom(), cellFont)));
-            table.addCell(new com.lowagie.text.pdf.PdfPCell(new com.lowagie.text.Paragraph(
-                    p.getCategorie() != null ? p.getCategorie().getLabel() : "-", cellFont)));
-            table.addCell(
-                    new com.lowagie.text.pdf.PdfPCell(new com.lowagie.text.Paragraph(p.getRestaurantNom(), cellFont)));
-            table.addCell(new com.lowagie.text.pdf.PdfPCell(
-                    new com.lowagie.text.Paragraph(String.format("%.2f €", p.getPrix()), cellFont)));
-            table.addCell(new com.lowagie.text.pdf.PdfPCell(
-                    new com.lowagie.text.Paragraph(p.isDisponible() ? "Disponible" : "Indispo", cellFont)));
+            java.awt.Color rowBg = (row % 2 == 0) ? cCardBg : cCardAlt;
+
+            // Name
+            com.lowagie.text.pdf.PdfPCell c1 = new com.lowagie.text.pdf.PdfPCell(
+                    new com.lowagie.text.Paragraph(p.getNom(), fCell));
+            c1.setBackgroundColor(rowBg);
+            c1.setBorderColor(cSep);
+            c1.setBorderWidth(0.5f);
+            c1.setPadding(7);
+            table.addCell(c1);
+
+            // Category
+            com.lowagie.text.pdf.PdfPCell c2 = new com.lowagie.text.pdf.PdfPCell(
+                    new com.lowagie.text.Paragraph(
+                            p.getCategorie() != null ? p.getCategorie().getLabel() : "-", fCell));
+            c2.setBackgroundColor(rowBg);
+            c2.setBorderColor(cSep);
+            c2.setBorderWidth(0.5f);
+            c2.setPadding(7);
+            table.addCell(c2);
+
+            // Restaurant
+            com.lowagie.text.pdf.PdfPCell c3 = new com.lowagie.text.pdf.PdfPCell(
+                    new com.lowagie.text.Paragraph(p.getRestaurantNom(), fCell));
+            c3.setBackgroundColor(rowBg);
+            c3.setBorderColor(cSep);
+            c3.setBorderWidth(0.5f);
+            c3.setPadding(7);
+            table.addCell(c3);
+
+            // Price — accent color
+            com.lowagie.text.Font priceFont = new com.lowagie.text.Font(
+                    com.lowagie.text.Font.HELVETICA, 9, com.lowagie.text.Font.BOLD, cAccent);
+            com.lowagie.text.pdf.PdfPCell c4 = new com.lowagie.text.pdf.PdfPCell(
+                    new com.lowagie.text.Paragraph(
+                            String.format("%.2f €", p.getPrix()), priceFont));
+            c4.setBackgroundColor(rowBg);
+            c4.setBorderColor(cSep);
+            c4.setBorderWidth(0.5f);
+            c4.setPadding(7);
+            c4.setHorizontalAlignment(com.lowagie.text.Element.ALIGN_RIGHT);
+            table.addCell(c4);
+
+            // Status — colored
+            java.awt.Color stColor = p.isDisponible()
+                    ? new java.awt.Color(34, 197, 94)
+                    : new java.awt.Color(239, 68, 68);
+            com.lowagie.text.Font stFont = new com.lowagie.text.Font(
+                    com.lowagie.text.Font.HELVETICA, 8, com.lowagie.text.Font.BOLD, stColor);
+            com.lowagie.text.pdf.PdfPCell c5 = new com.lowagie.text.pdf.PdfPCell(
+                    new com.lowagie.text.Paragraph(
+                            p.isDisponible() ? "Disponible" : "Indisponible", stFont));
+            c5.setBackgroundColor(rowBg);
+            c5.setBorderColor(cSep);
+            c5.setBorderWidth(0.5f);
+            c5.setPadding(7);
+            c5.setHorizontalAlignment(com.lowagie.text.Element.ALIGN_CENTER);
+            table.addCell(c5);
+
+            row++;
         }
 
         document.add(table);
+        document.add(com.lowagie.text.Chunk.NEWLINE);
+
+        // ── 11. Footer ────────────────────────────────────────────────
+        com.lowagie.text.pdf.PdfPTable sepFoot = new com.lowagie.text.pdf.PdfPTable(1);
+        sepFoot.setWidthPercentage(100);
+        com.lowagie.text.pdf.PdfPCell fc = new com.lowagie.text.pdf.PdfPCell();
+        fc.setBackgroundColor(cAccent2);
+        fc.setBorder(com.lowagie.text.Rectangle.NO_BORDER);
+        fc.setFixedHeight(1.5f);
+        sepFoot.addCell(fc);
+        document.add(sepFoot);
+        document.add(
+                new com.lowagie.text.Paragraph(" ", new com.lowagie.text.Font(com.lowagie.text.Font.HELVETICA, 3)));
+
+        com.lowagie.text.Font fBrandFoot = new com.lowagie.text.Font(
+                com.lowagie.text.Font.HELVETICA, 8, com.lowagie.text.Font.BOLD, cAccent);
+        com.lowagie.text.Paragraph fb1 = new com.lowagie.text.Paragraph("LAMA EXPEDITION™", fBrandFoot);
+        fb1.setAlignment(com.lowagie.text.Element.ALIGN_CENTER);
+        document.add(fb1);
+
+        com.lowagie.text.Paragraph fb2 = new com.lowagie.text.Paragraph(
+                "Document confidentiel — Usage interne uniquement — " + dateStr, fFooter);
+        fb2.setAlignment(com.lowagie.text.Element.ALIGN_CENTER);
+        document.add(fb2);
+
+        com.lowagie.text.Paragraph fb3 = new com.lowagie.text.Paragraph(
+                totalPlats + " plat(s) répertorié(s) — Généré par LAMA EXPEDITION™", fFooter);
+        fb3.setAlignment(com.lowagie.text.Element.ALIGN_CENTER);
+        document.add(fb3);
+
         document.close();
     }
 

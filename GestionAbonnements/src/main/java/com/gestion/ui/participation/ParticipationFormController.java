@@ -89,6 +89,7 @@ public class ParticipationFormController {
     private boolean editMode = false;
     private Runnable onSaved;
     private BigDecimal currentPromoDiscount = BigDecimal.ZERO;
+    private boolean isSubscriptionCheckBypassed = false;
 
     private boolean isFilteringEvent = false;
 
@@ -431,6 +432,12 @@ public class ParticipationFormController {
                 participationController = new ParticipationController();
             }
 
+            // --- MANDATORY SUBSCRIPTION CHOICE FLOW ---
+            if (!editMode && !isSubscriptionCheckBypassed) {
+                showSubscriptionChoicePopup(userId, evenementId);
+                return;
+            }
+
             if (editMode) {
                 participationController.update(target);
                 showInfo("Participation modifiée avec succès.");
@@ -443,18 +450,12 @@ public class ParticipationFormController {
                 onSaved.run();
             }
             closeWindow();
-        } catch (IllegalArgumentException ex) {
-            if (ex.getMessage().contains("Accès refusé")) {
-                showRedirectionDialog(userId, evenementId);
-            } else {
-                showError(errorGlobal, ex.getMessage());
-            }
         } catch (Exception ex) {
             showError(errorGlobal, "Erreur lors de l'enregistrement : " + ex.getMessage());
         }
     }
 
-    private void showRedirectionDialog(Long userId, Long eventId) {
+    private void showSubscriptionChoicePopup(Long userId, Long eventId) {
         // Calculate the base amount from the UI labels
         BigDecimal baseAmount = BigDecimal.ZERO;
         try {
@@ -466,14 +467,14 @@ public class ParticipationFormController {
         }
 
         BigDecimal passPrice = baseAmount;
-        BigDecimal abonnementPrice = baseAmount.multiply(new BigDecimal("3.00")).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal abonnementPrice = new BigDecimal("14.99"); // Standard Monthly Price
 
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Accès Refusé - Aventurier");
-        alert.setHeaderText("Vous n'avez pas d'accès valide pour cet événement.");
+        alert.setTitle("Choix de l'Accès - LAMMA");
+        alert.setHeaderText("Comment souhaitez-vous valider votre participation ?");
         alert.setContentText("Choisissez une option pour continuer :\n\n" +
-                "• Pass Unique : " + passPrice + " TND (Prix de la participation)\n" +
-                "• Abonnement Mensuel : " + abonnementPrice + " TND (3x le prix de la participation)");
+                "• Pass Unique : " + passPrice + " € (Accès pour cet événement uniquement)\n" +
+                "• Abonnement Global : à partir de " + abonnementPrice + " € (Accès à tous les événements)");
 
         ButtonType btnPass = new ButtonType("Prendre un Pass Unique");
         ButtonType btnAbonnement = new ButtonType("S'abonner (Global)");
@@ -482,7 +483,6 @@ public class ParticipationFormController {
         alert.getButtonTypes().setAll(btnPass, btnAbonnement, btnCancel);
 
         final BigDecimal finalPassPrice = passPrice;
-        final BigDecimal finalAbonnementPrice = abonnementPrice;
 
         alert.showAndWait().ifPresent(response -> {
             if (response == btnPass) {
@@ -504,6 +504,7 @@ public class ParticipationFormController {
             ctrl.setOnSuccess(() -> {
                 Platform.runLater(() -> {
                     showInfo("Abonnement activé ! Nous confirmons votre participation...");
+                    isSubscriptionCheckBypassed = true;
                     onEnregistrer(); // Auto-confirm
                 });
             });
@@ -530,6 +531,7 @@ public class ParticipationFormController {
             ctrl.setOnSave(() -> {
                 Platform.runLater(() -> {
                     showInfo("Accès obtenu ! Confirmation de votre participation en cours...");
+                    isSubscriptionCheckBypassed = true;
                     onEnregistrer(); // Auto-confirm
                 });
             });

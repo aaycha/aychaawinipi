@@ -93,6 +93,12 @@ public class ChatbotController implements Initializable {
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
             sb.append("- Total Revenue from subscriptions: ").append(totalRevenue).append(" TND\n");
 
+            // Weather
+            com.gestion.services.WeatherService.WeatherInfo weather = com.gestion.services.WeatherService.getInstance()
+                    .getCurrentWeather("Tunis");
+            sb.append("- Current Weather: ").append(weather.temp).append(", ").append(weather.condition).append(" in ")
+                    .append(weather.city).append("\n");
+
         } catch (Exception e) {
             sb.append("(Error fetching live data: ").append(e.getMessage()).append(")\n");
         }

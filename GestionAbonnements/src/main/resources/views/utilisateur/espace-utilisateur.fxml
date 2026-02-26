@@ -18,6 +18,15 @@
                 <Label text="MY BASE CAMP" styleClass="text-hero" style="-fx-font-size: 20;"/>
                 <Label text="Log your mountain mission data and check trail status" styleClass="text-muted" style="-fx-font-size: 10;"/>
             </VBox>
+            
+            <!-- Weather Widget -->
+            <VBox spacing="2" alignment="CENTER_RIGHT" style="-fx-background-color: rgba(255,255,255,0.05); -fx-background-radius: 10; -fx-padding: 5 12;">
+                <HBox spacing="8" alignment="CENTER_RIGHT">
+                    <Label fx:id="weatherTemp" text="--°C" style="-fx-text-fill: #F97316; -fx-font-size: 14; -fx-font-weight: 800;"/>
+                    <Label fx:id="weatherCondition" text="Loading..." style="-fx-text-fill: #94a3b8; -fx-font-size: 10;"/>
+                </HBox>
+                <Label fx:id="weatherLocation" text="" style="-fx-text-fill: #64748b; -fx-font-size: 9;"/>
+            </VBox>
         </HBox>
 
         <!-- Quick Navigation -->
