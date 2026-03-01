@@ -28,7 +28,7 @@
     cursor: hand;
     -fx-cursor: hand;
     padding: 2 6;
-    -fx-padding: 2 6;
+    -fx-padding: 1 4;
     text-align: left;
     -fx-alignment: CENTER_LEFT;
     transition: all 0.2s ease;
@@ -81,7 +81,7 @@
 }
 
 .stat-value {
-    -fx-font-size: 12px;
+    -fx-font-size: 11px;
     -fx-font-weight: 900;
     -fx-text-fill: white;
 }
@@ -131,13 +131,13 @@
 
 /* List Headers */
 .section-title {
-    -fx-font-size: 18px;
+    -fx-font-size: 15px;
     -fx-font-weight: 800;
     -fx-text-fill: white;
 }
 
 .section-subtitle {
-    -fx-font-size: 11px;
+    -fx-font-size: 10px;
     -fx-text-fill: #94a3b8;
     -fx-font-weight: 500;
 }
@@ -160,9 +160,9 @@
 .voyage-card {
     -fx-background-color: rgba(255, 255, 255, 0.08);
     -fx-background-radius: 10;
-    -fx-padding: 8;
-    -fx-pref-width: 150;
-    -fx-min-height: 100;
+    -fx-padding: 6;
+    -fx-pref-width: 140;
+    -fx-min-height: 90;
     -fx-spacing: 5;
     -fx-border-color: rgba(255, 255, 255, 0.1);
     -fx-border-width: 0.8;

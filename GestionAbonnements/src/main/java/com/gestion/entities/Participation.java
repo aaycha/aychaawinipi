@@ -71,7 +71,8 @@ public class Participation {
         SANS_REPAS("Sans repas"),
         AVEC_REPAS("Avec repas"),
         AVEC_MENU("Avec menu complet"),
-        COMPOSITION_SUR_PLACE("Composition sur place");
+        COMPOSITION_SUR_PLACE("Composition sur place"),
+        AU_RESTAURANT("Au restaurant");
 
         private final String label;
 
@@ -108,6 +109,8 @@ public class Participation {
     private MealOption mealOption;
     private int pointsEarned;
     private Long abonnementId;
+    private Long restaurantId;
+    private Long menuId;
 
     public Participation() {
     }
@@ -289,6 +292,22 @@ public class Participation {
 
     public void setAbonnementId(Long abonnementId) {
         this.abonnementId = abonnementId;
+    }
+
+    public Long getRestaurantId() {
+        return restaurantId;
+    }
+
+    public void setRestaurantId(Long restaurantId) {
+        this.restaurantId = restaurantId;
+    }
+
+    public Long getMenuId() {
+        return menuId;
+    }
+
+    public void setMenuId(Long menuId) {
+        this.menuId = menuId;
     }
 
     public void confirmer() {

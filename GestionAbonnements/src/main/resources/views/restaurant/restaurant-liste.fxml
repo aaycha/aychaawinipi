@@ -8,14 +8,11 @@
 
 <ScrollPane xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.gestion.ui.restaurant.RestaurantListeController"
-            fitToWidth="false" fitToHeight="false" styleClass="modern-scroll-pane"
-            vbarPolicy="AS_NEEDED" hbarPolicy="AS_NEEDED">
-    <stylesheets>
-        <URL value="@../../styles/card-view.css" />
-        <URL value="@../../styles/nature-mood.css" />
-    </stylesheets>
-
-    <VBox spacing="8" styleClass="modern-panel" prefWidth="1000" style="-fx-padding: 12;">
+            fitToWidth="true" fitToHeight="false" hbarPolicy="AS_NEEDED" vbarPolicy="AS_NEEDED"
+            style="-fx-background: transparent; -fx-background-color: transparent;"
+            stylesheets="@../../styles/card-view.css, @../../styles/nature-mood.css">
+    
+    <VBox spacing="4" styleClass="modern-panel" prefWidth="1000" style="-fx-padding: 8;">
         
         <!-- Nature Header -->
         <HBox spacing="12" alignment="CENTER_LEFT">
@@ -33,19 +30,19 @@
             </HBox>
         </HBox>
 
-        <!-- Action Bar - Capsule Style -->
         <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 2 0;">
-            <Button text="➕ NEW" onAction="#onNouveauRestaurant" styleClass="button-capsule" style="-fx-padding: 8 16; -fx-font-size: 11;"/>
-            <Button text="🔄 SYNC" onAction="#onActualiser" styleClass="button-capsule-glass" style="-fx-padding: 8 16; -fx-font-size: 11;"/>
+            <Button fx:id="btnNouveau" text="➕ NEW" onAction="#onNouveauRestaurant" styleClass="button-capsule" style="-fx-padding: 8 16; -fx-font-size: 11;"/>
+            <Button fx:id="btnActualiser" text="🔄 SYNC" onAction="#onActualiser" styleClass="button-capsule-glass" style="-fx-padding: 8 16; -fx-font-size: 11;"/>
             <Button fx:id="btnModifier" text="✏️ EDIT" onAction="#onModifier" disable="true" styleClass="button-capsule-glass" style="-fx-padding: 8 16; -fx-font-size: 11;"/>
             <Button fx:id="btnSupprimer" text="🗑️ REMOVE" onAction="#onSupprimer" disable="true" styleClass="button-capsule-glass" style="-fx-padding: 8 16; -fx-text-fill: #ef4444; -fx-font-size: 11;"/>
             <Button fx:id="btnVoirDetails" text="👁️ DETAILS" onAction="#onVoirDetails" disable="true" styleClass="button-capsule-glass" style="-fx-padding: 8 16; -fx-text-fill: #3b82f6; -fx-font-size: 11;"/>
+            <Button fx:id="btnReserver" text="📅 RÉSERVER" onAction="#onReserver" visible="false" managed="false" styleClass="button-capsule" style="-fx-padding: 8 16; -fx-font-size: 11; -fx-background-color: #00D4B4;"/>
             <Region HBox.hgrow="ALWAYS"/>
             <TextField fx:id="searchField" promptText="🔍 Scout search..." styleClass="modern-input" prefWidth="220" style="-fx-font-size: 11;"/>
         </HBox>
 
         <!-- Filter Grid - Glass -->
-        <HBox spacing="12" alignment="CENTER_LEFT" styleClass="modern-card" style="-fx-padding: 10 20;">
+        <HBox spacing="10" alignment="CENTER_LEFT" styleClass="modern-card" style="-fx-padding: 6 15;">
             <Label text="Status:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 11;"/>
             <ComboBox fx:id="filterActifCombo" promptText="All Lodges" styleClass="modern-input" prefWidth="150" style="-fx-font-size: 11;"/>
             <Region HBox.hgrow="ALWAYS"/>
@@ -71,6 +68,5 @@
                 </placeholder>
             </ListView>
         </VBox>
-
     </VBox>
 </ScrollPane>

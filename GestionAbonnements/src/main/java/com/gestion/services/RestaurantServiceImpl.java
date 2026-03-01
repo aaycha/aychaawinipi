@@ -50,6 +50,7 @@ public class RestaurantServiceImpl implements RestaurantService {
                 addColumnIfNotExists(st, "latitude", "DOUBLE");
                 addColumnIfNotExists(st, "longitude", "DOUBLE");
                 addColumnIfNotExists(st, "rating", "DOUBLE DEFAULT 0.0");
+                addColumnIfNotExists(st, "nombre_places", "INT DEFAULT 50");
             }
         } catch (SQLException e) {
             System.err.println("Warning: Could not ensure table " + TABLE + " : " + e.getMessage());
@@ -77,7 +78,7 @@ public class RestaurantServiceImpl implements RestaurantService {
             throw new IllegalArgumentException(validation.getAllErrorsAsString());
 
         String sql = "INSERT INTO " + TABLE
-                + " (nom, adresse, telephone, email, description, image_url, actif, latitude, longitude, rating) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                + " (nom, adresse, telephone, email, description, image_url, actif, latitude, longitude, rating, nombre_places) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try {
             Connection c = db.getConnection();
             if (c == null)
@@ -93,6 +94,7 @@ public class RestaurantServiceImpl implements RestaurantService {
                 ps.setObject(8, restaurant.getLatitude());
                 ps.setObject(9, restaurant.getLongitude());
                 ps.setObject(10, restaurant.getRating());
+                ps.setInt(11, restaurant.getNombrePlaces());
                 ps.executeUpdate();
                 try (ResultSet keys = ps.getGeneratedKeys()) {
                     if (keys.next())
@@ -115,7 +117,7 @@ public class RestaurantServiceImpl implements RestaurantService {
             throw new IllegalArgumentException(validation.getAllErrorsAsString());
 
         String sql = "UPDATE " + TABLE
-                + " SET nom=?, adresse=?, telephone=?, email=?, description=?, image_url=?, actif=?, latitude=?, longitude=?, rating=? WHERE id=?";
+                + " SET nom=?, adresse=?, telephone=?, email=?, description=?, image_url=?, actif=?, latitude=?, longitude=?, rating=?, nombre_places=? WHERE id=?";
         try {
             Connection c = db.getConnection();
             if (c == null)
@@ -131,7 +133,8 @@ public class RestaurantServiceImpl implements RestaurantService {
                 ps.setObject(8, restaurant.getLatitude());
                 ps.setObject(9, restaurant.getLongitude());
                 ps.setObject(10, restaurant.getRating());
-                ps.setLong(11, restaurant.getId());
+                ps.setInt(11, restaurant.getNombrePlaces());
+                ps.setLong(12, restaurant.getId());
                 int updated = ps.executeUpdate();
                 if (updated == 0)
                     throw new IllegalArgumentException("Restaurant non trouvé avec l'ID: " + restaurant.getId());
@@ -276,11 +279,42 @@ public class RestaurantServiceImpl implements RestaurantService {
         r.setLatitude(rs.getObject("latitude", Double.class));
         r.setLongitude(rs.getObject("longitude", Double.class));
         r.setRating(rs.getObject("rating", Double.class));
+        r.setNombrePlaces(rs.getInt("nombre_places"));
         Timestamp ts = rs.getTimestamp("date_creation");
         if (ts != null)
             r.setDateCreation(ts.toLocalDateTime());
         else
             r.setDateCreation(LocalDateTime.now());
         return r;
+    }
+
+    @Override
+    public int getPlacesRestantes(Long restaurantId, Long excludeParticipationId) {
+        if (restaurantId == null)
+            return 0;
+
+        Optional<Restaurant> restOpt = findById(restaurantId);
+        if (restOpt.isEmpty())
+            return 0;
+        int totalCap = restOpt.get().getNombrePlaces();
+
+        String sql = "SELECT COUNT(*) FROM participations WHERE restaurant_id = ? AND meal_option = 'AU_RESTAURANT'";
+        if (excludeParticipationId != null) {
+            sql += " AND id != ?";
+        }
+
+        try (Connection c = db.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setLong(1, restaurantId);
+            if (excludeParticipationId != null) {
+                ps.setLong(2, excludeParticipationId);
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                int reserved = rs.next() ? rs.getInt(1) : 0;
+                return Math.max(0, totalCap - reserved);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error calculating remaining places: " + e.getMessage());
+            return totalCap; // Fallback to total capacity on error
+        }
     }
 }

@@ -2,7 +2,6 @@ package com.gestion.ui.utilisateur;
 
 import com.gestion.controllers.AbonnementController;
 import com.gestion.entities.Abonnement;
-import com.gestion.ui.abonnement.FactureController;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -18,7 +17,6 @@ import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import java.time.format.DateTimeFormatter;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -88,36 +86,67 @@ public class AbonnementChoixController {
 
     private void subscribe(Abonnement.TypeAbonnement type, double prix) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/abonnement/abonnement-form.fxml"));
-            Parent root = loader.load();
-            com.gestion.ui.abonnement.AbonnementFormController ctrl = loader.getController();
+            // --- Open Stripe Checkout for real payment ---
+            com.gestion.services.StripePaymentService stripeService = com.gestion.services.StripePaymentService
+                    .getInstance();
+            stripeService.openCheckoutInBrowser(java.math.BigDecimal.valueOf(prix), "Abonnement " + type.getLabel());
 
-            Abonnement template = new Abonnement(currentUserId, null, type, java.time.LocalDate.now(),
-                    java.math.BigDecimal.valueOf(prix), true);
+            Alert payConfirm = new Alert(Alert.AlertType.CONFIRMATION);
+            payConfirm.setTitle("Stripe Payment Verification");
+            payConfirm.setHeaderText("Secure Payment Gateway Launched");
+            payConfirm.setContentText(
+                    "The Stripe checkout session has been opened in your browser.\n\n" +
+                            "Montant : " + prix + " €\n" +
+                            "Plan : " + type.getLabel() + "\n\n" +
+                            "Click 'CONFIRM PAYMENT' after completing the transaction to activate your status.");
 
-            ctrl.setAbonnement(template);
-            ctrl.setReadOnly(true); // Mandatory validation for subscription through this list
-            ctrl.setOnSave(() -> {
-                Platform.runLater(() -> {
-                    onActualiser();
-                    if (mainTabPane != null) {
-                        mainTabPane.getSelectionModel().select(0);
+            ButtonType btnConfirm = new ButtonType("CONFIRM PAYMENT");
+            ButtonType btnCancel = new ButtonType("CANCEL", ButtonBar.ButtonData.CANCEL_CLOSE);
+            payConfirm.getButtonTypes().setAll(btnConfirm, btnCancel);
+
+            payConfirm.showAndWait().ifPresent(response -> {
+                if (response == btnConfirm) {
+                    try {
+                        // Create the abonnement
+                        Abonnement template = new Abonnement(currentUserId, null, type, java.time.LocalDate.now(),
+                                java.math.BigDecimal.valueOf(prix), true);
+
+                        // Save the abonnement via the form
+                        FXMLLoader loader = new FXMLLoader(
+                                getClass().getResource("/views/abonnement/abonnement-form.fxml"));
+                        Parent root = loader.load();
+                        com.gestion.ui.abonnement.AbonnementFormController ctrl = loader.getController();
+
+                        ctrl.setAbonnement(template);
+                        ctrl.setReadOnly(true);
+                        ctrl.setOnSave(() -> {
+                            Platform.runLater(() -> {
+                                onActualiser();
+                                if (mainTabPane != null) {
+                                    mainTabPane.getSelectionModel().select(0);
+                                }
+                                if (onSuccess != null) {
+                                    onSuccess.run();
+                                }
+                                if (statusLabel != null && statusLabel.getScene() != null) {
+                                    ((Stage) statusLabel.getScene().getWindow()).close();
+                                }
+
+                                // --- Open Facture (Invoice) after successful save ---
+                                showFacture(template);
+                            });
+                        });
+
+                        Stage stage = new Stage();
+                        stage.initModality(Modality.APPLICATION_MODAL);
+                        stage.setTitle("Mission Activation: " + type.getLabel());
+                        stage.setScene(new Scene(root));
+                        stage.show();
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                    if (onSuccess != null) {
-                        onSuccess.run();
-                    }
-                    // Close the choice window if it's still open
-                    if (statusLabel != null && statusLabel.getScene() != null) {
-                        ((Stage) statusLabel.getScene().getWindow()).close();
-                    }
-                });
+                }
             });
-
-            Stage stage = new Stage();
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setTitle("Confirmation de votre Abonnement");
-            stage.setScene(new Scene(root));
-            stage.showAndWait();
         } catch (Exception e) {
             e.printStackTrace();
             Alert error = new Alert(Alert.AlertType.ERROR);
@@ -125,6 +154,28 @@ public class AbonnementChoixController {
             error.setHeaderText("Échec de l'ouverture du formulaire");
             error.setContentText(e.getMessage());
             error.show();
+        }
+    }
+
+    /**
+     * Opens the Facture (Invoice) window for the given abonnement.
+     * The facture contains a "Send Notification" button for SMS validation.
+     */
+    private void showFacture(Abonnement abonnement) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/abonnement/facture.fxml"));
+            Parent root = loader.load();
+            com.gestion.ui.abonnement.FactureController ctrl = loader.getController();
+            ctrl.setData(abonnement);
+
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Facture — " + abonnement.getType().getLabel());
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Erreur ouverture facture: " + e.getMessage());
         }
     }
 
@@ -220,22 +271,4 @@ public class AbonnementChoixController {
         });
     }
 
-    private void showFacture(Abonnement a) {
-        if (a == null)
-            return;
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/abonnement/facture.fxml"));
-            Parent root = loader.load();
-            FactureController ctrl = loader.getController();
-            ctrl.setData(a);
-
-            Stage stage = new Stage();
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setTitle("Facture LAMMA");
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }

@@ -2,53 +2,60 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.image.*?>
 <?import java.net.URL?>
 
 <ScrollPane xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.gestion.ui.evenement.EvenementViewController"
-            fitToWidth="false" fitToHeight="false" styleClass="modern-scroll-pane"
-            vbarPolicy="AS_NEEDED" hbarPolicy="AS_NEEDED">
-    <stylesheets>
-        <URL value="@../../styles/nature-mood.css" />
-    </stylesheets>
+            fx:controller="com.gestion.ui.evenement.EvenementListeController"
+            fitToWidth="true" fitToHeight="true" hbarPolicy="AS_NEEDED" vbarPolicy="AS_NEEDED"
+            style="-fx-background: transparent; -fx-background-color: transparent;"
+            stylesheets="@../../styles/nature-mood.css, @../../styles/card-view.css">
 
-    <VBox spacing="10" prefWidth="1000" styleClass="modern-panel" style="-fx-padding: 12;">
+    <VBox spacing="10" styleClass="modern-panel" prefWidth="1050" style="-fx-padding: 12;">
         
-        <!-- Header -->
-        <HBox spacing="10" alignment="CENTER_LEFT">
-            <StackPane style="-fx-background-color: rgba(59, 130, 246, 0.15); -fx-background-radius: 8; -fx-padding: 6;">
-                <Label text="📅" style="-fx-font-size: 16;"/>
+        <!-- Nature Header -->
+        <HBox spacing="12" alignment="CENTER_LEFT">
+            <StackPane style="-fx-background-color: rgba(30, 58, 50, 0.2); -fx-background-radius: 8; -fx-padding: 6;">
+                <Label text="🏞️" style="-fx-font-size: 16;"/>
             </StackPane>
             <VBox spacing="0">
-                <Label text="Gestion des Événements" styleClass="modern-title" style="-fx-text-fill: white; -fx-font-size: 16; -fx-font-weight: 800;"/>
-                <Label text="Planifiez et gérez les treks, soirées et séjours" style="-fx-text-fill: #94A3B8; -fx-font-size: 9;"/>
+                <Label text="Mission Archive" styleClass="modern-title" style="-fx-text-fill: white; -fx-font-size: 16; -fx-font-weight: 800;"/>
+                <Label text="Scheduled explorations and trail events" style="-fx-text-fill: #94a3b8; -fx-font-size: 9;"/>
             </VBox>
-        </HBox>
-
-        <!-- Action Bar -->
-        <HBox spacing="10" alignment="CENTER_LEFT">
-            <Button fx:id="btnNouvelEvent" text="➕ NEW" onAction="#onNouvelEvenement" styleClass="button-capsule" style="-fx-padding: 8 16; -fx-font-size: 11;"/>
-            <Button text="🔄 SYNC" onAction="#onActualiser" styleClass="button-capsule-glass" style="-fx-padding: 8 16; -fx-font-size: 11;"/>
-            <Button fx:id="btnModifier" text="✏️ EDIT" onAction="#onModifier" disable="true" styleClass="button-capsule-glass" style="-fx-padding: 8 16; -fx-font-size: 11;"/>
-            <Button fx:id="btnSupprimer" text="🗑️ DELETE" onAction="#onSupprimer" disable="true" styleClass="button-capsule-glass" style="-fx-padding: 8 16; -fx-text-fill: #ef4444; -fx-font-size: 11;" />
             <Region HBox.hgrow="ALWAYS"/>
-            <TextField fx:id="searchField" promptText="🔍 Search trail..." styleClass="modern-input" prefWidth="200" style="-fx-font-size: 11;"/>
+            <HBox alignment="CENTER" spacing="8" style="-fx-background-color: rgba(255,255,255,0.05); -fx-padding: 4 12; -fx-background-radius: 15; -fx-border-color: rgba(255,255,255,0.1); -fx-border-radius: 15;">
+                <Circle fill="#1e3a32" radius="3"/>
+                <Label fx:id="statusLabel" text="Grid Online" style="-fx-text-fill: white; -fx-font-size: 10; -fx-font-weight: 600;"/>
+            </HBox>
         </HBox>
 
-        <!-- Stats & Info -->
-        <HBox alignment="CENTER_LEFT" spacing="10">
-            <Label fx:id="countLabel" text="0 événement(s)" style="-fx-text-fill: #3b82f6; -fx-font-weight: bold; -fx-font-size: 12;"/>
-            <Label fx:id="statusInfoLabel" text="" style="-fx-text-fill: #94A3B8; -fx-font-size: 10;"/>
+        <!-- Action Bar - Capsule Style -->
+        <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 2 0;">
+            <Button fx:id="btnActualiser" text="🔄 SYNC" onAction="#onActualiser" styleClass="button-capsule-glass" style="-fx-padding: 8 16; -fx-font-size: 11;"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <TextField fx:id="searchField" promptText="🔍 Scout search..." styleClass="modern-input" prefWidth="250" style="-fx-font-size: 11;"/>
         </HBox>
 
-        <!-- List Area -->
-        <ListView fx:id="listView" VBox.vgrow="ALWAYS" minHeight="400" styleClass="modern-list-view">
-            <placeholder>
-                <VBox alignment="CENTER" spacing="10" style="-fx-padding: 30;">
-                    <Label text="📭" style="-fx-font-size: 32;"/>
-                    <Label text="Aucun événement trouvé" style="-fx-text-fill: #94A3B8; -fx-font-size: 14;"/>
-                </VBox>
-            </placeholder>
-        </ListView>
+        <!-- Filter Grid - Glass -->
+        <HBox spacing="10" alignment="CENTER_LEFT" styleClass="modern-card" style="-fx-padding: 6 15;">
+            <Label text="FILTER:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 11;"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="countLabel" text="0 entries" style="-fx-text-fill: #22c55e; -fx-font-weight: 800; -fx-font-size: 11; -fx-background-color: rgba(34, 197, 94, 0.1); -fx-padding: 4 12; -fx-background-radius: 12;"/>
+        </HBox>
+
+        <!-- Registries List -->
+        <VBox spacing="10" VBox.vgrow="ALWAYS">
+            <ListView fx:id="listView" VBox.vgrow="ALWAYS" minHeight="500"
+                       styleClass="modern-list-view" onMouseClicked="#onListClick">
+                <placeholder>
+                    <VBox alignment="CENTER" spacing="10" style="-fx-padding: 40;">
+                        <Label text="🗺️" style="-fx-font-size: 32;"/>
+                        <Label text="No events on the trail map" style="-fx-text-fill: #94a3b8; -fx-font-size: 14; -fx-font-weight: 600;"/>
+                    </VBox>
+                </placeholder>
+            </ListView>
+        </VBox>
+
     </VBox>
 </ScrollPane>

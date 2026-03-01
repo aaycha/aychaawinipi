@@ -16,13 +16,11 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.scene.layout.*;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 
 import java.io.IOException;
 import java.util.List;
@@ -683,7 +681,7 @@ public class ParticipationViewController {
             ParticipationFormController formController = loader.getController();
             formController.setParticipationController(controller);
             formController.setParticipation(participation);
-            formController.setOnSaved(this::onActualiser);
+            formController.setOnSaved(p -> onActualiser());
             formController.setAdminMode(isAdmin());
 
             Stage stage = new Stage();

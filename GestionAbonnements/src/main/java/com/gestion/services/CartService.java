@@ -27,6 +27,7 @@ public class CartService {
 
     public void addItem(RepasDetaille repas) {
         items.put(repas, items.getOrDefault(repas, 0) + 1);
+        new RepasDetailleServiceImpl().incrementChoixCount(repas.getId());
     }
 
     public void removeItem(RepasDetaille repas) {

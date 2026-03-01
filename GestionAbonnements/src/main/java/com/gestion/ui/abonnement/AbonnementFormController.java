@@ -227,6 +227,27 @@ public class AbonnementFormController {
                 evId = (long) ev.getIdEvent();
             }
 
+            // --- Open Stripe Checkout for real payment ---
+            com.gestion.services.StripePaymentService stripeService = com.gestion.services.StripePaymentService
+                    .getInstance();
+            boolean opened = stripeService.openCheckoutInBrowser(
+                    "Abonnement " + type.getLabel() + " - " + prix + " EUR");
+            if (!opened) {
+                showError("Impossible d'ouvrir la page de paiement Stripe. Veuillez réessayer.");
+                return;
+            }
+
+            // Show confirmation that payment page was opened
+            Alert paymentAlert = new Alert(Alert.AlertType.INFORMATION);
+            paymentAlert.setTitle("Paiement Stripe");
+            paymentAlert.setHeaderText("Page de paiement ouverte !");
+            paymentAlert.setContentText(
+                    "La page de paiement Stripe a été ouverte dans votre navigateur.\n\n" +
+                            "Montant : " + prix + " €\n" +
+                            "Type : " + type.getLabel() + "\n\n" +
+                            "Cliquez OK une fois le paiement effectué pour finaliser votre abonnement.");
+            paymentAlert.showAndWait();
+
             if (isEditMode) {
                 selectedAbonnement.setUserId(userId);
                 selectedAbonnement.setEvenementId(evId);

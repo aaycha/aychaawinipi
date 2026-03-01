@@ -19,12 +19,12 @@
 <?import javafx.scene.layout.FlowPane?>
 <ScrollPane xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.gestion.ui.utilisateur.MonEspaceRestaurationController"
-            fitToWidth="false" fitToHeight="false" styleClass="modern-scroll-pane"
+            fitToWidth="true" fitToHeight="true" styleClass="modern-scroll-pane"
             hbarPolicy="AS_NEEDED" vbarPolicy="AS_NEEDED"
             stylesheets="@../../styles/nature-mood.css, @../../styles/card-view.css"
             style="-fx-background: transparent; -fx-background-color: transparent;">
 
-    <VBox spacing="10" styleClass="modern-panel" prefWidth="1050" style="-fx-padding: 12;">
+    <VBox spacing="10" styleClass="modern-panel" style="-fx-padding: 12;">
             
         <!-- Trail Header -->
         <HBox spacing="10" alignment="CENTER_LEFT">

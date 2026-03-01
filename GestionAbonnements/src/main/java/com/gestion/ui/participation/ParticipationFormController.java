@@ -10,7 +10,9 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -44,6 +46,10 @@ public class ParticipationFormController {
     private TextField inputPromoCode;
     @FXML
     private ComboBox<Participation.MealOption> comboRepas;
+    @FXML
+    private VBox containerRestaurant;
+    @FXML
+    private ComboBox<com.gestion.entities.Restaurant> comboRestaurant;
     @FXML
     private ComboBox<Participation.TypeParticipation> inputType;
     @FXML
@@ -80,6 +86,8 @@ public class ParticipationFormController {
     private Label errorGroupe;
     @FXML
     private Label errorGlobal;
+    @FXML
+    private ScrollPane errorScroll;
 
     @FXML
     private Button btnEnregistrer;
@@ -87,7 +95,7 @@ public class ParticipationFormController {
     private ParticipationController participationController;
     private Participation participation;
     private boolean editMode = false;
-    private Runnable onSaved;
+    private java.util.function.Consumer<Participation> onSaved;
     private BigDecimal currentPromoDiscount = BigDecimal.ZERO;
     private boolean isSubscriptionCheckBypassed = false;
 
@@ -99,8 +107,39 @@ public class ParticipationFormController {
     @FXML
     public void initialize() {
         if (comboRepas != null) {
-            comboRepas.getItems().addAll(Participation.MealOption.values());
+            comboRepas.getItems().setAll(Participation.MealOption.values());
+            comboRepas.setConverter(new StringConverter<Participation.MealOption>() {
+                @Override
+                public String toString(Participation.MealOption option) {
+                    return option == null ? "" : option.getLabel();
+                }
+
+                @Override
+                public Participation.MealOption fromString(String string) {
+                    return null;
+                }
+            });
             comboRepas.setValue(Participation.MealOption.SANS_REPAS);
+        }
+
+        if (comboRestaurant != null) {
+            com.gestion.interfaces.RestaurantService restService = new com.gestion.services.RestaurantServiceImpl();
+            comboRestaurant.getItems().setAll(restService.findActifs());
+            comboRestaurant.setConverter(new StringConverter<com.gestion.entities.Restaurant>() {
+                @Override
+                public String toString(com.gestion.entities.Restaurant r) {
+                    if (r == null)
+                        return "";
+                    com.gestion.interfaces.RestaurantService localRestService = new com.gestion.services.RestaurantServiceImpl();
+                    int rest = localRestService.getPlacesRestantes(r.getId(), editMode ? participation.getId() : null);
+                    return r.getNom() + " (" + rest + " places dispo / " + r.getNombrePlaces() + ")";
+                }
+
+                @Override
+                public com.gestion.entities.Restaurant fromString(String string) {
+                    return null;
+                }
+            });
         }
 
         // Chargement initial des données
@@ -197,7 +236,14 @@ public class ParticipationFormController {
         if (inputContexte != null)
             inputContexte.valueProperty().addListener(recalc);
         if (comboRepas != null)
-            comboRepas.valueProperty().addListener(recalc);
+            comboRepas.valueProperty().addListener((obs, oldVal, newVal) -> {
+                updatePreviewFromFields();
+                if (containerRestaurant != null) {
+                    boolean isResto = newVal == Participation.MealOption.AU_RESTAURANT;
+                    containerRestaurant.setVisible(isResto);
+                    containerRestaurant.setManaged(isResto);
+                }
+            });
     }
 
     private void clearError(Label label) {
@@ -208,7 +254,7 @@ public class ParticipationFormController {
         this.participationController = controller;
     }
 
-    public void setOnSaved(Runnable onSaved) {
+    public void setOnSaved(java.util.function.Consumer<Participation> onSaved) {
         this.onSaved = onSaved;
     }
 
@@ -239,8 +285,15 @@ public class ParticipationFormController {
                 inputType.setValue(participation.getType());
             if (inputContexte != null)
                 inputContexte.setValue(participation.getContexteSocial());
-            if (comboRepas != null)
+            if (comboRepas != null) {
                 comboRepas.setValue(participation.getMealOption());
+                if (participation.getMealOption() == Participation.MealOption.AU_RESTAURANT
+                        && participation.getRestaurantId() != null) {
+                    comboRestaurant.getItems().stream()
+                            .filter(r -> r.getId().equals(participation.getRestaurantId()))
+                            .findFirst().ifPresent(comboRestaurant::setValue);
+                }
+            }
             if (inputHebergement != null)
                 inputHebergement.setSelected(participation.getHebergementNuits() > 0);
             if (inputHebergementNuits != null) {
@@ -331,6 +384,23 @@ public class ParticipationFormController {
         Participation.MealOption mealOption = comboRepas != null ? comboRepas.getValue()
                 : Participation.MealOption.SANS_REPAS;
 
+        Long restaurantId = null;
+        if (mealOption == Participation.MealOption.AU_RESTAURANT) {
+            com.gestion.entities.Restaurant selResto = comboRestaurant.getValue();
+            if (selResto == null) {
+                errors.add("Veuillez sélectionner un restaurant.");
+            } else {
+                com.gestion.interfaces.RestaurantService restService = new com.gestion.services.RestaurantServiceImpl();
+                int available = restService.getPlacesRestantes(selResto.getId(),
+                        editMode ? participation.getId() : null);
+                if (available <= 0) {
+                    errors.add("Désolé, ce restaurant est complet.");
+                } else {
+                    restaurantId = selResto.getId();
+                }
+            }
+        }
+
         if (evenementId == null) {
             errors.add("Sélection de l'événement obligatoire.");
             showError(errorEvenementId, "Veuillez sélectionner un événement dans la liste.");
@@ -364,9 +434,18 @@ public class ParticipationFormController {
             }
         }
 
+        String rawNuits = inputHebergementNuits != null ? inputHebergementNuits.getText() : "null";
+        System.out.println("[DEBUG] onEnregistrer - rawNuits='" + rawNuits + "', parsed nuits=" + nuits);
+        System.out.println("[DEBUG] onEnregistrer - userId=" + userId + ", evenementId=" + evenementId);
+        System.out.println("[DEBUG] onEnregistrer - Type=" + type + ", Contexte=" + contexte + ", Meal=" + mealOption);
+        System.out.println("[DEBUG] onEnregistrer - Hebergement Selected="
+                + (inputHebergement != null && inputHebergement.isSelected())
+                + ", Nuits=" + nuits);
+
         if (!errors.isEmpty()) {
-            showError(errorGroupe, String.join("\n", errors));
-            showError(errorGlobal, "Veuillez corriger les champs indiqués avant d'enregistrer.");
+            String combinedErrors = String.join("\n• ", errors);
+            System.out.println("[DEBUG] onEnregistrer - Validation Errors:\n" + combinedErrors);
+            showError(errorGlobal, "Erreurs de validation :\n• " + combinedErrors);
             return;
         }
 
@@ -396,6 +475,7 @@ public class ParticipationFormController {
             }
             target.setBesoinsSpeciaux(inputBesoinsSpeciaux.getText());
             target.setMealOption(mealOption);
+            target.setRestaurantId(restaurantId);
 
             // --- LOYALTY POINTS ---
             int points = 10; // Base points
@@ -433,7 +513,7 @@ public class ParticipationFormController {
             }
 
             // --- MANDATORY SUBSCRIPTION CHOICE FLOW ---
-            if (!editMode && !isSubscriptionCheckBypassed) {
+            if (!editMode && !isSubscriptionCheckBypassed && !hasActiveSubscription(userId, evenementId)) {
                 showSubscriptionChoicePopup(userId, evenementId);
                 return;
             }
@@ -447,11 +527,41 @@ public class ParticipationFormController {
             }
 
             if (onSaved != null) {
-                onSaved.run();
+                onSaved.accept(target);
             }
             closeWindow();
+        } catch (IllegalArgumentException ex) {
+            System.err.println("[ERROR] Validation Service Fail: " + ex.getMessage());
+            showError(errorGlobal, ex.getMessage());
         } catch (Exception ex) {
-            showError(errorGlobal, "Erreur lors de l'enregistrement : " + ex.getMessage());
+            ex.printStackTrace();
+            showError(errorGlobal, "Problème technique : " + ex.getMessage());
+        }
+    }
+
+    private boolean hasActiveSubscription(Long userId, Long eventId) {
+        try {
+            com.gestion.controllers.AbonnementController abCont = new com.gestion.controllers.AbonnementController();
+            List<com.gestion.entities.Abonnement> fullList = abCont.getAll();
+            System.out.println("[DEBUG] hasActiveSubscription - Total in DB: " + fullList.size());
+
+            List<com.gestion.entities.Abonnement> list = fullList.stream()
+                    .filter(a -> a.getUserId().equals(userId) && a.estActif())
+                    .collect(java.util.stream.Collectors.toList());
+
+            System.out.println("[DEBUG] hasActiveSubscription - Active for User " + userId + ": " + list.size());
+            if (list.isEmpty())
+                return false;
+
+            // Check if any sub is global or matches this event
+            boolean hasAccess = list.stream().anyMatch(a -> a.getType() != Abonnement.TypeAbonnement.EVENEMENT_PASS
+                    || (a.getEvenementId() != null && a.getEvenementId().equals(eventId)));
+
+            System.out.println("[DEBUG] hasActiveSubscription - Access granted: " + hasAccess);
+            return hasAccess;
+        } catch (Exception e) {
+            System.err.println("[DEBUG] hasActiveSubscription - Exception: " + e.getMessage());
+            return false;
         }
     }
 
@@ -486,9 +596,39 @@ public class ParticipationFormController {
 
         alert.showAndWait().ifPresent(response -> {
             if (response == btnPass) {
+                // Open Stripe Checkout for Pass payment
+                com.gestion.services.StripePaymentService stripeService = com.gestion.services.StripePaymentService
+                        .getInstance();
+                stripeService.openCheckoutInBrowser(finalPassPrice, "Pass Unique LAMMA");
+
+                Alert payConfirm = new Alert(Alert.AlertType.INFORMATION);
+                payConfirm.setTitle("Paiement Stripe");
+                payConfirm.setHeaderText("Page de paiement ouverte !");
+                payConfirm.setContentText(
+                        "La page de paiement Stripe a été ouverte dans votre navigateur.\n\n" +
+                                "Montant : " + finalPassPrice + " €\n" +
+                                "Type : Pass Unique\n\n" +
+                                "Cliquez OK une fois le paiement effectué.");
+                payConfirm.showAndWait();
+
                 openAbonnementForm(new Abonnement(userId, eventId, Abonnement.TypeAbonnement.EVENEMENT_PASS,
                         java.time.LocalDate.now(), finalPassPrice, false), true);
             } else if (response == btnAbonnement) {
+                // Open Stripe Checkout for Abonnement payment
+                com.gestion.services.StripePaymentService stripeService = com.gestion.services.StripePaymentService
+                        .getInstance();
+                stripeService.openCheckoutInBrowser(abonnementPrice, "Abonnement Global LAMMA");
+
+                Alert payConfirm = new Alert(Alert.AlertType.INFORMATION);
+                payConfirm.setTitle("Paiement Stripe");
+                payConfirm.setHeaderText("Page de paiement ouverte !");
+                payConfirm.setContentText(
+                        "La page de paiement Stripe a été ouverte dans votre navigateur.\n\n" +
+                                "Montant : à partir de " + abonnementPrice + " €\n" +
+                                "Type : Abonnement Global\n\n" +
+                                "Cliquez OK une fois le paiement effectué.");
+                payConfirm.showAndWait();
+
                 openAbonnementChoix();
             }
         });
@@ -688,6 +828,12 @@ public class ParticipationFormController {
             label.setText("⚠ " + message);
             label.setVisible(true);
             label.setManaged(true);
+
+            // If it's the global error, also show the scroll container
+            if (label == errorGlobal && errorScroll != null) {
+                errorScroll.setVisible(true);
+                errorScroll.setManaged(true);
+            }
         }
     }
 
@@ -696,6 +842,12 @@ public class ParticipationFormController {
             label.setText("");
             label.setVisible(false);
             label.setManaged(false);
+
+            // If it's the global error, also hide the scroll container
+            if (label == errorGlobal && errorScroll != null) {
+                errorScroll.setVisible(false);
+                errorScroll.setManaged(false);
+            }
         }
     }
 

@@ -31,6 +31,25 @@ public class ParticipationServiceImpl implements ParticipationService {
     public ParticipationServiceImpl() {
         this.dbConnection = MyConnection.getInstance();
         this.abonnementService = new com.gestion.services.AbonnementServiceImpl();
+        ensureTableMigration();
+    }
+
+    private void ensureTableMigration() {
+        try (Connection conn = dbConnection.getConnection();
+                Statement st = conn.createStatement()) {
+            // Check if restaurant_id exists
+            try {
+                st.execute("ALTER TABLE participations ADD COLUMN restaurant_id BIGINT");
+                logger.info("✅ Added column restaurant_id to participations table");
+            } catch (SQLException e) {
+                // Ignore if already exists (MySQL error 1060 or SQLState 42S21)
+                if (!"42S21".equals(e.getSQLState()) && e.getErrorCode() != 1060) {
+                    logger.warn("Migration warning (restaurant_id): " + e.getMessage());
+                }
+            }
+        } catch (SQLException e) {
+            logger.error("Critical Migration Error: " + e.getMessage());
+        }
     }
 
     private static class ValidationResult {
@@ -64,26 +83,35 @@ public class ParticipationServiceImpl implements ParticipationService {
         }
 
         if (p.getUserId() == null || p.getUserId() <= 0)
-            errors.add("User ID obligatoire");
+            errors.add("L'identifiant de l'utilisateur est manquant.");
         if (p.getEvenementId() == null || p.getEvenementId() <= 0)
-            errors.add("Événement ID obligatoire");
+            errors.add("Aucun événement n'a été sélectionné.");
         if (p.getType() == null)
-            errors.add("Type obligatoire");
+            errors.add("Le type de participation (Simple, Hébergement, etc.) est requis.");
         if (p.getContexteSocial() == null)
-            errors.add("Contexte social obligatoire");
+            errors.add("Le contexte social (Solo, Famille, etc.) est requis.");
 
         if (!isUpdate) {
             if (isAlreadyParticipating(p.getUserId(), p.getEvenementId())) {
-                errors.add("L'utilisateur est déjà inscrit à cet événement.");
+                errors.add("Vous êtes déjà inscrit à cet événement.");
             }
 
             // Règle métier : l'utilisateur doit acheter un abonnement/pass avant la
             // participation
             if (!hasValidAccess(p.getUserId(), p.getEvenementId())) {
                 errors.add(
-                        "Accès refusé. L'utilisateur doit posséder un abonnement actif ou un Pass pour cet événement.");
+                        "Accès refusé : Vous devez posséder un abonnement global actif ou un 'Pass Expedition' pour cet événement spécifique.");
             }
         }
+
+        // Validation de l'hébergement
+        if (p.getHebergementNuits() < 0) {
+            errors.add("Le nombre de nuits ne peut pas être négatif.");
+        }
+        // Si type Hébergement ou contexte spécifique ? (Dépend des règles métier)
+        // Mais si p.getHebergementNuits() > 0, on considère que c'est ok.
+        // Si le contrôleur a une règle plus stricte, le service l'appuiera ici s'il y a
+        // un souci.
 
         return errors.isEmpty() ? ValidationResult.valid() : ValidationResult.invalid(errors.toArray(new String[0]));
     }
@@ -154,8 +182,8 @@ public class ParticipationServiceImpl implements ParticipationService {
         if (!vr.valid)
             throw new IllegalArgumentException(vr.getMessage());
 
-        String sqlWithAb = "INSERT INTO participations (user_id, evenement_id, date_inscription, type, statut, hebergement_nuits, contexte_social, badge_associe, nb_adultes, nb_enfants, nb_chiens, total_participants, type_abonnement, montant_calcule, devise, commentaire, besoins_speciaux, abonnement_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        String sqlWithoutAb = "INSERT INTO participations (user_id, evenement_id, date_inscription, type, statut, hebergement_nuits, contexte_social, badge_associe, nb_adultes, nb_enfants, nb_chiens, total_participants, type_abonnement, montant_calcule, devise, commentaire, besoins_speciaux) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sqlWithAb = "INSERT INTO participations (user_id, evenement_id, date_inscription, type, statut, hebergement_nuits, contexte_social, badge_associe, nb_adultes, nb_enfants, nb_chiens, total_participants, type_abonnement, montant_calcule, devise, commentaire, besoins_speciaux, abonnement_id, restaurant_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sqlWithoutAb = "INSERT INTO participations (user_id, evenement_id, date_inscription, type, statut, hebergement_nuits, contexte_social, badge_associe, nb_adultes, nb_enfants, nb_chiens, total_participants, type_abonnement, montant_calcule, devise, commentaire, besoins_speciaux, restaurant_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = dbConnection.getConnection()) {
             if (conn == null) {
@@ -218,6 +246,17 @@ public class ParticipationServiceImpl implements ParticipationService {
             } else {
                 ps.setNull(18, Types.BIGINT);
             }
+            if (p.getRestaurantId() != null) {
+                ps.setLong(19, p.getRestaurantId());
+            } else {
+                ps.setNull(19, Types.BIGINT);
+            }
+        } else {
+            if (p.getRestaurantId() != null) {
+                ps.setLong(18, p.getRestaurantId());
+            } else {
+                ps.setNull(18, Types.BIGINT);
+            }
         }
     }
 
@@ -266,12 +305,16 @@ public class ParticipationServiceImpl implements ParticipationService {
         // n'est pas faite)
         try {
             long abId = rs.getLong("abonnement_id");
-            if (!rs.wasNull()) {
+            if (!rs.wasNull())
                 p.setAbonnementId(abId);
-            }
         } catch (SQLException e) {
-            // La colonne n'existe probablement pas encore, on ignore sans crasher
-            logger.debug("Colonne abonnement_id non trouvée dans le ResultSet, liaison ignorée.");
+        }
+
+        try {
+            long restId = rs.getLong("restaurant_id");
+            if (!rs.wasNull())
+                p.setRestaurantId(restId);
+        } catch (SQLException e) {
         }
 
         return p;
@@ -351,8 +394,8 @@ public class ParticipationServiceImpl implements ParticipationService {
         if (p.getId() == null)
             throw new IllegalArgumentException("ID manquant");
 
-        String sqlWithAb = "UPDATE participations SET statut=?, hebergement_nuits=?, contexte_social=?, badge_associe=?, nb_adultes=?, nb_enfants=?, nb_chiens=?, total_participants=?, type_abonnement=?, montant_calcule=?, devise=?, commentaire=?, besoins_speciaux=?, abonnement_id=? WHERE id=?";
-        String sqlWithoutAb = "UPDATE participations SET statut=?, hebergement_nuits=?, contexte_social=?, badge_associe=?, nb_adultes=?, nb_enfants=?, nb_chiens=?, total_participants=?, type_abonnement=?, montant_calcule=?, devise=?, commentaire=?, besoins_speciaux=? WHERE id=?";
+        String sqlWithAb = "UPDATE participations SET statut=?, hebergement_nuits=?, contexte_social=?, badge_associe=?, nb_adultes=?, nb_enfants=?, nb_chiens=?, total_participants=?, type_abonnement=?, montant_calcule=?, devise=?, commentaire=?, besoins_speciaux=?, abonnement_id=?, restaurant_id=? WHERE id=?";
+        String sqlWithoutAb = "UPDATE participations SET statut=?, hebergement_nuits=?, contexte_social=?, badge_associe=?, nb_adultes=?, nb_enfants=?, nb_chiens=?, total_participants=?, type_abonnement=?, montant_calcule=?, devise=?, commentaire=?, besoins_speciaux=?, restaurant_id=? WHERE id=?";
 
         try (Connection conn = dbConnection.getConnection()) {
             if (conn == null) {
@@ -402,9 +445,19 @@ public class ParticipationServiceImpl implements ParticipationService {
             } else {
                 ps.setNull(14, Types.BIGINT);
             }
-            ps.setLong(15, p.getId());
+            if (p.getRestaurantId() != null) {
+                ps.setLong(15, p.getRestaurantId());
+            } else {
+                ps.setNull(15, Types.BIGINT);
+            }
+            ps.setLong(16, p.getId());
         } else {
-            ps.setLong(14, p.getId());
+            if (p.getRestaurantId() != null) {
+                ps.setLong(14, p.getRestaurantId());
+            } else {
+                ps.setNull(14, Types.BIGINT);
+            }
+            ps.setLong(15, p.getId());
         }
     }
 

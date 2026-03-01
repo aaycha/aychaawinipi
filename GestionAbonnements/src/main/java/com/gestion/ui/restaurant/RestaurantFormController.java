@@ -17,23 +17,44 @@ import java.util.ResourceBundle;
  */
 public class RestaurantFormController implements Initializable {
 
-    @FXML private Label formTitle;
-    @FXML private TextField inputNom;
-    @FXML private TextArea inputAdresse;
-    @FXML private TextField inputTelephone;
-    @FXML private TextField inputEmail;
-    @FXML private TextArea inputDescription;
-    @FXML private TextField inputImageUrl;
-    @FXML private CheckBox checkActif;
-    @FXML private Label errorNom;
-    @FXML private Label hintNom;
-    @FXML private Label errorTelephone;
-    @FXML private Label errorEmail;
-    @FXML private Label errorAdresse;
-    @FXML private Label errorDescription;
-    @FXML private Label errorImageUrl;
-    @FXML private VBox errorContainer;
-    @FXML private Label globalErrorMessage;
+    @FXML
+    private Label formTitle;
+    @FXML
+    private TextField inputNom;
+    @FXML
+    private TextArea inputAdresse;
+    @FXML
+    private TextField inputTelephone;
+    @FXML
+    private TextField inputEmail;
+    @FXML
+    private TextField inputNombrePlaces;
+    @FXML
+    private TextArea inputDescription;
+    @FXML
+    private TextField inputImageUrl;
+    @FXML
+    private CheckBox checkActif;
+    @FXML
+    private Label errorNom;
+    @FXML
+    private Label hintNom;
+    @FXML
+    private Label errorTelephone;
+    @FXML
+    private Label errorEmail;
+    @FXML
+    private Label errorNombrePlaces;
+    @FXML
+    private Label errorAdresse;
+    @FXML
+    private Label errorDescription;
+    @FXML
+    private Label errorImageUrl;
+    @FXML
+    private VBox errorContainer;
+    @FXML
+    private Label globalErrorMessage;
 
     private RestaurantController controller = new RestaurantController();
     private RestaurantListeController listeController;
@@ -50,20 +71,28 @@ public class RestaurantFormController implements Initializable {
     private static final int MAX_NOM_RESTAURANT = 100;
 
     private void setupValidationListeners() {
-        inputNom.textProperty().addListener((obs, oldVal, newVal) -> { clearError(errorNom); updateHintNom(); });
+        inputNom.textProperty().addListener((obs, oldVal, newVal) -> {
+            clearError(errorNom);
+            updateHintNom();
+        });
         inputTelephone.textProperty().addListener((obs, oldVal, newVal) -> clearError(errorTelephone));
         inputEmail.textProperty().addListener((obs, oldVal, newVal) -> clearError(errorEmail));
+        inputNombrePlaces.textProperty().addListener((obs, oldVal, newVal) -> clearError(errorNombrePlaces));
         inputAdresse.textProperty().addListener((obs, oldVal, newVal) -> clearError(errorAdresse));
         inputDescription.textProperty().addListener((obs, oldVal, newVal) -> clearError(errorDescription));
-        if (inputImageUrl != null) inputImageUrl.textProperty().addListener((obs, oldVal, newVal) -> clearError(errorImageUrl));
+        if (inputImageUrl != null)
+            inputImageUrl.textProperty().addListener((obs, oldVal, newVal) -> clearError(errorImageUrl));
     }
 
     private void updateHintNom() {
-        if (hintNom == null) return;
+        if (hintNom == null)
+            return;
         String s = inputNom.getText();
         int len = s == null ? 0 : s.trim().length();
-        hintNom.setText(len + " / " + MAX_NOM_RESTAURANT + " car." + (len == 0 ? " — Obligatoire" : len > MAX_NOM_RESTAURANT ? " — Trop long !" : ""));
-        hintNom.setStyle(len > MAX_NOM_RESTAURANT ? "-fx-text-fill: #e74c3c; -fx-font-size: 11px;" : "-fx-text-fill: #7f8c8d; -fx-font-size: 11px;");
+        hintNom.setText(len + " / " + MAX_NOM_RESTAURANT + " car."
+                + (len == 0 ? " — Obligatoire" : len > MAX_NOM_RESTAURANT ? " — Trop long !" : ""));
+        hintNom.setStyle(len > MAX_NOM_RESTAURANT ? "-fx-text-fill: #e74c3c; -fx-font-size: 11px;"
+                : "-fx-text-fill: #7f8c8d; -fx-font-size: 11px;");
     }
 
     public void setRestaurant(Restaurant restaurant) {
@@ -82,7 +111,10 @@ public class RestaurantFormController implements Initializable {
         this.listeController = listeController;
     }
 
-    /** Utilise le même contrôleur que la liste pour que la sauvegarde soit visible dans la liste (même stockage). */
+    /**
+     * Utilise le même contrôleur que la liste pour que la sauvegarde soit visible
+     * dans la liste (même stockage).
+     */
     public void setController(RestaurantController controller) {
         if (controller != null) {
             this.controller = controller;
@@ -90,12 +122,14 @@ public class RestaurantFormController implements Initializable {
     }
 
     private void populateFields() {
-        if (restaurant == null) return;
+        if (restaurant == null)
+            return;
 
         inputNom.setText(restaurant.getNom());
         inputAdresse.setText(restaurant.getAdresse());
         inputTelephone.setText(restaurant.getTelephone());
         inputEmail.setText(restaurant.getEmail());
+        inputNombrePlaces.setText(String.valueOf(restaurant.getNombrePlaces()));
         inputDescription.setText(restaurant.getDescription());
         inputImageUrl.setText(restaurant.getImageUrl());
         checkActif.setSelected(restaurant.isActif());
@@ -110,6 +144,12 @@ public class RestaurantFormController implements Initializable {
         r.setAdresse(inputAdresse.getText().trim());
         r.setTelephone(inputTelephone.getText().trim());
         r.setEmail(inputEmail.getText().trim());
+        try {
+            r.setNombrePlaces(Integer.parseInt(inputNombrePlaces.getText().trim()));
+        } catch (NumberFormatException e) {
+            showError(errorNombrePlaces, "Veuillez entrer un nombre valide.");
+            return;
+        }
         r.setDescription(inputDescription.getText().trim());
         r.setImageUrl(inputImageUrl.getText().trim());
         r.setActif(checkActif.isSelected());
@@ -153,13 +193,16 @@ public class RestaurantFormController implements Initializable {
         if (validation.getFieldErrors("email") != null && !validation.getFieldErrors("email").isEmpty()) {
             showError(errorEmail, validation.getFieldErrors("email").get(0));
         }
-        if (errorAdresse != null && validation.getFieldErrors("adresse") != null && !validation.getFieldErrors("adresse").isEmpty()) {
+        if (errorAdresse != null && validation.getFieldErrors("adresse") != null
+                && !validation.getFieldErrors("adresse").isEmpty()) {
             showError(errorAdresse, validation.getFieldErrors("adresse").get(0));
         }
-        if (errorDescription != null && validation.getFieldErrors("description") != null && !validation.getFieldErrors("description").isEmpty()) {
+        if (errorDescription != null && validation.getFieldErrors("description") != null
+                && !validation.getFieldErrors("description").isEmpty()) {
             showError(errorDescription, validation.getFieldErrors("description").get(0));
         }
-        if (errorImageUrl != null && validation.getFieldErrors("imageUrl") != null && !validation.getFieldErrors("imageUrl").isEmpty()) {
+        if (errorImageUrl != null && validation.getFieldErrors("imageUrl") != null
+                && !validation.getFieldErrors("imageUrl").isEmpty()) {
             showError(errorImageUrl, validation.getFieldErrors("imageUrl").get(0));
         }
         if (validation.hasErrors()) {
@@ -173,7 +216,8 @@ public class RestaurantFormController implements Initializable {
         clearError(errorEmail);
         clearError(errorAdresse);
         clearError(errorDescription);
-        if (errorImageUrl != null) clearError(errorImageUrl);
+        if (errorImageUrl != null)
+            clearError(errorImageUrl);
         errorContainer.setVisible(false);
         errorContainer.setManaged(false);
     }

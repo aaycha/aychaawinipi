@@ -29,8 +29,8 @@ public class MenuServiceImpl implements MenuService {
                 "  restaurant_id BIGINT NOT NULL," +
                 "  restaurant_nom VARCHAR(150) NOT NULL," +
                 "  nom VARCHAR(100) NOT NULL," +
-                "  description VARCHAR(500) NOT NULL," +
-                "  prix DECIMAL(10,2) NOT NULL," +
+                "  description TEXT NOT NULL," +
+                "  prix DECIMAL(10,2) NULL," + // Changed NOT NULL to NULL
                 "  date_debut DATE NOT NULL," +
                 "  date_fin DATE NOT NULL," +
                 "  actif BOOLEAN NOT NULL DEFAULT TRUE," +
@@ -45,6 +45,24 @@ public class MenuServiceImpl implements MenuService {
             }
             try (Statement st = c.createStatement()) {
                 st.execute(sql);
+
+                // Migration: make prix nullable if table already exists
+                try {
+                    st.execute("ALTER TABLE " + TABLE + " MODIFY COLUMN prix DECIMAL(10,2) NULL");
+                } catch (SQLException e) {
+                    // Ignore if already null or other issues
+                }
+
+                // Add dishes_ids column if it doesn't exist
+                try {
+                    st.execute("ALTER TABLE " + TABLE + " ADD COLUMN dishes_ids TEXT AFTER actif");
+                    System.out.println("Column 'dishes_ids' added to " + TABLE);
+                } catch (SQLException e) {
+                    // Column likely exists
+                    if (!e.getMessage().toLowerCase().contains("duplicate column name")) {
+                        System.err.println("Note: " + e.getMessage());
+                    }
+                }
             }
         } catch (SQLException e) {
             System.err.println("Warning: Could not ensure table " + TABLE + " : " + e.getMessage());
@@ -60,7 +78,7 @@ public class MenuServiceImpl implements MenuService {
             throw new IllegalArgumentException(validation.getAllErrorsAsString());
 
         String sql = "INSERT INTO " + TABLE
-                + " (restaurant_id, restaurant_nom, nom, description, prix, date_debut, date_fin, actif) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                + " (restaurant_id, restaurant_nom, nom, description, prix, date_debut, date_fin, actif, dishes_ids) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try {
             Connection c = db.getConnection();
             if (c == null)
@@ -74,6 +92,7 @@ public class MenuServiceImpl implements MenuService {
                 ps.setDate(6, Date.valueOf(menu.getDateDebut()));
                 ps.setDate(7, Date.valueOf(menu.getDateFin()));
                 ps.setBoolean(8, menu.isActif());
+                ps.setString(9, serializeDishes(menu.getDishesIds()));
                 ps.executeUpdate();
                 try (ResultSet keys = ps.getGeneratedKeys()) {
                     if (keys.next())
@@ -96,7 +115,7 @@ public class MenuServiceImpl implements MenuService {
             throw new IllegalArgumentException(validation.getAllErrorsAsString());
 
         String sql = "UPDATE " + TABLE
-                + " SET restaurant_id=?, restaurant_nom=?, nom=?, description=?, prix=?, date_debut=?, date_fin=?, actif=?, updated_at=CURRENT_TIMESTAMP WHERE id=?";
+                + " SET restaurant_id=?, restaurant_nom=?, nom=?, description=?, prix=?, date_debut=?, date_fin=?, actif=?, dishes_ids=?, updated_at=CURRENT_TIMESTAMP WHERE id=?";
         try {
             Connection c = db.getConnection();
             if (c == null)
@@ -110,7 +129,8 @@ public class MenuServiceImpl implements MenuService {
                 ps.setDate(6, Date.valueOf(menu.getDateDebut()));
                 ps.setDate(7, Date.valueOf(menu.getDateFin()));
                 ps.setBoolean(8, menu.isActif());
-                ps.setLong(9, menu.getId());
+                ps.setString(9, serializeDishes(menu.getDishesIds()));
+                ps.setLong(10, menu.getId());
                 int updated = ps.executeUpdate();
                 if (updated == 0)
                     throw new IllegalArgumentException("Menu non trouvé avec l'ID: " + menu.getId());
@@ -306,6 +326,26 @@ public class MenuServiceImpl implements MenuService {
         m.setDateDebut(d1 != null ? d1.toLocalDate() : null);
         m.setDateFin(d2 != null ? d2.toLocalDate() : null);
         m.setActif(rs.getBoolean("actif"));
+        m.setDishesIds(deserializeDishes(rs.getString("dishes_ids")));
         return m;
+    }
+
+    private String serializeDishes(List<Long> ids) {
+        if (ids == null || ids.isEmpty())
+            return null;
+        return ids.stream().map(String::valueOf).collect(java.util.stream.Collectors.joining(","));
+    }
+
+    private List<Long> deserializeDishes(String s) {
+        List<Long> ids = new ArrayList<>();
+        if (s == null || s.trim().isEmpty())
+            return ids;
+        for (String part : s.split(",")) {
+            try {
+                ids.add(Long.parseLong(part.trim()));
+            } catch (NumberFormatException ignored) {
+            }
+        }
+        return ids;
     }
 }

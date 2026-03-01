@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.SVGPath?>
+<?import java.net.URL?>
+
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:id="cardRoot"
+      prefWidth="600" prefHeight="900" spacing="0"
+      style="-fx-background-color: #d1f2eb; -fx-padding: 0;">
+
+    <stylesheets>
+        <URL value="@../../styles/cafe-rimberio.css" />
+    </stylesheets>
+
+    <StackPane VBox.vgrow="ALWAYS">
+        <!-- Background Decorations & Illustrations -->
+        <Pane mouseTransparent="true">
+            <!-- Illustrations from generated assets - Using absolute-ish paths relative to resources -->
+            <ImageView fitWidth="120" fitHeight="120" layoutX="30" layoutY="250" opacity="0.9" styleClass="rimberio-card-illustration">
+                <image><Image url="@../../assets/rimberio_coffee_cup_1772288311657.png"/></image>
+            </ImageView>
+            <ImageView fitWidth="100" fitHeight="130" layoutX="460" layoutY="180" opacity="0.9" styleClass="rimberio-card-illustration">
+                <image><Image url="@../../assets/rimberio_milkshake_illustration_1772288394280.png"/></image>
+            </ImageView>
+            <ImageView fitWidth="110" fitHeight="110" layoutX="20" layoutY="580" opacity="0.8" styleClass="rimberio-card-illustration">
+                <image><Image url="@../../assets/rimberio_tea_cup_illustration_1772288381648.png"/></image>
+            </ImageView>
+
+            <!-- Floating Hearts & Sparkles -->
+            <SVGPath content="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" 
+                     fill="#ef8a6d" layoutX="280" layoutY="60" scaleX="1.5" scaleY="1.5"/>
+            
+            <SVGPath content="M 10 0 L 12 8 L 20 10 L 12 12 L 10 20 L 8 12 L 0 10 L 8 8 Z" 
+                     fill="#1d3c34" layoutX="500" layoutY="450" scaleX="0.8" scaleY="0.8" opacity="0.4"/>
+            <SVGPath content="M 10 0 L 12 8 L 20 10 L 12 12 L 10 20 L 8 12 L 0 10 L 8 8 Z" 
+                     fill="#ef8a6d" layoutX="80" layoutY="780" scaleX="1.2" scaleY="1.2" opacity="0.6"/>
+        </Pane>
+
+        <!-- The Main Wavy Content Area -->
+        <VBox alignment="TOP_CENTER" spacing="25" styleClass="rimberio-card-wavy-shape" maxWidth="480" maxHeight="800">
+            
+            <VBox alignment="CENTER" spacing="5">
+                <Label text="{MENU DÉGUSTATION}" style="-fx-font-family: 'Georgia'; -fx-font-size: 36; -fx-text-fill: #1d3c34; -fx-font-weight: 900;"/>
+                <Label fx:id="restaurantName" text="CAFE RIMBERIO" 
+                       style="-fx-font-family: 'Arial'; -fx-font-size: 14; -fx-text-fill: #5e7d75; -fx-font-weight: bold; -fx-letter-spacing: 3;"/>
+            </VBox>
+
+            <Region prefHeight="5"/>
+
+            <VBox alignment="CENTER" spacing="10">
+                <Label fx:id="menuTitle" text="SIGNATURE DU CHEF" wrapText="true" textAlignment="CENTER"
+                       style="-fx-font-family: 'Georgia'; -fx-font-size: 24; -fx-text-fill: #1d3c34; -fx-font-weight: bold;"/>
+                <Label fx:id="menuDescription" text="Une expérience culinaire d'exception, préparée avec passion pour éveiller vos sens." 
+                       wrapText="true" textAlignment="CENTER" maxWidth="350"
+                       style="-fx-font-family: 'Arial'; -fx-font-size: 12; -fx-text-fill: #1d3c34; -fx-font-style: italic; -fx-opacity: 0.8;"/>
+            </VBox>
+
+            <Separator style="-fx-background-color: #1d3c34; -fx-opacity: 0.1;" maxWidth="100"/>
+
+            <VBox fx:id="dishesContainer" spacing="15" alignment="TOP_CENTER">
+                <!-- Dynamic Content -->
+            </VBox>
+
+            <Region VBox.vgrow="ALWAYS"/>
+
+            <VBox alignment="CENTER" spacing="15">
+                <Label fx:id="validityPeriod" text="VALABLE DU 01/02 AU 28/02"
+                       style="-fx-font-family: 'Arial'; -fx-font-size: 10; -fx-text-fill: #1d3c34; -fx-font-weight: bold; -fx-opacity: 0.6;"/>
+                
+                <StackPane style="-fx-padding: 8; -fx-background-color: white; -fx-background-radius: 12; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 2);">
+                    <ImageView fx:id="qrCodeImage" fitWidth="70" fitHeight="70" preserveRatio="true"/>
+                </StackPane>
+            </VBox>
+        </VBox>
+    </StackPane>
+
+    <VBox alignment="CENTER" spacing="5" style="-fx-padding: 15 0;">
+        <Label text="123 ANYWHERE ST., ANY CITY | PH: 123-456-7890" 
+               style="-fx-font-size: 10; -fx-text-fill: #1d3c34; -fx-letter-spacing: 1.5; -fx-font-weight: bold;"/>
+        <Label text="WWW.LAMMA-EXPLORER.COM" 
+               style="-fx-font-size: 11; -fx-text-fill: #1d3c34; -fx-letter-spacing: 2; -fx-font-weight: 900; -fx-underline: true;"/>
+    </VBox>
+</VBox>

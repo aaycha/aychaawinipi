@@ -8,13 +8,10 @@
 
 <ScrollPane xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.gestion.ui.participation.ParticipationViewController"
-            fitToWidth="false" fitToHeight="false" styleClass="modern-scroll-pane"
-            vbarPolicy="AS_NEEDED" hbarPolicy="AS_NEEDED">
-    <stylesheets>
-        <URL value="@../../styles/card-view.css" />
-        <URL value="@../../styles/nature-mood.css" />
-    </stylesheets>
-
+            fitToWidth="true" fitToHeight="false" hbarPolicy="AS_NEEDED" vbarPolicy="AS_NEEDED"
+            style="-fx-background: transparent; -fx-background-color: transparent;"
+            stylesheets="@../../styles/card-view.css, @../../styles/nature-mood.css">
+    
     <VBox spacing="8" styleClass="modern-panel" prefWidth="1000" style="-fx-padding: 12;">
         
         <!-- Nature Header -->
@@ -111,5 +108,4 @@
             <Label fx:id="validationMessage"/>
         </VBox>
     </VBox>
-
 </ScrollPane>

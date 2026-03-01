@@ -10,6 +10,8 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 
+import com.gestion.tools.Session;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -77,38 +79,56 @@ public class EspaceUtilisateurController {
         }
     }
 
-    private static final List<UserSection> SECTIONS = List.of(
-            new UserSection("evenement", "Découvrir Événements",
-                    "Explorer les treks, soirées et séjours nature de 2026",
-                    "/views/evenement/evenement-liste.fxml", "🏔️"),
+    private static final List<UserSection> BASE_SECTIONS = List.of(
             new UserSection("participation", "Mes Participations",
                     "Consulter et gérer mes inscriptions aux événements",
                     "/views/utilisateur/mes-participations.fxml", "👥"),
-            new UserSection("repas", "Mes Repas",
-                    "Voir mes plats et compositions",
-                    "/views/repas/repas-liste.fxml", "🍕"),
-            new UserSection("restauration", "Restauration",
-                    "Menus, repas et personnalisation 2026",
-                    "/views/utilisateur/restauration-2026.fxml", "🍴"),
-            new UserSection("abonnement", "Mon Abonnement",
-                    "Gérer mon abonnement LAMMA",
-                    "/views/utilisateur/abonnement-choix.fxml", "📋"),
-            new UserSection("chatbot", "Assistant LAMMA",
-                    "Discuter avec l'IA pour obtenir de l'aide",
-                    "/views/chatbot/chatbot-modal.fxml", "🤖"),
+            new UserSection("restauration", "Trail Rations 2026",
+                    "Explorer et commander vos provisions de haute montagne",
+                    "/views/utilisateur/restauration-2026.fxml", "🏔️"),
+            new UserSection("composition", "Ma Composition",
+                    "Cuisiner et personnaliser vos repas d'expédition",
+                    "/views/utilisateur/dish-composition-modal.fxml", "🍳"),
+            new UserSection("repas", "Catalogue des Repas",
+                    "Découvrir tous les plats disponibles sur le trail",
+                    "/views/repas/repas-liste.fxml", "🍱"),
+            new UserSection("menu", "Menus d'Expédition",
+                    "Consulter les menus complets du camp de base",
+                    "/views/menu/menu-liste.fxml", "📜"),
             new UserSection("map", "Carte Interactive",
                     "Explorer les refuges et restaurants sur la carte",
                     "/views/map/map-view.fxml", "🗺️"),
-            new UserSection("composition", "Mon Menu Hebdomadaire",
-                    "Consulter le planning des repas de la semaine",
-                    "/views/repas/admin-menu-planner.fxml", "📅"));
+            new UserSection("abonnement", "Mon Abonnement",
+                    "Gérer mon abonnement LAMMA",
+                    "/views/utilisateur/abonnement-choix.fxml", "📋"),
+            new UserSection("panier", "Mon Panier",
+                    "Gérer vos commandes, modifier les quantités ou supprimer des articles avant paiement",
+                    "/views/utilisateur/checkout-modal.fxml", "🛒"),
+            new UserSection("chatbot", "LAMA AI Assistant",
+                    "Posez vos questions sur les menus, ingrédients ou événements",
+                    "/views/chatbot/chatbot-modal.fxml", "🤖"));
 
     @FXML
     public void initialize() {
         if (cardsContainer == null)
             return;
         cardsContainer.getChildren().clear();
-        for (UserSection section : SECTIONS) {
+
+        List<UserSection> sectionsToDisplay = new ArrayList<>(BASE_SECTIONS);
+
+        // Dynamic Check: Keep only for specialized logic if needed, otherwise just list
+        // base sections
+        try {
+            Session session = Session.getInstance();
+            if (session.isLoggedIn()) {
+                // We keep the dynamic check section empty or remove if fully static
+                // User requested them to be added, so they are now in BASE_SECTIONS
+            }
+        } catch (Exception e) {
+            System.err.println("Error checking dynamic sections: " + e.getMessage());
+        }
+
+        for (UserSection section : sectionsToDisplay) {
             VBox card = createCard(section);
             cardsContainer.getChildren().add(card);
         }

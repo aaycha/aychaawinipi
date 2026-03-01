@@ -4,6 +4,13 @@ import com.gestion.controllers.RepasController;
 import com.gestion.entities.Menu;
 import com.gestion.entities.Repas;
 import com.gestion.entities.Restaurant;
+import com.gestion.entities.User;
+import com.gestion.entities.RepasDetaille;
+import com.gestion.services.CartService;
+import com.gestion.services.RepasServiceImpl;
+import java.math.BigDecimal;
+import com.gestion.services.AutoPromoService;
+import com.gestion.tools.Session;
 import javafx.geometry.Insets;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -22,7 +29,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-
+import java.util.List;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -56,6 +63,10 @@ public class RepasListeController implements Initializable {
     @FXML
     private Button btnSupprimer;
     @FXML
+    private Button btnNouveau;
+    @FXML
+    private Button btnCommander;
+    @FXML
     private ComboBox<String> spaceSelector;
     @FXML
     private ToggleButton iaToggle;
@@ -81,6 +92,7 @@ public class RepasListeController implements Initializable {
     private Label previewDescription;
 
     private final RepasController controller = new RepasController();
+    private final AutoPromoService promoService = new AutoPromoService();
     private ObservableList<Repas> repas = FXCollections.observableArrayList();
     private ObservableList<Restaurant> restaurants = FXCollections.observableArrayList();
     private ObservableList<Menu> menus = FXCollections.observableArrayList();
@@ -89,11 +101,34 @@ public class RepasListeController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        promoService.generateAutoPromos(); // Reload promos
         setupListView();
         setupFilters();
         loadRestaurants();
         loadMenus();
         loadRepas();
+        applySecurityRestrictions();
+    }
+
+    private void applySecurityRestrictions() {
+        User currentUser = Session.getInstance().getCurrentUser();
+        if (currentUser != null && "USER".equals(currentUser.getRole())) {
+            // User Space: Hide admin actions as requested
+            if (btnNouveau != null)
+                btnNouveau.setVisible(false);
+            if (btnModifier != null)
+                btnModifier.setVisible(false);
+            if (btnSupprimer != null)
+                btnSupprimer.setVisible(false);
+
+            // Show Commander button only for users
+            if (btnCommander != null) {
+                btnCommander.setVisible(true);
+                btnCommander.setManaged(true);
+            }
+
+            statusLabel.setText("Espace Client • Menu consultatif");
+        }
     }
 
     private void setupListView() {
@@ -267,8 +302,29 @@ public class RepasListeController implements Initializable {
         // Price Section
         VBox priceContainer = new VBox(2);
         priceContainer.setAlignment(javafx.geometry.Pos.CENTER_RIGHT);
-        Label price = new Label(String.format("%.2f €", item.getPrix() != null ? item.getPrix() : 0.0));
+
+        BigDecimal prixBD = item.getPrix() != null ? item.getPrix() : BigDecimal.ZERO;
+        double originalPrice = prixBD.doubleValue();
+        double displayPrice = originalPrice;
+
+        // Discount Logic
+        boolean hasDiscount = item.getId() != null && promoService.hasAutoPromo(item.getId());
+        if (hasDiscount) {
+            displayPrice = originalPrice * 0.85; // 15% discount
+            Label promoBadge = createBadge("🏷️ -15% PROMO", "#F97316");
+            promoBadge.setStyle(promoBadge.getStyle() + " -fx-font-size: 8px; -fx-padding: 2 6;");
+            priceContainer.getChildren().add(promoBadge);
+        }
+
+        Label price = new Label(String.format("%.2f €", displayPrice));
         price.setStyle("-fx-font-weight: 900; -fx-font-size: 20px; -fx-text-fill: #00D4B4;");
+
+        if (hasDiscount) {
+            Label oldPrice = new Label(String.format("%.2f €", originalPrice));
+            oldPrice.setStyle("-fx-text-fill: #94A3B8; -fx-strikethrough: true; -fx-font-size: 11px;");
+            priceContainer.getChildren().add(oldPrice);
+        }
+
         Label reviews = new Label("⭐ 4.8 avis");
         reviews.setStyle("-fx-font-size: 10px; -fx-text-fill: #FBBF24; -fx-font-weight: bold;");
         priceContainer.getChildren().addAll(price, reviews);
@@ -363,11 +419,35 @@ public class RepasListeController implements Initializable {
     }
 
     @FXML
+    private void onCommander() {
+        if (selectedRepas != null) {
+            // Map Repas to RepasDetaille for CartService
+            RepasDetaille rd = new RepasDetaille();
+            rd.setId(selectedRepas.getId());
+            rd.setNom(selectedRepas.getNom());
+            rd.setDescription(selectedRepas.getDescription());
+            rd.setPrix(selectedRepas.getPrix());
+            rd.setImageUrl(selectedRepas.getImageUrl());
+            rd.setRestaurantId(selectedRepas.getRestaurantId());
+
+            // Add to cart
+            CartService.getInstance().addItem(rd);
+
+            statusLabel.setText("🚀 " + selectedRepas.getNom() + " ajouté au kit d'expédition !");
+
+            showAlert(Alert.AlertType.INFORMATION, "Logistique LAMMA", "Ration configurée",
+                    selectedRepas.getNom() + " a été ajouté à votre panier de mission.");
+        }
+    }
+
+    @FXML
     private void onListClick(javafx.scene.input.MouseEvent event) {
         selectedRepas = listView.getSelectionModel().getSelectedItem();
         boolean hasSelection = selectedRepas != null;
         btnModifier.setDisable(!hasSelection);
         btnSupprimer.setDisable(!hasSelection);
+        if (btnCommander != null)
+            btnCommander.setDisable(!hasSelection);
     }
 
     @FXML
@@ -408,7 +488,20 @@ public class RepasListeController implements Initializable {
         previewCategory.getStyleClass().clear();
         previewCategory.getStyleClass().add("badge-mint");
 
-        previewPrice.setText(String.format("%.2f €", item.getPrix() != null ? item.getPrix() : 0.0));
+        BigDecimal prixBD = item.getPrix() != null ? item.getPrix() : BigDecimal.ZERO;
+        double originalPrice = prixBD.doubleValue();
+        double displayPrice = originalPrice;
+        boolean hasDiscount = item.getId() != null && promoService.hasAutoPromo(item.getId());
+
+        if (hasDiscount) {
+            displayPrice = originalPrice * 0.85;
+            previewPrice.setText(String.format("%.2f € (PROMO!)", displayPrice));
+            previewPrice.setStyle("-fx-font-weight: 900; -fx-font-size: 20px; -fx-text-fill: #F97316;");
+        } else {
+            previewPrice.setText(String.format("%.2f €", displayPrice));
+            previewPrice.setStyle("-fx-font-weight: 900; -fx-font-size: 20px; -fx-text-fill: #F97316;");
+        }
+
         previewStatus.setText(item.isDisponible() ? "ACTIF EN LIGNE" : "HORS LIGNE");
         previewStatus.setStyle(
                 "-fx-text-fill: " + (item.isDisponible() ? "#00D4B4" : "#94A3B8") + "; -fx-font-weight: 900;");
@@ -416,6 +509,10 @@ public class RepasListeController implements Initializable {
         String desc = item.getDescription();
         if (desc == null || desc.isEmpty())
             desc = "Ce plat est une spécialité du restaurant " + item.getRestaurantNom() + ".";
+
+        if (hasDiscount) {
+            desc = "🏷️ OFFRE SPÉCIALE ÉCO-TRAIL : -15% sur ce plat !\n\n" + desc;
+        }
         previewDescription.setText(desc);
 
         Image img = loadImage(item.getImageUrl());

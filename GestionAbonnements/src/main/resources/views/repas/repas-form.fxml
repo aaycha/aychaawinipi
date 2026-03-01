@@ -1,3 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.StackPane?>
@@ -14,14 +16,15 @@
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.layout.FlowPane?>
+
 <ScrollPane xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.gestion.ui.repas.RepasFormController"
-            fitToWidth="false" fitToHeight="false" pannable="true" hbarPolicy="ALWAYS" vbarPolicy="ALWAYS"
-            stylesheets="@../../styles/nature-mood.css, @../../styles/card-view.css"
-            style="-fx-background-color: transparent; -fx-background: transparent; -fx-border-color: transparent; -fx-padding: 0;">
+            fitToWidth="true" fitToHeight="false" hbarPolicy="AS_NEEDED" vbarPolicy="AS_NEEDED"
+            style="-fx-background: transparent; -fx-background-color: transparent;"
+            stylesheets="@../../styles/nature-mood.css, @../../styles/card-view.css">
 
     <StackPane style="-fx-background-color: transparent; -fx-padding: 5;">
-        <VBox spacing="8" styleClass="glass-panel" prefWidth="800" maxWidth="850" alignment="TOP_CENTER" style="-fx-padding: 10;">
+        <VBox spacing="4" styleClass="glass-panel" prefWidth="800" maxWidth="850" alignment="TOP_CENTER" style="-fx-padding: 8;">
             
             <!-- Hiker Title Section -->
             <HBox alignment="CENTER_LEFT" spacing="10">
@@ -46,7 +49,7 @@
                 </columnConstraints>
 
                 <!-- LEFT: CORE FORM -->
-                <VBox GridPane.columnIndex="0" spacing="15">
+                <VBox GridPane.columnIndex="0" spacing="8">
                     <!-- Error Terminal -->
                     <VBox fx:id="errorContainer" visible="false" managed="false" style="-fx-background-color: rgba(239, 68, 68, 0.1); -fx-padding: 10; -fx-background-radius: 10; -fx-border-color: rgba(239, 68, 68, 0.2); -fx-border-radius: 10;">
                         <HBox spacing="8" alignment="CENTER_LEFT">
@@ -56,7 +59,7 @@
                     </VBox>
 
                     <!-- Identity Section -->
-                        <VBox spacing="8" styleClass="modern-card" style="-fx-padding: 10;">
+                        <VBox spacing="6" styleClass="modern-card" style="-fx-padding: 8;">
                         <Label text="🍲 RATION IDENTIFICATION" style="-fx-font-weight: 900; -fx-text-fill: #3b82f6; -fx-font-size: 9; -fx-letter-spacing: 0.5px;"/>
                         
                         <VBox spacing="6">
@@ -75,7 +78,7 @@
                     </VBox>
 
                     <!-- Metrics Section -->
-                    <VBox spacing="8" styleClass="modern-card" style="-fx-padding: 10;">
+                    <VBox spacing="6" styleClass="modern-card" style="-fx-padding: 8;">
                         <Label text="📊 EXPLOITATION METRICS" style="-fx-font-weight: 900; -fx-text-fill: #FACC15; -fx-font-size: 9; -fx-letter-spacing: 0.5px;"/>
                         
                         <HBox spacing="12">
@@ -118,7 +121,8 @@
                         </HBox>
                         
                         <VBox spacing="8">
-                            <TextArea fx:id="inputDescription" promptText="Drafting expedition menu details..." wrapText="true" prefRowCount="3" styleClass="modern-input" style="-fx-font-size: 11;"/>
+                            <TextArea fx:id="inputDescription" promptText="Drafting expedition menu details..." 
+                                      wrapText="true" prefRowCount="8" styleClass="modern-input" style="-fx-font-size: 11; -fx-min-height: 150;"/>
                             <Label fx:id="errorDescription" visible="false" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 9px;"/>
                             
                             <HBox fx:id="allergenBox" spacing="5" alignment="CENTER_LEFT" managed="false" visible="false">

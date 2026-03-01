@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.VBox?>
@@ -6,56 +7,61 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.control.ListView?>
-<VBox xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.gestion.ui.utilisateur.MesParticipationsController"
-      spacing="30" styleClass="modern-panel" prefWidth="1000" style="-fx-padding: 35;"
-      stylesheets="@../../styles/nature-mood.css, @../../styles/card-view.css">
 
-    <!-- Header -->
-    <HBox spacing="18" alignment="CENTER_LEFT">
-        <StackPane style="-fx-background-color: rgba(34, 197, 94, 0.15); -fx-background-radius: 12; -fx-padding: 10;">
-            <Label text="👥" style="-fx-font-size: 24;"/>
-        </StackPane>
-        <VBox spacing="2">
-            <Label text="My Expedition Groups" styleClass="modern-title" style="-fx-text-fill: white; -fx-font-size: 24; -fx-font-weight: 800;"/>
-            <Label fx:id="statusLabel" text="Mission status: Ready" style="-fx-text-fill: #94a3b8; -fx-font-size: 13;"/>
-        </VBox>
-    </HBox>
+<ScrollPane xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.gestion.ui.utilisateur.MesParticipationsController"
+            fitToWidth="true" fitToHeight="true" hbarPolicy="AS_NEEDED" vbarPolicy="AS_NEEDED"
+            style="-fx-background: transparent; -fx-background-color: transparent;"
+            stylesheets="@../../styles/nature-mood.css, @../../styles/card-view.css">
+    
+    <VBox spacing="15" styleClass="modern-panel" style="-fx-padding: 15;">
 
-    <!-- Actions -->
-    <HBox spacing="15" alignment="CENTER_LEFT">
-        <Button text="➕ Join Expedition" onAction="#onCreerParticipation" styleClass="button-capsule" style="-fx-padding: 12 24;"/>
-        <Button text="🔄 Retransmit" onAction="#onActualiser" styleClass="button-capsule-glass" style="-fx-padding: 12 24;"/>
-        <Button text="📥 Badge PDF" onAction="#onTelechargerBadge" styleClass="button-capsule" style="-fx-padding: 12 24; -fx-background-color: rgba(99,102,241,0.8); -fx-text-fill: white; -fx-font-weight: bold;"/>
-        <Region HBox.hgrow="ALWAYS"/>
-        <Label text="Your recorded missions in the LAMMA Grid." style="-fx-text-fill: #94a3b8; -fx-font-size: 12; -fx-font-style: italic;"/>
-    </HBox>
-
-    <!-- Pricing Guide -->
-    <VBox spacing="12" styleClass="modern-card" style="-fx-padding: 20; -fx-background-color: rgba(59, 130, 246, 0.05); -fx-border-color: rgba(59, 130, 246, 0.1);">
-        <HBox alignment="CENTER_LEFT" spacing="10">
-            <Label text="📡" style="-fx-font-size: 16;"/>
-            <Label text="Automatic Logistics Calculation:" style="-fx-font-weight: 900; -fx-text-fill: #3b82f6; -fx-font-size: 12;"/>
+        <!-- Header -->
+        <HBox spacing="18" alignment="CENTER_LEFT">
+            <StackPane style="-fx-background-color: rgba(34, 197, 94, 0.15); -fx-background-radius: 12; -fx-padding: 10;">
+                <Label text="👥" style="-fx-font-size: 24;"/>
+            </StackPane>
+            <VBox spacing="1">
+                <Label text="My Expedition Groups" styleClass="modern-title" style="-fx-text-fill: white; -fx-font-size: 16; -fx-font-weight: 800;"/>
+                <Label fx:id="statusLabel" text="Mission status: Ready" style="-fx-text-fill: #94a3b8; -fx-font-size: 10;"/>
+            </VBox>
         </HBox>
-        <Label text="• Solo Explorer (25 €)   • Scout Group Pass (60 €)   • K9 Companion (+8 €)   • Division Member (-30%)"
-               style="-fx-text-fill: #94a3b8; -fx-font-size: 11; -fx-wrap-text: true;"/>
-    </VBox>
 
-    <!-- List Section -->
-    <VBox spacing="15" VBox.vgrow="ALWAYS">
+        <!-- Actions -->
         <HBox spacing="10" alignment="CENTER_LEFT">
-            <Label text="📑 Expedition Log" style="-fx-font-size: 16; -fx-font-weight: 800; -fx-text-fill: white;"/>
+            <Button text="➕ Join" onAction="#onCreerParticipation" styleClass="button-capsule" style="-fx-padding: 8 16; -fx-font-size: 11;"/>
+            <Button text="🔄 Sync" onAction="#onActualiser" styleClass="button-capsule-glass" style="-fx-padding: 8 16; -fx-font-size: 11;"/>
+            <Button text="📥 PDF" onAction="#onTelechargerBadge" styleClass="button-capsule" style="-fx-padding: 8 16; -fx-background-color: rgba(99,102,241,0.8); -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 11;"/>
             <Region HBox.hgrow="ALWAYS"/>
-            <Label fx:id="countLabel" text="0 entries" style="-fx-text-fill: #22c55e; -fx-font-weight: 800; -fx-font-size: 11; -fx-background-color: rgba(34, 197, 94, 0.1); -fx-padding: 5 12; -fx-background-radius: 12;"/>
+            <Label text="Your recorded missions in the LAMMA Grid." style="-fx-text-fill: #94a3b8; -fx-font-size: 12; -fx-font-style: italic;"/>
         </HBox>
-        
-        <ListView fx:id="listView" VBox.vgrow="ALWAYS" minHeight="450" styleClass="modern-list-view" onMouseClicked="#onListClick">
-            <placeholder>
-                <VBox alignment="CENTER" spacing="15" style="-fx-padding: 40;">
-                    <Label text="⛰️ NO VISIBLE EXPEDITIONS" style="-fx-font-size: 16; -fx-text-fill: #64748b; -fx-font-weight: 800;"/>
-                    <Label text="Join an expedition to begin tracking your mountain progress." style="-fx-text-fill: #64748b; -fx-font-size: 12; -fx-text-alignment: center;"/>
-                </VBox>
-            </placeholder>
-        </ListView>
+
+        <!-- Pricing Guide -->
+        <VBox spacing="8" styleClass="modern-card" style="-fx-padding: 10; -fx-background-color: rgba(59, 130, 246, 0.05); -fx-border-color: rgba(59, 130, 246, 0.1);">
+            <HBox alignment="CENTER_LEFT" spacing="8">
+                <Label text="📡" style="-fx-font-size: 14;"/>
+                <Label text="Logistics Calculation:" style="-fx-font-weight: 900; -fx-text-fill: #3b82f6; -fx-font-size: 10;"/>
+            </HBox>
+            <Label text="• Solo (25 €)   • Group (60 €)   • K9 (+8 €)"
+                   style="-fx-text-fill: #94a3b8; -fx-font-size: 10; -fx-wrap-text: true;"/>
+        </VBox>
+
+        <!-- List Section -->
+        <VBox spacing="15" VBox.vgrow="ALWAYS">
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="📑 Expedition Log" style="-fx-font-size: 16; -fx-font-weight: 800; -fx-text-fill: white;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="countLabel" text="0 entries" style="-fx-text-fill: #22c55e; -fx-font-weight: 800; -fx-font-size: 11; -fx-background-color: rgba(34, 197, 94, 0.1); -fx-padding: 5 12; -fx-background-radius: 12;"/>
+            </HBox>
+            
+            <ListView fx:id="listView" VBox.vgrow="ALWAYS" minHeight="450" styleClass="modern-list-view" onMouseClicked="#onListClick">
+                <placeholder>
+                    <VBox alignment="CENTER" spacing="15" style="-fx-padding: 40;">
+                        <Label text="⛰️ NO VISIBLE EXPEDITIONS" style="-fx-font-size: 16; -fx-text-fill: #64748b; -fx-font-weight: 800;"/>
+                        <Label text="Join an expedition to begin tracking your mountain progress." style="-fx-text-fill: #64748b; -fx-font-size: 12; -fx-text-alignment: center;"/>
+                    </VBox>
+                </placeholder>
+            </ListView>
+        </VBox>
     </VBox>
-</VBox>
+</ScrollPane>

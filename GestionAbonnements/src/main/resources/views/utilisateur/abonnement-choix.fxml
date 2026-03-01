@@ -4,9 +4,13 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.gestion.ui.utilisateur.AbonnementChoixController"
-      spacing="20" styleClass="modern-panel" prefWidth="1000">
+<ScrollPane xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.gestion.ui.utilisateur.AbonnementChoixController"
+            fitToWidth="true" fitToHeight="false" hbarPolicy="AS_NEEDED" vbarPolicy="AS_NEEDED"
+            style="-fx-background: transparent; -fx-background-color: transparent;"
+            stylesheets="@../../styles/nature-mood.css">
+
+<VBox spacing="20" styleClass="modern-panel">
     <padding>
         <Insets top="24" right="24" bottom="24" left="24"/>
     </padding>
@@ -22,8 +26,7 @@
            style="-fx-text-fill: #666; -fx-font-size: 13px;" wrapText="true"/>
 
     <!-- Content Area with Tabs -->
-    <TabPane fx:id="mainTabPane" VBox.vgrow="ALWAYS" tabClosingPolicy="UNAVAILABLE" styleClass="modern-tab-pane"
-             stylesheets="@../../styles/nature-mood.css">
+    <TabPane fx:id="mainTabPane" VBox.vgrow="ALWAYS" tabClosingPolicy="UNAVAILABLE" styleClass="modern-tab-pane">
         
         <!-- Tab 1: Mes Abonnements -->
         <Tab text="Mes Abonnements">
@@ -116,4 +119,4 @@
         </Tab>
     </TabPane>
 </VBox>
-
+</ScrollPane>

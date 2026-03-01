@@ -42,7 +42,7 @@
             <StackPane style="-fx-background-color: rgba(10, 15, 13, 0.75);" />
 
             <!-- Main Scrollable Content -->
-            <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="modern-scroll">
+            <ScrollPane fitToWidth="true" hbarPolicy="AS_NEEDED" styleClass="modern-scroll">
                 <content>
                     <VBox alignment="CENTER" spacing="20" style="-fx-padding: 30 0 30 0;">
                         

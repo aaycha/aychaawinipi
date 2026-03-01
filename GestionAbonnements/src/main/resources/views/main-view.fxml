@@ -23,20 +23,6 @@
                 </ImageView>
                 <Label text="LAMA EXPEDITION" styleClass="section-title" style="-fx-font-size: 28; -fx-text-fill: white;"/>
                 <Region HBox.hgrow="ALWAYS"/>
-                <!-- Weather Widget -->
-                <VBox spacing="2" alignment="CENTER_LEFT">
-                    <HBox spacing="8" alignment="CENTER_LEFT">
-                        <VBox spacing="0">
-                            <Label styleClass="stat-title" text="WEATHER" style="-fx-font-size: 9;"/>
-                            <Label fx:id="weatherTemp" styleClass="stat-value" text="--°C" style="-fx-font-size: 16;"/>
-                        </VBox>
-                    </HBox>
-                    <HBox spacing="6" alignment="CENTER_LEFT">
-                        <Label fx:id="weatherCondition" style="-fx-text-fill: #94a3b8; -fx-font-size: 10;" text="Loading..." />
-                        <Label fx:id="weatherLocation" style="-fx-text-fill: #64748b; -fx-font-size: 9;" text="" />
-                    </HBox>
-                </VBox>
-                <Region minWidth="10"/>
                 <ComboBox fx:id="roleCombo" prefWidth="160" styleClass="modern-input" promptText="Select Role"/>
                 <Region minWidth="20"/>
                 <Label fx:id="userLabel" text="Active Scout: Explorer" styleClass="section-subtitle" style="-fx-text-fill: #3b82f6;"/>
@@ -54,39 +40,37 @@
             <StackPane style="-fx-background-color: rgba(10, 15, 13, 0.85);" />
 
             <StackPane fx:id="contentPane">
-                <!-- Dashboard Admin - Liste des gestions -->
-                <ScrollPane fx:id="dashboardScroll" fitToWidth="false" hbarPolicy="ALWAYS" vbarPolicy="ALWAYS" styleClass="modern-scroll">
-                    <VBox fx:id="dashboardBox" spacing="8" style="-fx-padding: 10 15; -fx-background-color: transparent;">
-                        <VBox spacing="1">
-                            <Label text="Base Camp Dashboard" styleClass="section-title" style="-fx-font-size: 14; -fx-text-fill: white;"/>
-                            <Label text="Select an expedition module" styleClass="section-subtitle" style="-fx-text-fill: rgba(255,255,255,0.6); -fx-font-size: 8;"/>
-                        </VBox>
-                        <FlowPane fx:id="cardsContainer" hgap="8" vgap="8" prefWrapLength="2000"/>
-                    </VBox>
-
-
-
-
+                <!-- ... existing content ... -->
+                <ScrollPane fx:id="dashboardScroll" fitToWidth="true" hbarPolicy="AS_NEEDED" styleClass="modern-scroll">
+                    <FlowPane fx:id="cardsContainer" hgap="25" vgap="25" style="-fx-padding: 40;" />
                 </ScrollPane>
-                <!-- Espace Utilisateur - Liste scrollable (Mes Participations, Mes Repas, Restauration, Abonnement) -->
                 <ScrollPane fx:id="userDashboardScroll" fitToWidth="true" styleClass="modern-scroll" visible="false" managed="false" style="-fx-background: transparent; -fx-background-color: transparent;" hbarPolicy="AS_NEEDED">
                     <fx:include source="utilisateur/espace-utilisateur.fxml" fx:id="espaceUtilisateurInclude"/>
                 </ScrollPane>
-                <!-- Zone de contenu dynamique (FXML charges) -->
                 <BorderPane fx:id="moduleContentPane" visible="false" managed="false" style="-fx-background-color: transparent;">
                     <top>
-                        <HBox spacing="15" alignment="CENTER_LEFT" style="-fx-padding: 20 40; -fx-background-color: rgba(255,255,255,0.02); -fx-border-color: rgba(255,255,255,0.05); -fx-border-width: 0 0 1 0;">
-                            <Button fx:id="backButton" text="⬅ Return to Base Camp" onAction="#retourDashboard" styleClass="button-capsule-glass" style="-fx-padding: 10 20;"/>
-                            <Region HBox.hgrow="ALWAYS"/>
-                            <Label fx:id="moduleTitleLabel" text="" styleClass="section-title" style="-fx-font-size: 22; -fx-text-fill: white;"/>
+                        <HBox alignment="CENTER_LEFT" spacing="20" style="-fx-padding: 10 20;">
+                            <Button fx:id="backButton" onAction="#retourDashboard" text="← Back" styleClass="button-capsule-glass" />
+                            <Label fx:id="moduleTitleLabel" text="Module Title" style="-fx-text-fill: white; -fx-font-size: 20; -fx-font-weight: bold;" />
                         </HBox>
                     </top>
                     <center>
-                        <ScrollPane fitToWidth="true" hbarPolicy="AS_NEEDED" styleClass="modern-scroll" style="-fx-background: transparent; -fx-background-color: transparent;">
-                            <StackPane fx:id="moduleStackPane" styleClass="voyage-module-content" style="-fx-background-color: transparent;"/>
+                        <ScrollPane fitToWidth="true" fitToHeight="false" style="-fx-background: transparent; -fx-background-color: transparent;" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
+                            <StackPane fx:id="moduleStackPane" />
                         </ScrollPane>
                     </center>
                 </BorderPane>
+
+                <!-- Floating Chatbot Button -->
+                <StackPane pickOnBounds="false">
+                    <Button onAction="#openChatbot" styleClass="button-capsule" 
+                            style="-fx-background-color: #1890ff; -fx-background-radius: 50; -fx-min-width: 60; -fx-min-height: 60; -fx-max-width: 60; -fx-max-height: 60; -fx-font-size: 24; -fx-effect: dropshadow(gaussian, rgba(24, 144, 255, 0.5), 15, 0, 0, 0);"
+                            text="🤖" StackPane.alignment="BOTTOM_RIGHT">
+                        <StackPane.margin>
+                            <Insets bottom="30" right="30"/>
+                        </StackPane.margin>
+                    </Button>
+                </StackPane>
             </StackPane>
         </StackPane>
     </center>

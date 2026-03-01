@@ -67,6 +67,42 @@
     -fx-font-weight: bold;
 }
 
+/* ================= PREMIUM GLASS ================= */
+.glass-panel-deep {
+    -fx-background-color: linear-gradient(to bottom right, rgba(15, 23, 42, 0.95), rgba(30, 58, 50, 0.9));
+    -fx-background-radius: 40;
+    -fx-border-color: rgba(255, 255, 255, 0.15);
+    -fx-border-width: 1.5;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 50, 0, 0, 20);
+}
+
+.neo-card-mini {
+    -fx-background-color: rgba(255, 255, 255, 0.04);
+    -fx-background-radius: 15;
+    -fx-padding: 12;
+    -fx-border-color: rgba(255, 255, 255, 0.05);
+    -fx-border-width: 1;
+}
+
+.modern-scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+}
+
+.modern-scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+.modern-scroll-pane .scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-width: 6;
+}
+
+.modern-scroll-pane .scroll-bar:vertical .thumb {
+    -fx-background-color: rgba(255, 255, 255, 0.2);
+    -fx-background-radius: 10;
+}
+
 /* ================= ENHANCEMENTS ================= */
 
 .featured-image-container {

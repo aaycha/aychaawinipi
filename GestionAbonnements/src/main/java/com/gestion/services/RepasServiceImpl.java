@@ -85,19 +85,28 @@ public class RepasServiceImpl implements RepasService {
             if (c == null)
                 return repas;
             try (PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-                ps.setLong(1, repas.getRestaurantId());
+                if (repas.getRestaurantId() != null)
+                    ps.setLong(1, repas.getRestaurantId());
+                else
+                    ps.setNull(1, Types.BIGINT);
                 ps.setString(2, repas.getRestaurantNom());
-                ps.setLong(3, repas.getMenuId());
+                if (repas.getMenuId() != null)
+                    ps.setLong(3, repas.getMenuId());
+                else
+                    ps.setNull(3, Types.BIGINT);
                 ps.setString(4, repas.getMenuNom());
                 ps.setString(5, repas.getNom());
                 ps.setString(6, repas.getDescription());
                 ps.setBigDecimal(7, repas.getPrix());
                 ps.setString(8, repas.getCategorie() != null ? repas.getCategorie().name() : null);
                 ps.setString(9, repas.getTypePlat() != null ? repas.getTypePlat().name() : null);
-                ps.setInt(10, repas.getTempsPreparation());
+                if (repas.getTempsPreparation() != null)
+                    ps.setInt(10, repas.getTempsPreparation());
+                else
+                    ps.setNull(10, Types.INTEGER);
                 ps.setString(11, repas.getImageUrl());
-                ps.setBoolean(12, repas.isDisponible());
-                ps.setString(13, repas.getIngredients());
+                ps.setString(12, repas.getIngredients());
+                ps.setBoolean(13, repas.isDisponible());
                 ps.executeUpdate();
                 try (ResultSet keys = ps.getGeneratedKeys()) {
                     if (keys.next())
@@ -126,19 +135,28 @@ public class RepasServiceImpl implements RepasService {
             if (c == null)
                 return repas;
             try (PreparedStatement ps = c.prepareStatement(sql)) {
-                ps.setLong(1, repas.getRestaurantId());
+                if (repas.getRestaurantId() != null)
+                    ps.setLong(1, repas.getRestaurantId());
+                else
+                    ps.setNull(1, Types.BIGINT);
                 ps.setString(2, repas.getRestaurantNom());
-                ps.setLong(3, repas.getMenuId());
+                if (repas.getMenuId() != null)
+                    ps.setLong(3, repas.getMenuId());
+                else
+                    ps.setNull(3, Types.BIGINT);
                 ps.setString(4, repas.getMenuNom());
                 ps.setString(5, repas.getNom());
                 ps.setString(6, repas.getDescription());
                 ps.setBigDecimal(7, repas.getPrix());
                 ps.setString(8, repas.getCategorie() != null ? repas.getCategorie().name() : null);
                 ps.setString(9, repas.getTypePlat() != null ? repas.getTypePlat().name() : null);
-                ps.setInt(10, repas.getTempsPreparation());
+                if (repas.getTempsPreparation() != null)
+                    ps.setInt(10, repas.getTempsPreparation());
+                else
+                    ps.setNull(10, Types.INTEGER);
                 ps.setString(11, repas.getImageUrl());
-                ps.setBoolean(12, repas.isDisponible());
-                ps.setString(13, repas.getIngredients());
+                ps.setString(12, repas.getIngredients());
+                ps.setBoolean(13, repas.isDisponible());
                 ps.setLong(14, repas.getId());
                 int updated = ps.executeUpdate();
                 if (updated == 0)

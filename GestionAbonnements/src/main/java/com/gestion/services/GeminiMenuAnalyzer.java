@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
+import java.time.LocalDate;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -21,9 +22,8 @@ import java.util.Random;
  */
 public class GeminiMenuAnalyzer {
 
-        private static final String GEMINI_KEY = "AIzaSyA1QFslUu4eiBVlepdCS0pVWdl5saQ487E";
-        private static final String API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key="
-                        + GEMINI_KEY;
+        private static String GEMINI_KEY = "";
+        private static final String API_URL_BASE = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=";
 
         private static final String PROMPT = "Act as a professional chef, nutritionist, and restaurant marketing expert. "
                         +
@@ -35,6 +35,27 @@ public class GeminiMenuAnalyzer {
         private final ObjectMapper mapper = new ObjectMapper();
         private final HttpClient http = HttpClient.newBuilder()
                         .connectTimeout(Duration.ofSeconds(15)).build();
+
+        public GeminiMenuAnalyzer() {
+                loadConfig();
+        }
+
+        private void loadConfig() {
+                try (java.io.InputStream input = getClass().getClassLoader()
+                                .getResourceAsStream("afilnet.properties")) {
+                        if (input != null) {
+                                java.util.Properties props = new java.util.Properties();
+                                props.load(input);
+                                GEMINI_KEY = props.getProperty("gemini.api_key", "");
+                        }
+                } catch (Exception e) {
+                        System.err.println("Gemini Config Error: " + e.getMessage());
+                }
+        }
+
+        private String getApiUrl() {
+                return API_URL_BASE + GEMINI_KEY;
+        }
 
         public static class MenuAnalysisResult {
                 public String nom, description, tags;
@@ -59,7 +80,7 @@ public class GeminiMenuAnalyzer {
                                         + "\"}}]}]}";
 
                         HttpRequest req = HttpRequest.newBuilder()
-                                        .uri(URI.create(API_URL))
+                                        .uri(URI.create(getApiUrl()))
                                         .header("Content-Type", "application/json")
                                         .POST(HttpRequest.BodyPublishers.ofString(body))
                                         .build();
@@ -134,5 +155,115 @@ public class GeminiMenuAnalyzer {
                 }
 
                 return new MenuAnalysisResult(nom, desc, prix, tags);
+        }
+
+        public String generateMenuDescription(java.util.List<String> dishNames) {
+                if (dishNames == null || dishNames.isEmpty()) {
+                        return "Une sélection gourmande de nos meilleurs plats.";
+                }
+
+                String dishesStr = String.join(", ", dishNames);
+                String promptV2 = "Act as a Michelin-star chef. Create a SHORT, appetizing, and poetic French description for a menu composed of: "
+                                + dishesStr + ". " +
+                                "Return ONLY the description text (max 250 characters). No JSON, no quotes.";
+
+                try {
+                        String body = "{\"contents\":[{\"parts\":[{\"text\":\"" + promptV2 + "\"}]}]}";
+
+                        HttpRequest req = HttpRequest.newBuilder()
+                                        .uri(URI.create(getApiUrl()))
+                                        .header("Content-Type", "application/json")
+                                        .POST(HttpRequest.BodyPublishers.ofString(body))
+                                        .build();
+
+                        HttpResponse<String> resp = http.send(req, HttpResponse.BodyHandlers.ofString());
+
+                        if (resp.statusCode() == 200) {
+                                JsonNode root = mapper.readTree(resp.body());
+                                String text = root.at("/candidates/0/content/parts/0/text").asText();
+                                if (text != null && !text.isBlank()) {
+                                        return text.trim();
+                                }
+                        }
+                } catch (Exception e) {
+                        System.err.println("AI Description Error: " + e.getMessage());
+                }
+
+                return "Une alliance raffinée de saveurs : " + dishesStr + ".";
+        }
+
+        public String generateMenuName(java.util.List<String> dishNames, int varietySeed) {
+                if (dishNames == null || dishNames.isEmpty()) {
+                        return "Menu Gourmand";
+                }
+
+                String dishesStr = String.join(", ", dishNames);
+                String varietyInstruction = varietySeed > 0
+                                ? "Try a DIFFERENT creative angle than before (Version #" + varietySeed + "). "
+                                : "";
+                String promptV3 = "Act as a Michelin-star chef and marketing expert. Suggest a UNIQUE, SHORT (max 3-4 words), appetizing, and creative French name for a menu composed of: "
+                                + dishesStr + ". " +
+                                varietyInstruction +
+                                "Return ONLY the name text. No quotes, no preamble. Make it different and sophisticated.";
+
+                try {
+                        String body = "{\"contents\":[{\"parts\":[{\"text\":\"" + promptV3 + "\"}]}]}";
+
+                        HttpRequest req = HttpRequest.newBuilder()
+                                        .uri(URI.create(getApiUrl()))
+                                        .header("Content-Type", "application/json")
+                                        .POST(HttpRequest.BodyPublishers.ofString(body))
+                                        .build();
+
+                        HttpResponse<String> resp = http.send(req, HttpResponse.BodyHandlers.ofString());
+
+                        if (resp.statusCode() == 200) {
+                                JsonNode root = mapper.readTree(resp.body());
+                                String text = root.at("/candidates/0/content/parts/0/text").asText();
+                                if (text != null && !text.isBlank()) {
+                                        return text.trim();
+                                }
+                        }
+                } catch (Exception e) {
+                        System.err.println("AI Name Error: " + e.getMessage());
+                }
+
+                return "Signature du Chef";
+        }
+
+        public String generateMenuDates(java.util.List<String> dishNames, int varietySeed) {
+                if (dishNames == null || dishNames.isEmpty()) {
+                        return LocalDate.now().toString() + "|" + LocalDate.now().plusDays(7).toString();
+                }
+
+                String dishesStr = String.join(", ", dishNames);
+                // Vary the start date based on seed
+                LocalDate startDate = LocalDate.now().plusDays(varietySeed % 14);
+                String promptV4 = "Based on these dishes: " + dishesStr
+                                + ", suggest a logical 7-day validity period starting from " + startDate
+                                + ". " +
+                                "Return format: YYYY-MM-DD|YYYY-MM-DD. ONLY the dates, no text.";
+
+                try {
+                        String body = "{\"contents\":[{\"parts\":[{\"text\":\"" + promptV4 + "\"}]}]}";
+                        HttpRequest req = HttpRequest.newBuilder()
+                                        .uri(URI.create(getApiUrl()))
+                                        .header("Content-Type", "application/json")
+                                        .POST(HttpRequest.BodyPublishers.ofString(body))
+                                        .build();
+
+                        HttpResponse<String> resp = http.send(req, HttpResponse.BodyHandlers.ofString());
+                        if (resp.statusCode() == 200) {
+                                JsonNode root = mapper.readTree(resp.body());
+                                String text = root.at("/candidates/0/content/parts/0/text").asText();
+                                if (text != null && text.contains("|")) {
+                                        return text.trim();
+                                }
+                        }
+                } catch (Exception e) {
+                        System.err.println("AI Date Error: " + e.getMessage());
+                }
+
+                return LocalDate.now().toString() + "|" + LocalDate.now().plusDays(7).toString();
         }
 }

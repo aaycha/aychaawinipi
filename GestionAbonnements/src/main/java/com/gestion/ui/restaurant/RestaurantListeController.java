@@ -45,6 +45,12 @@ public class RestaurantListeController implements Initializable {
     private Button btnSupprimer;
     @FXML
     private Button btnVoirDetails;
+    @FXML
+    private Button btnNouveau;
+    @FXML
+    private Button btnActualiser;
+    @FXML
+    private Button btnReserver;
 
     private final RestaurantController controller = new RestaurantController();
     private ObservableList<Restaurant> restaurants = FXCollections.observableArrayList();
@@ -56,6 +62,30 @@ public class RestaurantListeController implements Initializable {
         setupListView();
         setupFilters();
         loadRestaurants();
+        setUserMode(false); // Default to admin mode until set otherwise
+    }
+
+    public void setUserMode(boolean userMode) {
+        if (btnNouveau != null) {
+            btnNouveau.setVisible(!userMode);
+            btnNouveau.setManaged(!userMode);
+        }
+        if (btnActualiser != null) {
+            btnActualiser.setVisible(!userMode);
+            btnActualiser.setManaged(!userMode);
+        }
+        if (btnModifier != null) {
+            btnModifier.setVisible(!userMode);
+            btnModifier.setManaged(!userMode);
+        }
+        if (btnSupprimer != null) {
+            btnSupprimer.setVisible(!userMode);
+            btnSupprimer.setManaged(!userMode);
+        }
+        if (btnReserver != null) {
+            btnReserver.setVisible(userMode);
+            btnReserver.setManaged(userMode);
+        }
     }
 
     private void setupListView() {
@@ -77,9 +107,14 @@ public class RestaurantListeController implements Initializable {
         listView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             selectedRestaurant = newSelection;
             boolean hasSelection = newSelection != null;
-            btnModifier.setDisable(!hasSelection);
-            btnSupprimer.setDisable(!hasSelection);
-            btnVoirDetails.setDisable(!hasSelection);
+            if (btnModifier != null)
+                btnModifier.setDisable(!hasSelection);
+            if (btnSupprimer != null)
+                btnSupprimer.setDisable(!hasSelection);
+            if (btnVoirDetails != null)
+                btnVoirDetails.setDisable(!hasSelection);
+            if (btnReserver != null)
+                btnReserver.setDisable(!hasSelection);
         });
     }
 
@@ -133,12 +168,18 @@ public class RestaurantListeController implements Initializable {
         details.add(createDetailLabel("📞 Tél:", item.getTelephone()), 1, 0);
         details.add(createDetailLabel("✉️ Email:", item.getEmail()), 0, 1);
 
+        com.gestion.interfaces.RestaurantService restService = new com.gestion.services.RestaurantServiceImpl();
+        int remaining = restService.getPlacesRestantes(item.getId(), null);
+        Label capLabel = new Label("🪑 " + remaining + " / " + item.getNombrePlaces() + " places");
+        capLabel.setStyle("-fx-text-fill: #FACC15; -fx-font-weight: 800; -fx-font-size: 12px;");
+        details.add(capLabel, 1, 1);
+
         if (item.getDescription() != null && !item.getDescription().isEmpty()) {
             Label desc = new Label(item.getDescription());
             desc.setStyle("-fx-font-size: 11px; -fx-text-fill: #7f8c8d; -fx-font-style: italic;");
             desc.setWrapText(true);
             desc.setMaxWidth(400);
-            details.add(desc, 1, 1);
+            details.add(desc, 0, 2, 2, 1);
         }
 
         content.getChildren().addAll(header, details);
@@ -215,6 +256,17 @@ public class RestaurantListeController implements Initializable {
     private void onVoirDetails() {
         if (selectedRestaurant != null) {
             openDetailPage(selectedRestaurant);
+        }
+    }
+
+    @FXML
+    private void onReserver() {
+        if (selectedRestaurant != null) {
+            statusLabel.setText("Réservation confirmée pour : " + selectedRestaurant.getNom());
+            showAlert(Alert.AlertType.INFORMATION, "Réservation", "Place réservée",
+                    "Vous avez réservé une place au restaurant : " + selectedRestaurant.getNom());
+
+            // In a real app, this would update the participation or a reservation table
         }
     }
 

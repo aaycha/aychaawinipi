@@ -66,9 +66,8 @@
     -fx-border-width: 1.2;
     -fx-border-radius: 10;
     -fx-background-radius: 10;
-    -fx-padding: 10 15;
-    -fx-text-fill: white;
-    -fx-font-size: 14px;
+    -fx-padding: 6 12;
+    -fx-font-size: 12px;
     -fx-prompt-text-fill: rgba(255, 255, 255, 0.3);
 }
 
@@ -81,10 +80,10 @@
 .button-capsule {
     -fx-background-color: #F97316;
     -fx-text-fill: white;
-    -fx-font-size: 14px;
+    -fx-font-size: 12px;
     -fx-font-weight: 700;
     -fx-background-radius: 30;
-    -fx-padding: 12 25;
+    -fx-padding: 8 20;
     -fx-cursor: hand;
     -fx-transition: all 0.3s;
 }
@@ -101,8 +100,8 @@
     -fx-border-radius: 30;
     -fx-background-radius: 30;
     -fx-text-fill: white;
-    -fx-font-size: 14px;
-    -fx-padding: 12 25;
+    -fx-font-size: 12px;
+    -fx-padding: 8 20;
 }
 
 .button-capsule-glass:hover {
@@ -133,12 +132,12 @@
 
 /* Typography */
 .text-hero {
-    -fx-font-size: 18px;
+    -fx-font-size: 16px;
     -fx-font-weight: 900;
     -fx-text-fill: white;
 }
 
 .text-muted {
-    -fx-font-size: 14px;
+    -fx-font-size: 12px;
     -fx-text-fill: #94A3B8;
 }

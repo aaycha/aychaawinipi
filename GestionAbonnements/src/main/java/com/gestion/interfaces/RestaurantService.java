@@ -26,4 +26,6 @@ public interface RestaurantService {
     boolean existsById(Long id);
 
     long count();
+
+    int getPlacesRestantes(Long restaurantId, Long excludeParticipationId);
 }

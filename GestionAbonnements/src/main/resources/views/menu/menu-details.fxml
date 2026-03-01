@@ -3,66 +3,81 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.shape.SVGPath?>
+<?import java.net.URL?>
 
 <ScrollPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.gestion.ui.menu.MenuDetailsController"
             fitToWidth="true" fitToHeight="true"
-            style="-fx-background: #f5f6fa; -fx-background-color: #f5f6fa;">
+            styleClass="rimberio-root" style="-fx-background: transparent;">
 
-    <VBox spacing="0" style="-fx-background-color: #f5f6fa;" prefWidth="560">
-        <padding>
-            <Insets top="32" right="40" bottom="32" left="40"/>
-        </padding>
+    <stylesheets>
+        <URL value="@../../styles/cafe-rimberio.css" />
+    </stylesheets>
 
-        <HBox spacing="16" alignment="CENTER_LEFT" style="-fx-padding: 0 0 24 0;">
-            <Label text="📋" style="-fx-font-size: 32px;"/>
-            <VBox spacing="4">
-                <Label text="Détail du menu" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
-                <Label text="Informations complètes" style="-fx-font-size: 13px; -fx-text-fill: #7f8c8d;"/>
-            </VBox>
-            <Region HBox.hgrow="ALWAYS"/>
-            <Button text="Fermer" onAction="#onFermer"
-                    style="-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-padding: 10 20; -fx-cursor: hand; -fx-background-radius: 8;"/>
-        </HBox>
+    <StackPane style="-fx-background-color: #d1f2eb; -fx-padding: 0;">
+        <!-- Decorations Layer -->
+        <Pane mouseTransparent="true">
+             <ImageView fitWidth="120" fitHeight="120" layoutX="20" layoutY="200" opacity="0.6">
+                <image><Image url="@../../assets/rimberio_coffee_cup_1772288311657.png"/></image>
+            </ImageView>
+            <ImageView fitWidth="100" fitHeight="100" layoutX="430" layoutY="50" opacity="0.5">
+                <image><Image url="@../../assets/rimberio_milkshake_illustration_1772288394280.png"/></image>
+            </ImageView>
+            <SVGPath content="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" 
+                     fill="#ef8a6d" layoutX="400" layoutY="550" scaleX="1.2" scaleY="1.2" opacity="0.4"/>
+        </Pane>
 
-        <VBox spacing="20"
-              style="-fx-background-color: white; -fx-background-radius: 12;
-                     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 12, 0, 0, 4);">
+        <VBox alignment="TOP_CENTER" spacing="0">
             <padding>
-                <Insets top="28" right="32" bottom="28" left="32"/>
+                <Insets top="30" right="30" bottom="30" left="30"/>
             </padding>
 
-            <Label fx:id="detailNom" text="" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #2c3e50; -fx-wrap-text: true;"/>
+            <!-- Close Button Header -->
+            <HBox alignment="CENTER_RIGHT" style="-fx-padding: 0 0 20 0;">
+                <Button text="FERMER" onAction="#onFermer" styleClass="button-rimberio-outline" 
+                        style="-fx-font-size: 13; -fx-padding: 8 20; -fx-background-color: white;"/>
+            </HBox>
 
-            <Separator style="-fx-opacity: 0.25;"/>
+            <!-- Premium Wavy Menu Card -->
+            <VBox fx:id="menuCard" maxWidth="500" spacing="25" alignment="TOP_CENTER" styleClass="rimberio-card-wavy-shape"
+                  style="-fx-padding: 50; -fx-background-radius: 100 40 100 40;">
+                
+                <!-- Header -->
+                <VBox alignment="CENTER" spacing="8">
+                    <Label fx:id="restoName" text="CAFE RIMBERIO" 
+                           style="-fx-font-family: 'Georgia'; -fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #1d3c34; -fx-letter-spacing: 3;"/>
+                    <Label fx:id="menuTitle" text="SIGNATURE DU CHEF" wrapText="true" textAlignment="CENTER"
+                           style="-fx-font-family: 'Georgia'; -fx-font-size: 32; -fx-font-weight: 900; -fx-text-fill: #1d3c34;"/>
+                    
+                    <SVGPath content="M0,0 Q50,15 100,0 T200,0" fill="transparent" stroke="#1d3c34" strokeWidth="2" opacity="0.2"/>
+                </VBox>
 
-            <GridPane hgap="16" vgap="14">
-                <columnConstraints>
-                    <ColumnConstraints minWidth="130" prefWidth="150" halignment="RIGHT"/>
-                    <ColumnConstraints minWidth="280" hgrow="ALWAYS"/>
-                </columnConstraints>
+                <!-- Description -->
+                <Label fx:id="menuDescription" text="Description here..." wrapText="true" textAlignment="CENTER"
+                       style="-fx-font-family: 'Georgia'; -fx-font-size: 14; -fx-text-fill: #1d3c34; -fx-font-style: italic; -fx-opacity: 0.8; -fx-line-spacing: 4;"/>
 
-                <Label text="Restaurant :" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-text-fill: #7f8c8d;"/>
-                <Label fx:id="detailRestaurant" text="" GridPane.columnIndex="1" GridPane.rowIndex="0" style="-fx-font-size: 14px;"/>
+                <Separator style="-fx-background-color: #1d3c34; -fx-opacity: 0.1;" maxWidth="120"/>
 
-                <Label text="Prix :" GridPane.columnIndex="0" GridPane.rowIndex="1" style="-fx-text-fill: #7f8c8d;"/>
-                <Label fx:id="detailPrix" text="" GridPane.columnIndex="1" GridPane.rowIndex="1" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+                <!-- Dishes Container -->
+                <VBox fx:id="dishesContainer" spacing="12" alignment="CENTER"/>
 
-                <Label text="Période :" GridPane.columnIndex="0" GridPane.rowIndex="2" style="-fx-text-fill: #7f8c8d;"/>
-                <Label fx:id="detailPeriode" text="" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="2" style="-fx-font-size: 14px;"/>
+                <Region VBox.vgrow="ALWAYS" prefHeight="20"/>
 
-                <Label text="Statut :" GridPane.columnIndex="0" GridPane.rowIndex="3" style="-fx-text-fill: #7f8c8d;"/>
-                <Label fx:id="detailStatut" text="" GridPane.columnIndex="1" GridPane.rowIndex="3" style="-fx-font-size: 14px;"/>
+                <!-- Footer & QR Code -->
+                <VBox spacing="15" alignment="CENTER">
+                    <Label fx:id="validityPeriod" text="VALID FROM... TO..."
+                           style="-fx-font-family: 'Arial'; -fx-font-size: 11; -fx-text-fill: #1d3c34; -fx-opacity: 0.7; -fx-font-weight: bold;"/>
 
-                <Label text="Créé le :" GridPane.columnIndex="0" GridPane.rowIndex="4" style="-fx-text-fill: #7f8c8d;"/>
-                <Label fx:id="detailCreatedAt" text="" GridPane.columnIndex="1" GridPane.rowIndex="4" style="-fx-font-size: 13px;"/>
-
-                <Label text="Modifié le :" GridPane.columnIndex="0" GridPane.rowIndex="5" style="-fx-text-fill: #7f8c8d;"/>
-                <Label fx:id="detailUpdatedAt" text="" GridPane.columnIndex="1" GridPane.rowIndex="5" style="-fx-font-size: 13px;"/>
-            </GridPane>
-
-            <Label text="Description" style="-fx-font-weight: bold; -fx-text-fill: #2c3e50; -fx-padding: 8 0 4 0;"/>
-            <Label fx:id="detailDescription" wrapText="true" style="-fx-font-size: 14px; -fx-text-fill: #34495e;"/>
+                    <StackPane maxWidth="100" style="-fx-padding: 10; -fx-background-color: white; -fx-background-radius: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 2);">
+                        <ImageView fx:id="qrCodeImage" fitWidth="80" fitHeight="80" preserveRatio="true"/>
+                    </StackPane>
+                    
+                    <Label text="SCANNEZ POUR DÉCOUVRIR" 
+                           style="-fx-font-family: 'Arial'; -fx-font-size: 9; -fx-text-fill: #1d3c34; -fx-font-weight: bold; -fx-letter-spacing: 2;"/>
+                </VBox>
+            </VBox>
         </VBox>
-    </VBox>
+    </StackPane>
 </ScrollPane>

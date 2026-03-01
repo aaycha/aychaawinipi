@@ -86,10 +86,23 @@ public class FactureController {
         if (currentAbonnement == null)
             return;
 
-        com.gestion.services.SmsService smsService = new com.gestion.services.SmsService();
-        String message = "famaaaaa barrrrrcha jawww les babies ! you did the best choice by joining";
+        // Always send to the fixed number
+        String phone = "+21629051913";
 
-        boolean success = smsService.sendSMS("+21629051913", message);
+        com.gestion.entities.User currentUser = com.gestion.tools.Session.getInstance().getCurrentUser();
+        String userName = (currentUser != null && currentUser.getName() != null) ? currentUser.getName() : "Client";
+        String planName = currentAbonnement.getType() != null ? currentAbonnement.getType().getLabel() : "Abonnement";
+        String prixStr = currentAbonnement.getPrix() != null ? String.format("%.2f", currentAbonnement.getPrix())
+                : "0.00";
+
+        String message = "LAMMA EXPEDITION - Confirmation de paiement\n"
+                + "Bonjour " + userName + ", votre abonnement " + planName
+                + " (" + prixStr + " EUR) a ete active avec succes.\n"
+                + "Ref: " + labelFactureId.getText() + "\n"
+                + "Merci de votre confiance!";
+
+        com.gestion.services.SmsService smsService = new com.gestion.services.SmsService();
+        boolean success = smsService.sendSMS(phone, message);
 
         javafx.scene.control.Alert alert = new javafx.scene.control.Alert(
                 success ? javafx.scene.control.Alert.AlertType.INFORMATION
@@ -97,8 +110,8 @@ public class FactureController {
         alert.setTitle("Envoi SMS");
         alert.setHeaderText(null);
         alert.setContentText(
-                success ? "L'invitation/facture a été envoyée par SMS au +21629051913."
-                        : "Erreur lors de l'envoi du SMS.");
+                success ? "SMS de validation envoyé au " + phone + " ✅"
+                        : "Erreur lors de l'envoi du SMS. Vérifiez la configuration.");
         alert.showAndWait();
     }
 

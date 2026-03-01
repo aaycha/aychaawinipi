@@ -318,14 +318,21 @@ public class MainController {
      * Repas, etc.)
      */
     public void loadUserSection(String fxmlPath, String title) {
+        loadUserSection(fxmlPath, title, null);
+    }
+
+    /**
+     * Version enrichie permettant de configurer le contrôleur chargé
+     */
+    public void loadUserSection(String fxmlPath, String title, java.util.function.Consumer<Object> controllerSetup) {
         if (statusLabel != null)
             statusLabel.setText("Chargement de " + title + "...");
         if (backButton != null)
             backButton.setVisible(true);
         if (moduleStackPane != null)
-            moduleStackPane.setCursor(Cursor.WAIT);
+            moduleStackPane.setCursor(javafx.scene.Cursor.WAIT);
 
-        Platform.runLater(() -> {
+        javafx.application.Platform.runLater(() -> {
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
                 if (loader.getLocation() == null) {
@@ -336,10 +343,19 @@ public class MainController {
                     moduleStackPane.getChildren().setAll(root);
                 if (moduleTitleLabel != null)
                     moduleTitleLabel.setText(title);
+
                 Object ctrl = loader.getController();
                 if (ctrl != null) {
+                    if (controllerSetup != null) {
+                        try {
+                            controllerSetup.accept(ctrl);
+                        } catch (Exception e) {
+                            System.err.println("Erreur setup contrôleur: " + e.getMessage());
+                        }
+                    }
+
                     try {
-                        Method refresh = ctrl.getClass().getMethod("onActualiser");
+                        java.lang.reflect.Method refresh = ctrl.getClass().getMethod("onActualiser");
                         refresh.invoke(ctrl);
                     } catch (NoSuchMethodException ignored) {
                     } catch (Exception ex) {
@@ -359,7 +375,7 @@ public class MainController {
                 showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de charger " + title, e.getMessage());
             } finally {
                 if (moduleStackPane != null)
-                    moduleStackPane.setCursor(Cursor.DEFAULT);
+                    moduleStackPane.setCursor(javafx.scene.Cursor.DEFAULT);
             }
         });
     }
@@ -645,6 +661,18 @@ public class MainController {
     @FXML
     private void loadAbonnements() {
         MainApplication.loadView("/views/abonnements/abonnement-list.fxml");
+    }
+
+    @FXML
+    private void openChatbot() {
+        if (currentRole == Role.UTILISATEUR) {
+            loadUserSection("/views/chatbot/chatbot-modal.fxml", "LAMA AI Assistant");
+        } else {
+            // Support for Admin to also use the chatbot
+            ModuleGestion chatbotModule = new ModuleGestion("chatbot", "AI Assistant",
+                    "Posez vos questions à l'IA", "/views/chatbot/chatbot-modal.fxml", "🤖");
+            chargerModule(chatbotModule);
+        }
     }
 
     // ────────────────────────────────────────────────

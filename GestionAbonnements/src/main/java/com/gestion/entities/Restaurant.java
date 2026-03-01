@@ -41,6 +41,9 @@ public class Restaurant {
     private Double rating = 0.0;
     private boolean isOpen = true; // Default to true for simplicity
 
+    @Min(value = 0, message = "Le nombre de places ne peut pas être négatif")
+    private int nombrePlaces = 50; // Default capacity
+
     public Restaurant() {
         this.dateCreation = LocalDateTime.now();
     }
@@ -201,6 +204,14 @@ public class Restaurant {
 
     public void setOpen(boolean open) {
         isOpen = open;
+    }
+
+    public int getNombrePlaces() {
+        return nombrePlaces;
+    }
+
+    public void setNombrePlaces(int nombrePlaces) {
+        this.nombrePlaces = nombrePlaces;
     }
 
     @Override

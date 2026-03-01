@@ -38,7 +38,9 @@ public class RepasDetailleServiceImpl implements RepasDetailleService {
                 "    halal BOOLEAN," +
                 "    actif BOOLEAN DEFAULT TRUE," +
                 "    image_url VARCHAR(255)," +
-                "    notes TEXT" +
+                "    notes TEXT," +
+                "    restaurant_id BIGINT," +
+                "    choix_count INT DEFAULT 0" +
                 ")";
         try {
             Connection c = dbConnection.getConnection();
@@ -98,8 +100,9 @@ public class RepasDetailleServiceImpl implements RepasDetailleService {
     public RepasDetaille create(RepasDetaille repas) {
         String sql = "INSERT INTO repas_detaille " +
                 "(nom, description, prix, calories, type_repas, date, participant_id, evenement_id, " +
-                "ingredients, allergenes, vegetarien, vegan, sans_gluten, halal, actif, image_url, notes) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "ingredients, allergenes, vegetarien, vegan, sans_gluten, halal, actif, image_url, notes, restaurant_id, choix_count) "
+                +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try {
             Connection c = dbConnection.getConnection();
             if (c == null)
@@ -122,6 +125,8 @@ public class RepasDetailleServiceImpl implements RepasDetailleService {
                 ps.setBoolean(15, repas.isActif());
                 ps.setString(16, repas.getImageUrl());
                 ps.setString(17, repas.getNotes());
+                ps.setObject(18, repas.getRestaurantId());
+                ps.setInt(19, repas.getChoixCount());
 
                 ps.executeUpdate();
                 try (ResultSet keys = ps.getGeneratedKeys()) {
@@ -165,7 +170,7 @@ public class RepasDetailleServiceImpl implements RepasDetailleService {
     public RepasDetaille update(RepasDetaille repas) {
         String sql = "UPDATE repas_detaille SET " +
                 "nom=?, description=?, prix=?, calories=?, type_repas=?, date=?, participant_id=?, evenement_id=?, " +
-                "ingredients=?, allergenes=?, vegetarien=?, vegan=?, sans_gluten=?, halal=?, actif=?, image_url=?, notes=? "
+                "ingredients=?, allergenes=?, vegetarien=?, vegan=?, sans_gluten=?, halal=?, actif=?, image_url=?, notes=?, restaurant_id=?, choix_count=? "
                 +
                 "WHERE id=?";
         try {
@@ -190,7 +195,9 @@ public class RepasDetailleServiceImpl implements RepasDetailleService {
                 ps.setBoolean(15, repas.isActif());
                 ps.setString(16, repas.getImageUrl());
                 ps.setString(17, repas.getNotes());
-                ps.setLong(18, repas.getId());
+                ps.setObject(18, repas.getRestaurantId());
+                ps.setInt(19, repas.getChoixCount());
+                ps.setLong(20, repas.getId());
 
                 ps.executeUpdate();
                 logger.info("Repas détaillé mis à jour: ID {}", repas.getId());
@@ -388,7 +395,53 @@ public class RepasDetailleServiceImpl implements RepasDetailleService {
         r.setActif(rs.getBoolean("actif"));
         r.setImageUrl(rs.getString("image_url"));
         r.setNotes(rs.getString("notes"));
+        try {
+            r.setRestaurantId(rs.getObject("restaurant_id") != null ? rs.getLong("restaurant_id") : null);
+        } catch (SQLException e) {
+        }
+        try {
+            r.setChoixCount(rs.getInt("choix_count"));
+        } catch (SQLException e) {
+        }
         return r;
+    }
+
+    @Override
+    public void incrementChoixCount(Long id) {
+        String sql = "UPDATE repas_detaille SET choix_count = choix_count + 1 WHERE id = ?";
+        try {
+            Connection c = dbConnection.getConnection();
+            if (c == null)
+                return;
+            try (PreparedStatement ps = c.prepareStatement(sql)) {
+                ps.setLong(1, id);
+                ps.executeUpdate();
+                logger.info("Choix count incrémenté pour ID: {}", id);
+            }
+        } catch (SQLException e) {
+            // If the column doesn't exist, create it and retry
+            if (e.getMessage() != null && e.getMessage().contains("choix_count")) {
+                try {
+                    Connection c = dbConnection.getConnection();
+                    if (c == null)
+                        return;
+                    try (java.sql.Statement stmt = c.createStatement()) {
+                        stmt.executeUpdate("ALTER TABLE repas_detaille ADD COLUMN choix_count INT DEFAULT 0");
+                        logger.info("Column choix_count created in repas_detaille table");
+                    }
+                    // Retry the increment
+                    try (PreparedStatement ps = c.prepareStatement(sql)) {
+                        ps.setLong(1, id);
+                        ps.executeUpdate();
+                        logger.info("Choix count incrémenté pour ID: {}", id);
+                    }
+                } catch (SQLException ex) {
+                    logger.error("Erreur création colonne choix_count", ex);
+                }
+            } else {
+                logger.error("Erreur incrementChoixCount", e);
+            }
+        }
     }
 
     @FunctionalInterface

@@ -72,7 +72,13 @@
                     <ComboBox fx:id="inputContexte" prefWidth="300" styleClass="modern-input" style="-fx-font-size: 11;" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
                     
                     <Label text="Meal Option:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 10;" GridPane.columnIndex="2" GridPane.rowIndex="2"/>
-                    <ComboBox fx:id="comboRepas" prefWidth="300" promptText="Meal inclusion..." styleClass="modern-input" style="-fx-font-size: 11;" GridPane.columnIndex="3" GridPane.rowIndex="2"/>
+                    <VBox spacing="3" GridPane.columnIndex="3" GridPane.rowIndex="2">
+                        <ComboBox fx:id="comboRepas" prefWidth="300" promptText="Meal inclusion..." styleClass="modern-input" style="-fx-font-size: 11;"/>
+                        <VBox fx:id="containerRestaurant" spacing="2" visible="false" managed="false">
+                            <Label text="Choisissez votre restaurant:" style="-fx-text-fill: #FACC15; -fx-font-size: 9px; -fx-font-weight: 700;"/>
+                            <ComboBox fx:id="comboRestaurant" prefWidth="300" promptText="Target restaurant..." styleClass="modern-input" style="-fx-font-size: 10;"/>
+                        </VBox>
+                    </VBox>
                 </GridPane>
             </VBox>
 
@@ -138,8 +144,6 @@
 
             <!-- Actions Section -->
             <VBox spacing="12">
-                <Label fx:id="errorGlobal" visible="false" managed="false" wrapText="true"
-                       style="-fx-background-color: rgba(239, 68, 68, 0.1); -fx-padding: 10; -fx-background-radius: 10; -fx-text-fill: #ef4444; -fx-font-weight: 700; -fx-font-size: 11;"/>
                 <HBox spacing="12" alignment="CENTER_RIGHT">
                     <Button text="Abort" onAction="#onAnnuler" styleClass="button-capsule-glass" style="-fx-padding: 10 20; -fx-font-size: 11;"/>
                     <Button fx:id="btnEnregistrer" text="CONFIRM TREK" onAction="#onEnregistrer" 

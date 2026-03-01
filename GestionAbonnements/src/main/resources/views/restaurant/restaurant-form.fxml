@@ -1,3 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.VBox?>
@@ -11,14 +13,15 @@
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
+
 <ScrollPane xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.gestion.ui.restaurant.RestaurantFormController"
-            fitToWidth="false" fitToHeight="false" pannable="true" hbarPolicy="AS_NEEDED" vbarPolicy="AS_NEEDED"
-            stylesheets="@../../styles/nature-mood.css, @../../styles/card-view.css"
-            style="-fx-background-color: transparent; -fx-background: transparent; -fx-border-color: transparent; -fx-padding: 0;">
+            fitToWidth="true" fitToHeight="false" hbarPolicy="AS_NEEDED" vbarPolicy="AS_NEEDED"
+            style="-fx-background: transparent; -fx-background-color: transparent;"
+            stylesheets="@../../styles/nature-mood.css, @../../styles/card-view.css">
 
     <StackPane style="-fx-background-color: transparent; -fx-padding: 10;">
-        <VBox spacing="10" styleClass="glass-panel" prefWidth="800" maxWidth="850" alignment="TOP_CENTER" style="-fx-padding: 15;">
+        <VBox spacing="6" styleClass="glass-panel" prefWidth="800" maxWidth="850" alignment="TOP_CENTER" style="-fx-padding: 10;">
             
             <!-- Hiker Title Section -->
             <HBox alignment="CENTER_LEFT" spacing="10">
@@ -27,105 +30,75 @@
                 </StackPane>
                 <VBox spacing="0">
                     <Label fx:id="formTitle" text="New Mountain Lodge"
-                           style="-fx-font-size: 16px; -fx-font-weight: 800; -fx-text-fill: white;"/>
-                    <Label text="Establish a new fueling station for explorers" style="-fx-font-size: 9px; -fx-text-fill: #94a3b8;"/>
+                           style="-fx-font-size: 14px; -fx-font-weight: 800; -fx-text-fill: white;"/>
+                    <Label text="Establish a new fueling station for explorers" style="-fx-font-size: 8px; -fx-text-fill: #94a3b8;"/>
                 </VBox>
                 <Region HBox.hgrow="ALWAYS"/>
-                <Label text="CERTIFIED BASE CAMP" style="-fx-background-color: rgba(34, 197, 94, 0.1); -fx-text-fill: #22c55e; -fx-font-size: 10; -fx-font-weight: 900; -fx-padding: 4 12; -fx-background-radius: 12;"/>
+                <Label text="CERTIFIED BASE CAMP" style="-fx-background-color: rgba(34, 197, 94, 0.1); -fx-text-fill: #22c55e; -fx-font-size: 9; -fx-font-weight: 900; -fx-padding: 3 10; -fx-background-radius: 10;"/>
             </HBox>
 
             <Separator style="-fx-opacity: 0.1;"/>
 
             <!-- General Logistics Section -->
-            <VBox spacing="12" styleClass="modern-card" style="-fx-padding: 15;">
-                <Label text="📋 LODGE IDENTIFICATION" style="-fx-font-weight: 900; -fx-text-fill: #3b82f6; -fx-font-size: 11; -fx-letter-spacing: 1px;"/>
+            <VBox spacing="8" styleClass="modern-card" style="-fx-padding: 10;">
+                <Label text="📋 LODGE IDENTIFICATION" style="-fx-font-weight: 900; -fx-text-fill: #3b82f6; -fx-font-size: 10; -fx-letter-spacing: 1px;"/>
                 
-                <GridPane hgap="20" vgap="15">
-                    <columnConstraints>
-                        <ColumnConstraints minWidth="120" prefWidth="140"/>
-                        <ColumnConstraints hgrow="ALWAYS"/>
-                    </columnConstraints>
-
-                    <Label text="Station Name:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 11;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-                    <VBox spacing="3" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                        <TextField fx:id="inputNom" promptText="Lodge or Resort name..." styleClass="modern-input" style="-fx-font-size: 11;"/>
-                        <Label fx:id="hintNom" text="Official trail designation (Required)" style="-fx-text-fill: #64748b; -fx-font-size: 10px;"/>
-                        <Label fx:id="errorNom" text="" visible="false" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 11px;"/>
+                <GridPane hgap="15" vgap="10">
+                    <Label text="Station Name:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 10;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                    <VBox spacing="2" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <TextField fx:id="inputNom" promptText="Lodge name..." styleClass="modern-input" style="-fx-font-size: 10;"/>
+                        <Label fx:id="errorNom" text="" visible="false" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 10px;"/>
                     </VBox>
 
-                    <Label text="Direct Frequency:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 11;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-                    <VBox spacing="3" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                        <TextField fx:id="inputTelephone" promptText="+00 123 456 789" styleClass="modern-input" style="-fx-font-size: 11;"/>
-                        <Label fx:id="errorTelephone" text="" visible="false" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 11px;"/>
+                    <Label text="Frequency:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 10;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                    <VBox spacing="2" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <TextField fx:id="inputTelephone" promptText="+00 123..." styleClass="modern-input" style="-fx-font-size: 10;"/>
+                        <Label fx:id="errorTelephone" text="" visible="false" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 10px;"/>
                     </VBox>
 
-                    <Label text="Signal Email:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 11;" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-                    <VBox spacing="3" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                        <TextField fx:id="inputEmail" promptText="lodge@mountain.com" styleClass="modern-input" style="-fx-font-size: 11;"/>
-                        <Label fx:id="errorEmail" text="" visible="false" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 11px;"/>
+                    <Label text="Email Sign:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 10;" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                    <VBox spacing="2" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <TextField fx:id="inputEmail" promptText="lodge@lamma.com" styleClass="modern-input" style="-fx-font-size: 10;"/>
+                        <Label fx:id="errorEmail" text="" visible="false" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 10px;"/>
+                    </VBox>
+
+                    <Label text="Capacity:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 10;" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                    <VBox spacing="2" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                        <TextField fx:id="inputNombrePlaces" text="50" styleClass="modern-input" style="-fx-font-size: 10;"/>
+                        <Label fx:id="errorNombrePlaces" text="" visible="false" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 10px;"/>
                     </VBox>
                 </GridPane>
             </VBox>
 
             <!-- Coordinate Section -->
-            <VBox spacing="12" styleClass="modern-card" style="-fx-padding: 15;">
-                <Label text="📍 TRAIL COORDINATES" style="-fx-font-weight: 900; -fx-text-fill: #FACC15; -fx-font-size: 11; -fx-letter-spacing: 1px;"/>
-                
-                <GridPane hgap="20" vgap="12">
-                    <columnConstraints>
-                        <ColumnConstraints minWidth="120" prefWidth="140"/>
-                        <ColumnConstraints hgrow="ALWAYS"/>
-                    </columnConstraints>
-
-                    <Label text="Lodge Address:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 11;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-                    <VBox spacing="3" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                        <TextArea fx:id="inputAdresse" promptText="Peak Altitude, Trail Segment 7..." wrapText="true" prefRowCount="2" styleClass="modern-input" style="-fx-font-size: 11;"/>
-                        <Label fx:id="errorAdresse" text="" visible="false" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 11px;"/>
-                    </VBox>
-                </GridPane>
+            <VBox spacing="8" styleClass="modern-card" style="-fx-padding: 10;">
+                <Label text="📍 TRAIL COORDINATES" style="-fx-font-weight: 900; -fx-text-fill: #FACC15; -fx-font-size: 10; -fx-letter-spacing: 1px;"/>
+                <TextArea fx:id="inputAdresse" promptText="Peak Altitude..." wrapText="true" prefRowCount="2" styleClass="modern-input" style="-fx-font-size: 10;"/>
             </VBox>
 
             <!-- Media Section -->
-            <VBox spacing="12" styleClass="modern-card" style="-fx-padding: 15;">
-                <Label text="🖼️ VISUAL SIGNAL" style="-fx-font-weight: 900; -fx-text-fill: #F97316; -fx-font-size: 11; -fx-letter-spacing: 1px;"/>
-                
-                <GridPane hgap="20" vgap="15">
-                    <columnConstraints>
-                        <ColumnConstraints minWidth="120" prefWidth="140"/>
-                        <ColumnConstraints hgrow="ALWAYS"/>
-                    </columnConstraints>
-
-                    <Label text="Brief Bio:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 11;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-                    <VBox spacing="3" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                        <TextArea fx:id="inputDescription" promptText="Tell explorers about your cuisine..." wrapText="true" prefRowCount="3" styleClass="modern-input" style="-fx-font-size: 11;"/>
-                        <Label fx:id="errorDescription" text="" visible="false" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 11px;"/>
-                    </VBox>
-
-                    <Label text="Visual Feed URL:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 11;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-                    <VBox spacing="3" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                        <TextField fx:id="inputImageUrl" promptText="https://images.com/lodge.jpg" styleClass="modern-input" style="-fx-font-size: 11;"/>
-                        <Label fx:id="errorImageUrl" text="" visible="false" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 11px;"/>
-                    </VBox>
-                </GridPane>
+            <VBox spacing="8" styleClass="modern-card" style="-fx-padding: 10;">
+                <Label text="🖼️ VISUAL SIGNAL" style="-fx-font-weight: 900; -fx-text-fill: #F97316; -fx-font-size: 10; -fx-letter-spacing: 1px;"/>
+                <TextArea fx:id="inputDescription" promptText="Cuisine bio..." wrapText="true" prefRowCount="2" styleClass="modern-input" style="-fx-font-size: 10;"/>
+                <TextField fx:id="inputImageUrl" promptText="URL image..." styleClass="modern-input" style="-fx-font-size: 10;"/>
             </VBox>
 
-            <!-- Active Status Section -->
-            <HBox spacing="15" alignment="CENTER_LEFT" styleClass="modern-card" style="-fx-padding: 10 20;">
-                <Label text="⚙️ Operational Status:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 11;"/>
-                <CheckBox fx:id="checkActif" text="Lodge is currently open for explorers" selected="true" style="-fx-text-fill: white; -fx-font-weight: 700; -fx-font-size: 11;"/>
+            <!-- Operational Status -->
+            <HBox spacing="15" alignment="CENTER_LEFT" styleClass="modern-card" style="-fx-padding: 8 15;">
+                <CheckBox fx:id="checkActif" text="Lodge Open" selected="true" style="-fx-text-fill: white; -fx-font-weight: 700; -fx-font-size: 10;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <!-- Invisible anchors for controller satisfaction -->
+                <Label fx:id="hintNom" visible="false" managed="false"/>
+                <Label fx:id="errorAdresse" visible="false" managed="false"/>
+                <Label fx:id="errorDescription" visible="false" managed="false"/>
+                <Label fx:id="errorImageUrl" visible="false" managed="false"/>
+                <VBox fx:id="errorContainer" visible="false" managed="false"><Label fx:id="globalErrorMessage"/></VBox>
             </HBox>
 
-            <!-- Error Terminal -->
-            <VBox fx:id="errorContainer" spacing="8" visible="false" managed="false" style="-fx-background-color: rgba(239, 68, 68, 0.1); -fx-padding: 10; -fx-background-radius: 10; -fx-border-color: rgba(239, 68, 68, 0.2); -fx-border-radius: 10;">
-                <Label fx:id="globalErrorMessage" text="" style="-fx-text-fill: #ef4444; -fx-font-weight: 700; -fx-font-size: 11;"/>
-            </VBox>
-
             <!-- Actions Section -->
-            <HBox spacing="12" alignment="CENTER_RIGHT">
-                <Button text="💾 ESTABLISH LODGE" onAction="#onEnregistrer" styleClass="button-capsule" style="-fx-padding: 10 30; -fx-font-size: 11;"/>
-                <Button text="❌ Abort Mission" onAction="#onAnnuler" styleClass="button-capsule-glass" style="-fx-padding: 10 25; -fx-font-size: 11;"/>
-                <Region HBox.hgrow="ALWAYS"/>
-                <Label text="* Mandatory Scout Info" style="-fx-text-fill: #64748b; -fx-font-size: 10px; -fx-font-style: italic;"/>
+            <HBox spacing="10" alignment="CENTER_RIGHT">
+                <Button text="💾 SAVE" onAction="#onEnregistrer" styleClass="button-capsule" style="-fx-padding: 8 20; -fx-font-size: 10;"/>
+                <Button text="❌ CANCEL" onAction="#onAnnuler" styleClass="button-capsule-glass" style="-fx-padding: 8 20; -fx-font-size: 10;"/>
             </HBox>
 
         </VBox>

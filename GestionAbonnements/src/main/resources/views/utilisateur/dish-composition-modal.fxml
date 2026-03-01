@@ -1,77 +1,83 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.geometry.Insets?>
 
-<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.gestion.ui.utilisateur.DishCompositionController"
-      spacing="0" prefWidth="500" prefHeight="700"
-      stylesheets="@../../styles/restoration-2026.css"
-      style="-fx-background-color: transparent;">
+<ScrollPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.gestion.ui.utilisateur.DishCompositionController"
+            fitToWidth="true" fitToHeight="false" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
+            prefWidth="500" prefHeight="550" maxWidth="520" maxHeight="600"
+            style="-fx-background: transparent; -fx-background-color: transparent; -fx-padding: 0; -fx-border-color: transparent;"
+            stylesheets="@../../styles/restoration-2026.css">
 
-    <VBox spacing="25" styleClass="glass-panel" VBox.vgrow="ALWAYS" style="-fx-background-radius: 40; -fx-border-color: rgba(255,255,255,0.1); -fx-border-width: 1.5;">
-        <padding>
-            <Insets top="40" right="40" bottom="30" left="40"/>
-        </padding>
+    <VBox spacing="0" prefWidth="480"
+          style="-fx-background-color: transparent;">
 
-        <!-- Header -->
-        <HBox spacing="25" alignment="CENTER_LEFT">
-            <StackPane styleClass="featured-image-box" style="-fx-background-radius: 20; -fx-padding: 5;">
-                <ImageView fx:id="smallHeroImage" fitWidth="120" fitHeight="120" preserveRatio="true" styleClass="featured-image-container"/>
-            </StackPane>
-            <VBox spacing="8" HBox.hgrow="ALWAYS">
-                <Label fx:id="dishNameLabel" text="Personnalise ton Plat" styleClass="card-title-2026" style="-fx-font-size: 24px;"/>
-                <Label fx:id="basePriceLabel" text="À partir de 15.00 €" styleClass="delicious-baseline" style="-fx-font-size: 14px; -fx-text-fill: #00D4B4; -fx-font-weight: bold;"/>
+        <VBox spacing="0" styleClass="glass-panel-deep"
+              style="-fx-background-radius: 30; -fx-border-color: rgba(255,255,255,0.15); -fx-border-width: 1.5; -fx-background-color: linear-gradient(to bottom right, rgba(15, 23, 42, 0.98), rgba(30, 58, 50, 0.95));">
+
+            <!-- Header -->
+            <VBox spacing="10" style="-fx-padding: 20 25 15 25;">
+                <HBox spacing="15" alignment="CENTER_LEFT">
+                    <StackPane styleClass="featured-image-box" style="-fx-background-radius: 18; -fx-padding: 5; -fx-background-color: rgba(0, 212, 180, 0.1);">
+                        <ImageView fx:id="smallHeroImage" fitWidth="90" fitHeight="90" preserveRatio="true" styleClass="featured-image-container"/>
+                    </StackPane>
+                    <VBox spacing="6" HBox.hgrow="ALWAYS">
+                        <HBox alignment="CENTER_LEFT" spacing="8">
+                            <Label text="CUSTOM MISSION" style="-fx-text-fill: #00D4B4; -fx-font-weight: 900; -fx-font-size: 9; -fx-letter-spacing: 2;"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Button text="✕" onAction="#onClose" style="-fx-background-color: rgba(255,255,255,0.05); -fx-text-fill: white; -fx-background-radius: 50; -fx-min-width: 26; -fx-min-height: 26; -fx-cursor: hand;"/>
+                        </HBox>
+                        <Label fx:id="dishNameLabel" text="Design Your Ration" styleClass="card-title-2026" style="-fx-font-size: 22px;"/>
+                        <Label fx:id="basePriceLabel" text="Base: 15.00 €" styleClass="delicious-baseline" style="-fx-font-size: 13px; -fx-text-fill: rgba(255,255,255,0.6);"/>
+                    </VBox>
+                </HBox>
+
+                <!-- Stats Bar (compact) -->
+                <HBox spacing="10" style="-fx-padding: 6 0;">
+                    <VBox spacing="3" alignment="CENTER" styleClass="neo-card-mini" HBox.hgrow="ALWAYS" style="-fx-background-color: rgba(255,255,255,0.03); -fx-padding: 8; -fx-background-radius: 12;">
+                        <Label text="🔥 ENERGY" style="-fx-text-fill: #94a3b8; -fx-font-weight: 800; -fx-font-size: 8;"/>
+                        <Label fx:id="liveCalories" text="420" styleClass="card-title-2026" style="-fx-text-fill: #FF5E78; -fx-font-size: 16px;"/>
+                    </VBox>
+                    <VBox spacing="3" alignment="CENTER" styleClass="neo-card-mini" HBox.hgrow="ALWAYS" style="-fx-background-color: rgba(255,255,255,0.03); -fx-padding: 8; -fx-background-radius: 12;">
+                        <Label text="⏱ PREP" style="-fx-text-fill: #94a3b8; -fx-font-weight: 800; -fx-font-size: 8;"/>
+                        <Label fx:id="liveTime" text="25 min" styleClass="card-title-2026" style="-fx-font-size: 16px;"/>
+                    </VBox>
+                    <VBox spacing="3" alignment="CENTER" styleClass="neo-card-mini" HBox.hgrow="ALWAYS" style="-fx-background-color: rgba(255,255,255,0.03); -fx-padding: 8; -fx-background-radius: 12;">
+                        <Label text="💪 PROTEIN" style="-fx-text-fill: #94a3b8; -fx-font-weight: 800; -fx-font-size: 8;"/>
+                        <Label fx:id="liveProteins" text="28g" styleClass="card-title-2026" style="-fx-text-fill: #22c55e; -fx-font-size: 16px;"/>
+                    </VBox>
+                </HBox>
             </VBox>
-        </HBox>
 
-        <HBox spacing="15">
-            <VBox spacing="5" alignment="CENTER" styleClass="neo-card" HBox.hgrow="ALWAYS">
-                <Label text="🔥 Calories" styleClass="delicious-baseline" style="-fx-font-size: 11px;"/>
-                <Label fx:id="liveCalories" text="420" styleClass="card-title-2026" style="-fx-text-fill: #FF5E78; -fx-font-size: 18px;"/>
-            </VBox>
-            <VBox spacing="5" alignment="CENTER" styleClass="neo-card" HBox.hgrow="ALWAYS">
-                <Label text="⏱ Temps" styleClass="delicious-baseline" style="-fx-font-size: 11px;"/>
-                <Label fx:id="liveTime" text="25 Mins" styleClass="card-title-2026" style="-fx-font-size: 18px;"/>
-            </VBox>
-            <VBox spacing="5" alignment="CENTER" styleClass="neo-card" HBox.hgrow="ALWAYS">
-                <Label text="💪 Protéines" styleClass="delicious-baseline" style="-fx-font-size: 11px;"/>
-                <Label fx:id="liveProteins" text="28g" styleClass="card-title-2026" style="-fx-text-fill: #28a745; -fx-font-size: 18px;"/>
-            </VBox>
-        </HBox>
+            <Separator style="-fx-opacity: 0.05;"/>
 
-        <Separator style="-fx-opacity: 0.1;"/>
-
-        <!-- Ingredients Selection -->
-        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" style="-fx-background-color: transparent;" VBox.vgrow="ALWAYS">
-            <VBox fx:id="ingredientsContainer" spacing="25">
-                <padding>
-                    <Insets right="10"/>
-                </padding>
+            <!-- Ingredients Selection -->
+            <VBox fx:id="ingredientsContainer" spacing="20" style="-fx-padding: 15 25;">
                 <!-- Categories will be injected here -->
             </VBox>
-        </ScrollPane>
 
-        <!-- Footer -->
-        <VBox spacing="20" styleClass="peek-metadata" style="-fx-background-color: rgba(255,255,255,0.05); -fx-border-color: rgba(255,255,255,0.1); -fx-border-width: 1 0 0 0;">
-            <padding>
-                <Insets top="20"/>
-            </padding>
-            <HBox alignment="CENTER_LEFT">
-                <VBox spacing="5">
-                    <Label text="PRIX TOTAL" styleClass="delicious-baseline" style="-fx-font-size: 11px; -fx-font-weight: 900; -fx-text-fill: rgba(255,255,255,0.6);"/>
-                    <Label fx:id="totalPriceLabel" text="18.50 €" styleClass="card-price-2026" style="-fx-font-size: 32px; -fx-text-fill: #00D4B4;"/>
-                </VBox>
-                <Region HBox.hgrow="ALWAYS"/>
-                <Label text="Healthy Pick ✨" styleClass="health-badge" style="-fx-padding: 8 15;"/>
-            </HBox>
+            <!-- Sticky Footer -->
+            <VBox spacing="14" style="-fx-background-color: rgba(15, 23, 42, 0.8); -fx-padding: 20 25; -fx-border-color: rgba(255,255,255,0.1); -fx-border-width: 1 0 0 0; -fx-background-radius: 0 0 30 30;">
+                <HBox alignment="CENTER_LEFT">
+                    <VBox spacing="3">
+                        <Label text="TOTAL INVESTMENT" style="-fx-text-fill: #94a3b8; -fx-font-weight: 900; -fx-font-size: 9; -fx-letter-spacing: 1;"/>
+                        <Label fx:id="totalPriceLabel" text="18.50 €" style="-fx-font-size: 30px; -fx-font-weight: 900; -fx-text-fill: #00D4B4;"/>
+                    </VBox>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <VBox alignment="CENTER_RIGHT" spacing="4">
+                        <Label text="OPTIMIZED" style="-fx-background-color: rgba(0, 212, 180, 0.1); -fx-text-fill: #00D4B4; -fx-font-size: 8; -fx-font-weight: 900; -fx-padding: 4 10; -fx-background-radius: 15;"/>
+                        <Label text="Selection ✨" style="-fx-text-fill: rgba(255,255,255,0.4); -fx-font-size: 10;"/>
+                    </VBox>
+                </HBox>
 
-            <HBox spacing="15">
-                <Button text="❤️ Favori" styleClass="btn-soft" prefHeight="45" prefWidth="120"/>
-                <Button text="Ajouter au Panier" onAction="#onAddToCart" styleClass="btn-primary" prefHeight="45" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
-            </HBox>
+                <HBox spacing="10">
+                    <Button text="❤️ SAVE" styleClass="btn-soft" prefHeight="42" prefWidth="100" style="-fx-font-weight: 800; -fx-font-size: 12;"/>
+                    <Button text="DEPLOY TO KIT" onAction="#onAddToCart" styleClass="btn-primary" prefHeight="42" HBox.hgrow="ALWAYS" maxWidth="Infinity" style="-fx-font-weight: 900; -fx-font-size: 13; -fx-letter-spacing: 0.5;"/>
+                </HBox>
+            </VBox>
         </VBox>
     </VBox>
-</VBox>
+</ScrollPane>

@@ -9,21 +9,37 @@ import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
+import java.util.ArrayList;
+import java.util.stream.Collectors;
+import com.gestion.entities.RepasDetaille;
+import com.gestion.interfaces.RepasDetailleService;
+import com.gestion.services.RepasDetailleServiceImpl;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
-import java.math.BigDecimal;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import javafx.collections.ObservableList;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.SnapshotParameters;
+import javafx.scene.image.WritableImage;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.stage.Modality;
+import javafx.embed.swing.SwingFXUtils;
+import javax.imageio.ImageIO;
+import javafx.fxml.FXMLLoader;
+import java.io.IOException;
 
 /**
  * Contrôleur pour le formulaire de menu
@@ -39,8 +55,6 @@ public class MenuFormController implements Initializable {
     @FXML
     private ComboBox<Restaurant> comboRestaurant;
     @FXML
-    private TextField inputPrix;
-    @FXML
     private TextArea inputDescription;
     @FXML
     private DatePicker inputDateDebut;
@@ -53,52 +67,209 @@ public class MenuFormController implements Initializable {
     @FXML
     private Label errorRestaurant;
     @FXML
-    private Label errorPrix;
-    @FXML
     private Label errorDates;
     @FXML
     private Label errorDescription;
     @FXML
     private Label hintNom;
     @FXML
-    private Label hintPrix;
-    @FXML
     private VBox errorContainer;
     @FXML
     private Label globalErrorMessage;
 
-    // ── Section IA ────────────────────────────────────────────────────────────
     @FXML
-    private ImageView imagePreview;
+    private Button btnGenerateNameIA;
     @FXML
-    private Label imagePlaceholder;
+    private ProgressIndicator nameAiProgress;
     @FXML
-    private Button btnAnalyser;
+    private Button btnGenerateDatesIA;
     @FXML
-    private ProgressIndicator aiProgress;
+    private ProgressIndicator datesAiProgress;
+
     @FXML
-    private Label aiStatusLabel;
+    private VBox dishesSelectionList;
+    @FXML
+    private Button btnGenerateDescIA;
+    @FXML
+    private ProgressIndicator descAiProgress;
+
+    private final RepasDetailleService dishService = new RepasDetailleServiceImpl();
+    private final List<CheckBox> dishCheckboxes = new ArrayList<>();
 
     private static final int MAX_NOM_MENU = 100;
     private final MenuController controller = new MenuController();
     private final GeminiMenuAnalyzer geminiAnalyzer = new GeminiMenuAnalyzer();
 
-    private MenuListeController listeController;
+    // private MenuListeController listeController; // Field is not used
     private ObservableList<Restaurant> restaurants;
     private Menu menu;
     private boolean isEditMode = false;
-    private File selectedImageFile = null;
+    private int nameClickCount = 0;
+    private int datesClickCount = 0;
 
     // ─────────────────────────────────────────────────────────────────────────
     // INIT
     // ─────────────────────────────────────────────────────────────────────────
 
-    @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         checkActif.setSelected(true);
         setupValidationListeners();
         updateHintNom();
-        updateHintPrix();
+        loadAvailableDishes();
+    }
+
+    private void loadAvailableDishes() {
+        dishesSelectionList.getChildren().clear();
+        dishCheckboxes.clear();
+        List<RepasDetaille> dishes = dishService.findAll();
+        for (RepasDetaille dish : dishes) {
+            CheckBox cb = new CheckBox(dish.getNom() + " (" + dish.getPrix() + " €)");
+            cb.setUserData(dish);
+            cb.getStyleClass().add("card-label");
+            cb.setStyle("-fx-text-fill: #1d3c34; -fx-font-size: 11px; -fx-font-weight: bold;");
+            dishCheckboxes.add(cb);
+            dishesSelectionList.getChildren().add(cb);
+        }
+    }
+
+    @FXML
+    private void onGenerateNameIA() {
+        List<String> selectedNames = dishCheckboxes.stream()
+                .filter(CheckBox::isSelected)
+                .map(cb -> ((RepasDetaille) cb.getUserData()).getNom())
+                .collect(Collectors.toList());
+
+        if (selectedNames.isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "Attention", "Aucun plat sélectionné",
+                    "Veuillez sélectionner au moins un plat pour générer un nom.");
+            return;
+        }
+
+        btnGenerateNameIA.setDisable(true);
+        nameAiProgress.setVisible(true);
+        nameAiProgress.setManaged(true);
+
+        Task<String> task = new Task<String>() {
+            @Override
+            protected String call() throws Exception {
+                return geminiAnalyzer.generateMenuName(selectedNames, ++nameClickCount);
+            }
+        };
+
+        task.setOnSucceeded(e -> {
+            Platform.runLater(() -> {
+                inputNom.setText(task.getValue());
+                btnGenerateNameIA.setDisable(false);
+                nameAiProgress.setVisible(false);
+                nameAiProgress.setManaged(false);
+            });
+        });
+
+        task.setOnFailed(e -> {
+            Platform.runLater(() -> {
+                btnGenerateNameIA.setDisable(false);
+                nameAiProgress.setVisible(false);
+                nameAiProgress.setManaged(false);
+                showAlert(Alert.AlertType.ERROR, "Erreur IA", "Génération du nom échouée",
+                        task.getException().getMessage());
+            });
+        });
+
+        new Thread(task).start();
+    }
+
+    @FXML
+    private void onGenerateDatesIA() {
+        List<String> selectedNames = dishCheckboxes.stream()
+                .filter(CheckBox::isSelected)
+                .map(cb -> ((RepasDetaille) cb.getUserData()).getNom())
+                .collect(Collectors.toList());
+
+        btnGenerateDatesIA.setDisable(true);
+        datesAiProgress.setVisible(true);
+        datesAiProgress.setManaged(true);
+
+        Task<String> task = new Task<String>() {
+            @Override
+            protected String call() throws Exception {
+                return geminiAnalyzer.generateMenuDates(selectedNames, ++datesClickCount);
+            }
+        };
+
+        task.setOnSucceeded(e -> {
+            Platform.runLater(() -> {
+                String result = task.getValue();
+                if (result != null && result.contains("|")) {
+                    String[] parts = result.split("\\|");
+                    try {
+                        inputDateDebut.setValue(LocalDate.parse(parts[0]));
+                        inputDateFin.setValue(LocalDate.parse(parts[1]));
+                    } catch (Exception ex) {
+                        System.err.println("Parse date error: " + ex.getMessage());
+                    }
+                }
+                btnGenerateDatesIA.setDisable(false);
+                datesAiProgress.setVisible(false);
+                datesAiProgress.setManaged(false);
+            });
+        });
+
+        task.setOnFailed(e -> {
+            Platform.runLater(() -> {
+                btnGenerateDatesIA.setDisable(false);
+                datesAiProgress.setVisible(false);
+                datesAiProgress.setManaged(false);
+                showAlert(Alert.AlertType.ERROR, "Erreur IA", "Génération des dates échouée",
+                        task.getException().getMessage());
+            });
+        });
+
+        new Thread(task).start();
+    }
+
+    @FXML
+    private void onGenerateDescriptionIA() {
+        List<String> selectedNames = dishCheckboxes.stream()
+                .filter(CheckBox::isSelected)
+                .map(cb -> ((RepasDetaille) cb.getUserData()).getNom())
+                .collect(Collectors.toList());
+
+        if (selectedNames.isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "Attention", "Aucun plat sélectionné",
+                    "Veuillez sélectionner au moins un plat pour générer une description.");
+            return;
+        }
+
+        btnGenerateDescIA.setDisable(true);
+        descAiProgress.setVisible(true);
+        descAiProgress.setManaged(true);
+
+        Task<String> task = new Task<String>() {
+            @Override
+            protected String call() throws Exception {
+                return geminiAnalyzer.generateMenuDescription(selectedNames);
+            }
+        };
+
+        task.setOnSucceeded(e -> {
+            Platform.runLater(() -> {
+                inputDescription.setText(task.getValue());
+                btnGenerateDescIA.setDisable(false);
+                descAiProgress.setVisible(false);
+                descAiProgress.setManaged(false);
+            });
+        });
+
+        task.setOnFailed(e -> {
+            Platform.runLater(() -> {
+                btnGenerateDescIA.setDisable(false);
+                descAiProgress.setVisible(false);
+                descAiProgress.setManaged(false);
+                showAlert(Alert.AlertType.ERROR, "Erreur IA", "Génération échouée", task.getException().getMessage());
+            });
+        });
+
+        new Thread(task).start();
     }
 
     private void setupValidationListeners() {
@@ -106,145 +277,20 @@ public class MenuFormController implements Initializable {
             clearError(errorNom);
             updateHintNom();
         });
-        inputPrix.textProperty().addListener((obs, o, n) -> {
-            clearError(errorPrix);
-            updateHintPrix();
+        comboRestaurant.valueProperty().addListener((obs, o, n) -> {
+            clearError(errorRestaurant);
         });
-        comboRestaurant.valueProperty().addListener((obs, o, n) -> clearError(errorRestaurant));
         inputDateDebut.valueProperty().addListener((obs, o, n) -> clearError(errorDates));
         inputDateFin.valueProperty().addListener((obs, o, n) -> clearError(errorDates));
         if (inputDescription != null)
-            inputDescription.textProperty().addListener((obs, o, n) -> clearError(errorDescription));
+            inputDescription.textProperty().addListener((obs, o, n) -> {
+                clearError(errorDescription);
+            });
     }
 
     // ─────────────────────────────────────────────────────────────────────────
     // HANDLERS — IA IMAGE
-    // ─────────────────────────────────────────────────────────────────────────
-
-    /** Ouvre un FileChooser pour sélectionner une image du plat. */
-    @FXML
-    private void onChoisirImage() {
-        FileChooser chooser = new FileChooser();
-        chooser.setTitle("Choisir une image du plat");
-        chooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Images", "*.jpg", "*.jpeg", "*.png", "*.webp", "*.gif"),
-                new FileChooser.ExtensionFilter("Tous les fichiers", "*.*"));
-
-        Stage stage = (Stage) inputNom.getScene().getWindow();
-        File file = chooser.showOpenDialog(stage);
-        if (file == null)
-            return;
-
-        selectedImageFile = file;
-
-        // Afficher l'aperçu
-        try {
-            Image img = new Image(file.toURI().toString(), 118, 88, true, true);
-            imagePreview.setImage(img);
-            imagePreview.setVisible(true);
-            imagePreview.setManaged(true);
-            imagePlaceholder.setVisible(false);
-            imagePlaceholder.setManaged(false);
-        } catch (Exception e) {
-            imagePlaceholder.setText("⚠ Aperçu indisponible");
-        }
-
-        btnAnalyser.setDisable(false);
-        setAiStatus("✅ Image sélectionnée : " + file.getName() + " — Cliquez sur « Analyser ».", "#22c55e");
-    }
-
-    /**
-     * Lance l'analyse de l'image via Gemini Vision API sur un thread background.
-     * Remplit automatiquement les champs du formulaire avec le résultat.
-     */
-    @FXML
-    private void onAnalyserImage() {
-        if (selectedImageFile == null)
-            return;
-
-        btnAnalyser.setDisable(true);
-        aiProgress.setVisible(true);
-        aiProgress.setManaged(true);
-        setAiStatus("🤖 Analyse en cours… (Gemini Vision)", "#a5b4fc");
-
-        final File imageFile = selectedImageFile;
-
-        Task<GeminiMenuAnalyzer.MenuAnalysisResult> task = new Task<GeminiMenuAnalyzer.MenuAnalysisResult>() {
-            @Override
-            protected GeminiMenuAnalyzer.MenuAnalysisResult call() throws Exception {
-                return geminiAnalyzer.analyze(imageFile);
-            }
-        };
-
-        task.setOnSucceeded(e -> {
-            GeminiMenuAnalyzer.MenuAnalysisResult result = task.getValue();
-            Platform.runLater(() -> fillFormWithAiResult(result));
-        });
-
-        task.setOnFailed(e -> {
-            Throwable err = task.getException();
-            Platform.runLater(() -> {
-                aiProgress.setVisible(false);
-                aiProgress.setManaged(false);
-                btnAnalyser.setDisable(false);
-                setAiStatus("❌ Erreur : " + (err != null ? err.getMessage() : "inconnue"), "#f87171");
-            });
-        });
-
-        Thread t = new Thread(task, "GeminiMenuAnalysis");
-        t.setDaemon(true);
-        t.start();
-    }
-
-    /** Remplit les champs du formulaire avec le résultat de l'analyse IA. */
-    private void fillFormWithAiResult(GeminiMenuAnalyzer.MenuAnalysisResult result) {
-        aiProgress.setVisible(false);
-        aiProgress.setManaged(false);
-        btnAnalyser.setDisable(false);
-
-        if (result == null) {
-            setAiStatus("❌ L'analyse n'a retourné aucun résultat.", "#f87171");
-            return;
-        }
-
-        // Vérification des références FXML
-        if (inputNom == null || inputPrix == null || inputDescription == null) {
-            System.err.println("CRITICAL: FXML fields are NULL! Check fx:id in FXML.");
-            setAiStatus("❌ Erreur interne : champs UI manquants.", "#f87171");
-            return;
-        }
-
-        // Remplissage forcé
-        String nom = (result.nom != null && !result.nom.isBlank()) ? result.nom : "Nouveau Plat";
-        inputNom.setText(nom);
-
-        String desc = (result.description != null && !result.description.isBlank()) ? result.description
-                : "Description générée par l'IA.";
-        if (result.tags != null && !result.tags.isBlank()) {
-            desc += "\n\n🏷 Tags : " + result.tags;
-        }
-        inputDescription.setText(desc);
-
-        double prix = result.prixEstime;
-        if (prix <= 0)
-            prix = 15.00; // Prix par défaut si l'IA échoue
-        inputPrix.setText(String.valueOf(prix));
-
-        // Dates par défaut
-        if (inputDateDebut.getValue() == null)
-            inputDateDebut.setValue(LocalDate.now());
-        if (inputDateFin.getValue() == null)
-            inputDateFin.setValue(LocalDate.now().plusDays(7));
-
-        setAiStatus("✨ \"" + nom + "\" généré avec succès !", "#34d399");
-    }
-
-    private void setAiStatus(String message, String hexColor) {
-        if (aiStatusLabel != null) {
-            aiStatusLabel.setText(message);
-            aiStatusLabel.setStyle("-fx-text-fill: " + hexColor + "; -fx-font-size: 9.5px; -fx-font-style: italic;");
-        }
-    }
+    // ── IA Image Handlers removed as requested ────────────────────────────────
 
     // ─────────────────────────────────────────────────────────────────────────
     // SETTERS
@@ -262,7 +308,8 @@ public class MenuFormController implements Initializable {
     }
 
     public void setListeController(MenuListeController controller) {
-        this.listeController = controller;
+        // Method kept for compatibility with MenuListeController, but internal field is
+        // unused.
     }
 
     public void setRestaurants(ObservableList<Restaurant> restaurants) {
@@ -279,7 +326,6 @@ public class MenuFormController implements Initializable {
         if (menu == null)
             return;
         inputNom.setText(menu.getNom());
-        inputPrix.setText(menu.getPrix() != null ? menu.getPrix().toString() : "");
         inputDescription.setText(menu.getDescription());
         inputDateDebut.setValue(menu.getDateDebut());
         inputDateFin.setValue(menu.getDateFin());
@@ -292,6 +338,145 @@ public class MenuFormController implements Initializable {
                     break;
                 }
             }
+        }
+
+        // Populate dishes
+        if (menu.getDishesIds() != null) {
+            for (CheckBox cb : dishCheckboxes) {
+                RepasDetaille dish = (RepasDetaille) cb.getUserData();
+                if (menu.getDishesIds().contains(dish.getId())) {
+                    cb.setSelected(true);
+                }
+            }
+        }
+    }
+
+    @FXML
+    private void onGenerateMenuCard() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/menu/menu-export-card.fxml"));
+            Parent cardRoot = loader.load();
+
+            // Populate Card
+            Label lblRestaurant = (Label) cardRoot.lookup("#restaurantName");
+            Label lblMenuTitle = (Label) cardRoot.lookup("#menuTitle");
+            Label lblDescription = (Label) cardRoot.lookup("#menuDescription");
+            Label lblValidity = (Label) cardRoot.lookup("#validityPeriod");
+            VBox dishesContainer = (VBox) cardRoot.lookup("#dishesContainer");
+
+            String rName = comboRestaurant.getValue() != null ? comboRestaurant.getValue().getNom() : "LICERIA & CO.";
+            lblRestaurant.setText(rName.toUpperCase());
+            lblMenuTitle.setText(inputNom.getText().toUpperCase());
+            lblDescription.setText(inputDescription.getText());
+
+            String validity = "Valid from " + (inputDateDebut.getValue() != null ? inputDateDebut.getValue() : "Today")
+                    +
+                    " - " + (inputDateFin.getValue() != null ? inputDateFin.getValue() : "Forever");
+            lblValidity.setText(validity);
+
+            // Add Dishes Grouped by Category
+            dishesContainer.getChildren().clear();
+            List<RepasDetaille> selectedItems = dishCheckboxes.stream()
+                    .filter(CheckBox::isSelected)
+                    .map(cb -> (RepasDetaille) cb.getUserData())
+                    .collect(Collectors.toList());
+
+            if (selectedItems.isEmpty()) {
+                Label noDishes = new Label("NO ITEMS SELECTED");
+                noDishes.setStyle(
+                        "-fx-font-family: 'Arial'; -fx-font-size: 14; -fx-text-fill: #2d5a27; -fx-opacity: 0.5;");
+                dishesContainer.getChildren().add(noDishes);
+            } else {
+                // Group by Category
+                java.util.Map<String, List<RepasDetaille>> grouped = selectedItems.stream()
+                        .collect(Collectors.groupingBy(d -> d.getTypeRepas() != null ? d.getTypeRepas() : "AUTRES"));
+
+                for (java.util.Map.Entry<String, List<RepasDetaille>> entry : grouped.entrySet()) {
+                    // Category Header
+                    Label catHeader = new Label("——— " + entry.getKey().replace("_", " ") + " ———");
+                    catHeader.setStyle(
+                            "-fx-font-family: 'Arial'; -fx-font-size: 14; -fx-text-fill: #2d5a27; -fx-font-weight: bold; -fx-letter-spacing: 2;");
+                    VBox.setMargin(catHeader, new Insets(10, 0, 5, 0));
+                    dishesContainer.getChildren().add(catHeader);
+
+                    for (RepasDetaille dish : entry.getValue()) {
+                        HBox itemRow = createDishRow(dish.getNom().toUpperCase(), dish.getPrix() + " €");
+                        dishesContainer.getChildren().add(itemRow);
+                    }
+                }
+            }
+
+            // Preview Window
+            Stage previewStage = new Stage();
+            previewStage.initModality(Modality.APPLICATION_MODAL);
+            previewStage.setTitle("Aperçu de la Carte Menu");
+
+            // Wrap card in a ScrollPane for preview
+            ScrollPane scrollPane = new ScrollPane(cardRoot);
+            scrollPane.setFitToWidth(true);
+            scrollPane.setStyle("-fx-background: transparent; -fx-background-color: #fcfaf5;");
+
+            VBox layout = new VBox(10, scrollPane);
+            layout.setPadding(new Insets(10));
+            layout.setAlignment(Pos.CENTER);
+            layout.setStyle("-fx-background-color: #fcfaf5;");
+
+            Button btnExport = new Button("📸 Exporter en Image (PNG)");
+            btnExport.setStyle(
+                    "-fx-background-color: #2d5a27; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20; -fx-background-radius: 20;");
+            btnExport.setOnAction(e -> exportToImage(cardRoot, previewStage));
+
+            layout.getChildren().add(btnExport);
+
+            Scene scene = new Scene(layout, 650, 900);
+            previewStage.setScene(scene);
+            previewStage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de générer la carte", e.getMessage());
+        }
+    }
+
+    private HBox createDishRow(String name, String price) {
+        HBox row = new HBox(10);
+        row.setAlignment(Pos.BOTTOM_CENTER);
+        row.setPadding(new Insets(0, 50, 0, 50));
+
+        Label lblName = new Label(name);
+        lblName.setStyle("-fx-font-family: 'Georgia'; -fx-font-size: 16; -fx-text-fill: #2d5a27;");
+
+        Region dots = new Region();
+        HBox.setHgrow(dots, Priority.ALWAYS);
+        dots.setPrefHeight(1);
+        dots.setStyle(
+                "-fx-border-color: #2d5a27; -fx-border-width: 0 0 1 0; -fx-border-style: dotted; -fx-opacity: 0.3;");
+
+        Label lblPrice = new Label(price);
+        lblPrice.setStyle(
+                "-fx-font-family: 'Georgia'; -fx-font-size: 16; -fx-text-fill: #2d5a27; -fx-font-weight: bold;");
+
+        row.getChildren().addAll(lblName, dots, lblPrice);
+        return row;
+    }
+
+    private void exportToImage(Parent node, Stage stage) {
+        try {
+            WritableImage snapshot = node.snapshot(new SnapshotParameters(), null);
+
+            FileChooser chooser = new FileChooser();
+            chooser.setTitle("Enregistrer l'image du menu");
+            chooser.setInitialFileName("Menu_" + inputNom.getText().replace(" ", "_") + ".png");
+            chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PNG Image", "*.png"));
+
+            File file = chooser.showSaveDialog(stage);
+            if (file != null) {
+                ImageIO.write(SwingFXUtils.fromFXImage(snapshot, null), "png", file);
+                showAlert(Alert.AlertType.INFORMATION, "Succès", "Image exportée",
+                        "La carte menu a été enregistrée avec succès.");
+            }
+        } catch (IOException e) {
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Échec de l'export", e.getMessage());
         }
     }
 
@@ -310,22 +495,19 @@ public class MenuFormController implements Initializable {
             m.setRestaurantId(null);
         }
 
-        String prixText = inputPrix.getText().trim();
-        if (!prixText.isEmpty()) {
-            try {
-                m.setPrix(new BigDecimal(prixText.replace(",", ".")));
-            } catch (NumberFormatException e) {
-                showError(errorPrix, "Le prix doit être un nombre valide");
-                return;
-            }
-        } else {
-            m.setPrix(null);
-        }
+        m.setPrix(null);
 
         m.setDescription(inputDescription.getText().trim());
         m.setDateDebut(inputDateDebut.getValue());
         m.setDateFin(inputDateFin.getValue());
         m.setActif(checkActif.isSelected());
+
+        // Collect selected dishes
+        List<Long> selectedDishes = dishCheckboxes.stream()
+                .filter(CheckBox::isSelected)
+                .map(cb -> ((RepasDetaille) cb.getUserData()).getId())
+                .collect(Collectors.toList());
+        m.setDishesIds(selectedDishes);
 
         ValidationResult validation = m.validate();
         if (validation.hasErrors()) {
@@ -366,54 +548,13 @@ public class MenuFormController implements Initializable {
         hintNom.setText(len + " / " + MAX_NOM_MENU + " car."
                 + (len == 0 ? " — Obligatoire" : len > MAX_NOM_MENU ? " — Trop long !" : ""));
         hintNom.setStyle(len > MAX_NOM_MENU
-                ? "-fx-text-fill: #e74c3c; -fx-font-size: 11px;"
-                : "-fx-text-fill: #7f8c8d; -fx-font-size: 11px;");
-    }
-
-    private void updateHintPrix() {
-        if (hintPrix == null)
-            return;
-        String s = inputPrix.getText();
-        if (s == null || s.trim().isEmpty()) {
-            hintPrix.setText("Obligatoire. Ex: 15.00");
-            hintPrix.setStyle("-fx-text-fill: #e67e22; -fx-font-size: 11px;");
-            return;
-        }
-        try {
-            BigDecimal v = new BigDecimal(s.trim().replace(",", "."));
-            hintPrix.setText(v.compareTo(BigDecimal.ZERO) < 0 ? "Le prix ne peut pas être négatif." : "Format valide.");
-            hintPrix.setStyle(v.compareTo(BigDecimal.ZERO) < 0
-                    ? "-fx-text-fill: #e74c3c; -fx-font-size: 11px;"
-                    : "-fx-text-fill: #27ae60; -fx-font-size: 11px;");
-        } catch (NumberFormatException e) {
-            hintPrix.setText("Saisir un nombre (ex. 15.00).");
-            hintPrix.setStyle("-fx-text-fill: #e67e22; -fx-font-size: 11px;");
-        }
-    }
-
-    private void displayValidationErrors(ValidationResult validation) {
-        if (!isEmpty(validation.getFieldErrors("nom")))
-            showError(errorNom, validation.getFieldErrors("nom").get(0));
-        if (!isEmpty(validation.getFieldErrors("restaurant")))
-            showError(errorRestaurant, validation.getFieldErrors("restaurant").get(0));
-        if (!isEmpty(validation.getFieldErrors("prix")))
-            showError(errorPrix, validation.getFieldErrors("prix").get(0));
-        if (!isEmpty(validation.getFieldErrors("dates")))
-            showError(errorDates, validation.getFieldErrors("dates").get(0));
-        if (errorDescription != null && !isEmpty(validation.getFieldErrors("description")))
-            showError(errorDescription, validation.getFieldErrors("description").get(0));
-        if (validation.hasErrors())
-            showGlobalError("Veuillez corriger les erreurs indiquées avant d'enregistrer.");
-    }
-
-    private boolean isEmpty(List<?> list) {
-        return list == null || list.isEmpty();
+                ? "-fx-text-fill: #ef4444; -fx-font-size: 11px; -fx-font-weight: bold;"
+                : "-fx-text-fill: #5e7d75; -fx-font-size: 11px;");
     }
 
     private void clearAllErrors() {
         clearError(errorNom);
         clearError(errorRestaurant);
-        clearError(errorPrix);
         clearError(errorDates);
         if (errorDescription != null)
             clearError(errorDescription);
@@ -433,6 +574,23 @@ public class MenuFormController implements Initializable {
         label.setText("⚠ " + message);
         label.setVisible(true);
         label.setManaged(true);
+    }
+
+    private void displayValidationErrors(ValidationResult validation) {
+        if (!isEmpty(validation.getFieldErrors("nom")))
+            showError(errorNom, validation.getFieldErrors("nom").get(0));
+        if (!isEmpty(validation.getFieldErrors("restaurant")))
+            showError(errorRestaurant, validation.getFieldErrors("restaurant").get(0));
+        if (!isEmpty(validation.getFieldErrors("dates")))
+            showError(errorDates, validation.getFieldErrors("dates").get(0));
+        if (errorDescription != null && !isEmpty(validation.getFieldErrors("description")))
+            showError(errorDescription, validation.getFieldErrors("description").get(0));
+        if (validation.hasErrors())
+            showGlobalError("Veuillez corriger les erreurs indiquées avant d'enregistrer.");
+    }
+
+    private boolean isEmpty(java.util.List<?> list) {
+        return list == null || list.isEmpty();
     }
 
     private void showGlobalError(String message) {

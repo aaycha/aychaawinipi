@@ -6,6 +6,13 @@ import com.gestion.entities.Restaurant;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
+import com.gestion.tools.Session;
+import com.gestion.entities.Participation;
+import com.gestion.interfaces.ParticipationService;
+import com.gestion.services.ParticipationServiceImpl;
+import java.util.List;
+import java.util.Optional;
+import javafx.scene.shape.SVGPath;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -14,9 +21,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.geometry.Pos;
@@ -49,12 +53,17 @@ public class MenuListeController implements Initializable {
     private Button btnSupprimer;
     @FXML
     private Button btnVoirDetails;
+    @FXML
+    private HBox adminActionBar;
+
+    private Participation currentParticipation;
 
     private final MenuController controller = new MenuController();
     private ObservableList<Menu> menus = FXCollections.observableArrayList();
     private ObservableList<Restaurant> restaurants = FXCollections.observableArrayList();
     private FilteredList<Menu> filteredMenus;
     private Menu selectedMenu;
+    private final ParticipationService participationService = new ParticipationServiceImpl();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -62,6 +71,11 @@ public class MenuListeController implements Initializable {
         setupFilters();
         loadRestaurants();
         loadMenus();
+
+        if (!isAdmin() && adminActionBar != null) {
+            adminActionBar.setVisible(false);
+            adminActionBar.setManaged(false);
+        }
     }
 
     private void setupListView() {
@@ -90,78 +104,116 @@ public class MenuListeController implements Initializable {
     }
 
     private javafx.scene.Node createMenuCard(Menu item) {
-        HBox card = new HBox(15);
-        card.getStyleClass().add("modern-card");
-        card.setAlignment(Pos.CENTER_LEFT);
+        VBox card = new VBox(0);
+        card.setPadding(new Insets(15));
+        card.setSpacing(10);
+        card.setStyle("-fx-background-color: #fcfaf5; " +
+                "-fx-border-color: #2d5a27; " +
+                "-fx-border-width: 2; " +
+                "-fx-border-radius: 8; " +
+                "-fx-background-radius: 8;");
+        card.setMaxWidth(Double.MAX_VALUE);
 
-        // Icon
-        StackPane iconPane = new StackPane();
-        Circle bg = new Circle(20, Color.web("#fff9db"));
-        Text icon = new Text("🍽️");
-        icon.setFont(Font.font("Segoe UI Emoji", 20));
-        iconPane.getChildren().addAll(bg, icon);
-
-        // Content
-        VBox content = new VBox(5);
-        HBox.setHgrow(content, Priority.ALWAYS);
-
+        // Header: Restaurant & Status
         HBox header = new HBox(10);
         header.setAlignment(Pos.CENTER_LEFT);
-        Label title = new Label(item.getNom());
-        title.getStyleClass().add("card-title");
 
-        Label statusBadge = new Label(item.isActif() ? "ACTIF" : "INACTIF");
-        statusBadge.getStyleClass().add("status-badge");
-        if (item.isActif()) {
-            statusBadge.setStyle("-fx-background-color: #28a745;");
-        } else {
-            statusBadge.setStyle("-fx-background-color: #6c757d;");
-        }
+        Label restoLabel = new Label(
+                (item.getRestaurantNom() != null ? item.getRestaurantNom() : "RESTO").toUpperCase());
+        restoLabel.setStyle(
+                "-fx-font-family: 'Georgia'; -fx-font-size: 10; -fx-text-fill: #2d5a27; -fx-font-weight: bold; -fx-letter-spacing: 1;");
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        header.getChildren().addAll(title, spacer, statusBadge);
+        Label statusBadge = new Label(item.isActif() ? "ACTIF" : "INACTIF");
+        statusBadge.setStyle("-fx-font-size: 9; -fx-padding: 3 8; -fx-background-radius: 10; -fx-text-fill: white; " +
+                "-fx-background-color: " + (item.isActif() ? "#2d5a27" : "#64748b") + ";");
 
-        GridPane details = new GridPane();
-        details.setHgap(20);
-        details.setVgap(5);
+        header.getChildren().addAll(restoLabel, spacer, statusBadge);
 
-        details.add(createDetailLabel("🏪 Resto:", item.getRestaurantNom() != null ? item.getRestaurantNom() : "N/A"),
-                0, 0);
-        details.add(createDetailLabel("📅 Période:", getPeriodeStr(item)), 1, 0);
+        // Title
+        Label title = new Label(item.getNom().toUpperCase());
+        title.setStyle(
+                "-fx-font-family: 'Times New Roman'; -fx-font-size: 20; -fx-text-fill: #2d5a27; -fx-font-weight: bold;");
+        title.setWrapText(true);
 
-        Label descLabel = new Label(item.getDescription());
-        descLabel.getStyleClass().add("card-label");
-        descLabel.setStyle("-fx-font-style: italic; -fx-text-fill: #6c757d;");
-        descLabel.setWrapText(true);
-        details.add(descLabel, 0, 1, 2, 1);
+        // Separator (Wave SVG inspired line)
+        SVGPath wave = new SVGPath();
+        wave.setContent("M0,0 Q25,10 50,0 T100,0");
+        wave.setFill(Color.TRANSPARENT);
+        wave.setStroke(Color.web("#2d5a27"));
+        wave.setStrokeWidth(1.5);
+        wave.setOpacity(0.5);
 
-        content.getChildren().addAll(header, details);
+        // Description
+        Label desc = new Label(item.getDescription());
+        desc.setStyle("-fx-font-family: 'Georgia'; -fx-font-size: 11; -fx-text-fill: #4a4a4a; -fx-font-style: italic;");
+        desc.setWrapText(true);
+        desc.setMaxHeight(40);
 
-        // Right side: Price and Actions
-        VBox rightSide = new VBox(8);
-        rightSide.setAlignment(Pos.CENTER_RIGHT);
+        // Footer: Price & Date
+        HBox footer = new HBox(10);
+        footer.setAlignment(Pos.BOTTOM_LEFT);
 
-        Label price = new Label(String.format("%.2f €", item.getPrix() != null ? item.getPrix() : 0.0));
-        price.getStyleClass().add("card-price");
+        VBox priceAndDate = new VBox(2);
+        Label dateRange = new Label(getPeriodeStr(item));
+        dateRange.setStyle("-fx-font-family: 'Arial'; -fx-font-size: 11; -fx-text-fill: #64748b;");
 
-        HBox actions = new HBox(5);
+        priceAndDate.getChildren().addAll(dateRange);
+
+        Region footerSpacer = new Region();
+        HBox.setHgrow(footerSpacer, Priority.ALWAYS);
+
+        HBox actions = new HBox(8);
         actions.setAlignment(Pos.CENTER_RIGHT);
-        Button editBtn = new Button("✏️");
-        Button deleteBtn = new Button("🗑️");
-        editBtn.getStyleClass().add("btn-warning-sm");
-        deleteBtn.getStyleClass().add("btn-danger-sm");
-        editBtn.setStyle("-fx-padding: 4 8; -fx-font-size: 10px;");
-        deleteBtn.setStyle("-fx-padding: 4 8; -fx-font-size: 10px;");
 
-        editBtn.setOnAction(e -> handleEdit(item));
-        deleteBtn.setOnAction(e -> handleDelete(item));
+        boolean isAdmin = isAdmin();
+        if (isAdmin) {
+            Button editBtn = new Button("✏️");
+            Button deleteBtn = new Button("🗑️");
+            editBtn.setStyle(
+                    "-fx-background-color: transparent; -fx-border-color: #2d5a27; -fx-border-radius: 15; -fx-text-fill: #2d5a27; -fx-cursor: hand; -fx-padding: 4 8; -fx-font-size: 10;");
+            deleteBtn.setStyle(
+                    "-fx-background-color: transparent; -fx-border-color: #ef4444; -fx-border-radius: 15; -fx-text-fill: #ef4444; -fx-cursor: hand; -fx-padding: 4 8; -fx-font-size: 10;");
 
-        actions.getChildren().addAll(editBtn, deleteBtn);
-        rightSide.getChildren().addAll(price, actions);
+            editBtn.setOnAction(e -> handleEdit(item));
+            deleteBtn.setOnAction(e -> handleDelete(item));
+            actions.getChildren().addAll(editBtn, deleteBtn);
+        } else {
+            Button selectBtn = new Button("CHOISIR 🍴");
+            selectBtn.getStyleClass().addAll("button-capsule-glass");
+            selectBtn.setStyle(
+                    "-fx-border-color: #1890ff; -fx-text-fill: #1890ff; -fx-font-size: 10px; -fx-padding: 4 10;");
 
-        card.getChildren().addAll(iconPane, content, rightSide);
+            // Highlight if already selected
+            if (currentParticipation != null && item.getId().equals(currentParticipation.getMenuId())) {
+                selectBtn.setText("SÉLECTIONNÉ ✅");
+                selectBtn.setStyle(
+                        "-fx-background-color: #1890ff; -fx-text-fill: white; -fx-font-size: 10px; -fx-padding: 4 10;");
+            }
+
+            selectBtn.setOnAction(e -> handleSelectMenu(item));
+            actions.getChildren().add(selectBtn);
+        }
+
+        footer.getChildren().addAll(priceAndDate, footerSpacer, actions);
+
+        card.getChildren().addAll(header, title, wave, desc, footer);
+
+        // Single click on card opens details
+        card.setOnMouseClicked(e -> {
+            if (e.getClickCount() == 1) {
+                openDetailPage(item);
+            }
+        });
+
+        // Hover effect
+        card.setOnMouseEntered(e -> card.setStyle(
+                "-fx-background-color: #f5f1e8; -fx-border-color: #1b3d1b; -fx-border-width: 2; -fx-border-radius: 8; -fx-background-radius: 8; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);"));
+        card.setOnMouseExited(e -> card.setStyle(
+                "-fx-background-color: #fcfaf5; -fx-border-color: #2d5a27; -fx-border-width: 2; -fx-border-radius: 8; -fx-background-radius: 8;"));
+
         return card;
     }
 
@@ -175,17 +227,6 @@ public class MenuListeController implements Initializable {
         if (fin != null)
             return "Jusqu'au " + fin;
         return "Permanent";
-    }
-
-    private HBox createDetailLabel(String labelText, String valueText) {
-        HBox box = new HBox(5);
-        box.setAlignment(Pos.CENTER_LEFT);
-        Label label = new Label(labelText);
-        label.getStyleClass().add("card-label");
-        Label value = new Label(valueText);
-        value.getStyleClass().add("card-value");
-        box.getChildren().addAll(label, value);
-        return box;
     }
 
     @FXML
@@ -214,7 +255,32 @@ public class MenuListeController implements Initializable {
     }
 
     private void loadMenus() {
-        menus.setAll(controller.getAllMenus());
+        var user = Session.getInstance().getCurrentUser();
+        if (user != null && "ADMIN".equals(user.getRole())) {
+            menus.setAll(controller.getAllMenus());
+        } else if (user != null) {
+            // Filter by participation restaurant
+            List<Participation> participations = participationService.findByUserId((long) user.getId());
+            Optional<Participation> p = participations.stream()
+                    .filter(part -> part.getRestaurantId() != null)
+                    .findFirst();
+
+            if (p.isPresent()) {
+                currentParticipation = p.get();
+                menus.setAll(controller.getMenusByRestaurant(p.get().getRestaurantId()));
+                statusLabel.setText("Menus pour votre restaurant : " + p.get().getRestaurantId());
+            } else {
+                currentParticipation = null;
+                menus.clear();
+                statusLabel.setText("⚠️ Veuillez participer à un événement pour voir les menus.");
+                showAlert(Alert.AlertType.INFORMATION, "Information", "Aucun restaurant associé",
+                        "Veuillez d'abord vous inscrire à un événement avec restauration pour voir les menus correspondants.");
+            }
+        } else {
+            currentParticipation = null;
+            menus.setAll(controller.getAllMenus());
+        }
+
         filteredMenus = new FilteredList<>(menus, p -> true);
         listView.setItems(filteredMenus);
         updateCountLabel();
@@ -373,11 +439,36 @@ public class MenuListeController implements Initializable {
         loadMenus();
     }
 
-    private String getMenuDetails(com.gestion.entities.Menu m) {
-        return "Nom: " + m.getNom() + "\n" +
-                "Description: " + (m.getDescription() != null ? m.getDescription() : "Non renseignée") + "\n" +
-                "Prix: " + m.getPrix() + " €\n" +
-                "Statut: " + (m.isActif() ? "Disponible" : "Indisponible") + "\n";
+    private boolean isAdmin() {
+        var user = Session.getInstance().getCurrentUser();
+        return user != null && "ADMIN".equals(user.getRole());
+    }
+
+    private void handleSelectMenu(Menu menu) {
+        if (currentParticipation == null) {
+            showAlert(Alert.AlertType.WARNING, "Attention", "Aucune participation",
+                    "Vous devez être inscrit à un événement pour choisir un menu.");
+            return;
+        }
+
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Choisir ce menu");
+        confirm.setHeaderText("Confirmation de sélection");
+        confirm.setContentText("Voulez-vous choisir le menu \"" + menu.getNom() + "\" pour votre expédition ?");
+
+        confirm.showAndWait().ifPresent(res -> {
+            if (res == ButtonType.OK) {
+                currentParticipation.setMenuId(menu.getId());
+                if (participationService.update(currentParticipation) != null) {
+                    statusLabel.setText("Menu \"" + menu.getNom() + "\" sélectionné !");
+                    // Refresh UI to show checkmark
+                    listView.refresh();
+                } else {
+                    showAlert(Alert.AlertType.ERROR, "Erreur", "Échec de la sélection",
+                            "Impossible de mettre à jour votre participation.");
+                }
+            }
+        });
     }
 
     private void showAlert(Alert.AlertType type, String title, String header, String content) {

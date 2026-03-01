@@ -21,6 +21,7 @@ public class Menu {
     private boolean actif = true;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private java.util.List<Long> dishesIds = new java.util.ArrayList<>();
 
     public Menu() {
         this.createdAt = LocalDateTime.now();
@@ -41,12 +42,12 @@ public class Menu {
             result.addError("restaurant", "Vous devez sélectionner un restaurant pour ce menu.");
         }
 
-        if (prix == null) {
-            result.addError("prix", "Le prix est obligatoire. Saisissez un montant en € (ex. 15.00).");
-        } else if (prix.compareTo(BigDecimal.ZERO) < 0) {
-            result.addError("prix", "Le prix ne peut pas être négatif.");
-        } else if (prix.compareTo(new BigDecimal("999999.99")) > 0) {
-            result.addError("prix", "Le prix maximum autorisé est 999 999,99 €.");
+        if (prix != null) {
+            if (prix.compareTo(BigDecimal.ZERO) < 0) {
+                result.addError("prix", "Le prix ne peut pas être négatif.");
+            } else if (prix.compareTo(new BigDecimal("999999.99")) > 0) {
+                result.addError("prix", "Le prix maximum autorisé est 999 999,99 €.");
+            }
         }
 
         if (description == null || description.trim().isEmpty()) {
@@ -75,38 +76,101 @@ public class Menu {
 
     // ================= GETTERS / SETTERS =================
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public Long getRestaurantId() { return restaurantId; }
-    public void setRestaurantId(Long restaurantId) { this.restaurantId = restaurantId; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getRestaurantNom() { return restaurantNom; }
-    public void setRestaurantNom(String restaurantNom) { this.restaurantNom = restaurantNom; }
+    public Long getRestaurantId() {
+        return restaurantId;
+    }
 
-    public String getNom() { return nom; }
-    public void setNom(String nom) { this.nom = nom; }
+    public void setRestaurantId(Long restaurantId) {
+        this.restaurantId = restaurantId;
+    }
 
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+    public String getRestaurantNom() {
+        return restaurantNom;
+    }
 
-    public BigDecimal getPrix() { return prix; }
-    public void setPrix(BigDecimal prix) { this.prix = prix; }
+    public void setRestaurantNom(String restaurantNom) {
+        this.restaurantNom = restaurantNom;
+    }
 
-    public LocalDate getDateDebut() { return dateDebut; }
-    public void setDateDebut(LocalDate dateDebut) { this.dateDebut = dateDebut; }
+    public String getNom() {
+        return nom;
+    }
 
-    public LocalDate getDateFin() { return dateFin; }
-    public void setDateFin(LocalDate dateFin) { this.dateFin = dateFin; }
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
 
-    public boolean isActif() { return actif; }
-    public void setActif(boolean actif) { this.actif = actif; }
+    public String getDescription() {
+        return description;
+    }
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-    public LocalDateTime getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+    public BigDecimal getPrix() {
+        return prix;
+    }
+
+    public void setPrix(BigDecimal prix) {
+        this.prix = prix;
+    }
+
+    public LocalDate getDateDebut() {
+        return dateDebut;
+    }
+
+    public void setDateDebut(LocalDate dateDebut) {
+        this.dateDebut = dateDebut;
+    }
+
+    public LocalDate getDateFin() {
+        return dateFin;
+    }
+
+    public void setDateFin(LocalDate dateFin) {
+        this.dateFin = dateFin;
+    }
+
+    public boolean isActif() {
+        return actif;
+    }
+
+    public void setActif(boolean actif) {
+        this.actif = actif;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public java.util.List<Long> getDishesIds() {
+        return dishesIds;
+    }
+
+    public void setDishesIds(java.util.List<Long> dishesIds) {
+        this.dishesIds = dishesIds;
+    }
 
     @Override
     public String toString() {

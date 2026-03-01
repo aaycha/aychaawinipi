@@ -3,6 +3,7 @@ package com.gestion.ui.utilisateur;
 import com.gestion.entities.Participation;
 import com.gestion.services.TicketBadgeGenerator;
 import com.gestion.ui.participation.ParticipationFormController;
+// import com.gestion.ui.restaurant.RestaurantListeController; // Unused
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -37,6 +38,7 @@ public class MesParticipationsController {
     private Label countLabel;
 
     private final com.gestion.interfaces.ParticipationService participationService = new com.gestion.services.ParticipationServiceImpl();
+    private final com.gestion.interfaces.AbonnementService abonnementService = new com.gestion.services.AbonnementServiceImpl();
     private Long currentUserId = com.gestion.tools.Session.getInstance().getCurrentUserId() != null
             ? Long.valueOf(com.gestion.tools.Session.getInstance().getCurrentUserId())
             : null;
@@ -120,9 +122,13 @@ public class MesParticipationsController {
         price.getStyleClass().add("card-price");
 
         Button badgeBtn = new Button("📥 Badge");
-        badgeBtn.setStyle("-fx-background-color: rgba(99,102,241,0.85); -fx-text-fill: white;"
+        boolean isConfirmed = item.getStatut() == Participation.StatutParticipation.CONFIRME;
+        badgeBtn.setDisable(!isConfirmed);
+        badgeBtn.setTooltip(new Tooltip(isConfirmed ? "Télécharger le badge" : "Attente d'approbation admin"));
+        badgeBtn.setStyle("-fx-background-color: " + (isConfirmed ? "rgba(99,102,241,0.85)" : "rgba(148,163,184,0.4)")
+                + "; -fx-text-fill: white;"
                 + " -fx-font-size: 11; -fx-font-weight: bold; -fx-padding: 6 14;"
-                + " -fx-background-radius: 20; -fx-cursor: hand;");
+                + " -fx-background-radius: 20; -fx-cursor: " + (isConfirmed ? "hand" : "default") + ";");
         badgeBtn.setOnAction(e -> downloadBadgeForParticipation(item));
         rightSide.getChildren().addAll(price, badgeBtn);
 
@@ -194,6 +200,44 @@ public class MesParticipationsController {
      */
     @FXML
     public void onCreerParticipation() {
+        if (!hasActiveSubscription()) {
+            showSubscriptionChoice();
+        } else {
+            openParticipationForm();
+        }
+    }
+
+    private boolean hasActiveSubscription() {
+        if (currentUserId == null)
+            return false;
+        return abonnementService.findByUserId(currentUserId).stream()
+                .anyMatch(a -> a.getStatut() == com.gestion.entities.Abonnement.StatutAbonnement.ACTIF
+                        && a.getDateFin().isAfter(java.time.LocalDate.now()));
+    }
+
+    private void showSubscriptionChoice() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Choix de Participation");
+        alert.setHeaderText("Souscription Requise");
+        alert.setContentText("Vous n'avez pas d'abonnement actif. Comment souhaitez-vous participer ?");
+
+        ButtonType btnAbonnement = new ButtonType("S'abonner (Global)");
+        ButtonType btnPass = new ButtonType("Prendre un Pass (Unique)");
+        ButtonType btnCancel = new ButtonType("Annuler", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+        alert.getButtonTypes().setAll(btnAbonnement, btnPass, btnCancel);
+
+        alert.showAndWait().ifPresent(type -> {
+            if (type == btnAbonnement) {
+                com.gestion.controllers.MainController.getInstance()
+                        .loadUserSection("/views/utilisateur/abonnement-choix.fxml", "Abonnements");
+            } else if (type == btnPass) {
+                openParticipationForm();
+            }
+        });
+    }
+
+    private void openParticipationForm() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/participation/participation-form.fxml"));
             Parent root = loader.load();
@@ -201,7 +245,11 @@ public class MesParticipationsController {
             ParticipationFormController formController = loader.getController();
             formController.setAdminMode(false);
             formController.setCurrentUserId(currentUserId);
-            formController.setOnSaved(this::onActualiser);
+
+            formController.setOnSaved(participation -> {
+                onActualiser();
+                handleMealRouting(participation);
+            });
 
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
@@ -216,6 +264,57 @@ public class MesParticipationsController {
             a.setContentText(e.getMessage());
             a.showAndWait();
         }
+    }
+
+    private void handleMealRouting(Participation p) {
+        if (p == null || p.getMealOption() == null)
+            return;
+
+        String targetFxml = null;
+        String title = "";
+
+        switch (p.getMealOption()) {
+            case AVEC_REPAS:
+            case AVEC_MENU:
+            case COMPOSITION_SUR_PLACE:
+                targetFxml = "/views/utilisateur/restauration-2026.fxml";
+                title = (p.getMealOption() == com.gestion.entities.Participation.MealOption.COMPOSITION_SUR_PLACE)
+                        ? "Composez votre plat (Expédition)"
+                        : "Catalogue des plats";
+                break;
+            case SANS_REPAS:
+            case AU_RESTAURANT:
+                targetFxml = "/views/restaurant/restaurant-liste.fxml";
+                title = "Explorer les restaurants du camp";
+                break;
+            default:
+                return; // Nothing to do
+        }
+
+        if (targetFxml != null) {
+            com.gestion.controllers.MainController main = com.gestion.controllers.MainController.getInstance();
+            if (main != null) {
+                if (targetFxml.contains("restaurant-liste.fxml")) {
+                    main.loadUserSection(targetFxml, title, ctrl -> {
+                        if (ctrl instanceof Restauration2026Controller && p.getRestaurantId() != null) {
+                            ((Restauration2026Controller) ctrl).setRestaurantFilter(p.getRestaurantId());
+                        }
+                    });
+                } else {
+                    main.loadUserSection(targetFxml, title);
+                }
+                showInfo("🧭 Redirection", "Selon votre choix de repas (" + p.getMealOption().getLabel()
+                        + "), nous avons ouvert : " + title);
+            }
+        }
+    }
+
+    private void showInfo(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.show(); // Non-blocking
     }
 
     // ─── BADGE PDF ─────────────────────────────────────────────────────────
@@ -242,6 +341,15 @@ public class MesParticipationsController {
      * Ouvre un FileChooser, génère et sauvegarde le badge PDF.
      */
     private void downloadBadgeForParticipation(Participation item) {
+        if (item.getStatut() != Participation.StatutParticipation.CONFIRME) {
+            Alert warn = new Alert(Alert.AlertType.WARNING);
+            warn.setTitle("Expédition non confirmée");
+            warn.setHeaderText("Téléchargement impossible");
+            warn.setContentText(
+                    "Votre participation doit être approuvée par l'administration avant de pouvoir générer votre badge.");
+            warn.showAndWait();
+            return;
+        }
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Enregistrer le badge PDF");
         chooser.setInitialFileName("badge_participation_" + item.getId() + ".pdf");

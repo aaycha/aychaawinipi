@@ -1,72 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
-<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.layout.Region?>
 <?import javafx.scene.control.Button?>
-<VBox xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1"
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.gestion.ui.utilisateur.CheckoutController"
-      spacing="0" prefWidth="480" prefHeight="650"
-      stylesheets="@../../styles/nature-mood.css, @../../styles/card-view.css"
-      styleClass="glass-panel" style="-fx-background-radius: 30; -fx-border-radius: 30; -fx-background-color: rgba(15, 23, 42, 0.95);">
+      alignment="TOP_CENTER" spacing="0" prefWidth="550"
+      style="-fx-background-color: transparent;"
+      stylesheets="@../../styles/nature-mood.css, @../../styles/card-view.css">
 
-    <VBox spacing="25" VBox.vgrow="ALWAYS">
-        <padding>
-            <Insets top="40" right="45" bottom="40" left="45"/>
-        </padding>
+    <VBox spacing="0" maxWidth="520"
+          styleClass="glass-panel" style="-fx-background-radius: 30; -fx-border-radius: 30; -fx-background-color: rgba(15, 23, 42, 0.95);">
 
-        <!-- Header -->
-        <VBox spacing="10" alignment="CENTER">
-            <StackPane style="-fx-background-color: rgba(34, 197, 94, 0.1); -fx-background-radius: 15; -fx-padding: 12;">
-                <Label text="🏔️" style="-fx-font-size: 28;"/>
-            </StackPane>
-            <Label text="SECURE TRAIL PAY" styleClass="hiker-label" style="-fx-text-fill: #22c55e; -fx-font-weight: 900; -fx-font-size: 11;"/>
-            <Label fx:id="amountLabel" text="Total: 0.00 €" style="-fx-font-size: 32; -fx-font-weight: 900; -fx-text-fill: white;"/>
-        </VBox>
+        <VBox spacing="20">
+            <padding>
+                <Insets top="35" right="40" bottom="35" left="40"/>
+            </padding>
 
-        <Separator style="-fx-opacity: 0.1;" />
-
-        <!-- Payment Card -->
-        <VBox spacing="20" styleClass="modern-card" style="-fx-padding: 30;">
-            <VBox spacing="8">
-                <Label text="📡 COURIER SIGNAL (EMAIL)" style="-fx-text-fill: #94a3b8; -fx-font-weight: 800; -fx-font-size: 10;"/>
-                <TextField fx:id="emailField" promptText="scout@mountain-node.com" styleClass="modern-input"/>
+            <!-- Header -->
+            <VBox spacing="10" alignment="CENTER">
+                <StackPane style="-fx-background-color: rgba(34, 197, 94, 0.1); -fx-background-radius: 15; -fx-padding: 12;">
+                    <Label text="🏔️" style="-fx-font-size: 28;"/>
+                </StackPane>
+                <Label text="SECURE TRAIL PAY" styleClass="hiker-label" style="-fx-text-fill: #22c55e; -fx-font-weight: 900; -fx-font-size: 12;"/>
+                <Label fx:id="amountLabel" text="Total: 0.00 €" style="-fx-font-size: 30; -fx-font-weight: 900; -fx-text-fill: white;"/>
             </VBox>
 
-            <VBox spacing="10">
-                <Label text="💳 CRYPTO-CREDIT KEY" style="-fx-text-fill: #94a3b8; -fx-font-weight: 800; -fx-font-size: 10;"/>
-                <VBox spacing="0" styleClass="modern-input" style="-fx-padding: 2; -fx-background-color: rgba(255, 255, 255, 0.03);">
-                    <TextField fx:id="cardNumberField" promptText="0000 0000 0000 0000" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-padding: 12 15; -fx-border-color: rgba(255,255,255,0.05); -fx-border-width: 0 0 1 0;"/>
-                    <HBox spacing="0">
-                        <TextField fx:id="expiryField" promptText="MM / YY" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-padding: 12 15; -fx-border-color: rgba(255,255,255,0.05); -fx-border-width: 0 1 0 0;" HBox.hgrow="ALWAYS"/>
-                        <TextField fx:id="cvcField" promptText="CVC" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-padding: 12 15;" prefWidth="120"/>
-                    </HBox>
-                </VBox>
+            <!-- Cart Items Section -->
+            <VBox spacing="12" styleClass="modern-card" style="-fx-padding: 20; -fx-background-color: rgba(255,255,255,0.03); -fx-background-radius: 20;">
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label text="🛒" style="-fx-font-size: 16;"/>
+                    <Label text="YOUR SELECTION" style="-fx-text-fill: #94a3b8; -fx-font-weight: 900; -fx-font-size: 11;"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Label fx:id="cartItemCountLabel" text="0 items" style="-fx-text-fill: #64748b; -fx-font-size: 10;"/>
+                </HBox>
+                <ScrollPane fitToWidth="true" minHeight="150" maxHeight="300" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
+                            styleClass="modern-scroll-pane" style="-fx-background: transparent; -fx-background-color: transparent;">
+                    <VBox fx:id="cartItemsList" spacing="12" style="-fx-padding: 5;"/>
+                </ScrollPane>
+
+                <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 8 0 0 0;">
+                    <TextField fx:id="promoCodeField" promptText="Promo Code" styleClass="modern-input" HBox.hgrow="ALWAYS" style="-fx-font-size: 11;"/>
+                    <Button text="APPLY" onAction="#onApplyPromo" styleClass="button-capsule-glass" style="-fx-padding: 8 15; -fx-font-size: 10;"/>
+                </HBox>
+                <Label fx:id="promoMsgLabel" text="" style="-fx-font-size: 10; -fx-text-fill: #f97316;"/>
             </VBox>
 
-            <VBox spacing="8">
-                <Label text="🌍 DEPLOYMENT ZONE" style="-fx-text-fill: #94a3b8; -fx-font-weight: 800; -fx-font-size: 10;"/>
-                <ComboBox fx:id="countryCombo" promptText="France" maxWidth="Infinity" styleClass="modern-input"/>
+            <!-- Footer -->
+            <VBox spacing="12">
+                <HBox spacing="10" alignment="CENTER" style="-fx-background-color: rgba(34, 197, 94, 0.05); -fx-padding: 12; -fx-background-radius: 12; -fx-border-color: rgba(34, 197, 94, 0.1);">
+                    <Label text="🔒" style="-fx-font-size: 16;"/>
+                    <Label text="EXPEDITION FUNDS ENCRYPTED" style="-fx-font-weight: 900; -fx-font-size: 10; -fx-text-fill: #22c55e;"/>
+                </HBox>
+
+                <Button fx:id="payButton" text="PAYER &amp; VALIDER LA MISSION" onAction="#onPay"
+                        styleClass="button-capsule" maxWidth="Infinity" style="-fx-padding: 18; -fx-font-size: 14;"/>
+
+                <Button text="ABORT MISSION" onAction="#onCancel" maxWidth="Infinity"
+                        style="-fx-text-fill: #64748b; -fx-background-color: transparent; -fx-cursor: hand; -fx-font-weight: 800; -fx-font-size: 11;"/>
             </VBox>
-        </VBox>
-
-        <Region VBox.vgrow="ALWAYS" />
-
-        <!-- Footer -->
-        <VBox spacing="15">
-            <HBox spacing="10" alignment="CENTER" style="-fx-background-color: rgba(34, 197, 94, 0.05); -fx-padding: 12; -fx-background-radius: 12; -fx-border-color: rgba(34, 197, 94, 0.1);">
-                <Label text="🔒" style="-fx-font-size: 16;"/>
-                <Label text="EXPEDITION FUNDS ENCRYPTED" style="-fx-font-weight: 900; -fx-font-size: 10; -fx-text-fill: #22c55e;"/>
-            </HBox>
-
-            <Button fx:id="payButton" text="AUTHORIZE TRANSACTION" onAction="#onPay"
-                    styleClass="button-capsule" maxWidth="Infinity" style="-fx-padding: 18;"/>
-            
-            <Button text="ABORT MISSION" onAction="#onCancel" maxWidth="Infinity" style="-fx-text-fill: #64748b; -fx-background-color: transparent; -fx-cursor: hand; -fx-font-weight: 800; -fx-font-size: 11;"/>
         </VBox>
     </VBox>
 </VBox>
+

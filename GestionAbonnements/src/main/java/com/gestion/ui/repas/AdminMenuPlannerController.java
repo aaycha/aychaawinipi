@@ -13,8 +13,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import com.gestion.entities.Menu;
+import com.gestion.interfaces.MenuService;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 
@@ -40,16 +41,20 @@ public class AdminMenuPlannerController implements Initializable {
     @FXML
     private TextField searchField;
     @FXML
-    private ListView<RepasDetaille> availableDishesList;
+    private ListView<Object> availableDishesList;
+    @FXML
+    private Button btnShowDishes, btnShowMenus;
 
     private final RepasDetailleService dishService = new RepasDetailleServiceImpl();
+    private final MenuService menuService = new com.gestion.services.MenuServiceImpl();
     private final CompositionMenuService compositionService = new CompositionMenuServiceImpl();
     private final com.gestion.interfaces.RestaurationService restaurationService = new com.gestion.services.RestaurationServiceImpl();
 
     private LocalDate weekStart;
     private Long validMenuId;
-    private final ObservableList<RepasDetaille> allDishes = FXCollections.observableArrayList();
-    private FilteredList<RepasDetaille> filteredDishes;
+    private final ObservableList<Object> catalogItems = FXCollections.observableArrayList();
+    private FilteredList<Object> filteredItems;
+    private boolean showingDishes = true;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -82,25 +87,25 @@ public class AdminMenuPlannerController implements Initializable {
     }
 
     private void setupCatalog() {
-        allDishes.setAll(dishService.findAll());
-        filteredDishes = new FilteredList<>(allDishes, p -> true);
-        availableDishesList.setItems(filteredDishes);
+        updateCatalogItems();
+        filteredItems = new FilteredList<>(catalogItems, p -> true);
+        availableDishesList.setItems(filteredItems);
 
-        // Custom Cell Factory for Catalog
+        // Custom Cell Factory for Catalog (Object-aware)
         availableDishesList.setCellFactory(lv -> new ListCell<>() {
-            private final ImageView iv = new ImageView();
-
             @Override
-            protected void updateItem(RepasDetaille item, boolean empty) {
+            protected void updateItem(Object item, boolean empty) {
                 super.updateItem(item, empty);
                 if (empty || item == null) {
                     setText(null);
                     setGraphic(null);
                 } else {
-                    setText(item.getNom() + " (" + item.getPrix() + " €)");
-                    if (item.getImageUrl() != null && !item.getImageUrl().isEmpty()) {
-                        iv.setImage(new Image(item.getImageUrl(), 30, 30, true, true));
-                        setGraphic(iv);
+                    if (item instanceof RepasDetaille) {
+                        RepasDetaille dish = (RepasDetaille) item;
+                        setText(dish.getNom() + " (" + (dish.getPrix() != null ? dish.getPrix() : "0.00") + " €)");
+                    } else if (item instanceof Menu) {
+                        Menu m = (Menu) item;
+                        setText("COMBO: " + m.getNom() + " (" + m.getDishesIds().size() + " plats)");
                     }
                     getStyleClass().add("catalog-cell");
                 }
@@ -109,29 +114,68 @@ public class AdminMenuPlannerController implements Initializable {
 
         // DRAG SOURCE: ListView
         availableDishesList.setOnDragDetected(event -> {
-            RepasDetaille selected = availableDishesList.getSelectionModel().getSelectedItem();
+            Object selected = availableDishesList.getSelectionModel().getSelectedItem();
             if (selected != null) {
                 Dragboard db = availableDishesList.startDragAndDrop(TransferMode.COPY);
                 ClipboardContent content = new ClipboardContent();
-                content.putString(selected.getId().toString()); // Transfer ID
-                db.setContent(content);
 
-                // Visual drag view
-                if (selected.getImageUrl() != null) {
-                    db.setDragView(new Image(selected.getImageUrl(), 60, 60, true, true));
+                if (selected instanceof RepasDetaille) {
+                    RepasDetaille dish = (RepasDetaille) selected;
+                    content.putString("DISH:" + dish.getId());
+                    if (dish.getImageUrl() != null) {
+                        db.setDragView(new Image(dish.getImageUrl(), 60, 60, true, true));
+                    }
+                } else if (selected instanceof Menu) {
+                    content.putString("MENU:" + ((Menu) selected).getId());
                 }
+
+                db.setContent(content);
                 event.consume();
             }
         });
     }
 
+    private void updateCatalogItems() {
+        catalogItems.clear();
+        if (showingDishes) {
+            // Clean up duplicates by name
+            List<RepasDetaille> distinct = dishService.findAll().stream()
+                    .collect(Collectors.toMap(RepasDetaille::getNom, d -> d, (e, r) -> e))
+                    .values().stream().collect(Collectors.toList());
+            catalogItems.addAll(distinct);
+        } else {
+            catalogItems.addAll(menuService.findAll());
+        }
+    }
+
+    @FXML
+    private void showDishes() {
+        showingDishes = true;
+        btnShowDishes.setStyle("-fx-background-color: #00D4B4; -fx-text-fill: white; -fx-background-radius: 15;");
+        btnShowMenus.setStyle("-fx-background-color: transparent; -fx-text-fill: #1E3A8A;");
+        updateCatalogItems();
+    }
+
+    @FXML
+    private void showMenus() {
+        showingDishes = false;
+        btnShowMenus.setStyle("-fx-background-color: #00D4B4; -fx-text-fill: white; -fx-background-radius: 15;");
+        btnShowDishes.setStyle("-fx-background-color: transparent; -fx-text-fill: #1E3A8A;");
+        updateCatalogItems();
+    }
+
     private void setupSearch() {
         searchField.textProperty().addListener((obs, oldVal, newVal) -> {
-            filteredDishes.setPredicate(dish -> {
+            filteredItems.setPredicate(item -> {
                 if (newVal == null || newVal.isEmpty())
                     return true;
                 String lower = newVal.toLowerCase();
-                return dish.getNom().toLowerCase().contains(lower);
+                String name = "";
+                if (item instanceof RepasDetaille)
+                    name = ((RepasDetaille) item).getNom();
+                else if (item instanceof Menu)
+                    name = ((Menu) item).getNom();
+                return name.toLowerCase().contains(lower);
             });
         });
     }
@@ -209,8 +253,14 @@ public class AdminMenuPlannerController implements Initializable {
             Dragboard db = event.getDragboard();
             boolean success = false;
             if (db.hasString()) {
-                Long dishId = Long.parseLong(db.getString());
-                assignDishToSlot(dishId, date, type);
+                String data = db.getString();
+                if (data.startsWith("DISH:")) {
+                    Long dishId = Long.parseLong(data.substring(5));
+                    assignDishToSlot(dishId, date, type);
+                } else if (data.startsWith("MENU:")) {
+                    Long menuId = Long.parseLong(data.substring(5));
+                    assignMenuToSlot(menuId, date, type);
+                }
                 loadCompositionsForSlot(slot, date, type);
                 success = true;
             }
@@ -219,6 +269,17 @@ public class AdminMenuPlannerController implements Initializable {
         });
 
         return slot;
+    }
+
+    private void assignMenuToSlot(Long menuId, LocalDate date, String type) {
+        menuService.findById(menuId).ifPresent(m -> {
+            List<Long> dishIds = m.getDishesIds();
+            if (dishIds != null) {
+                for (Long dishId : dishIds) {
+                    assignDishToSlot(dishId, date, type);
+                }
+            }
+        });
     }
 
     private void loadCompositionsForSlot(VBox slot, LocalDate date, String type) {

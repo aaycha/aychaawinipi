@@ -48,8 +48,12 @@
             <padding>
                 <Insets top="15" right="10" bottom="15" left="10"/>
             </padding>
-            <Label text="CATALOGUE RAPIDE" styleClass="sidebar-title" />
-            <TextField fx:id="searchField" promptText="Rechercher un plat..." styleClass="search-bar-smart" />
+            <Label text="CATALOGUE" styleClass="sidebar-title" />
+            <HBox spacing="5" alignment="CENTER">
+                <Button fx:id="btnShowDishes" text="Plats" onAction="#showDishes" styleClass="btn-toggle-active" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
+                <Button fx:id="btnShowMenus" text="Menus" onAction="#showMenus" styleClass="btn-toggle-inactive" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
+            </HBox>
+            <TextField fx:id="searchField" promptText="Rechercher..." styleClass="search-bar-smart" />
             <ListView fx:id="availableDishesList" VBox.vgrow="ALWAYS" styleClass="modern-list-view" />
             <Button text="Nouveau Plat" styleClass="btn-turquoise" maxWidth="Infinity" />
         </VBox>
