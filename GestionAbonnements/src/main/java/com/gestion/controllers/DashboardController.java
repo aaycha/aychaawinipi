@@ -372,58 +372,163 @@ public class DashboardController {
     }
 
     @FXML
-    private void loadAbonnements() {
-        loadModule("/views/abonnement/abonnement.fxml", "Abonnements");
+    private void showParticipationSelector() {
+        String[][] items = {
+                { "🤝", "Participations", "Gérer les participations aux événements",
+                        "/views/participation/participation.fxml" },
+                { "🎫", "Abonnements", "Gérer les abonnements des membres", "/views/abonnement/abonnement.fxml" }
+        };
+        VBox selector = buildSelectorView("Participation & Abonnement", "Choisissez un module à gérer", items, 2);
+        if (mainContentArea != null) {
+            mainContentArea.getChildren().setAll(selector);
+        }
     }
 
     @FXML
-    private void loadParticipations() {
-        loadModule("/views/participation/participation.fxml", "Participations");
+    private void showRestaurationSelector() {
+        String[][] items = {
+                { "🍱", "Repas", "Gérer les repas disponibles", "/views/repas/repas-liste.fxml" },
+                { "📜", "Menus", "Composer et gérer les menus", "/views/menu/menu-liste.fxml" },
+                { "🗓️", "Planification", "Planifier les menus de la semaine", "/views/repas/admin-menu-planner.fxml" },
+                { "📈", "Analytics", "Statistiques et rapports détaillés", "/views/analytics/analytics.fxml" },
+                { "🤖", "IA Recommandations", "Recommandations intelligentes par IA",
+                        "/views/recommandations/recommandations.fxml" },
+                { "🎟️", "Codes Promo", "Gérer les codes promotionnels", "/views/admin/promo-list.fxml" },
+                { "📦", "Inventaire", "Suivi du stock et inventaire", "/views/admin/inventaire.fxml" },
+                { "🏨", "Restaurants", "Gérer les restaurants partenaires", "/views/restaurant/restaurant-liste.fxml" },
+                { "🚩", "Restaurant Map", "Carte interactive des restaurants", "/views/map/map-view.fxml" }
+        };
+        VBox selector = buildSelectorView("Restauration", "Choisissez un module à gérer", items, 3);
+        if (mainContentArea != null) {
+            mainContentArea.getChildren().setAll(selector);
+        }
     }
 
-    @FXML
-    private void loadRestaurants() {
-        loadModule("/views/restaurant/restaurant-liste.fxml", "Restaurants");
+    /**
+     * Builds a premium card-based selector view.
+     */
+    private VBox buildSelectorView(String title, String subtitle, String[][] items, int maxColumns) {
+        VBox container = new VBox(20);
+        container.setAlignment(Pos.TOP_CENTER);
+        container.setPadding(new Insets(40, 30, 30, 30));
+        container.setStyle("-fx-background-color: transparent;");
+
+        // Back button
+        Button backBtn = new Button("← Retour au Dashboard");
+        backBtn.setStyle(
+                "-fx-background-color: rgba(255,255,255,0.08); -fx-text-fill: #cbd5e1; -fx-font-size: 11; -fx-font-weight: 600; "
+                        + "-fx-background-radius: 20; -fx-padding: 8 18; -fx-cursor: hand; "
+                        + "-fx-border-color: rgba(255,255,255,0.1); -fx-border-radius: 20;");
+        backBtn.setOnMouseEntered(e -> backBtn.setStyle(
+                "-fx-background-color: rgba(255,255,255,0.15); -fx-text-fill: white; -fx-font-size: 11; -fx-font-weight: 600; "
+                        + "-fx-background-radius: 20; -fx-padding: 8 18; -fx-cursor: hand; "
+                        + "-fx-border-color: rgba(249,115,22,0.5); -fx-border-radius: 20;"));
+        backBtn.setOnMouseExited(e -> backBtn.setStyle(
+                "-fx-background-color: rgba(255,255,255,0.08); -fx-text-fill: #cbd5e1; -fx-font-size: 11; -fx-font-weight: 600; "
+                        + "-fx-background-radius: 20; -fx-padding: 8 18; -fx-cursor: hand; "
+                        + "-fx-border-color: rgba(255,255,255,0.1); -fx-border-radius: 20;"));
+        backBtn.setOnAction(e -> showDashboard());
+
+        HBox backRow = new HBox(backBtn);
+        backRow.setAlignment(Pos.CENTER_LEFT);
+
+        // Title section
+        Label titleLabel = new Label(title);
+        titleLabel.setStyle("-fx-font-size: 26; -fx-font-weight: 900; -fx-text-fill: white;");
+        Label subtitleLabel = new Label(subtitle);
+        subtitleLabel.setStyle("-fx-font-size: 13; -fx-text-fill: #94a3b8; -fx-font-weight: 500;");
+
+        VBox headerBox = new VBox(4, titleLabel, subtitleLabel);
+        headerBox.setAlignment(Pos.CENTER);
+
+        // Cards grid
+        GridPane grid = new GridPane();
+        grid.setHgap(20);
+        grid.setVgap(20);
+        grid.setAlignment(Pos.CENTER);
+        grid.setPadding(new Insets(10, 0, 0, 0));
+
+        int col = 0;
+        int row = 0;
+        for (String[] item : items) {
+            VBox card = createModuleCard(item[0], item[1], item[2], item[3]);
+            grid.add(card, col, row);
+            col++;
+            if (col >= maxColumns) {
+                col = 0;
+                row++;
+            }
+        }
+
+        // Wrap grid in a glass panel
+        VBox glassWrapper = new VBox(grid);
+        glassWrapper.setAlignment(Pos.CENTER);
+        glassWrapper.setPadding(new Insets(25));
+        glassWrapper.setStyle(
+                "-fx-background-color: rgba(15, 23, 42, 0.75); -fx-background-radius: 16; "
+                        + "-fx-border-color: rgba(255,255,255,0.12); -fx-border-width: 1; -fx-border-radius: 16; "
+                        + "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 20, 0, 0, 8);");
+
+        container.getChildren().addAll(backRow, headerBox, glassWrapper);
+        return container;
     }
 
-    @FXML
-    private void loadRepas() {
-        loadModule("/views/repas/repas-liste.fxml", "Repas");
-    }
+    /**
+     * Creates a single premium module card for the selector view.
+     */
+    private VBox createModuleCard(String icon, String name, String description, String fxmlPath) {
+        VBox card = new VBox(10);
+        card.setAlignment(Pos.CENTER);
+        card.setPadding(new Insets(20, 16, 20, 16));
+        card.setPrefWidth(200);
+        card.setPrefHeight(170);
 
-    @FXML
-    private void loadMenus() {
-        loadModule("/views/menu/menu-liste.fxml", "Menus");
-    }
+        String normalStyle = "-fx-background-color: rgba(255,255,255,0.06); -fx-background-radius: 14; "
+                + "-fx-border-color: rgba(255,255,255,0.1); -fx-border-width: 1; -fx-border-radius: 14; "
+                + "-fx-cursor: hand; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0, 0, 3);";
+        String hoverStyle = "-fx-background-color: rgba(255,255,255,0.12); -fx-background-radius: 14; "
+                + "-fx-border-color: rgba(249,115,22,0.6); -fx-border-width: 1.5; -fx-border-radius: 14; "
+                + "-fx-cursor: hand; -fx-effect: dropshadow(gaussian, rgba(249,115,22,0.2), 15, 0, 0, 5);";
 
-    @FXML
-    private void loadRecommandations() {
-        loadModule("/views/recommandations/recommandations.fxml", "AI Recommandations");
-    }
+        card.setStyle(normalStyle);
+        card.setOnMouseEntered(e -> card.setStyle(hoverStyle));
+        card.setOnMouseExited(e -> card.setStyle(normalStyle));
 
-    @FXML
-    private void loadPlanner() {
-        loadModule("/views/repas/admin-menu-planner.fxml", "Planner");
-    }
+        // Icon
+        Label iconLabel = new Label(icon);
+        iconLabel.setStyle("-fx-font-size: 32; -fx-text-fill: #F97316;");
 
-    @FXML
-    private void loadPromoCodes() {
-        loadModule("/views/admin/promo-list.fxml", "Codes Promo");
-    }
+        // Name
+        Label nameLabel = new Label(name);
+        nameLabel.setStyle("-fx-font-size: 14; -fx-font-weight: 800; -fx-text-fill: white;");
 
-    @FXML
-    private void loadInventory() {
-        loadModule("/views/admin/inventaire.fxml", "Inventaire");
-    }
+        // Description
+        Label descLabel = new Label(description);
+        descLabel.setStyle("-fx-font-size: 10; -fx-text-fill: #94a3b8; -fx-font-weight: 500;");
+        descLabel.setWrapText(true);
+        descLabel.setMaxWidth(170);
+        descLabel.setAlignment(Pos.CENTER);
 
-    @FXML
-    private void loadAnalytics() {
-        loadModule("/views/analytics/analytics.fxml", "Analytics");
-    }
+        // Open button
+        Button openBtn = new Button("Ouvrir →");
+        openBtn.setStyle(
+                "-fx-background-color: rgba(249,115,22,0.8); -fx-text-fill: white; -fx-font-size: 10; "
+                        + "-fx-font-weight: 700; -fx-background-radius: 16; -fx-padding: 5 14; -fx-cursor: hand;");
+        openBtn.setOnMouseEntered(e -> openBtn.setStyle(
+                "-fx-background-color: #F97316; -fx-text-fill: white; -fx-font-size: 10; "
+                        + "-fx-font-weight: 700; -fx-background-radius: 16; -fx-padding: 5 14; -fx-cursor: hand; "
+                        + "-fx-effect: dropshadow(gaussian, rgba(249,115,22,0.4), 10, 0, 0, 0);"));
+        openBtn.setOnMouseExited(e -> openBtn.setStyle(
+                "-fx-background-color: rgba(249,115,22,0.8); -fx-text-fill: white; -fx-font-size: 10; "
+                        + "-fx-font-weight: 700; -fx-background-radius: 16; -fx-padding: 5 14; -fx-cursor: hand;"));
+        openBtn.setOnAction(e -> loadModule(fxmlPath, name));
 
-    @FXML
-    private void loadMap() {
-        loadModule("/views/map/map-view.fxml", "Restaurant Map");
+        card.getChildren().addAll(iconLabel, nameLabel, descLabel, openBtn);
+
+        // Also allow click on the entire card
+        card.setOnMouseClicked(e -> loadModule(fxmlPath, name));
+
+        return card;
     }
 
     @FXML

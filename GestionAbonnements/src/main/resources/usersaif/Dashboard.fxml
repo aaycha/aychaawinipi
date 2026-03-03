@@ -98,17 +98,8 @@
                         <!-- Management Sections -->
                         <VBox spacing="5" style="-fx-padding: 5 15;">
                             <Label styleClass="nav-label" text="CAMP MANAGEMENT" />
-                            <Button onAction="#loadAbonnements" prefHeight="40" prefWidth="210" styleClass="nav-button" text="🎫  Abonnements" />
-                            <Button onAction="#loadParticipations" prefHeight="40" prefWidth="210" styleClass="nav-button" text="🤝  Participations" />
-                            <Button onAction="#loadRestaurants" prefHeight="40" prefWidth="210" styleClass="nav-button" text="🏨  Restaurants" />
-                            <Button onAction="#loadRepas" prefHeight="40" prefWidth="210" styleClass="nav-button" text="🍱  Repas" />
-                            <Button onAction="#loadMenus" prefHeight="40" prefWidth="210" styleClass="nav-button" text="📜  Menus" />
-                            <Button onAction="#loadPlanner" prefHeight="40" prefWidth="210" styleClass="nav-button" text="🗓️  Planificateur" />
-                            <Button onAction="#loadPromoCodes" prefHeight="40" prefWidth="210" styleClass="nav-button" text="🎟️  Codes Promo" />
-                            <Button onAction="#loadInventory" prefHeight="40" prefWidth="210" styleClass="nav-button" text="📦  Inventaire" />
-                            <Button onAction="#loadRecommandations" prefHeight="40" prefWidth="210" styleClass="nav-button" text="🤖  AI Recommends" />
-                            <Button onAction="#loadAnalytics" prefHeight="35" prefWidth="180" styleClass="nav-button" text="📈  Analytics" />
-                            <Button onAction="#loadMap" prefHeight="35" prefWidth="180" styleClass="nav-button" text="🚩  Restaurant Map" />
+                            <Button onAction="#showParticipationSelector" prefHeight="40" prefWidth="210" styleClass="nav-button" text="🤝  Participation &amp; Abonnement" />
+                            <Button onAction="#showRestaurationSelector" prefHeight="40" prefWidth="210" styleClass="nav-button" text="🍽️  Restauration" />
                         </VBox>
 
                         <Region VBox.vgrow="ALWAYS" />
