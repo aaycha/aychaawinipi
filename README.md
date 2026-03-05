@@ -3,6 +3,7 @@
 ## 📋 Description
 
 Ce projet est une application JavaFX professionnelle pour la gestion avancée des abonnements et participations avec intégration d'intelligence artificielle pour les recommandations personnalisées.
+This module was developed as part of the PIDEV – 3rd Year Engineering Program at Esprit School of Engineering (Academic Year 2025–2026).
 
 ### 🎯 Fonctionnalités Principales
 
