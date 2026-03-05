@@ -23,17 +23,17 @@
             <!-- Background Image -->
             <ImageView fitHeight="1000" fitWidth="1800" preserveRatio="false">
                 <image>
-                    <Image url="@clayton-manche--HtKP_ke858-unsplash.jpg" />
+                    <Image url="/usersaif/roaming_revolution-camping-6626537_1920.jpg" />
                 </image>
             </ImageView>
             
             <!-- Dark Overlay -->
-            <StackPane style="-fx-background-color: rgba(10, 15, 13, 0.7);" />
+            <StackPane style="-fx-background-color: rgba(10, 15, 13, 0.6);" />
 
             <!-- Main Scrollable Content -->
-            <ScrollPane fitToWidth="true" hbarPolicy="AS_NEEDED" styleClass="modern-scroll">
+            <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="modern-scroll" style="-fx-background-color: transparent;">
                 <content>
-                    <VBox alignment="CENTER" spacing="15" style="-fx-padding: 20 0 40 0;">
+                    <VBox alignment="CENTER" spacing="15" style="-fx-padding: 20 0 40 0; -fx-background-color: transparent;">
                         
                         <!-- Header Section -->
                         <VBox alignment="CENTER" spacing="5">
@@ -118,9 +118,9 @@
                             </GridPane>
 
                             <!-- Signup Button -->
-                            <Button fx:id="Signup" maxWidth="Infinity" onAction="#handleSignup" prefHeight="42.0" prefWidth="380.0" style="-fx-background-color: #7B5FF5; -fx-text-fill: white; -fx-font-size: 14; -fx-font-weight: 600; -fx-background-radius: 10; -fx-cursor: hand;" text="Create Account">
+                            <Button fx:id="Signup" maxWidth="Infinity" onAction="#handleSignup" prefHeight="45.0" styleClass="button-capsule" text="CREATE ACCOUNT ACCOUNT">
                                 <VBox.margin>
-                                    <Insets top="6" />
+                                    <Insets top="10" />
                                 </VBox.margin>
                             </Button>
 

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<StackPane prefHeight="650.0" prefWidth="900.0"
+           xmlns="http://javafx.com/javafx/21"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.gestion.controllers.AjouterProgrammeController"
+
+           styleClass="app-root">
+
+    <!-- Background -->
+    <ImageView fx:id="bgImage" fitHeight="650.0" fitWidth="900.0" preserveRatio="false" />
+    <Pane styleClass="bg-overlay"/>
+
+    <BorderPane>
+        <padding>
+            <Insets top="26" right="26" bottom="26" left="26"/>
+        </padding>
+
+        <!-- Header -->
+        <top>
+            <HBox alignment="CENTER_LEFT" spacing="16" styleClass="header-card">
+                <Button text="↩" onAction="#onRetour" styleClass="btn-icon-minimal"/>
+                <padding>
+                    <Insets bottom="16" left="18" right="18" top="16" />
+                </padding>
+
+                <ImageView fx:id="imgLogo" fitHeight="58" fitWidth="58" preserveRatio="true" />
+
+                <VBox spacing="3">
+                    <Label text="Ajouter Programme" styleClass="title"/>
+                    <Label fx:id="lblEventInfo" text="—" styleClass="subtitle"/>
+                </VBox>
+
+                <Pane HBox.hgrow="ALWAYS"/>
+            </HBox>
+        </top>
+
+        <!-- Content -->
+        <center>
+            <ScrollPane fitToWidth="true" styleClass="glass-scroll">
+                <content>
+                    <VBox spacing="16" styleClass="panel" alignment="TOP_CENTER" maxWidth="760">
+                        <padding>
+                            <Insets top="22" right="22" bottom="22" left="22"/>
+                        </padding>
+
+                        <!-- Message -->
+                        <Label fx:id="lblMessage" text="" styleClass="subtitle"/>
+
+                        <!-- Card form -->
+                        <VBox spacing="14" styleClass="panel" maxWidth="720">
+                            <padding>
+                                <Insets top="18" right="18" bottom="18" left="18"/>
+                            </padding>
+
+                            <Label text="Informations du programme" styleClass="card-title"/>
+
+                            <HBox spacing="12" alignment="CENTER_LEFT">
+                                <Label text="Titre :" styleClass="chip"/>
+                                <TextField fx:id="txtTitre"
+                                           promptText="Titre du programme"
+                                           HBox.hgrow="ALWAYS"/>
+                            </HBox>
+
+                            <Separator opacity="0.25"/>
+
+                            <Label text="Date début" styleClass="subtitle"/>
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <DatePicker fx:id="dpDebut" prefWidth="240"/>
+                                <Spinner fx:id="spDebutH" prefWidth="90"/>
+                                <Spinner fx:id="spDebutM" prefWidth="90"/>
+                            </HBox>
+
+                            <Label text="Date fin" styleClass="subtitle"/>
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <DatePicker fx:id="dpFin" prefWidth="240"/>
+                                <Spinner fx:id="spFinH" prefWidth="90"/>
+                                <Spinner fx:id="spFinM" prefWidth="90"/>
+                            </HBox>
+                        </VBox>
+
+                        <!-- Actions -->
+                        <HBox spacing="12" alignment="CENTER_RIGHT" maxWidth="720">
+                            <Button text="Retour" styleClass="btn-secondary" onAction="#onRetour"/>
+                            <Button text="Ajouter" styleClass="btn-primary" onAction="#onAjouterProgramme"/>
+                        </HBox>
+
+                        <!-- Hint -->
+                        <Label text="Astuce: double-clic sur un programme (dans Détails) pour le supprimer (admin)."
+                               styleClass="subtitle"/>
+                    </VBox>
+                </content>
+            </ScrollPane>
+        </center>
+
+    </BorderPane>
+</StackPane>

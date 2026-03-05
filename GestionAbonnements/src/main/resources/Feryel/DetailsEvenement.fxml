@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+
+<StackPane fx:id="root" prefHeight="650.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gestion.controllers.DetailsEvenementController" styleClass="app-root">
+    
+    <!-- Background & Glass Background Card -->
+    <ImageView fx:id="bgImage" fitHeight="650.0" fitWidth="900.0" preserveRatio="false" />
+    <Pane styleClass="bg-overlay" />
+
+    <BorderPane>
+        <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+
+        <!-- Header -->
+        <top>
+            <HBox spacing="15" alignment="CENTER_LEFT" styleClass="header-card-glass">
+                <ImageView fx:id="imgLogo" fitHeight="45" fitWidth="45" preserveRatio="true"/>
+                <VBox>
+                    <Label text="Détails de l'événement" styleClass="details-title-white" />
+                    <Label fx:id="lblProgCount" text="0 Aucun programme" styleClass="details-subtitle-gold" />
+                </VBox>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="📅" styleClass="btn-icon-minimal"/>
+            </HBox>
+        </top>
+
+        <center>
+            <HBox spacing="20">
+                <VBox.margin><Insets top="15"/></VBox.margin>
+                
+                <!-- Left Column: Visuals -->
+                <VBox spacing="15" prefWidth="380">
+                    <!-- Main Event Image -->
+                    <StackPane styleClass="img-container-premium">
+                        <ImageView fx:id="imgEvent" fitHeight="240" fitWidth="380" preserveRatio="false" styleClass="img-rounded"/>
+                        <Button fx:id="btnGenererImageIa" text="📷 Générer image IA" onAction="#onGenererImageIa" 
+                                StackPane.alignment="TOP_LEFT" styleClass="btn-ia-overlay">
+                            <StackPane.margin><Insets top="10" left="10"/></StackPane.margin>
+                        </Button>
+                    </StackPane>
+
+                    <!-- QR Code & Map -->
+                    <HBox spacing="15" VBox.vgrow="ALWAYS">
+                        <VBox spacing="10" alignment="CENTER" styleClass="panel-glass-dark" prefWidth="180">
+                            <Label text="QR Code" styleClass="label-gold-small"/>
+                            <ImageView fx:id="imgQr" fitHeight="130" fitWidth="130" preserveRatio="true"/>
+                            <Button fx:id="btnRegenQr" text="Regénérer QR" onAction="#onGenererQr" styleClass="btn-minimal-gold"/>
+                        </VBox>
+                        
+                        <VBox spacing="10" styleClass="panel-glass-dark" HBox.hgrow="ALWAYS">
+                            <Label text="Localisation" styleClass="label-gold-small"/>
+                            <VBox spacing="5">
+                                <HBox spacing="5" alignment="CENTER_LEFT">
+                                    <Label text="Latitude:" styleClass="label-dim"/>
+                                    <Label fx:id="lblLatitude" text="..." styleClass="label-white-bold"/>
+                                </HBox>
+                                <HBox spacing="5" alignment="CENTER_LEFT">
+                                    <Label text="Longitude:" styleClass="label-dim"/>
+                                    <Label fx:id="lblLongitude" text="..." styleClass="label-white-bold"/>
+                                </HBox>
+                            </VBox>
+                            <Region VBox.vgrow="ALWAYS"/>
+                            <Button fx:id="btnOpenMap" text="📍 Ouvrir dans Google Maps" onAction="#onOpenMap" maxWidth="Infinity" styleClass="btn-gold-card"/>
+                        </VBox>
+                    </HBox>
+                </VBox>
+
+                <!-- Right Column: Info Chips -->
+                <ScrollPane fitToWidth="true" HBox.hgrow="ALWAYS" styleClass="glass-scroll-no-border">
+                    <VBox spacing="12">
+                        <padding><Insets right="10"/></padding>
+                        
+                        <Label text="Détails" styleClass="section-tag-gold"/>
+                        
+                        <VBox spacing="8" styleClass="info-grid-premium">
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <Label text="Titre:" prefWidth="80" styleClass="label-dim"/>
+                                <Label fx:id="lblTitre" text="..." styleClass="chip-info-large" HBox.hgrow="ALWAYS"/>
+                            </HBox>
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <Label text="Type:" prefWidth="80" styleClass="label-dim"/>
+                                <Label fx:id="lblType" text="..." styleClass="chip-info" />
+                            </HBox>
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <Label text="Lieu:" prefWidth="80" styleClass="label-dim"/>
+                                <Label fx:id="lblLieu" text="..." styleClass="chip-info" />
+                            </HBox>
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <Label text="Début:" prefWidth="80" styleClass="label-dim"/>
+                                <Label fx:id="lblDebut" text="..." styleClass="chip-info" />
+                            </HBox>
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <Label text="Fin:" prefWidth="80" styleClass="label-dim"/>
+                                <Label fx:id="lblFin" text="..." styleClass="chip-info" />
+                            </HBox>
+                            <VBox spacing="5">
+                                <Label text="Description:" styleClass="label-dim"/>
+                                <Label fx:id="lblDescription" text="..." wrapText="true" styleClass="text-area-mock"/>
+                            </VBox>
+                        </VBox>
+
+                        <Label text="Programmes" styleClass="section-tag-gold"/>
+                        <VBox fx:id="progContainer" spacing="8" styleClass="prog-container-mock" />
+                    </VBox>
+                </ScrollPane>
+
+                <!-- Floating Sidebar Actions -->
+                <VBox spacing="12" alignment="TOP_CENTER" prefWidth="180" styleClass="sidebar-actions">
+                    <Button fx:id="btnReserverMaquillage" text="💄 Réservation Maquillage" onAction="#onReserverMaquillage" maxWidth="Infinity" styleClass="btn-gold-action"/>
+                    <Button fx:id="btnToggleNotif" text="Activer notification" onAction="#onToggleNotification" maxWidth="Infinity" styleClass="btn-dark-glass"/>
+                    <Region VBox.vgrow="ALWAYS"/>
+                    <Button text="↩ Retour" onAction="#onGoBack" maxWidth="Infinity" styleClass="btn-secondary-glass"/>
+                </VBox>
+            </HBox>
+        </center>
+
+        <bottom>
+            <HBox spacing="12" alignment="CENTER_RIGHT" fx:id="adminButtons">
+                <Button text="Ajouter Programme" onAction="#onGoAjouterProg" styleClass="btn-gold-capsule"/>
+                <Button text="Modifier" onAction="#onGoModifier" styleClass="btn-dark-glass-capsule"/>
+            </HBox>
+        </bottom>
+    </BorderPane>
+</StackPane>

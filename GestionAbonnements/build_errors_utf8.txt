@@ -1,0 +1,51 @@
+﻿[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------------< com.gestion:gestion-abonnements >-------------------
+[INFO] Building Gestion des Abonnements et Participations 1.0.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[WARNING] 6 problems were encountered while building the effective model for org.openjfx:javafx-controls:jar:17.0.2 during dependency collection step for project (use -X to see details)
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ gestion-abonnements ---
+[INFO] Copying 101 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ gestion-abonnements ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 177 source files with javac [debug release 11] to target\classes
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/SponsorViewController.java:[486,42] illegal start of expression
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/SponsorViewController.java:[487,29] : expected
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/SponsorViewController.java:[487,30] illegal start of expression
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/SponsorViewController.java:[488,31] : expected
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/SponsorViewController.java:[488,32] illegal start of expression
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/SponsorViewController.java:[489,22] : expected
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/SponsorViewController.java:[489,23] illegal start of expression
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/SponsorViewController.java:[490,20] : expected
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/SponsorViewController.java:[490,21] illegal start of expression
+[INFO] 9 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  1.474 s
+[INFO] Finished at: 2026-03-04T17:55:39+01:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.11.0:compile (default-compile) on project gestion-abonnements: Compilation failure: Compilation failure: 
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/SponsorViewController.java:[486,42] illegal start of expression
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/SponsorViewController.java:[487,29] : expected
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/SponsorViewController.java:[487,30] illegal start of expression
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/SponsorViewController.java:[488,31] : expected
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/SponsorViewController.java:[488,32] illegal start of expression
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/SponsorViewController.java:[489,22] : expected
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/SponsorViewController.java:[489,23] illegal start of expression
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/SponsorViewController.java:[490,20] : expected
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/SponsorViewController.java:[490,21] illegal start of expression
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

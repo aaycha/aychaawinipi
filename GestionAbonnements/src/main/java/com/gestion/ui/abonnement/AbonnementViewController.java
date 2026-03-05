@@ -131,11 +131,20 @@ public class AbonnementViewController {
         VBox content = new VBox(5);
         HBox.setHgrow(content, Priority.ALWAYS);
 
-        // Header: User ID + Statut
+        // Header: User Name + Statut
         HBox header = new HBox(10);
         header.setAlignment(Pos.CENTER_LEFT);
-        Label title = new Label("Utilisateur #" + item.getUserId());
+        String displayName;
+        if (item.getUserId() != null && item.getUserId() == 1L) {
+            displayName = "🛰️ MASTER TEMPLATE";
+        } else if (item.getUserName() != null && !item.getUserName().isEmpty()) {
+            displayName = "👤 " + item.getUserName();
+        } else {
+            displayName = "❓ Explorateur #" + item.getUserId();
+        }
+        Label title = new Label(displayName);
         title.getStyleClass().add("card-title");
+        title.setStyle("-fx-font-weight: 900; -fx-text-fill: " + (item.getUserId() == 1L ? "#FACC15" : "white") + ";");
 
         Label statusBadge = new Label(item.getStatut().name());
         statusBadge.getStyleClass().addAll("status-badge", item.getStatut().name());
@@ -160,8 +169,14 @@ public class AbonnementViewController {
         }
 
         // Row 2
-        details.add(createDetailLabel("💎 Type:", item.getType().name()), 0, 1);
+        String typeLabel = (item.getNom() != null && !item.getNom().isEmpty()) ? item.getNom() : item.getType().name();
+        details.add(createDetailLabel("💎 Type:", typeLabel), 0, 1);
         details.add(createDetailLabel("🔄 Auto-Renew:", item.isAutoRenew() ? "Oui" : "Non"), 1, 1);
+
+        // Row 3 (Restriction)
+        if (item.getRestrictionType() != null && !item.getRestrictionType().isEmpty()) {
+            details.add(createDetailLabel("🚫 Restriction:", item.getRestrictionType()), 0, 2);
+        }
 
         content.getChildren().addAll(header, details);
 
@@ -174,6 +189,13 @@ public class AbonnementViewController {
 
         Label points = new Label(item.getPointsAccumules() + " pts");
         points.setStyle("-fx-text-fill: #6c757d; -fx-font-size: 12px;");
+
+        if (item.getUserId() == 1L) {
+            Label templateLabel = new Label("PUBLIC ACCESS");
+            templateLabel.setStyle(
+                    "-fx-text-fill: #22c55e; -fx-font-size: 9px; -fx-font-weight: 900; -fx-background-color: rgba(34, 197, 94, 0.1); -fx-padding: 2 6; -fx-background-radius: 4;");
+            rightSide.getChildren().add(0, templateLabel);
+        }
 
         rightSide.getChildren().addAll(price, points);
 

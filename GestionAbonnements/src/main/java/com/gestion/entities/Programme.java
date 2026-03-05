@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 public class Programme {
     private int idProg;
-    private int eventId; // FK vers evenement.id_event
+    private int eventId;
     private String titre;
     private LocalDateTime debut;
     private LocalDateTime fin;

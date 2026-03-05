@@ -1,52 +1,152 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.image.*?>
-<?import java.net.URL?>
 
-<ScrollPane xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.gestion.ui.utilisateur.EspaceUtilisateurController"
-            fitToWidth="true" fitToHeight="false" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
-            style="-fx-background: transparent; -fx-background-color: transparent;"
-            stylesheets="@../../styles/nature-mood.css, @../../styles/card-view.css">
+<ScrollPane
+        fitToHeight="false"
+        fitToWidth="false"
+        hbarPolicy="AS_NEEDED"
+        vbarPolicy="AS_NEEDED"
+        prefWidth="900"
+        prefHeight="600"
+        style="-fx-background: transparent; -fx-background-color: transparent;"
+        stylesheets="@../../styles/nature-mood.css, @../../styles/card-view.css"
+        xmlns="http://javafx.com/javafx/17.0.12"
+        xmlns:fx="http://javafx.com/fxml/1"
+        fx:controller="com.gestion.ui.utilisateur.EspaceUtilisateurController">
 
-    <VBox spacing="4" style="-fx-padding: 6; -fx-background-color: transparent;">
-        
-        <!-- Hiker Header -->
-        <HBox spacing="12" alignment="CENTER_LEFT">
-            <VBox spacing="0" HBox.hgrow="ALWAYS">
-                <Label text="MY BASE CAMP" styleClass="text-hero" style="-fx-font-size: 20;"/>
-                <Label text="Log your mountain mission data and check trail status" styleClass="text-muted" style="-fx-font-size: 10;"/>
-            </VBox>
-            
-            <!-- Weather Widget -->
-            <VBox spacing="2" alignment="CENTER_RIGHT" style="-fx-background-color: rgba(255,255,255,0.05); -fx-background-radius: 10; -fx-padding: 5 12;">
-                <HBox spacing="8" alignment="CENTER_RIGHT">
-                    <Label fx:id="weatherTemp" text="--°C" style="-fx-text-fill: #F97316; -fx-font-size: 14; -fx-font-weight: 800;"/>
-                    <Label fx:id="weatherCondition" text="Loading..." style="-fx-text-fill: #94a3b8; -fx-font-size: 10;"/>
+    <content>
+        <VBox alignment="TOP_CENTER"
+              spacing="10"
+              style="-fx-padding: 15; -fx-background-color: transparent;"
+              minWidth="1200"
+              minHeight="800">
+
+            <!-- Inner Container -->
+            <VBox maxWidth="1100"
+                  minWidth="1100"
+                  spacing="15">
+
+                <!-- Header -->
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <VBox spacing="0" HBox.hgrow="ALWAYS">
+                        <Label style="-fx-font-size: 22;"
+                               styleClass="text-hero"
+                               text="MY EXPEDITION HUB" />
+                        <Label style="-fx-font-size: 11;"
+                               styleClass="text-muted"
+                               text="Log your mountain mission data and check trail status" />
+                    </VBox>
+
+                    <!-- Weather Widget -->
+                    <VBox alignment="CENTER_RIGHT"
+                          spacing="2"
+                          style="-fx-background-color: rgba(255,255,255,0.05);
+                                 -fx-background-radius: 12;
+                                 -fx-padding: 8 15;">
+
+                        <HBox alignment="CENTER_RIGHT" spacing="8">
+                            <Label fx:id="weatherTemp"
+                                   style="-fx-text-fill: #F97316;
+                                          -fx-font-size: 16;
+                                          -fx-font-weight: 800;"
+                                   text="--°C" />
+                            <Label fx:id="weatherCondition"
+                                   style="-fx-text-fill: #94a3b8;
+                                          -fx-font-size: 11;"
+                                   text="Loading..." />
+                        </HBox>
+
+                        <Label fx:id="weatherLocation"
+                               style="-fx-text-fill: #64748b;
+                                      -fx-font-size: 10;"
+                               text="" />
+                    </VBox>
                 </HBox>
-                <Label fx:id="weatherLocation" text="" style="-fx-text-fill: #64748b; -fx-font-size: 9;"/>
+
+                <!-- Quick Navigation -->
+                <HBox alignment="CENTER_LEFT"
+                      spacing="12"
+                      style="-fx-padding: 8 15;
+                             -fx-background-radius: 15;"
+                      styleClass="glass-panel">
+
+                    <Button onAction="#onRetourAccueil"
+                            style="-fx-padding: 8 20;
+                                   -fx-background-radius: 10;
+                                   -fx-font-size: 12;"
+                            styleClass="button-capsule"
+                            text="🏠 BASE CAMP PORTAL" />
+
+                    <Separator orientation="VERTICAL"
+                               prefHeight="15"
+                               style="-fx-opacity: 0.2;" />
+
+                    <Button fx:id="btnCommunity"
+                            onAction="#onCommunityNavigation"
+                            style="-fx-padding: 8 20;
+                                   -fx-background-radius: 10;
+                                   -fx-font-size: 12;"
+                            styleClass="button-capsule"
+                            text="💬 COMMUNITY" />
+
+                    <Separator orientation="VERTICAL"
+                               prefHeight="15"
+                               style="-fx-opacity: 0.2;" />
+
+                    <Button onAction="#onTikTokNavigation"
+                            style="-fx-padding: 8 20;
+                                   -fx-background-radius: 10;
+                                   -fx-font-size: 12;"
+                            styleClass="button-capsule"
+                            text="🎵 TIKTOK INTEL" />
+
+                    <Separator orientation="VERTICAL"
+                               prefHeight="15"
+                               style="-fx-opacity: 0.2;" />
+
+                    <Label fx:id="sectionLabel"
+                           style="-fx-font-size: 11;"
+                           styleClass="stat-title"
+                           text="Mission Terminal: System Ready" />
+                </HBox>
+
+                <!-- Cards -->
+                <TilePane fx:id="cardsContainer"
+                          alignment="TOP_LEFT"
+                          hgap="25"
+                          vgap="25"
+                          prefColumns="3"
+                          prefTileWidth="320"
+                          minWidth="1000"
+                          style="-fx-padding: 15 0;" />
+
+                <!-- Bottom Insight -->
+                <VBox spacing="10"
+                      style="-fx-padding: 15;
+                             -fx-background-color: rgba(16, 185, 129, 0.05);
+                             -fx-border-color: rgba(16, 185, 129, 0.1);
+                             -fx-border-radius: 15;
+                             -fx-background-radius: 15;"
+                      styleClass="glass-panel">
+
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <Label style="-fx-font-size: 16;" text="🍃" />
+                        <Label style="-fx-font-size: 12;
+                                       -fx-font-weight: bold;"
+                               text="SCOUT WISDOM" />
+                    </HBox>
+
+                    <Label style="-fx-font-style: italic;
+                                   -fx-font-size: 11;"
+                           styleClass="text-muted"
+                           text="Your mission efficiency is optimized. The LAMA Navigator ensures all trail conditions are monitored for your safety."
+                           wrapText="true" />
+                </VBox>
+
             </VBox>
-        </HBox>
-
-        <!-- Quick Navigation -->
-        <HBox spacing="8" alignment="CENTER_LEFT" styleClass="glass-panel" style="-fx-padding: 6 12; -fx-background-radius: 12;">
-            <Button text="🏠 BASE CAMP PORTAL" onAction="#onRetourAccueil" styleClass="button-capsule" style="-fx-padding: 6 15; -fx-background-radius: 8; -fx-font-size: 11;"/>
-            <Separator orientation="VERTICAL" prefHeight="12" style="-fx-opacity: 0.1;"/>
-            <Label fx:id="sectionLabel" text="Mission Terminal: System Ready" styleClass="stat-title" style="-fx-font-size: 10;"/>
-        </HBox>
-
-        <!-- Dynamic Content Nodes -->
-        <FlowPane fx:id="cardsContainer" hgap="15" vgap="15" prefWrapLength="1050" alignment="TOP_LEFT"/>
-        
-        <!-- Bottom Insight -->
-        <VBox spacing="8" styleClass="glass-panel" style="-fx-padding: 12; -fx-background-color: rgba(16, 185, 129, 0.05); -fx-border-color: rgba(16, 185, 129, 0.1);">
-            <HBox alignment="CENTER_LEFT" spacing="8">
-                <Label text="🍃" style="-fx-font-size: 14;"/>
-                <Label text="SCOUT WISDOM" styleClass="stat-title" style="-fx-text-fill: -fx-nature-accent-green; -fx-font-size: 10;"/>
-            </HBox>
-            <Label text="Your mission efficiency is optimized. The LAMA Navigator ensures all trail conditions are monitored for your safety." 
-                   wrapText="true" styleClass="text-muted" style="-fx-font-style: italic; -fx-font-size: 10;"/>
         </VBox>
-    </VBox>
+    </content>
+
 </ScrollPane>

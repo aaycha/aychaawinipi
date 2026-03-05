@@ -365,6 +365,122 @@ tail -f logs/application.log
 grep ERROR logs/application.log
 ```
 
+## 🏔️ LAMA EXPEDITION - Management System
+
+**LAMA EXPEDITION** is a premium, all-in-one management platform designed for scouting adventures, trekking, and nature expeditions. Built with JavaFX and powered by AI, it offers a seamless experience for both administrators and explorers.
+
+---
+
+## 🌟 Key Features
+
+### 🛠️ Admin Dashboard
+*   **Abonnements**: Complete management of monthly, annual, and premium subscriptions.
+*   **Participations**: Track event registrations and activity participation.
+*   **Événements**: Manage treks, campfire nights, and outdoor stays.
+*   **Restauration**: Specialized module for menu planning, inventory (ingredients), and base camp rations.
+*   **Boutique & Inventaire**: Manage trekking equipment inventory, sales, and rentals.
+*   **Analytics**: Real-time statistics and performance tracking for business optimization.
+*   **Infrastructure**: Automatic database schema management and table initialization.
+
+### ⛺ User Expedition Hub (Espace Utilisateur)
+*   **Mission Control**: Personal dashboard to track "Expedition Data" and "Trail Status."
+*   **AI Satellite Scout**: Integrated AI (powered by Gemini) for visual analysis and smart recommendations.
+*   **Boutique LAMA**: User-facing store to buy or rent trekking gear.
+*   **Messagerie Chat**: Real-time communication system for community explorers.
+*   **Weather Widget**: Real-time weather integration (currently tracking Tunis/Expedition base).
+*   **TikTok Intel**: Integrated search for viral expedition feedback and viral scouting spots.
+
+---
+
+## 💻 Technology Stack
+
+*   **Core**: Java 11
+*   **UI Framework**: JavaFX 17+ (Premium Nature-inspired design)
+*   **Build Tool**: Maven
+*   **Database**: MySQL 8.0+
+*   **AI Integration**: Google Gemini API (Vision & Recommendations)
+*   **Persistence**: JDBC with custom `MyConnection` singleton
+*   **External APIs**:
+    *   **Stripe**: Payment processing for gear and subscriptions.
+    *   **SendGrid**: Automated email notifications (Invoices, Registrations).
+    *   **Google Calendar**: Event synchronization.
+    *   **Weather API**: Real-time local trail conditions.
+
+---
+
+## 📂 Project Structure
+
+```text
+src/main/java/com/gestion/
+├── api/            # Integration with external REST APIs
+├── controllers/    # Shared and Admin UI controllers
+├── entities/       # Data models (Abonnement, Equipement, etc.)
+├── services/       # Business logic and database interactions
+├── tools/          # Utilities (Connection, Session, Email)
+└── ui/             # Categorized UI controllers (utilisateur, menu, etc.)
+
+src/main/resources/
+├── views/          # FXML layouts organized by module
+├── styles/         # CSS themes (Nature-mood, Dashboard-premium)
+└── images/         # Assets and expedition icons
+```
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+*   **Java 11 JDK**
+*   **Maven**
+*   **MySQL Server**
+
+### Installation
+
+1.  **Database Configuration**:
+    Create a database named `lama` in your MySQL server.
+    Update the credentials in `src/main/java/com/gestion/tools/MyConnection.java`:
+    ```java
+    private final String URL = "jdbc:mysql://localhost:3306/lama";
+    private final String LOGIN = "root";
+    private final String PWD = "";
+    ```
+
+2.  **Environment Variables**:
+    Ensure the following keys are configured (or updated in relevant Service classes):
+    *   `SENDGRID_API_KEY`: For email automation.
+
+3.  **Build**:
+    ```bash
+    mvn clean install
+    ```
+
+4.  **Run**:
+    ```bash
+    mvn javafx:run
+    ```
+
+---
+
+## 🎨 Design Philosophy
+
+LAMA uses a "Nature Glass" aesthetic, combining:
+*   **Glassmorphism**: Transparent, blurred panels for a modern look.
+*   **Organic Palette**: Earthy greens, mountain blues, and sky accents.
+*   **Micro-animations**: Smooth transitions and hover effects for a premium feel.
+
+---
+
+## 👨‍💻 Contributing
+
+1.  Create a feature branch.
+2.  Commit your changes following the Nature-Scout naming convention.
+3.  Push to the branch.
+4.  Open a Pull Request.
+
+---
+
+*“LAMA EXPEDITION - Log your mountain mission data and check trail status.”*
+
 ## 📚 Documentation Complémentaire
 
 ### API Documentation

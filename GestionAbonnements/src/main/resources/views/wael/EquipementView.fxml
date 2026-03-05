@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.ImageView?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.gestion.controllers.EquipementController"
+            stylesheets="@/styles/modern-module.css"
+            prefWidth="1200" prefHeight="750" maxWidth="Infinity" maxHeight="Infinity">
+
+    <!-- TOP: Sous-header + Bannière style LAMMA -->
+    <top>
+        <VBox>
+            <!-- Barre Retour / Section -->
+            <HBox styleClass="sub-header" spacing="10" alignment="CENTER_LEFT">
+                <Button text="← Retour au dashboard" styleClass="back-btn" onAction="#onRetourDashboard"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label text="Équipements" styleClass="nav-section-label"/>
+            </HBox>
+            <!-- Bannière bleue Gestion des Équipements -->
+            <HBox styleClass="section-banner" spacing="10" alignment="CENTER_LEFT">
+                <Label text="📋 Gestion des Équipements" styleClass="section-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label text="Espace Administrateur" styleClass="admin-space-label"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- CENTER: Contenu principal (scrollable) -->
+    <center>
+        <ScrollPane fitToWidth="true" styleClass="content-scroll" BorderPane.alignment="CENTER">
+            <VBox spacing="15">
+                <padding>
+                    <Insets top="20.0" right="20.0" bottom="20.0" left="20.0"/>
+                </padding>
+                <!-- Barre d'actions : claire et directe -->
+                <VBox spacing="8" styleClass="action-bar-box">
+                    <Label text="Que voulez-vous faire ?" styleClass="section-hint"/>
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Button text="+ Ajouter un équipement" fx:id="btnAjouter" styleClass="btn-new" onAction="#ajouterEquipement"/>
+                        <Button text="🔄 Actualiser la liste" fx:id="btnActualiser" styleClass="btn-refresh" onAction="#actualiser"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <TextField fx:id="searchField" promptText="Rechercher par nom, catégorie, ville..." styleClass="search-field" prefWidth="320"/>
+                    </HBox>
+                </VBox>
+
+                <!-- Affiner la liste : filtres et tri (sans option "public") -->
+                <VBox spacing="8" styleClass="filters-section">
+                    <Label text="Affiner la liste" styleClass="section-hint"/>
+                    <HBox spacing="15" alignment="CENTER_LEFT">
+                        <ComboBox fx:id="filterCategorie" promptText="Catégorie" prefWidth="180"/>
+                        <ComboBox fx:id="filterType" promptText="Type" prefWidth="140"/>
+                        <ComboBox fx:id="sortCombo" promptText="Trier par..." prefWidth="180"/>
+                        <Label fx:id="countLabel" text="0 équipement(s)" styleClass="count-label"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button text="Réinitialiser les filtres" fx:id="btnReset" styleClass="btn-reset" onAction="#resetFiltres"/>
+                    </HBox>
+                </VBox>
+
+                <!-- Table : cliquer sur une ligne pour modifier -->
+                <VBox spacing="8">
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Label text="📋 Liste des équipements" styleClass="table-title"/>
+                        <Label text="(sélectionnez une ligne pour modifier ou voir les détails)" styleClass="table-hint"/>
+                    </HBox>
+                    <TableView fx:id="equipementTable" styleClass="data-table" minHeight="280" prefHeight="320" VBox.vgrow="SOMETIMES">
+                        <columns>
+                            <TableColumn fx:id="colId" text="ID" minWidth="45" prefWidth="55"/>
+                            <TableColumn fx:id="colNom" text="Nom" minWidth="100" prefWidth="140"/>
+                            <TableColumn fx:id="colDescription" text="Description" minWidth="140" prefWidth="200"/>
+                            <TableColumn fx:id="colCategorie" text="Catégorie" minWidth="90" prefWidth="110"/>
+                            <TableColumn fx:id="colType" text="Type" minWidth="75" prefWidth="95"/>
+                            <TableColumn fx:id="colPrix" text="Prix (TND)" minWidth="90" prefWidth="110"/>
+                            <TableColumn fx:id="colVille" text="Ville" minWidth="85" prefWidth="105"/>
+                            <TableColumn fx:id="colDateAjout" text="Date" minWidth="100" prefWidth="120"/>
+                            <TableColumn fx:id="colActions" text="Actions" minWidth="115" prefWidth="140"/>
+                        </columns>
+                    </TableView>
+                </VBox>
+
+                <!-- Formulaire : visible seulement quand on clique sur Ajouter ou Modifier -->
+                <VBox fx:id="formSection" spacing="15" styleClass="form-section" visible="false" managed="false">
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <Label text="✏️ Ajouter ou modifier un équipement" styleClass="form-title"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button text="✕ Fermer" fx:id="btnFermerForm" styleClass="btn-close-form" onAction="#masquerFormulaire"/>
+                    </HBox>
+                    <Label text="Remplissez les champs puis Enregistrer. Fermez pour libérer l'espace." styleClass="form-hint"/>
+                    <GridPane hgap="15" vgap="15">
+                        <columnConstraints>
+                            <ColumnConstraints prefWidth="140"/>
+                            <ColumnConstraints prefWidth="280" hgrow="ALWAYS"/>
+                            <ColumnConstraints prefWidth="140"/>
+                            <ColumnConstraints prefWidth="280" hgrow="ALWAYS"/>
+                        </columnConstraints>
+
+                        <Label text="Nom *" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                        <TextField fx:id="nomField" promptText="Ex: Tente 4 places" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                        <Label text="Catégorie" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                        <TextField fx:id="categorieField" promptText="Ex: Camping, Randonnée" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+
+                        <Label text="Type *" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                        <ComboBox fx:id="typeCombo" promptText="Vente ou Location" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                        <Label text="Prix (TND) *" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                        <TextField fx:id="prixField" promptText="Ex: 150.500" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+
+                        <Label text="Ville" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                        <TextField fx:id="villeField" promptText="Ex: Tunis, Sfax" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+
+                        <Label text="Description" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                        <TextArea fx:id="descriptionField" promptText="Description optionnelle de l'équipement..." prefRowCount="3" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="3"/>
+                    </GridPane>
+
+                    <HBox spacing="10" alignment="CENTER_RIGHT">
+                        <Button text="💾 Enregistrer" fx:id="btnModifier" styleClass="btn-modify" onAction="#enregistrerModification"/>
+                        <Button text="🗑️ Supprimer" fx:id="btnSupprimer" styleClass="btn-delete" onAction="#supprimerEquipement"/>
+                        <Button text="ℹ️ Voir les détails" styleClass="btn-details" onAction="#afficherDetails"/>
+                    </HBox>
+                </VBox>
+
+                <!-- Footer -->
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="Prix en dinars tunisiens (TND) • Liste à jour" styleClass="status-label"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                </HBox>
+            </VBox>
+        </ScrollPane>
+    </center>
+
+</BorderPane>

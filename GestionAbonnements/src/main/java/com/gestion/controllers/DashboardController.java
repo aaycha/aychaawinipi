@@ -25,16 +25,19 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.gestion.interfaces.DataReceiver;
+
 /**
  * Controller for the main Admin Dashboard.
  * Handles user management, navigation, and smart feature integration.
  */
-public class DashboardController {
+public class DashboardController implements DataReceiver<String> {
 
     @FXML
     private TextField searchField;
@@ -90,8 +93,15 @@ public class DashboardController {
     private User currentUser;
     private List<User> allUsersList = new ArrayList<>();
 
+    private static DashboardController instance;
+
+    public static DashboardController getInstance() {
+        return instance;
+    }
+
     @FXML
     public void initialize() {
+        instance = this;
         loadUsers();
         updateStatistics();
         startApiMonitoring();
@@ -213,6 +223,15 @@ public class DashboardController {
             topBarUserName.setText(user.getName());
         if (welcomeLabel != null)
             welcomeLabel.setText("Welcome back, " + user.getName());
+    }
+
+    @Override
+    public void setData(String module) {
+        if ("EventSponsor".equals(module)) {
+            Platform.runLater(this::showEventSponsor);
+        } else if ("Sponsor".equals(module)) {
+            Platform.runLater(() -> loadModule("/views/SponsorView.fxml", "Gestion Sponsors"));
+        }
     }
 
     private void loadUsers() {
@@ -360,32 +379,48 @@ public class DashboardController {
 
     @FXML
     private void showDashboard() {
-        if (dashboardOverview != null && mainContentArea != null) {
-            mainContentArea.getChildren().setAll(dashboardOverview);
-            updateStatistics();
+        if (dashboardOverview != null) {
+            dashboardOverview.setVisible(true);
+            dashboardOverview.setManaged(true);
+            if (mainContentArea != null) {
+                mainContentArea.getChildren().setAll(dashboardOverview);
+            }
         }
     }
 
     @FXML
     private void showUsers() {
-        showDashboard();
+        showDashboard(); // Users list is part of the dashboard overview in this design
     }
 
     @FXML
-    private void showParticipationSelector() {
+    public void showParticipationSelector() {
         String[][] items = {
-                { "🤝", "Participations", "Gérer les participations aux événements",
+                { "🤝", "Participation", "Gérer les participations aux événements",
                         "/views/participation/participation.fxml" },
-                { "🎫", "Abonnements", "Gérer les abonnements des membres", "/views/abonnement/abonnement.fxml" }
+                { "🎫", "Abonnement", "Gestion des abonnements", "/views/abonnement/abonnement.fxml" }
         };
-        VBox selector = buildSelectorView("Participation & Abonnement", "Choisissez un module à gérer", items, 2);
+        VBox selector = buildSelectorView("Participation & Abonnement", "Gérez vos membres et leurs accès", items, 2);
         if (mainContentArea != null) {
             mainContentArea.getChildren().setAll(selector);
         }
     }
 
     @FXML
-    private void showRestaurationSelector() {
+    public void showEvenementSelector() {
+        String[][] items = {
+                { "🎪", "Événements", "Ajouter un nouvel événement", "/Feryel/AjouterEvenement.fxml" },
+                { "📅", "Programmes", "Ajouter un programme à un événement", "/Feryel/AjouterProgramme.fxml" },
+                { "🤝", "Sponsors", "Gérer les sponsors des événements", "/views/EventSponsorView.fxml" }
+        };
+        VBox selector = buildSelectorView("Événements & Programmes", "Organisez vos activités de camping", items, 3);
+        if (mainContentArea != null) {
+            mainContentArea.getChildren().setAll(selector);
+        }
+    }
+
+    @FXML
+    public void showRestaurationSelector() {
         String[][] items = {
                 { "🍱", "Repas", "Gérer les repas disponibles", "/views/repas/repas-liste.fxml" },
                 { "📜", "Menus", "Composer et gérer les menus", "/views/menu/menu-liste.fxml" },
@@ -402,6 +437,26 @@ public class DashboardController {
         if (mainContentArea != null) {
             mainContentArea.getChildren().setAll(selector);
         }
+    }
+
+    @FXML
+    private void showEventSponsor() {
+        loadModule("/views/EventSponsorView.fxml");
+    }
+
+    @FXML
+    private void showEquipements() {
+        loadModule("/views/wael/EquipementView.fxml");
+    }
+
+    @FXML
+    private void showBoutique() {
+        loadModule("/views/wael/EquipementStoreView.fxml");
+    }
+
+    @FXML
+    private void showMessagerie() {
+        loadModule("/views/wael/ChatView.fxml");
     }
 
     /**
@@ -521,12 +576,12 @@ public class DashboardController {
         openBtn.setOnMouseExited(e -> openBtn.setStyle(
                 "-fx-background-color: rgba(249,115,22,0.8); -fx-text-fill: white; -fx-font-size: 10; "
                         + "-fx-font-weight: 700; -fx-background-radius: 16; -fx-padding: 5 14; -fx-cursor: hand;"));
-        openBtn.setOnAction(e -> loadModule(fxmlPath, name));
+        openBtn.setOnAction(e -> loadModule(fxmlPath));
 
         card.getChildren().addAll(iconLabel, nameLabel, descLabel, openBtn);
 
         // Also allow click on the entire card
-        card.setOnMouseClicked(e -> loadModule(fxmlPath, name));
+        card.setOnMouseClicked(e -> loadModule(fxmlPath));
 
         return card;
     }
@@ -538,19 +593,39 @@ public class DashboardController {
         }
     }
 
-    private void loadModule(String fxmlPath, String title) {
+    public void loadModule(String fxmlPath) {
+        loadModule(fxmlPath, null);
+    }
+
+    public <T> void loadModule(String fxmlPath, T data) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            URL url = getClass().getResource(fxmlPath);
+            if (url == null) {
+                System.err.println("FXML introuvable: " + fxmlPath);
+                return;
+            }
+            FXMLLoader loader = new FXMLLoader(url);
             Parent root = loader.load();
+
             if (mainContentArea != null) {
                 mainContentArea.getChildren().setAll(root);
             }
+
             Object controller = loader.getController();
+            if (controller instanceof DataReceiver) {
+                @SuppressWarnings("unchecked")
+                DataReceiver<T> receiver = (DataReceiver<T>) controller;
+                receiver.setData(data);
+            }
+
+            // Trigger refresh if method exists
             if (controller != null) {
                 try {
                     java.lang.reflect.Method method = controller.getClass().getMethod("onActualiser");
                     method.invoke(controller);
                 } catch (NoSuchMethodException ignored) {
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         } catch (Exception e) {

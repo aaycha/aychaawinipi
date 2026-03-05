@@ -99,7 +99,17 @@
                         <VBox spacing="5" style="-fx-padding: 5 15;">
                             <Label styleClass="nav-label" text="CAMP MANAGEMENT" />
                             <Button onAction="#showParticipationSelector" prefHeight="40" prefWidth="210" styleClass="nav-button" text="🤝  Participation &amp; Abonnement" />
+                            <Button onAction="#showEvenementSelector" prefHeight="40" prefWidth="210" styleClass="nav-button" text="🎪  Événements" />
                             <Button onAction="#showRestaurationSelector" prefHeight="40" prefWidth="210" styleClass="nav-button" text="🍽️  Restauration" />
+                            <Button onAction="#showEventSponsor" prefHeight="40" prefWidth="210" styleClass="nav-button" text="🤝  Event Sponsor" />
+                        </VBox>
+
+                        <!-- Wael's Modules -->
+                        <VBox spacing="5" style="-fx-padding: 5 15;">
+                            <Label styleClass="nav-label" text="WAEL'S MODULES" />
+                            <Button onAction="#showEquipements" prefHeight="40" prefWidth="210" styleClass="nav-button" text="🛠️  Equipements" />
+                            <Button onAction="#showBoutique" prefHeight="40" prefWidth="210" styleClass="nav-button" text="🛒  Boutique" />
+                            <Button onAction="#showMessagerie" prefHeight="40" prefWidth="210" styleClass="nav-button" text="💬  Messagerie" />
                         </VBox>
 
                         <Region VBox.vgrow="ALWAYS" />

@@ -24,6 +24,10 @@ public class EvenementFormController {
     @FXML
     private DatePicker endDatePicker;
     @FXML
+    private TextField imageField;
+    @FXML
+    private TextField spotifyField;
+    @FXML
     private Label mainTitle;
 
     private Evenement event;
@@ -48,6 +52,8 @@ public class EvenementFormController {
                 startDatePicker.setValue(e.getDateDebut().toLocalDate());
             if (e.getDateFin() != null)
                 endDatePicker.setValue(e.getDateFin().toLocalDate());
+            imageField.setText(e.getImage());
+            spotifyField.setText(e.getSpotifyUrl());
         }
     }
 
@@ -73,6 +79,8 @@ public class EvenementFormController {
         if (endDatePicker.getValue() != null) {
             event.setDateFin(LocalDateTime.of(endDatePicker.getValue(), LocalTime.of(18, 0)));
         }
+        event.setImage(imageField.getText());
+        event.setSpotifyUrl(spotifyField.getText());
 
         try {
             if (event.getIdEvent() > 0) {

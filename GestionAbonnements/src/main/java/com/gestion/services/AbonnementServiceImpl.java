@@ -19,24 +19,43 @@ import java.util.*;
 public class AbonnementServiceImpl implements AbonnementService {
 
     private static final Logger logger = LoggerFactory.getLogger(AbonnementServiceImpl.class);
-    private final MyConnection dbConnection;
 
     public AbonnementServiceImpl() {
-        this.dbConnection = MyConnection.getInstance();
+        ensureColumnsExist();
+    }
+
+    private void ensureColumnsExist() {
+        try (Connection conn = MyConnection.getConnectionStatic();
+                Statement stmt = conn.createStatement()) {
+            try {
+                stmt.execute("ALTER TABLE abonnements ADD COLUMN nom VARCHAR(255)");
+                logger.info("Column 'nom' verified/added");
+            } catch (SQLException e) {
+                // Error 1060 is 'Duplicate column name' in MySQL
+                if (e.getErrorCode() != 1060) {
+                    logger.error("Error adding 'nom' column: " + e.getMessage());
+                }
+            }
+
+            try {
+                stmt.execute("ALTER TABLE abonnements ADD COLUMN restriction_type VARCHAR(50)");
+                logger.info("Column 'restriction_type' verified/added");
+            } catch (SQLException e) {
+                if (e.getErrorCode() != 1060) {
+                    logger.error("Error adding 'restriction_type' column: " + e.getMessage());
+                }
+            }
+        } catch (SQLException e) {
+            logger.error("Error ensuring columns exist: " + e.getMessage());
+        }
     }
 
     @Override
     public Abonnement create(Abonnement a) {
-        Connection conn = dbConnection.getConnection();
-        if (conn == null) {
-            logger.error("Cannot create abonnement: database connection is null");
-            throw new RuntimeException("Database connection unavailable");
-        }
+        String sqlWithEv = "INSERT INTO abonnements (user_id, evenement_id, type, nom, restriction_type, date_debut, date_fin, prix, statut, avantages, auto_renew, points_accumules, churn_score) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sqlWithoutEv = "INSERT INTO abonnements (user_id, type, nom, restriction_type, date_debut, date_fin, prix, statut, avantages, auto_renew, points_accumules, churn_score) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        String sqlWithEv = "INSERT INTO abonnements (user_id, evenement_id, type, date_debut, date_fin, prix, statut, avantages, auto_renew, points_accumules, churn_score) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        String sqlWithoutEv = "INSERT INTO abonnements (user_id, type, date_debut, date_fin, prix, statut, avantages, auto_renew, points_accumules, churn_score) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-        try {
+        try (Connection conn = MyConnection.getConnectionStatic()) {
             // Tentative avec evenement_id
             try (PreparedStatement ps = conn.prepareStatement(sqlWithEv, Statement.RETURN_GENERATED_KEYS)) {
                 fillPreparedStatement(ps, a, true);
@@ -75,25 +94,29 @@ public class AbonnementServiceImpl implements AbonnementService {
             else
                 ps.setNull(2, Types.BIGINT);
             ps.setString(3, a.getType().name());
-            ps.setDate(4, Date.valueOf(a.getDateDebut()));
-            ps.setDate(5, Date.valueOf(a.getDateFin()));
-            ps.setBigDecimal(6, a.getPrix());
-            ps.setString(7, a.getStatut().name());
-            ps.setString(8, "{}");
-            ps.setBoolean(9, a.isAutoRenew());
-            ps.setInt(10, a.getPointsAccumules());
-            ps.setDouble(11, a.getChurnScore());
+            ps.setString(4, a.getNom());
+            ps.setString(5, a.getRestrictionType());
+            ps.setDate(6, Date.valueOf(a.getDateDebut()));
+            ps.setDate(7, Date.valueOf(a.getDateFin()));
+            ps.setBigDecimal(8, a.getPrix());
+            ps.setString(9, a.getStatut().name());
+            ps.setString(10, "{}");
+            ps.setBoolean(11, a.isAutoRenew());
+            ps.setInt(12, a.getPointsAccumules());
+            ps.setDouble(13, a.getChurnScore());
         } else {
             ps.setLong(1, a.getUserId());
             ps.setString(2, a.getType().name());
-            ps.setDate(3, Date.valueOf(a.getDateDebut()));
-            ps.setDate(4, Date.valueOf(a.getDateFin()));
-            ps.setBigDecimal(5, a.getPrix());
-            ps.setString(6, a.getStatut().name());
-            ps.setString(7, "{}");
-            ps.setBoolean(8, a.isAutoRenew());
-            ps.setInt(9, a.getPointsAccumules());
-            ps.setDouble(10, a.getChurnScore());
+            ps.setString(3, a.getNom());
+            ps.setString(4, a.getRestrictionType());
+            ps.setDate(5, Date.valueOf(a.getDateDebut()));
+            ps.setDate(6, Date.valueOf(a.getDateFin()));
+            ps.setBigDecimal(7, a.getPrix());
+            ps.setString(8, a.getStatut().name());
+            ps.setString(9, "{}");
+            ps.setBoolean(10, a.isAutoRenew());
+            ps.setInt(11, a.getPointsAccumules());
+            ps.setDouble(12, a.getChurnScore());
         }
     }
 
@@ -113,8 +136,23 @@ public class AbonnementServiceImpl implements AbonnementService {
         a.setId(rs.getLong("id"));
         a.setUserId(rs.getLong("user_id"));
 
-        // Gestion sécurisée de evenement_id (évite le crash si la migration n'est pas
-        // faite)
+        // Join field
+        try {
+            a.setUserName(rs.getString("user_name"));
+        } catch (SQLException ignored) {
+        }
+
+        // New fields
+        try {
+            a.setNom(rs.getString("nom"));
+        } catch (SQLException ignored) {
+        }
+        try {
+            a.setRestrictionType(rs.getString("restriction_type"));
+        } catch (SQLException ignored) {
+        }
+
+        // Gestion sécurisée de evenement_id
         try {
             long evId = rs.getLong("evenement_id");
             if (!rs.wasNull())
@@ -142,13 +180,9 @@ public class AbonnementServiceImpl implements AbonnementService {
 
     @Override
     public Optional<Abonnement> findById(Long id) {
-        Connection conn = dbConnection.getConnection();
-        if (conn == null) {
-            logger.error("Cannot findById abonnement: database connection is null");
-            return Optional.empty();
-        }
-        String sql = "SELECT * FROM abonnements WHERE id = ?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        String sql = "SELECT a.*, u.name as user_name FROM abonnements a LEFT JOIN users u ON a.user_id = u.id WHERE a.id = ?";
+        try (Connection conn = MyConnection.getConnectionStatic();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setLong(1, id);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next())
@@ -163,13 +197,9 @@ public class AbonnementServiceImpl implements AbonnementService {
     @Override
     public List<Abonnement> findAll() {
         List<Abonnement> list = new ArrayList<>();
-        Connection conn = dbConnection.getConnection();
-        if (conn == null) {
-            logger.error("Cannot findAll abonnements: database connection is null");
-            return list;
-        }
-        String sql = "SELECT * FROM abonnements ORDER BY id DESC";
-        try (PreparedStatement ps = conn.prepareStatement(sql);
+        String sql = "SELECT a.*, u.name as user_name FROM abonnements a LEFT JOIN users u ON a.user_id = u.id ORDER BY a.id DESC";
+        try (Connection conn = MyConnection.getConnectionStatic();
+                PreparedStatement ps = conn.prepareStatement(sql);
                 ResultSet rs = ps.executeQuery()) {
             while (rs.next())
                 list.add(map(rs));
@@ -187,16 +217,10 @@ public class AbonnementServiceImpl implements AbonnementService {
 
     @Override
     public Abonnement update(Abonnement a) {
-        Connection conn = dbConnection.getConnection();
-        if (conn == null) {
-            logger.error("Cannot update abonnement: database connection is null");
-            throw new RuntimeException("Database connection unavailable");
-        }
+        String sqlWithEv = "UPDATE abonnements SET type=?, nom=?, restriction_type=?, date_debut=?, date_fin=?, prix=?, statut=?, auto_renew=?, points_accumules=?, churn_score=?, evenement_id=? WHERE id=?";
+        String sqlWithoutEv = "UPDATE abonnements SET type=?, nom=?, restriction_type=?, date_debut=?, date_fin=?, prix=?, statut=?, auto_renew=?, points_accumules=?, churn_score=? WHERE id=?";
 
-        String sqlWithEv = "UPDATE abonnements SET type=?, date_debut=?, date_fin=?, prix=?, statut=?, auto_renew=?, points_accumules=?, churn_score=?, evenement_id=? WHERE id=?";
-        String sqlWithoutEv = "UPDATE abonnements SET type=?, date_debut=?, date_fin=?, prix=?, statut=?, auto_renew=?, points_accumules=?, churn_score=? WHERE id=?";
-
-        try {
+        try (Connection conn = MyConnection.getConnectionStatic()) {
             try (PreparedStatement ps = conn.prepareStatement(sqlWithEv)) {
                 fillUpdatePreparedStatement(ps, a, true);
                 ps.executeUpdate();
@@ -221,33 +245,31 @@ public class AbonnementServiceImpl implements AbonnementService {
     private void fillUpdatePreparedStatement(PreparedStatement ps, Abonnement a, boolean withEvenement)
             throws SQLException {
         ps.setString(1, a.getType().name());
-        ps.setDate(2, Date.valueOf(a.getDateDebut()));
-        ps.setDate(3, Date.valueOf(a.getDateFin()));
-        ps.setBigDecimal(4, a.getPrix());
-        ps.setString(5, a.getStatut().name());
-        ps.setBoolean(6, a.isAutoRenew());
-        ps.setInt(7, a.getPointsAccumules());
-        ps.setDouble(8, a.getChurnScore());
+        ps.setString(2, a.getNom());
+        ps.setString(3, a.getRestrictionType());
+        ps.setDate(4, Date.valueOf(a.getDateDebut()));
+        ps.setDate(5, Date.valueOf(a.getDateFin()));
+        ps.setBigDecimal(6, a.getPrix());
+        ps.setString(7, a.getStatut().name());
+        ps.setBoolean(8, a.isAutoRenew());
+        ps.setInt(9, a.getPointsAccumules());
+        ps.setDouble(10, a.getChurnScore());
         if (withEvenement) {
             if (a.getEvenementId() != null)
-                ps.setLong(9, a.getEvenementId());
+                ps.setLong(11, a.getEvenementId());
             else
-                ps.setNull(9, Types.BIGINT);
-            ps.setLong(10, a.getId());
+                ps.setNull(11, Types.BIGINT);
+            ps.setLong(12, a.getId());
         } else {
-            ps.setLong(9, a.getId());
+            ps.setLong(11, a.getId());
         }
     }
 
     @Override
     public boolean delete(Long id) {
-        Connection conn = dbConnection.getConnection();
-        if (conn == null) {
-            logger.error("Cannot delete abonnement: database connection is null");
-            return false;
-        }
         String sql = "DELETE FROM abonnements WHERE id = ?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = MyConnection.getConnectionStatic();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setLong(1, id);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {

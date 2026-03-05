@@ -356,7 +356,6 @@ public class RestaurantListeController implements Initializable {
 
             RestaurantFormController formController = loader.getController();
             formController.setRestaurant(restaurant);
-            formController.setListeController(this);
             formController.setController(controller);
 
             Stage stage = new Stage();

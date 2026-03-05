@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
+
+<ScrollPane xmlns="http://javafx.com/javafx/11"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.gestion.ui.utilisateur.TikTokSearchController"
+            fitToWidth="false"
+            fitToHeight="false"
+            hbarPolicy="AS_NEEDED"
+            vbarPolicy="AS_NEEDED"
+            prefWidth="800"
+            prefHeight="550"
+            styleClass="modern-scroll-pane"
+            stylesheets="@../../styles/nature-mood.css, @../../styles/card-view.css"
+            style="-fx-background: transparent; -fx-background-color: transparent;">
+
+    <content>
+        <VBox spacing="8"
+              styleClass="modern-panel"
+              style="-fx-padding: 10;"
+              minWidth="950"
+              minHeight="700"
+              prefWidth="950"
+              prefHeight="700">
+
+            <!-- Header -->
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <Button text="↩"
+                        onAction="#onBack"
+                        styleClass="button-capsule-glass"
+                        style="-fx-font-size: 12; -fx-padding: 3 8;"/>
+
+                <StackPane style="-fx-background-color: rgba(0,0,0,0.4);
+                                  -fx-background-radius: 8; -fx-padding: 5;">
+                    <Label text="🎵" style="-fx-font-size: 16;"/>
+                </StackPane>
+
+                <VBox spacing="0">
+                    <Label text="TikTok Expedition Intel"
+                           styleClass="text-hero"
+                           style="-fx-font-size: 13;"/>
+                    <Label text="Viral destination insights"
+                           styleClass="text-muted"
+                           style="-fx-font-size: 8;"/>
+                </VBox>
+            </HBox>
+
+            <!-- Search Bar -->
+            <VBox spacing="6"
+                  styleClass="glass-panel"
+                  style="-fx-padding: 10;">
+
+                <Label text="🔍 SCAN TIKTOK WAVES"
+                       styleClass="hiker-label"
+                       style="-fx-text-fill: #fe2c55;
+                              -fx-font-size: 8;
+                              -fx-font-weight: 900;"/>
+
+                <HBox spacing="6" alignment="CENTER_LEFT">
+                    <TextField fx:id="inputSearch"
+                               promptText="Enter destination..."
+                               HBox.hgrow="ALWAYS"
+                               styleClass="modern-input"
+                               style="-fx-font-size: 10;
+                                      -fx-pref-height: 28;"/>
+
+                    <Button fx:id="btnSearch"
+                            text="🚀 FETCH"
+                            onAction="#onSearch"
+                            styleClass="button-capsule"
+                            style="-fx-padding: 5 14;
+                                   -fx-font-size: 9;
+                                   -fx-background-color: #fe2c55;
+                                   -fx-text-fill: white;
+                                   -fx-font-weight: bold;
+                                   -fx-background-radius: 20;"/>
+                </HBox>
+
+                <Label fx:id="statusLabel"
+                       text="📡 Waiting for coordinates."
+                       styleClass="text-muted"
+                       style="-fx-font-size: 8;
+                              -fx-font-style: italic;"/>
+            </VBox>
+
+            <!-- Results Grid -->
+            <TilePane fx:id="videoContainer"
+                      alignment="TOP_CENTER"
+                      hgap="12"
+                      vgap="12"
+                      prefColumns="2"
+                      prefTileWidth="260"
+                      minWidth="900"
+                      style="-fx-padding: 10 0;"/>
+
+            <!-- Empty State -->
+            <VBox fx:id="emptyState"
+                  alignment="CENTER"
+                  spacing="6"
+                  visible="true"
+                  managed="true"
+                  style="-fx-padding: 20 0;">
+
+                <Label text="📡"
+                       style="-fx-font-size: 26; -fx-opacity: 0.3;"/>
+
+                <Label text="Scanning TikTok frequency..."
+                       styleClass="text-muted"
+                       style="-fx-font-size: 10;"/>
+
+                <Label text="Enter a destination above to begin."
+                       styleClass="text-muted"
+                       style="-fx-font-size: 8;
+                              -fx-opacity: 0.6;"/>
+            </VBox>
+
+        </VBox>
+    </content>
+
+</ScrollPane>

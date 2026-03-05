@@ -3,13 +3,8 @@ package com.gestion.ui.abonnement;
 import com.gestion.controllers.AbonnementController;
 import com.gestion.entities.Abonnement;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -20,9 +15,9 @@ public class AbonnementFormController {
     @FXML
     private Label mainTitle;
     @FXML
-    private TextField inputUserName;
+    private TextField inputNom;
     @FXML
-    private TextField inputUserId;
+    private ComboBox<String> comboRestriction;
     @FXML
     private ComboBox<Abonnement.TypeAbonnement> inputType;
     @FXML
@@ -47,6 +42,14 @@ public class AbonnementFormController {
     private Label summaryType;
     @FXML
     private Button btnSave;
+    @FXML
+    private VBox validationContainer;
+    @FXML
+    private Label statusMessage;
+    @FXML
+    private ToggleButton iaToggleInForm;
+    @FXML
+    private Label iaInsightLabel;
 
     private Abonnement selectedAbonnement;
     private boolean isEditMode = false;
@@ -58,6 +61,9 @@ public class AbonnementFormController {
     public void initialize() {
         inputType.getItems().setAll(Abonnement.TypeAbonnement.values());
         inputStatut.getItems().setAll(Abonnement.StatutAbonnement.values());
+
+        // Load event types for restrictions
+        comboRestriction.getItems().setAll("", "SOIREE", "RANDONNEE", "CAMPING", "TREK", "AUTRE");
 
         // Listen for type changes to show/hide event selection and update summary
         inputType.valueProperty().addListener((obs, oldVal, newVal) -> {
@@ -85,7 +91,7 @@ public class AbonnementFormController {
     private void loadEvents() {
         try {
             com.gestion.services.EvenementService evService = new com.gestion.services.EvenementService();
-            comboEvent.getItems().setAll(evService.findAll());
+            comboEvent.getItems().setAll(evService.getAll());
             // Custom cell factory for display
             comboEvent.setCellFactory(lv -> new ListCell<>() {
                 @Override
@@ -101,6 +107,9 @@ public class AbonnementFormController {
                     setText(empty || item == null ? "" : item.getTitre());
                 }
             });
+        } catch (java.sql.SQLException e) {
+            e.printStackTrace();
+            showError("Erreur de chargement des événements: " + e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -112,8 +121,10 @@ public class AbonnementFormController {
 
         if (isEditMode) {
             mainTitle.setText("Modifier l'Expédition");
-            inputUserId.setText(String.valueOf(abonnement.getUserId()));
-            resolveUserName(abonnement.getUserId().intValue());
+
+            inputNom.setText(abonnement.getNom());
+            comboRestriction.setValue(abonnement.getRestrictionType());
+
             inputType.setValue(abonnement.getType());
             inputDateDebut.setValue(abonnement.getDateDebut());
             inputDateFin.setValue(abonnement.getDateFin());
@@ -131,10 +142,6 @@ public class AbonnementFormController {
             }
         } else if (abonnement != null) {
             // Pre-filling for NEW subscription
-            if (abonnement.getUserId() != null) {
-                inputUserId.setText(String.valueOf(abonnement.getUserId()));
-                resolveUserName(abonnement.getUserId().intValue());
-            }
             if (abonnement.getType() != null) {
                 inputType.setValue(abonnement.getType());
                 updateSummary(abonnement.getType());
@@ -149,17 +156,6 @@ public class AbonnementFormController {
                         .findFirst()
                         .ifPresent(ev -> comboEvent.setValue(ev));
             }
-        }
-    }
-
-    private void resolveUserName(int userId) {
-        try {
-            com.gestion.entities.User user = new com.gestion.services.UserService().getUserById(userId);
-            if (user != null) {
-                inputUserName.setText(user.getName());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
@@ -194,11 +190,15 @@ public class AbonnementFormController {
 
     @FXML
     private void onSave() {
-        hideError();
+        if (validationContainer != null)
+            validationContainer.setVisible(false);
         try {
-            Long userId = resolveUserId();
-            if (userId == null)
-                return;
+            // Default to Admin User (ID 1) if creating a template/admin subscription
+            Long userId = 1L;
+
+            if (selectedAbonnement != null && selectedAbonnement.getUserId() != null) {
+                userId = selectedAbonnement.getUserId();
+            }
 
             if (inputPrix.getText().isBlank()) {
                 showError("Le prix est requis");
@@ -216,6 +216,7 @@ public class AbonnementFormController {
             LocalDate fin = inputDateFin.getValue();
             Abonnement.StatutAbonnement statut = inputStatut.getValue();
             boolean auto = inputAutoRenew.isSelected();
+            String restriction = comboRestriction.getValue();
 
             Long evId = null;
             if (type == Abonnement.TypeAbonnement.EVENEMENT_PASS) {
@@ -227,29 +228,12 @@ public class AbonnementFormController {
                 evId = (long) ev.getIdEvent();
             }
 
-            // --- Open Stripe Checkout for real payment ---
-            com.gestion.services.StripePaymentService stripeService = com.gestion.services.StripePaymentService
-                    .getInstance();
-            boolean opened = stripeService.openCheckoutInBrowser(
-                    "Abonnement " + type.getLabel() + " - " + prix + " EUR");
-            if (!opened) {
-                showError("Impossible d'ouvrir la page de paiement Stripe. Veuillez réessayer.");
-                return;
-            }
-
-            // Show confirmation that payment page was opened
-            Alert paymentAlert = new Alert(Alert.AlertType.INFORMATION);
-            paymentAlert.setTitle("Paiement Stripe");
-            paymentAlert.setHeaderText("Page de paiement ouverte !");
-            paymentAlert.setContentText(
-                    "La page de paiement Stripe a été ouverte dans votre navigateur.\n\n" +
-                            "Montant : " + prix + " €\n" +
-                            "Type : " + type.getLabel() + "\n\n" +
-                            "Cliquez OK une fois le paiement effectué pour finaliser votre abonnement.");
-            paymentAlert.showAndWait();
+            // Payment logic removed as per Admin simplification request
 
             if (isEditMode) {
                 selectedAbonnement.setUserId(userId);
+                selectedAbonnement.setNom(inputNom.getText());
+                selectedAbonnement.setRestrictionType(restriction);
                 selectedAbonnement.setEvenementId(evId);
                 selectedAbonnement.setType(type);
                 selectedAbonnement.setDateDebut(debut);
@@ -260,6 +244,8 @@ public class AbonnementFormController {
                 controller.update(selectedAbonnement);
             } else {
                 Abonnement a = new Abonnement(userId, evId, type, debut, prix, auto);
+                a.setNom(inputNom.getText());
+                a.setRestrictionType(restriction);
                 if (fin != null)
                     a.setDateFin(fin);
                 if (statut != null)
@@ -270,38 +256,17 @@ public class AbonnementFormController {
             if (onSaveCallback != null)
                 onSaveCallback.run();
 
-            showFacture(isEditMode ? selectedAbonnement
-                    : controller.getAll().stream().max(Comparator.comparing(Abonnement::getId)).orElse(null));
             close();
         } catch (Exception e) {
             showError("Erreur: " + e.getMessage());
         }
     }
 
-    private void showFacture(Abonnement a) {
-        if (a == null)
-            return;
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/abonnement/facture.fxml"));
-            Parent root = loader.load();
-            FactureController ctrl = loader.getController();
-            ctrl.setData(a);
-
-            Stage stage = new Stage();
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setTitle("Facture LAMMA");
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     public void setReadOnly(boolean readOnly) {
         this.isReadOnly = readOnly;
         if (readOnly) {
-            inputUserName.setDisable(true);
-            inputUserId.setDisable(true);
+            inputNom.setDisable(true);
+            comboRestriction.setDisable(true);
             inputType.setDisable(true);
             inputDateDebut.setDisable(true);
             inputDateFin.setDisable(true);
@@ -322,51 +287,24 @@ public class AbonnementFormController {
         close();
     }
 
-    private Long resolveUserId() {
-        String idText = inputUserId.getText().trim();
-        String nameText = inputUserName.getText().trim();
-
-        com.gestion.services.UserService userService = new com.gestion.services.UserService();
-        try {
-            if (!idText.isEmpty()) {
-                int id = Integer.parseInt(idText);
-                com.gestion.entities.User u = userService.getUserById(id);
-                if (u != null)
-                    return (long) id;
-                showError("Utilisateur avec l'ID " + id + " non trouvé.");
-                return null;
-            } else if (!nameText.isEmpty()) {
-                com.gestion.entities.User u = userService.getUserByName(nameText);
-                if (u != null) {
-                    inputUserId.setText(String.valueOf(u.getId()));
-                    return (long) u.getId();
-                }
-                showError("Utilisateur avec le nom '" + nameText + "' non trouvé.");
-                return null;
-            }
-        } catch (Exception e) {
-            showError("Erreur lors de la recherche de l'utilisateur.");
-        }
-        showError("Veuillez saisir un ID ou un Nom.");
-        return null;
-    }
-
-    private void showError(String msg) {
-        if (validationMessage != null) {
-            validationMessage.setText(msg);
-            validationMessage.setVisible(true);
-            validationMessage.setManaged(true);
+    private void showError(String message) {
+        if (validationContainer != null) {
+            validationContainer.setVisible(true);
+            validationContainer.setManaged(true);
+            validationMessage.setText(message);
         }
     }
 
     private void hideError() {
-        if (validationMessage != null) {
-            validationMessage.setVisible(false);
-            validationMessage.setManaged(false);
+        if (validationContainer != null) {
+            validationContainer.setVisible(false);
+            validationContainer.setManaged(false);
         }
     }
 
     private void close() {
-        ((Stage) inputUserId.getScene().getWindow()).close();
+        if (mainTitle != null && mainTitle.getScene() != null) {
+            mainTitle.getScene().getWindow().hide();
+        }
     }
 }

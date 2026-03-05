@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<ScrollPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.gestion.controllers.EquipementFormController"
+            fitToWidth="true" fitToHeight="true" hbarPolicy="AS_NEEDED" vbarPolicy="AS_NEEDED"
+            stylesheets="@/styles/card-view.css, @/styles/nature-mood.css"
+            style="-fx-background-color: transparent; -fx-background: transparent;">
+
+    <StackPane style="-fx-background-color: transparent; -fx-padding: 10;">
+        <VBox spacing="10" styleClass="glass-panel" prefWidth="650" maxWidth="700" alignment="TOP_CENTER" style="-fx-padding: 15;">
+            
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <StackPane style="-fx-background-color: rgba(249, 115, 22, 0.15); -fx-background-radius: 8; -fx-padding: 6;">
+                    <Label text="⛺" style="-fx-font-size: 16;"/>
+                </StackPane>
+                <VBox spacing="0">
+                    <Label fx:id="formTitle" text="Nouvel équipement"
+                           style="-fx-font-size: 16px; -fx-font-weight: 800; -fx-text-fill: white;"/>
+                    <Label text="Tente, matelas, lunettes, sac de couchage..." style="-fx-font-size: 9px; -fx-text-fill: #94a3b8;"/>
+                </VBox>
+                <Region HBox.hgrow="ALWAYS"/>
+            </HBox>
+
+            <Separator style="-fx-opacity: 0.1;"/>
+
+            <VBox spacing="12" styleClass="modern-card" style="-fx-padding: 15;">
+                <Label text="📋 IDENTIFICATION" style="-fx-font-weight: 900; -fx-text-fill: #3b82f6; -fx-font-size: 11;"/>
+                <GridPane hgap="20" vgap="15">
+                    <columnConstraints>
+                        <ColumnConstraints minWidth="120" prefWidth="140"/>
+                        <ColumnConstraints hgrow="ALWAYS"/>
+                    </columnConstraints>
+                    <Label text="Nom *:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 11;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                    <TextField fx:id="inputNom" promptText="Ex: Tente 4 places" styleClass="modern-input" style="-fx-font-size: 11;" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                    <Label text="Type équipement:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 11;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                    <ComboBox fx:id="inputCategorie" promptText="Tente, Matelas, Lunettes..." styleClass="modern-input" prefWidth="200" style="-fx-font-size: 11;" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                    <Label text="Vente/Location *:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 11;" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                    <ComboBox fx:id="inputType" promptText="Vente ou Location" styleClass="modern-input" prefWidth="200" style="-fx-font-size: 11;" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                </GridPane>
+            </VBox>
+
+            <VBox spacing="12" styleClass="modern-card" style="-fx-padding: 15;">
+                <Label text="📍 LOCALISATION &amp; PRIX" style="-fx-font-weight: 900; -fx-text-fill: #FACC15; -fx-font-size: 11;"/>
+                <GridPane hgap="20" vgap="12">
+                    <columnConstraints>
+                        <ColumnConstraints minWidth="120" prefWidth="140"/>
+                        <ColumnConstraints hgrow="ALWAYS"/>
+                    </columnConstraints>
+                    <Label text="Ville:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 11;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                    <TextField fx:id="inputVille" promptText="Ex: Tunis, Sfax" styleClass="modern-input" style="-fx-font-size: 11;" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                    <Label text="Prix (TND) *:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 11;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                    <TextField fx:id="inputPrix" promptText="Ex: 150.500" styleClass="modern-input" style="-fx-font-size: 11;" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                </GridPane>
+            </VBox>
+
+            <VBox fx:id="attributsSection" spacing="12" styleClass="modern-card" style="-fx-padding: 15;">
+                <Label text="⛺ Tente (places, taille)" style="-fx-font-weight: 900; -fx-text-fill: #F97316; -fx-font-size: 11;"/>
+                <GridPane hgap="20" vgap="10">
+                    <columnConstraints>
+                        <ColumnConstraints minWidth="120"/>
+                        <ColumnConstraints hgrow="ALWAYS"/>
+                    </columnConstraints>
+                    <Label text="Places:" style="-fx-text-fill: #94a3b8; -fx-font-size: 11;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                    <ComboBox fx:id="inputPlaces" promptText="2, 4, 6, 8" styleClass="modern-input" prefWidth="150" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                    <Label text="Taille:" style="-fx-text-fill: #94a3b8; -fx-font-size: 11;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                    <ComboBox fx:id="inputTaille" promptText="Petite, Moyenne, Grande" styleClass="modern-input" prefWidth="150" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                </GridPane>
+            </VBox>
+            <VBox fx:id="attributsMatelasSection" spacing="12" styleClass="modern-card" style="-fx-padding: 15;" visible="false" managed="false">
+                <Label text="🛏️ Matelas" style="-fx-font-weight: 900; -fx-text-fill: #F97316; -fx-font-size: 11;"/>
+                <GridPane hgap="20" vgap="10">
+                    <columnConstraints>
+                        <ColumnConstraints minWidth="120"/>
+                        <ColumnConstraints hgrow="ALWAYS"/>
+                    </columnConstraints>
+                    <Label text="Épaisseur:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                    <TextField fx:id="inputMatelasEpaisseur" promptText="cm" styleClass="modern-input" prefWidth="150" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                    <Label text="Dimension:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                    <TextField fx:id="inputMatelasDimension" promptText="ex: 190x90" styleClass="modern-input" prefWidth="150" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                    <Label text="Matière:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                    <ComboBox fx:id="inputMatelasMatiere" promptText="Mousse, Latex..." styleClass="modern-input" prefWidth="150" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                    <Label text="Gonflable:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                    <ComboBox fx:id="inputMatelasGonflable" promptText="Oui/Non" styleClass="modern-input" prefWidth="150" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                </GridPane>
+            </VBox>
+            <VBox fx:id="attributsLunettesSection" spacing="12" styleClass="modern-card" style="-fx-padding: 15;" visible="false" managed="false">
+                <Label text="🕶️ Lunettes" style="-fx-font-weight: 900; -fx-text-fill: #F97316; -fx-font-size: 11;"/>
+                <GridPane hgap="20" vgap="10">
+                    <columnConstraints>
+                        <ColumnConstraints minWidth="120"/>
+                        <ColumnConstraints hgrow="ALWAYS"/>
+                    </columnConstraints>
+                    <Label text="Protection UV:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                    <TextField fx:id="inputLunettesUV" promptText="ex: UV400" styleClass="modern-input" prefWidth="150" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                    <Label text="Couleur verre:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                    <ComboBox fx:id="inputLunettesCouleur" promptText="Noir, Bleu..." styleClass="modern-input" prefWidth="150" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                    <Label text="Polarisées:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                    <ComboBox fx:id="inputLunettesPolarisees" promptText="Oui/Non" styleClass="modern-input" prefWidth="150" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                </GridPane>
+            </VBox>
+
+            <VBox spacing="12" styleClass="modern-card" style="-fx-padding: 15;">
+                <Label text="📝 DESCRIPTION" style="-fx-font-weight: 900; -fx-text-fill: #F97316; -fx-font-size: 11;"/>
+                <TextArea fx:id="inputDescription" promptText="Description de l'équipement..." wrapText="true" prefRowCount="3" styleClass="modern-input" style="-fx-font-size: 11;"/>
+            </VBox>
+            <VBox spacing="12" styleClass="modern-card" style="-fx-padding: 15;">
+                <Label text="📧 Email de notification" style="-fx-font-weight: 900; -fx-text-fill: #94a3b8; -fx-font-size: 11;"/>
+                <Label text="Un email sera envoyé à cette adresse à l'ajout (non affiché dans les détails)" style="-fx-text-fill: #64748b; -fx-font-size: 10;"/>
+                <TextField fx:id="inputMail" promptText="ex: destinataire@email.com" styleClass="modern-input" style="-fx-font-size: 11;"/>
+            </VBox>
+
+            <VBox spacing="12" styleClass="modern-card" style="-fx-padding: 15;">
+                <Label text="⚙️ STATUT" style="-fx-font-weight: 900; -fx-text-fill: #94a3b8; -fx-font-size: 11;"/>
+                <ComboBox fx:id="inputStatut" promptText="Disponible, Loué, Vendu" styleClass="modern-input" prefWidth="200" style="-fx-font-size: 11;"/>
+            </VBox>
+
+            <VBox fx:id="errorContainer" spacing="8" visible="false" managed="false" style="-fx-background-color: rgba(239, 68, 68, 0.1); -fx-padding: 10; -fx-background-radius: 10;">
+                <Label fx:id="globalErrorMessage" text="" style="-fx-text-fill: #ef4444; -fx-font-weight: 700; -fx-font-size: 11;"/>
+            </VBox>
+
+            <HBox spacing="12" alignment="CENTER_RIGHT">
+                <Button text="💾 ENREGISTRER" onAction="#onEnregistrer" styleClass="button-capsule" style="-fx-padding: 10 30; -fx-font-size: 11;"/>
+                <Button text="❌ Annuler" onAction="#onAnnuler" styleClass="button-capsule-glass" style="-fx-padding: 10 25; -fx-font-size: 11;"/>
+            </HBox>
+
+        </VBox>
+    </StackPane>
+</ScrollPane>

@@ -143,7 +143,13 @@ public class ParticipationFormController {
         }
 
         // Chargement initial des données
-        List<Evenement> events = eventService.findAll();
+        List<Evenement> events = new ArrayList<>();
+        try {
+            events = eventService.getAll();
+        } catch (java.sql.SQLException e) {
+            e.printStackTrace();
+            showError(errorGlobal, "Erreur lors du chargement des événements : " + e.getMessage());
+        }
 
         if (comboEvenement != null) {
             comboEvenement.setEditable(true);

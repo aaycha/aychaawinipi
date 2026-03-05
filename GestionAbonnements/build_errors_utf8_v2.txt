@@ -1,0 +1,239 @@
+﻿[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------------< com.gestion:gestion-abonnements >-------------------
+[INFO] Building Gestion des Abonnements et Participations 1.0.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[WARNING] 6 problems were encountered while building the effective model for org.openjfx:javafx-controls:jar:17.0.2 during dependency collection step for project (use -X to see details)
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ gestion-abonnements ---
+[INFO] Copying 101 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ gestion-abonnements ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 177 source files with javac [debug release 11] to target\classes
+[INFO] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/RepasDetailleServiceImpl.java: Some input files use or override a deprecated API.
+[INFO] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/RepasDetailleServiceImpl.java: Recompile with -Xlint:deprecation for details.
+[INFO] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/tools/SignatureService.java: Some input files use unchecked or unsafe operations.
+[INFO] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/tools/SignatureService.java: Recompile with -Xlint:unchecked for details.
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/dashbordmouheb.java:[9,13] package utils does not exist
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/SponsorDAO.java:[3,13] package model does not exist
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/SponsorDAO.java:[4,13] package utils does not exist
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/SponsorDAO.java:[13,25] cannot find symbol
+  symbol:   class Sponsor
+  location: class dao.SponsorDAO
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/SponsorDAO.java:[35,26] cannot find symbol
+  symbol:   class Sponsor
+  location: class dao.SponsorDAO
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/SponsorDAO.java:[63,17] cannot find symbol
+  symbol:   class Sponsor
+  location: class dao.SponsorDAO
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/SponsorDAO.java:[86,17] cannot find symbol
+  symbol:   class Sponsor
+  location: class dao.SponsorDAO
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/SponsorDAO.java:[109,12] cannot find symbol
+  symbol:   class Sponsor
+  location: class dao.SponsorDAO
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/SponsorDAO.java:[132,12] cannot find symbol
+  symbol:   class Sponsor
+  location: class dao.SponsorDAO
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/dashbordmouheb.java:[100,28] cannot find symbol
+  symbol:   variable CurrencyService
+  location: class com.gestion.controllers.dashbordmouheb
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/SponsorDAO.java:[15,32] cannot find symbol
+  symbol:   variable DatabaseConnection
+  location: class dao.SponsorDAO
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/SponsorDAO.java:[37,32] cannot find symbol
+  symbol:   variable DatabaseConnection
+  location: class dao.SponsorDAO
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/SponsorDAO.java:[54,32] cannot find symbol
+  symbol:   variable DatabaseConnection
+  location: class dao.SponsorDAO
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/SponsorDAO.java:[64,14] cannot find symbol
+  symbol:   class Sponsor
+  location: class dao.SponsorDAO
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/SponsorDAO.java:[67,32] cannot find symbol
+  symbol:   variable DatabaseConnection
+  location: class dao.SponsorDAO
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/SponsorDAO.java:[72,34] cannot find symbol
+  symbol:   class Sponsor
+  location: class dao.SponsorDAO
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/SponsorDAO.java:[87,14] cannot find symbol
+  symbol:   class Sponsor
+  location: class dao.SponsorDAO
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/SponsorDAO.java:[90,32] cannot find symbol
+  symbol:   variable DatabaseConnection
+  location: class dao.SponsorDAO
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/SponsorDAO.java:[95,34] cannot find symbol
+  symbol:   class Sponsor
+  location: class dao.SponsorDAO
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/SponsorDAO.java:[111,32] cannot find symbol
+  symbol:   variable DatabaseConnection
+  location: class dao.SponsorDAO
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/SponsorDAO.java:[118,28] cannot find symbol
+  symbol:   class Sponsor
+  location: class dao.SponsorDAO
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/SponsorDAO.java:[134,32] cannot find symbol
+  symbol:   variable DatabaseConnection
+  location: class dao.SponsorDAO
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/SponsorDAO.java:[141,28] cannot find symbol
+  symbol:   class Sponsor
+  location: class dao.SponsorDAO
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/SponsorDAO.java:[157,32] cannot find symbol
+  symbol:   variable DatabaseConnection
+  location: class dao.SponsorDAO
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/SponsorDAO.java:[173,32] cannot find symbol
+  symbol:   variable DatabaseConnection
+  location: class dao.SponsorDAO
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EventSponsorViewController.java:[109,65] cannot find symbol
+  symbol:   method getId()
+  location: variable e of type com.gestion.entities.Evenement
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EventSponsorViewController.java:[153,87] cannot find symbol
+  symbol:   method getNom()
+  location: variable ev of type com.gestion.entities.Evenement
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EventSponsorViewController.java:[154,29] cannot find symbol
+  symbol:   method getId()
+  location: variable ev of type com.gestion.entities.Evenement
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EventSponsorViewController.java:[170,32] cannot find symbol
+  symbol:   variable DatabaseConnection
+  location: class com.gestion.controllers.EventSponsorViewController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EventSponsorViewController.java:[187,32] cannot find symbol
+  symbol:   variable DatabaseConnection
+  location: class com.gestion.controllers.EventSponsorViewController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EventSponsorViewController.java:[218,32] cannot find symbol
+  symbol:   variable DatabaseConnection
+  location: class com.gestion.controllers.EventSponsorViewController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EventSponsorViewController.java:[418,32] cannot find symbol
+  symbol:   variable DatabaseConnection
+  location: class com.gestion.controllers.EventSponsorViewController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EventSponsorViewController.java:[422,35] no suitable constructor found for Evenement(int,java.lang.String,java.time.LocalDate,java.time.LocalDate,java.lang.String,java.lang.String,java.lang.String)
+    constructor com.gestion.entities.Evenement.Evenement() is not applicable
+      (actual and formal argument lists differ in length)
+    constructor com.gestion.entities.Evenement.Evenement(java.lang.String,java.lang.String,java.lang.String,java.time.LocalDateTime,java.time.LocalDateTime,java.lang.String,java.lang.String,java.lang.String) is not applicable
+      (actual and formal argument lists differ in length)
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EventSponsorViewController.java:[433,32] cannot find symbol
+  symbol:   variable DatabaseConnection
+  location: class com.gestion.controllers.EventSponsorViewController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EventSponsorViewController.java:[448,32] cannot find symbol
+  symbol:   variable DatabaseConnection
+  location: class com.gestion.controllers.EventSponsorViewController
+[INFO] 35 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  3.182 s
+[INFO] Finished at: 2026-03-04T17:56:42+01:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.11.0:compile (default-compile) on project gestion-abonnements: Compilation failure: Compilation failure: 
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/dashbordmouheb.java:[9,13] package utils does not exist
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/SponsorDAO.java:[3,13] package model does not exist
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/SponsorDAO.java:[4,13] package utils does not exist
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/SponsorDAO.java:[13,25] cannot find symbol
+[ERROR]   symbol:   class Sponsor
+[ERROR]   location: class dao.SponsorDAO
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/SponsorDAO.java:[35,26] cannot find symbol
+[ERROR]   symbol:   class Sponsor
+[ERROR]   location: class dao.SponsorDAO
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/SponsorDAO.java:[63,17] cannot find symbol
+[ERROR]   symbol:   class Sponsor
+[ERROR]   location: class dao.SponsorDAO
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/SponsorDAO.java:[86,17] cannot find symbol
+[ERROR]   symbol:   class Sponsor
+[ERROR]   location: class dao.SponsorDAO
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/SponsorDAO.java:[109,12] cannot find symbol
+[ERROR]   symbol:   class Sponsor
+[ERROR]   location: class dao.SponsorDAO
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/SponsorDAO.java:[132,12] cannot find symbol
+[ERROR]   symbol:   class Sponsor
+[ERROR]   location: class dao.SponsorDAO
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/dashbordmouheb.java:[100,28] cannot find symbol
+[ERROR]   symbol:   variable CurrencyService
+[ERROR]   location: class com.gestion.controllers.dashbordmouheb
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/SponsorDAO.java:[15,32] cannot find symbol
+[ERROR]   symbol:   variable DatabaseConnection
+[ERROR]   location: class dao.SponsorDAO
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/SponsorDAO.java:[37,32] cannot find symbol
+[ERROR]   symbol:   variable DatabaseConnection
+[ERROR]   location: class dao.SponsorDAO
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/SponsorDAO.java:[54,32] cannot find symbol
+[ERROR]   symbol:   variable DatabaseConnection
+[ERROR]   location: class dao.SponsorDAO
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/SponsorDAO.java:[64,14] cannot find symbol
+[ERROR]   symbol:   class Sponsor
+[ERROR]   location: class dao.SponsorDAO
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/SponsorDAO.java:[67,32] cannot find symbol
+[ERROR]   symbol:   variable DatabaseConnection
+[ERROR]   location: class dao.SponsorDAO
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/SponsorDAO.java:[72,34] cannot find symbol
+[ERROR]   symbol:   class Sponsor
+[ERROR]   location: class dao.SponsorDAO
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/SponsorDAO.java:[87,14] cannot find symbol
+[ERROR]   symbol:   class Sponsor
+[ERROR]   location: class dao.SponsorDAO
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/SponsorDAO.java:[90,32] cannot find symbol
+[ERROR]   symbol:   variable DatabaseConnection
+[ERROR]   location: class dao.SponsorDAO
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/SponsorDAO.java:[95,34] cannot find symbol
+[ERROR]   symbol:   class Sponsor
+[ERROR]   location: class dao.SponsorDAO
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/SponsorDAO.java:[111,32] cannot find symbol
+[ERROR]   symbol:   variable DatabaseConnection
+[ERROR]   location: class dao.SponsorDAO
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/SponsorDAO.java:[118,28] cannot find symbol
+[ERROR]   symbol:   class Sponsor
+[ERROR]   location: class dao.SponsorDAO
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/SponsorDAO.java:[134,32] cannot find symbol
+[ERROR]   symbol:   variable DatabaseConnection
+[ERROR]   location: class dao.SponsorDAO
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/SponsorDAO.java:[141,28] cannot find symbol
+[ERROR]   symbol:   class Sponsor
+[ERROR]   location: class dao.SponsorDAO
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/SponsorDAO.java:[157,32] cannot find symbol
+[ERROR]   symbol:   variable DatabaseConnection
+[ERROR]   location: class dao.SponsorDAO
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/SponsorDAO.java:[173,32] cannot find symbol
+[ERROR]   symbol:   variable DatabaseConnection
+[ERROR]   location: class dao.SponsorDAO
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EventSponsorViewController.java:[109,65] cannot find symbol
+[ERROR]   symbol:   method getId()
+[ERROR]   location: variable e of type com.gestion.entities.Evenement
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EventSponsorViewController.java:[153,87] cannot find symbol
+[ERROR]   symbol:   method getNom()
+[ERROR]   location: variable ev of type com.gestion.entities.Evenement
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EventSponsorViewController.java:[154,29] cannot find symbol
+[ERROR]   symbol:   method getId()
+[ERROR]   location: variable ev of type com.gestion.entities.Evenement
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EventSponsorViewController.java:[170,32] cannot find symbol
+[ERROR]   symbol:   variable DatabaseConnection
+[ERROR]   location: class com.gestion.controllers.EventSponsorViewController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EventSponsorViewController.java:[187,32] cannot find symbol
+[ERROR]   symbol:   variable DatabaseConnection
+[ERROR]   location: class com.gestion.controllers.EventSponsorViewController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EventSponsorViewController.java:[218,32] cannot find symbol
+[ERROR]   symbol:   variable DatabaseConnection
+[ERROR]   location: class com.gestion.controllers.EventSponsorViewController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EventSponsorViewController.java:[418,32] cannot find symbol
+[ERROR]   symbol:   variable DatabaseConnection
+[ERROR]   location: class com.gestion.controllers.EventSponsorViewController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EventSponsorViewController.java:[422,35] no suitable constructor found for Evenement(int,java.lang.String,java.time.LocalDate,java.time.LocalDate,java.lang.String,java.lang.String,java.lang.String)
+[ERROR]     constructor com.gestion.entities.Evenement.Evenement() is not applicable
+[ERROR]       (actual and formal argument lists differ in length)
+[ERROR]     constructor com.gestion.entities.Evenement.Evenement(java.lang.String,java.lang.String,java.lang.String,java.time.LocalDateTime,java.time.LocalDateTime,java.lang.String,java.lang.String,java.lang.String) is not applicable
+[ERROR]       (actual and formal argument lists differ in length)
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EventSponsorViewController.java:[433,32] cannot find symbol
+[ERROR]   symbol:   variable DatabaseConnection
+[ERROR]   location: class com.gestion.controllers.EventSponsorViewController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EventSponsorViewController.java:[448,32] cannot find symbol
+[ERROR]   symbol:   variable DatabaseConnection
+[ERROR]   location: class com.gestion.controllers.EventSponsorViewController
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

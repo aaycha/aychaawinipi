@@ -453,6 +453,21 @@ public class MainController {
                 "map", "Carte des Restaurants",
                 "Explorer les refuges et restaurants sur la carte",
                 "/views/map/map-view.fxml", "\uD83D\uDDFA"));
+
+        modules.add(new ModuleGestion(
+                "equipements", "Equipements",
+                "Gérer l'inventaire des équipements",
+                "/views/wael/EquipementView.fxml", "🛠️"));
+
+        modules.add(new ModuleGestion(
+                "boutique", "Boutique",
+                "Espace de vente et location",
+                "/views/wael/EquipementStoreView.fxml", "🛒"));
+
+        modules.add(new ModuleGestion(
+                "messagerie", "Messagerie",
+                "Chat en temps réel",
+                "/views/wael/ChatView.fxml", "💬"));
     }
 
     private void createDashboardCards() {

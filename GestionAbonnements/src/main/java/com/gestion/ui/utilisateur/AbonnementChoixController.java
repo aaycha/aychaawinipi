@@ -32,6 +32,8 @@ public class AbonnementChoixController {
     private ListView<Abonnement> listView;
     @FXML
     private Label statusLabel;
+    @FXML
+    private FlowPane offersFlowPane;
 
     private final AbonnementController controller = new AbonnementController();
     // Récupéré depuis l'utilisateur connecté
@@ -49,6 +51,7 @@ public class AbonnementChoixController {
     public void initialize() {
         setupListView();
         onActualiser();
+        loadAvailableOffers();
     }
 
     private void setupListView() {
@@ -68,37 +71,82 @@ public class AbonnementChoixController {
         });
     }
 
-    // Handlers pour les nouveaux boutons d'abonnement
-    @FXML
-    private void onSubscribeMensuel() {
-        subscribe(Abonnement.TypeAbonnement.MENSUEL, 14.99);
+    private void loadAvailableOffers() {
+        if (offersFlowPane == null)
+            return;
+        Platform.runLater(() -> {
+            try {
+                offersFlowPane.getChildren().clear();
+                List<Abonnement> templates = controller.getAll().stream()
+                        .filter(a -> a.getUserId() != null && a.getUserId() == 1L)
+                        .collect(Collectors.toList());
+
+                for (Abonnement template : templates) {
+                    offersFlowPane.getChildren().add(createOfferCard(template));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
     }
 
-    @FXML
-    private void onSubscribeAnnuel() {
-        subscribe(Abonnement.TypeAbonnement.ANNUEL, 149.99);
+    private VBox createOfferCard(Abonnement template) {
+        VBox card = new VBox(15);
+        card.getStyleClass().add("modern-card");
+        card.setPrefWidth(280);
+        card.setStyle(
+                "-fx-padding: 24; -fx-border-color: rgba(255,255,255,0.1); -fx-border-radius: 12; -fx-background-color: rgba(255,255,255,0.02);");
+        card.setAlignment(Pos.CENTER);
+
+        VBox header = new VBox(5);
+        header.setAlignment(Pos.CENTER);
+        Label icon = new Label("✨");
+        icon.setStyle("-fx-font-size: 32px;");
+        Label typeLabel = new Label(template.getType().name());
+        typeLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 18px; -fx-text-fill: white;");
+        Label nameLabel = new Label(template.getNom() != null ? template.getNom() : "Abonnement Standard");
+        nameLabel.setStyle("-fx-text-fill: #94a3b8; -fx-font-size: 12px;");
+        header.getChildren().addAll(icon, typeLabel, nameLabel);
+
+        HBox priceBox = new HBox(5);
+        priceBox.setAlignment(Pos.CENTER);
+        Label price = new Label(String.format("%.2f €", template.getPrix()));
+        price.setStyle("-fx-font-size: 24px; -fx-font-weight: 800; -fx-text-fill: #10b981;");
+        Label period = new Label("/ " + (template.getType() == Abonnement.TypeAbonnement.MENSUEL ? "mois" : "an"));
+        period.setStyle("-fx-text-fill: #64748b;");
+        priceBox.getChildren().addAll(price, period);
+
+        VBox details = new VBox(8);
+        details.getChildren().add(new Label(
+                "• Accès: " + (template.getRestrictionType() != null ? template.getRestrictionType() : "Global")));
+        details.getChildren().add(new Label("• Status: Scout Verified"));
+        details.setStyle("-fx-text-fill: #d1d5db; -fx-font-size: 13px;");
+
+        Button subscribeBtn = new Button("S'abonner →");
+        subscribeBtn.setMaxWidth(Double.MAX_VALUE);
+        subscribeBtn.getStyleClass().add("btn-primary");
+        subscribeBtn.setStyle("-fx-background-radius: 20; -fx-padding: 10; -fx-font-weight: bold;");
+        subscribeBtn.setOnAction(e -> subscribeToTemplate(template));
+
+        card.getChildren().addAll(header, priceBox, details, subscribeBtn);
+        return card;
     }
 
-    @FXML
-    private void onSubscribePremium() {
-        subscribe(Abonnement.TypeAbonnement.PREMIUM, 299.99);
+    private void subscribeToTemplate(Abonnement template) {
+        subscribe(template.getType(), template.getPrix().doubleValue(), template);
     }
 
-    private void subscribe(Abonnement.TypeAbonnement type, double prix) {
+    private void subscribe(Abonnement.TypeAbonnement type, double prix, Abonnement template) {
         try {
-            // --- Open Stripe Checkout for real payment ---
             com.gestion.services.StripePaymentService stripeService = com.gestion.services.StripePaymentService
                     .getInstance();
-            stripeService.openCheckoutInBrowser(java.math.BigDecimal.valueOf(prix), "Abonnement " + type.getLabel());
+            stripeService.openCheckoutInBrowser(java.math.BigDecimal.valueOf(prix),
+                    "Abonnement " + (template != null ? template.getNom() : type.getLabel()));
 
             Alert payConfirm = new Alert(Alert.AlertType.CONFIRMATION);
             payConfirm.setTitle("Stripe Payment Verification");
-            payConfirm.setHeaderText("Secure Payment Gateway Launched");
-            payConfirm.setContentText(
-                    "The Stripe checkout session has been opened in your browser.\n\n" +
-                            "Montant : " + prix + " €\n" +
-                            "Plan : " + type.getLabel() + "\n\n" +
-                            "Click 'CONFIRM PAYMENT' after completing the transaction to activate your status.");
+            payConfirm.setHeaderText("Secure Gateway Launched");
+            payConfirm.setContentText("Complete the transaction in your browser and confirm here to activate.");
 
             ButtonType btnConfirm = new ButtonType("CONFIRM PAYMENT");
             ButtonType btnCancel = new ButtonType("CANCEL", ButtonBar.ButtonData.CANCEL_CLOSE);
@@ -107,41 +155,33 @@ public class AbonnementChoixController {
             payConfirm.showAndWait().ifPresent(response -> {
                 if (response == btnConfirm) {
                     try {
-                        // Create the abonnement
-                        Abonnement template = new Abonnement(currentUserId, null, type, java.time.LocalDate.now(),
-                                java.math.BigDecimal.valueOf(prix), true);
+                        Abonnement newAbo = new Abonnement();
+                        newAbo.setUserId(currentUserId);
+                        newAbo.setNom(template != null ? template.getNom() : "Expedition Pass " + type.getLabel());
+                        newAbo.setType(type);
+                        newAbo.setDateDebut(java.time.LocalDate.now());
+                        newAbo.setDateFin(java.time.LocalDate.now().plusMonths(1));
+                        newAbo.setPrix(java.math.BigDecimal.valueOf(prix));
+                        newAbo.setAutoRenew(true);
+                        newAbo.setStatut(Abonnement.StatutAbonnement.ACTIF);
 
-                        // Save the abonnement via the form
-                        FXMLLoader loader = new FXMLLoader(
-                                getClass().getResource("/views/abonnement/abonnement-form.fxml"));
-                        Parent root = loader.load();
-                        com.gestion.ui.abonnement.AbonnementFormController ctrl = loader.getController();
+                        if (template != null) {
+                            newAbo.setRestrictionType(template.getRestrictionType());
+                            newAbo.setEvenementId(template.getEvenementId());
+                        }
 
-                        ctrl.setAbonnement(template);
-                        ctrl.setReadOnly(true);
-                        ctrl.setOnSave(() -> {
-                            Platform.runLater(() -> {
-                                onActualiser();
-                                if (mainTabPane != null) {
-                                    mainTabPane.getSelectionModel().select(0);
-                                }
-                                if (onSuccess != null) {
-                                    onSuccess.run();
-                                }
-                                if (statusLabel != null && statusLabel.getScene() != null) {
-                                    ((Stage) statusLabel.getScene().getWindow()).close();
-                                }
+                        // Save directly to DB
+                        Abonnement savedAbo = controller.create(newAbo);
+                        if (savedAbo != null) {
+                            newAbo.setId(savedAbo.getId());
+                        }
 
-                                // --- Open Facture (Invoice) after successful save ---
-                                showFacture(template);
-                            });
+                        Platform.runLater(() -> {
+                            onActualiser();
+                            if (mainTabPane != null)
+                                mainTabPane.getSelectionModel().select(0);
+                            showFacture(newAbo);
                         });
-
-                        Stage stage = new Stage();
-                        stage.initModality(Modality.APPLICATION_MODAL);
-                        stage.setTitle("Mission Activation: " + type.getLabel());
-                        stage.setScene(new Scene(root));
-                        stage.show();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -149,11 +189,6 @@ public class AbonnementChoixController {
             });
         } catch (Exception e) {
             e.printStackTrace();
-            Alert error = new Alert(Alert.AlertType.ERROR);
-            error.setTitle("Erreur");
-            error.setHeaderText("Échec de l'ouverture du formulaire");
-            error.setContentText(e.getMessage());
-            error.show();
         }
     }
 
@@ -184,12 +219,15 @@ public class AbonnementChoixController {
         card.getStyleClass().add("modern-card");
         card.setAlignment(Pos.CENTER_LEFT);
 
-        // Icon
+        // Icon - Scout Box Style
         StackPane iconPane = new StackPane();
-        Circle bg = new Circle(20, Color.web("#e7f5ff"));
+        iconPane.setPrefSize(40, 40);
+        iconPane.setStyle(
+                "-fx-background-color: rgba(255,255,255,0.05); -fx-background-radius: 10; -fx-border-color: rgba(255,255,255,0.1); -fx-border-radius: 10;");
         Text icon = new Text("🎫");
-        icon.setFont(Font.font("Segoe UI Emoji", 20));
-        iconPane.getChildren().addAll(bg, icon);
+        icon.setFont(Font.font("Segoe UI Emoji", 18));
+        icon.setFill(Color.WHITE);
+        iconPane.getChildren().addAll(icon);
 
         // Content
         VBox content = new VBox(5);
@@ -203,9 +241,12 @@ public class AbonnementChoixController {
         Label statusBadge = new Label(item.getStatut() != null ? item.getStatut().getLabel().toUpperCase() : "INCONNU");
         statusBadge.getStyleClass().add("status-badge");
         if (item.getStatut() == Abonnement.StatutAbonnement.ACTIF) {
-            statusBadge.setStyle("-fx-background-color: #28a745;");
+            statusBadge.setStyle(
+                    "-fx-background-color: #22c55e; -fx-text-fill: white; -fx-padding: 3 10; -fx-background-radius: 10; -fx-font-weight: bold; -fx-font-size: 9;");
+            statusBadge.setText("✓ VERIFIED");
         } else {
-            statusBadge.setStyle("-fx-background-color: #6c757d;");
+            statusBadge.setStyle(
+                    "-fx-background-color: #64748b; -fx-text-fill: white; -fx-padding: 3 10; -fx-background-radius: 10; -fx-font-weight: bold; -fx-font-size: 9;");
         }
 
         Region spacer = new Region();

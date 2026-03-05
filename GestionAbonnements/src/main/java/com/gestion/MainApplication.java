@@ -98,6 +98,7 @@ public class MainApplication extends Application {
     @Override
     public void start(Stage stage) {
         primaryStage = stage;
+        com.gestion.controllers.SceneUtil.setStage(stage);
 
         // Start REST API Server
         apiService = new com.gestion.api.RestApiService();

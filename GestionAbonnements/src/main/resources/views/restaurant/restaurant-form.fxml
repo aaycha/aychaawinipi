@@ -78,9 +78,16 @@
 
             <!-- Media Section -->
             <VBox spacing="8" styleClass="modern-card" style="-fx-padding: 10;">
-                <Label text="🖼️ VISUAL SIGNAL" style="-fx-font-weight: 900; -fx-text-fill: #F97316; -fx-font-size: 10; -fx-letter-spacing: 1px;"/>
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label text="🖼️ VISUAL SIGNAL" style="-fx-font-weight: 900; -fx-text-fill: #F97316; -fx-font-size: 10; -fx-letter-spacing: 1px;"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button fx:id="btnGenerateAI" text="✨ AUTO-DESCRIBE" onAction="#onGenerateAI" styleClass="button-capsule-glass" style="-fx-padding: 4 10; -fx-font-size: 9;"/>
+                </HBox>
                 <TextArea fx:id="inputDescription" promptText="Cuisine bio..." wrapText="true" prefRowCount="2" styleClass="modern-input" style="-fx-font-size: 10;"/>
-                <TextField fx:id="inputImageUrl" promptText="URL image..." styleClass="modern-input" style="-fx-font-size: 10;"/>
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <TextField fx:id="inputImageUrl" promptText="URL image or local path..." HBox.hgrow="ALWAYS" styleClass="modern-input" style="-fx-font-size: 10;"/>
+                    <Button text="📂 BROWSE" onAction="#onBrowseImage" styleClass="button-capsule-glass" style="-fx-padding: 6 12; -fx-font-size: 9;"/>
+                </HBox>
             </VBox>
 
             <!-- Operational Status -->

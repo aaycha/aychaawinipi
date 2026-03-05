@@ -14,12 +14,10 @@
     -fx-nature-slate: #1E293B;
     -fx-text-muted: #94A3B8;
 
-    /* Use color literals to avoid casting issues */
     -fx-glass-card-bg: rgba(15, 23, 42, 0.75);
     -fx-nature-glass-border: rgba(255, 255, 255, 0.15);
 }
 
-/* Base Styles */
 .nature-root {
     -fx-background-color: -fx-nature-bg;
     -fx-font-family: 'Segoe UI Semibold', 'Roboto', system-ui;
@@ -59,6 +57,58 @@
     -fx-border-radius: 16;
 }
 
+/* Restored Styles for User's FXML */
+.panel {
+    -fx-background-color: rgba(15, 23, 42, 0.85);
+    -fx-background-radius: 20;
+    -fx-padding: 24;
+    -fx-border-color: rgba(255, 255, 255, 0.1);
+    -fx-border-width: 1;
+    -fx-border-radius: 20;
+}
+
+.chip {
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+    -fx-text-fill: white;
+    -fx-padding: 4 12;
+    -fx-background-radius: 15;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.card-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -fx-nature-accent-orange;
+    -fx-padding: 0 0 10 0;
+}
+
+.glass-scroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+}
+
+.glass-scroll>.viewport {
+    -fx-background-color: transparent;
+}
+
+.title {
+    -fx-font-size: 24px;
+    -fx-font-weight: 900;
+    -fx-text-fill: white;
+}
+
+.subtitle {
+    -fx-font-size: 13px;
+    -fx-text-fill: #94A3B8;
+}
+
+.header-card {
+    -fx-background-color: rgba(0, 0, 0, 0.4);
+    -fx-padding: 15;
+    -fx-background-radius: 15;
+}
+
 /* Modern Inputs */
 .modern-input {
     -fx-background-color: rgba(255, 255, 255, 0.05);
@@ -76,60 +126,6 @@
     -fx-background-color: rgba(255, 255, 255, 0.12);
 }
 
-/* Premium Buttons */
-.button-capsule {
-    -fx-background-color: #F97316;
-    -fx-text-fill: white;
-    -fx-font-size: 12px;
-    -fx-font-weight: 700;
-    -fx-background-radius: 30;
-    -fx-padding: 8 20;
-    -fx-cursor: hand;
-    -fx-transition: all 0.3s;
-}
-
-.button-capsule:hover {
-    -fx-background-color: #FB923C;
-    -fx-effect: dropshadow(gaussian, rgba(249, 115, 22, 0.4), 15, 0, 0, 0);
-}
-
-.button-capsule-glass {
-    -fx-background-color: rgba(255, 255, 255, 0.05);
-    -fx-border-color: rgba(255, 255, 255, 0.2);
-    -fx-border-width: 1.2;
-    -fx-border-radius: 30;
-    -fx-background-radius: 30;
-    -fx-text-fill: white;
-    -fx-font-size: 12px;
-    -fx-padding: 8 20;
-}
-
-.button-capsule-glass:hover {
-    -fx-background-color: rgba(255, 255, 255, 0.2);
-}
-
-/* ScrollPane Clean Style */
-.modern-scroll {
-    -fx-background-color: transparent;
-    -fx-background: transparent;
-}
-
-.modern-scroll>.viewport {
-    -fx-background-color: transparent;
-}
-
-.modern-scroll .scroll-bar:vertical,
-.modern-scroll .scroll-bar:horizontal {
-    -fx-opacity: 0.3;
-    -fx-background-color: transparent;
-}
-
-.modern-scroll .scroll-bar:vertical .thumb,
-.modern-scroll .scroll-bar:horizontal .thumb {
-    -fx-background-color: rgba(255, 255, 255, 0.2);
-    -fx-background-radius: 10;
-}
-
 /* Typography */
 .text-hero {
     -fx-font-size: 16px;
@@ -140,4 +136,65 @@
 .text-muted {
     -fx-font-size: 12px;
     -fx-text-fill: #94A3B8;
+}
+
+/* Premium Classes (Secondary) */
+.premium-overlay {
+    -fx-background-color: rgba(0, 0, 0, 0.6);
+}
+
+.premium-card {
+    -fx-background-color: rgba(15, 23, 42, 0.9);
+    -fx-background-radius: 24;
+    -fx-padding: 30;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 30, 0, 0, 15);
+    -fx-border-color: rgba(255, 255, 255, 0.1);
+    -fx-border-width: 1;
+    -fx-border-radius: 24;
+}
+
+.premium-input {
+    -fx-background-color: rgba(255, 255, 255, 0.05);
+    -fx-border-color: rgba(255, 255, 255, 0.1);
+    -fx-border-width: 0 0 1 0;
+    -fx-text-fill: white;
+}
+
+/* Premium Buttons */
+.button-capsule {
+    -fx-background-color: #F97316;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 25;
+    -fx-cursor: hand;
+    -fx-padding: 8 20;
+}
+
+.button-capsule:hover {
+    -fx-background-color: #EA580C;
+}
+
+.button-capsule-glass {
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+    -fx-text-fill: white;
+    -fx-border-color: rgba(255, 255, 255, 0.2);
+    -fx-border-width: 1;
+    -fx-border-radius: 20;
+    -fx-background-radius: 20;
+    -fx-cursor: hand;
+}
+
+.button-capsule-glass:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.2);
+}
+/* ScrollPane Transparency */
+.modern-scroll {
+    -fx-background: transparent;
+    -fx-background-color: transparent;
+}
+.modern-scroll .viewport {
+    -fx-background-color: transparent;
+}
+.modern-scroll .scroll-bar {
+    -fx-background-color: transparent;
 }

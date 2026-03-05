@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<StackPane prefHeight="650.0" prefWidth="900.0"
+           xmlns="http://javafx.com/javafx/21"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.gestion.controllers.AjouterEvenementController"
+
+           styleClass="app-root">
+
+    <ImageView fx:id="bgImage" fitHeight="650.0" fitWidth="900.0" preserveRatio="false" />
+    <Pane styleClass="bg-overlay" />
+
+    <BorderPane>
+        <padding>
+            <Insets bottom="26" left="26" right="26" top="26" />
+        </padding>
+
+        <top>
+            <HBox alignment="CENTER_LEFT" spacing="16" styleClass="header-card">
+                <Button text="↩" onAction="#onRetour" styleClass="btn-icon-minimal"/>
+                <ImageView fx:id="imgLogo" fitHeight="58" fitWidth="58" preserveRatio="true" />
+                <Label styleClass="title" text="Ajouter un Événement" />
+                <Pane HBox.hgrow="ALWAYS"/>
+            </HBox>
+        </top>
+
+        <center>
+            <ScrollPane fitToWidth="true" styleClass="modern-scroll" stylesheets="@../styles/nature-mood.css">
+                <content>
+                    <VBox alignment="TOP_CENTER" spacing="20" style="-fx-padding: 30 0; -fx-background-color: transparent;">
+                        
+                        <!-- Main Glass Card -->
+                        <VBox maxWidth="750" spacing="25" styleClass="glass-panel" style="-fx-padding: 35;">
+                            
+                            <!-- Header Layer -->
+                            <HBox alignment="CENTER_LEFT" spacing="15">
+                                <ImageView fx:id="imgLogo" fitHeight="60" fitWidth="60" preserveRatio="true">
+                                    <image>
+                                        <Image url="@logo.png" />
+                                    </image>
+                                </ImageView>
+                                <Label styleClass="text-hero" text="Ajouter un Événement" style="-fx-font-size: 28;"/>
+                            </HBox>
+
+                            <Separator style="-fx-opacity: 0.1;" />
+
+                            <!-- Basic Fields -->
+                            <GridPane hgap="20" vgap="20">
+                                <columnConstraints>
+                                    <ColumnConstraints minWidth="120" prefWidth="120" />
+                                    <ColumnConstraints hgrow="ALWAYS" />
+                                </columnConstraints>
+
+                                <Label text="Titre :" styleClass="text-muted" style="-fx-font-weight: bold;" GridPane.rowIndex="0" GridPane.columnIndex="0" />
+                                <TextField fx:id="txtTitre" promptText="Titre de l'aventure" styleClass="modern-input" prefHeight="45" GridPane.rowIndex="0" GridPane.columnIndex="1" />
+
+                                <Label text="Description :" styleClass="text-muted" style="-fx-font-weight: bold;" GridPane.rowIndex="1" GridPane.columnIndex="0" />
+                                <TextArea fx:id="txtDesc" promptText="Décrivez votre trek..." styleClass="modern-input" prefHeight="80" prefWidth="520" wrapText="true" GridPane.rowIndex="1" GridPane.columnIndex="1" />
+
+                                <Label text="Lieu :" styleClass="text-muted" style="-fx-font-weight: bold;" GridPane.rowIndex="2" GridPane.columnIndex="0" />
+                                <TextField fx:id="txtLieu" promptText="Lieu de l'événement" styleClass="modern-input" prefHeight="45" GridPane.rowIndex="2" GridPane.columnIndex="1" />
+
+                                <Label text="Spotify :" styleClass="text-muted" style="-fx-font-weight: bold;" GridPane.rowIndex="3" GridPane.columnIndex="0" />
+                                <TextField fx:id="txtSpotifyUrl" promptText="https://open.spotify.com/playlist/..." styleClass="modern-input" prefHeight="45" GridPane.rowIndex="3" GridPane.columnIndex="1" />
+                            </GridPane>
+
+                            <!-- Date & Type Section -->
+                            <HBox spacing="20">
+                                <VBox spacing="8" HBox.hgrow="ALWAYS">
+                                    <Label text="TYPE D'ÉVÉNEMENT" style="-fx-text-fill: white; -fx-font-weight: 700; -fx-font-size: 11;" />
+                                    <ComboBox fx:id="cbType" maxWidth="Infinity" styleClass="modern-combo" prefHeight="45"/>
+                                </VBox>
+                                <VBox spacing="8" HBox.hgrow="ALWAYS">
+                                    <Label text="DATE DE DÉBUT" style="-fx-text-fill: white; -fx-font-weight: 700; -fx-font-size: 11;" />
+                                    <HBox spacing="10">
+                                        <DatePicker fx:id="dpDebut" HBox.hgrow="ALWAYS" styleClass="modern-datepicker" prefHeight="45"/>
+                                        <Button fx:id="btnTimeD" onAction="#onChoisirHeureDebut" styleClass="button-capsule-glass" text="🕐" prefWidth="50" prefHeight="45"/>
+                                    </HBox>
+                                </VBox>
+                                <VBox fx:id="boxDateFin" spacing="8" HBox.hgrow="ALWAYS">
+                                    <Label text="DATE DE FIN" style="-fx-text-fill: white; -fx-font-weight: 700; -fx-font-size: 11;" />
+                                    <HBox spacing="10">
+                                        <DatePicker fx:id="dpFin" HBox.hgrow="ALWAYS" styleClass="modern-datepicker" prefHeight="45"/>
+                                        <Button fx:id="btnTimeF" onAction="#onChoisirHeureFin" styleClass="button-capsule-glass" text="🕐" prefWidth="50" prefHeight="45"/>
+                                    </HBox>
+                                </VBox>
+                            </HBox>
+
+                            <!-- Equipment Section (Admin) -->
+                            <VBox fx:id="boxEquipment" spacing="15" style="-fx-background-color: rgba(255,255,255,0.02); -fx-padding: 20; -fx-background-radius: 15; -fx-border-color: rgba(255,255,255,0.05); -fx-border-radius: 15;">
+                                <Label styleClass="text-hero" text="Équipements / À prévoir" style="-fx-font-size: 16;" />
+                                <Label text="Dress code, déguisement, maquillage..." styleClass="text-muted" style="-fx-font-size: 12;" />
+                                
+                                <HBox spacing="12">
+                                    <TextField fx:id="txtEquipment" promptText="Ex: Tente, Sac de couchage..." HBox.hgrow="ALWAYS" styleClass="modern-input" prefHeight="40"/>
+                                    <Button text="+ Ajouter" onAction="#onAddEquipment" styleClass="button-capsule-glass" prefHeight="40"/>
+                                </HBox>
+
+                                <FlowPane fx:id="flowEquipmentSuggestions" hgap="8" vgap="8" />
+                                
+                                <Label text="Sélectionnés :" styleClass="text-muted" style="-fx-font-weight: bold; -fx-font-size: 11;" />
+                                <FlowPane fx:id="flowEquipmentSelected" hgap="8" vgap="8" />
+                            </VBox>
+
+                            <!-- Image Management -->
+                            <VBox spacing="15">
+                                <Label text="IMAGE &amp; VISUEL" style="-fx-text-fill: white; -fx-font-weight: 700; -fx-font-size: 11;" />
+                                <HBox spacing="15" alignment="CENTER_LEFT">
+                                    <Button text="Choisir image" onAction="#onChooseImage" styleClass="button-capsule-glass" prefHeight="40"/>
+                                    <Button text="Générer Image IA" onAction="#onGenerateImage" styleClass="button-capsule-glass" prefHeight="40"/>
+                                    <Label fx:id="lblImageName" text="logo.png" styleClass="text-muted" />
+                                </HBox>
+                                <ImageView fx:id="imgPreview" fitHeight="150" fitWidth="300" preserveRatio="true" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0, 0, 4);" />
+                            </VBox>
+
+                            <!-- Final Actions -->
+                            <HBox alignment="CENTER" spacing="20" style="-fx-padding: 10 0 0 0;">
+                                <Button text="Ajouter" onAction="#onAjouterEvenement" styleClass="button-capsule" prefWidth="150" prefHeight="45"/>
+                                <Button text="Retour" onAction="#onRetour" styleClass="button-capsule-glass" prefWidth="150" prefHeight="45"/>
+                            </HBox>
+
+                        </VBox>
+
+                    </VBox>
+                </content>
+            </ScrollPane>
+
+        </center>
+
+    </BorderPane>
+</StackPane>

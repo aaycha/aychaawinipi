@@ -1,36 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
 
-<?import javafx.collections.FXCollections?>
-<?import java.lang.String?>
-<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.gestion.controllers.MainController"
-            prefWidth="1200" prefHeight="850" styleClass="nature-root"
-            stylesheets="@../styles/nature-mood.css, @../styles/dashboard-premium.css">
+<BorderPane prefHeight="1554.0" prefWidth="3799.0" styleClass="nature-root" stylesheets="@../styles/nature-mood.css, @../styles/dashboard-premium.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gestion.controllers.MainController">
 
     <top>
-            <HBox alignment="CENTER_LEFT" spacing="20" styleClass="top-bar" style="-fx-padding: 20 40;">
+            <HBox alignment="CENTER_LEFT" spacing="20" style="-fx-padding: 20 40;" styleClass="top-bar">
                 <ImageView fitHeight="45" preserveRatio="true">
                     <image>
                         <Image url="@../images/lamma-logo.png" />
                     </image>
                 </ImageView>
-                <Label text="LAMA EXPEDITION" styleClass="section-title" style="-fx-font-size: 28; -fx-text-fill: white;"/>
-                <Region HBox.hgrow="ALWAYS"/>
-                <ComboBox fx:id="roleCombo" prefWidth="160" styleClass="modern-input" promptText="Select Role"/>
-                <Region minWidth="20"/>
-                <Label fx:id="userLabel" text="Active Scout: Explorer" styleClass="section-subtitle" style="-fx-text-fill: #3b82f6;"/>
+                <Label style="-fx-font-size: 28; -fx-text-fill: white;" styleClass="section-title" text="LAMA EXPEDITION" />
+                <Region HBox.hgrow="ALWAYS" />
+                <ComboBox fx:id="roleCombo" prefWidth="160" promptText="Select Role" styleClass="modern-input" />
+                <Region minWidth="20" />
+                <Label fx:id="userLabel" style="-fx-text-fill: #3b82f6;" styleClass="section-subtitle" text="Active Scout: Explorer" />
             </HBox>
     </top>
 
     <center>
-        <StackPane>
+        <StackPane prefHeight="1112.0" prefWidth="2019.0">
             <!-- Global Nature Background -->
             <ImageView fitHeight="1080" fitWidth="1920" preserveRatio="false">
                 <image>
@@ -42,20 +35,20 @@
             <StackPane fx:id="contentPane">
                 <!-- ... existing content ... -->
                 <ScrollPane fx:id="dashboardScroll" fitToWidth="true" hbarPolicy="AS_NEEDED" styleClass="modern-scroll">
-                    <FlowPane fx:id="cardsContainer" hgap="25" vgap="25" style="-fx-padding: 40;" />
+                    <FlowPane fx:id="cardsContainer" hgap="25" style="-fx-padding: 40;" vgap="25" />
                 </ScrollPane>
-                <ScrollPane fx:id="userDashboardScroll" fitToWidth="true" styleClass="modern-scroll" visible="false" managed="false" style="-fx-background: transparent; -fx-background-color: transparent;" hbarPolicy="AS_NEEDED">
-                    <fx:include source="utilisateur/espace-utilisateur.fxml" fx:id="espaceUtilisateurInclude"/>
+                <ScrollPane fx:id="userDashboardScroll" fitToWidth="true" hbarPolicy="AS_NEEDED" managed="false" style="-fx-background: transparent; -fx-background-color: transparent;" styleClass="modern-scroll" visible="false">
+                    <fx:include fx:id="espaceUtilisateurInclude" source="utilisateur/espace-utilisateur.fxml" />
                 </ScrollPane>
-                <BorderPane fx:id="moduleContentPane" visible="false" managed="false" style="-fx-background-color: transparent;">
+                <BorderPane fx:id="moduleContentPane" managed="false" style="-fx-background-color: transparent;" visible="false">
                     <top>
                         <HBox alignment="CENTER_LEFT" spacing="20" style="-fx-padding: 10 20;">
-                            <Button fx:id="backButton" onAction="#retourDashboard" text="← Back" styleClass="button-capsule-glass" />
-                            <Label fx:id="moduleTitleLabel" text="Module Title" style="-fx-text-fill: white; -fx-font-size: 20; -fx-font-weight: bold;" />
+                            <Button fx:id="backButton" onAction="#retourDashboard" styleClass="button-capsule-glass" text="← Back" />
+                            <Label fx:id="moduleTitleLabel" style="-fx-text-fill: white; -fx-font-size: 20; -fx-font-weight: bold;" text="Module Title" />
                         </HBox>
                     </top>
                     <center>
-                        <ScrollPane fitToWidth="true" fitToHeight="false" style="-fx-background: transparent; -fx-background-color: transparent;" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
+                        <ScrollPane fitToHeight="false" fitToWidth="true" hbarPolicy="NEVER" style="-fx-background: transparent; -fx-background-color: transparent;" vbarPolicy="AS_NEEDED">
                             <StackPane fx:id="moduleStackPane" />
                         </ScrollPane>
                     </center>
@@ -63,11 +56,9 @@
 
                 <!-- Floating Chatbot Button -->
                 <StackPane pickOnBounds="false">
-                    <Button onAction="#openChatbot" styleClass="button-capsule" 
-                            style="-fx-background-color: #1890ff; -fx-background-radius: 50; -fx-min-width: 60; -fx-min-height: 60; -fx-max-width: 60; -fx-max-height: 60; -fx-font-size: 24; -fx-effect: dropshadow(gaussian, rgba(24, 144, 255, 0.5), 15, 0, 0, 0);"
-                            text="🤖" StackPane.alignment="BOTTOM_RIGHT">
+                    <Button onAction="#openChatbot" style="-fx-background-color: #1890ff; -fx-background-radius: 50; -fx-min-width: 60; -fx-min-height: 60; -fx-max-width: 60; -fx-max-height: 60; -fx-font-size: 24; -fx-effect: dropshadow(gaussian, rgba(24, 144, 255, 0.5), 15, 0, 0, 0);" styleClass="button-capsule" text="🤖" StackPane.alignment="BOTTOM_RIGHT">
                         <StackPane.margin>
-                            <Insets bottom="30" right="30"/>
+                            <Insets bottom="30" right="30" />
                         </StackPane.margin>
                     </Button>
                 </StackPane>
@@ -76,11 +67,11 @@
     </center>
 
     <bottom>
-        <HBox spacing="12" alignment="CENTER_LEFT" styleClass="voyage-footer">
+        <HBox alignment="CENTER_LEFT" prefHeight="67.0" prefWidth="3021.0" spacing="12" styleClass="voyage-footer">
             <padding>
-                <Insets top="10" right="24" bottom="10" left="24"/>
+                <Insets bottom="10" left="24" right="24" top="10" />
             </padding>
-            <Label fx:id="statusLabel" text="Pret - Selectionnez un module" styleClass="voyage-status"/>
+            <Label fx:id="statusLabel" styleClass="voyage-status" text="Pret - Selectionnez un module" />
         </HBox>
     </bottom>
 </BorderPane>

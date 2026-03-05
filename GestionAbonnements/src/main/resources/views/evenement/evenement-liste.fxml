@@ -7,7 +7,7 @@
 <?import java.net.URL?>
 
 <ScrollPane xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.gestion.ui.evenement.EvenementListeController"
+            fx:controller="com.gestion.ui.evenement.EvenementViewController"
             fitToWidth="true" fitToHeight="true" hbarPolicy="AS_NEEDED" vbarPolicy="AS_NEEDED"
             style="-fx-background: transparent; -fx-background-color: transparent;"
             stylesheets="@../../styles/nature-mood.css, @../../styles/card-view.css">
@@ -33,6 +33,9 @@
         <!-- Action Bar - Capsule Style -->
         <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 2 0;">
             <Button fx:id="btnActualiser" text="🔄 SYNC" onAction="#onActualiser" styleClass="button-capsule-glass" style="-fx-padding: 8 16; -fx-font-size: 11;"/>
+            <Button fx:id="btnNouvelEvent" text="➕ AJOUTER" onAction="#onNouvelEvenement" styleClass="button-capsule" style="-fx-background-color: #22c55e; -fx-padding: 8 16; -fx-font-size: 11;"/>
+            <Button fx:id="btnModifier" text="✏️ MODIFIER" onAction="#onModifier" styleClass="button-capsule-glass" style="-fx-padding: 8 16; -fx-font-size: 11;"/>
+            <Button fx:id="btnSupprimer" text="🗑️ SUPPRIMER" onAction="#onSupprimer" styleClass="button-capsule-glass" style="-fx-padding: 8 16; -fx-font-size: 11; -fx-text-fill: #ef4444;"/>
             <Region HBox.hgrow="ALWAYS"/>
             <TextField fx:id="searchField" promptText="🔍 Scout search..." styleClass="modern-input" prefWidth="250" style="-fx-font-size: 11;"/>
         </HBox>

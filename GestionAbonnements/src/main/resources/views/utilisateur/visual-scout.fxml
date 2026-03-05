@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<ScrollPane
+        fitToWidth="false"
+        fitToHeight="false"
+        hbarPolicy="AS_NEEDED"
+        vbarPolicy="AS_NEEDED"
+        prefHeight="580.0"
+        prefWidth="850.0"
+        style="-fx-background: transparent; -fx-background-color: transparent;"
+        styleClass="modern-scroll-pane"
+        stylesheets="@../../styles/nature-mood.css, @../../styles/card-view.css"
+        xmlns="http://javafx.com/javafx/17.0.12"
+        xmlns:fx="http://javafx.com/fxml/1"
+        fx:controller="com.gestion.ui.utilisateur.VisualScoutController">
+
+    <content>
+        <VBox minHeight="700"
+              minWidth="950"
+              spacing="8"
+              style="-fx-padding: 10;"
+              styleClass="modern-panel">
+
+            <!-- ── Header ───────────────────────── -->
+            <HBox alignment="CENTER_LEFT" spacing="8">
+                <Button onAction="#onBack"
+                        style="-fx-font-size: 12; -fx-padding: 3 8;"
+                        styleClass="button-capsule-glass"
+                        text="↩"/>
+
+                <StackPane style="-fx-background-color: rgba(99,102,241,0.15);
+                                  -fx-background-radius: 8; -fx-padding: 5;">
+                    <Label style="-fx-font-size: 16;" text="🛰️"/>
+                </StackPane>
+
+                <VBox spacing="0">
+                    <Label style="-fx-font-size: 14;"
+                           styleClass="text-hero"
+                           text="Visual Scout Satellite"/>
+                    <Label style="-fx-font-size: 9;"
+                           styleClass="text-muted"
+                           text="AI environment analysis"/>
+                </VBox>
+            </HBox>
+
+            <!-- ── Input Section ─────────────────── -->
+            <VBox spacing="6"
+                  style="-fx-padding: 10;"
+                  styleClass="glass-panel">
+
+                <Label style="-fx-text-fill: #818cf8;
+                              -fx-font-size: 8;
+                              -fx-font-weight: 900;"
+                       styleClass="hiker-label"
+                       text="📍 DEPLOY VISUAL SENSOR"/>
+
+                <HBox alignment="CENTER_LEFT" spacing="6">
+                    <TextField fx:id="inputImageUrl"
+                               promptText="URL or local path..."
+                               style="-fx-font-size: 10;
+                                      -fx-pref-height: 30;"
+                               styleClass="modern-input"
+                               HBox.hgrow="ALWAYS"/>
+
+                    <Button onAction="#onBrowseImage"
+                            style="-fx-padding: 5 8;"
+                            styleClass="button-capsule-glass"
+                            text="📂"/>
+
+                    <Button fx:id="btnScan"
+                            onAction="#onScan"
+                            style="-fx-padding: 5 15;
+                                   -fx-font-size: 10;
+                                   -fx-background-color: #6366f1;
+                                   -fx-text-fill: white;
+                                   -fx-font-weight: bold;
+                                   -fx-background-radius: 20;"
+                            styleClass="button-capsule"
+                            text="🛰️ SCAN"/>
+                </HBox>
+
+                <Label fx:id="statusLabel"
+                       style="-fx-font-size: 9;
+                              -fx-font-style: italic;"
+                       styleClass="text-muted"
+                       text="Ready for deployment."/>
+            </VBox>
+
+            <!-- ── Result Section ────────────────── -->
+            <HBox spacing="8">
+
+                <!-- Sensor Feed -->
+                <VBox spacing="5"
+                      style="-fx-padding: 8;"
+                      styleClass="modern-card">
+
+                    <Label style="-fx-text-fill: #94a3b8;
+                                  -fx-font-weight: 800;
+                                  -fx-font-size: 8;"
+                           text="📸 SENSOR FEED"/>
+
+                    <StackPane style="-fx-background-color: rgba(0,0,0,0.25);
+                                      -fx-background-radius: 8;
+                                      -fx-min-width: 200;
+                                      -fx-pref-width: 220;
+                                      -fx-min-height: 180;
+                                      -fx-pref-height: 200;">
+
+                        <ImageView fx:id="previewImage"
+                                   fitWidth="200"
+                                   fitHeight="180"
+                                   preserveRatio="true"/>
+
+                        <Label fx:id="lblNoSignal"
+                               style="-fx-font-size: 9;"
+                               styleClass="text-muted"
+                               text="No signal feed"/>
+                    </StackPane>
+                </VBox>
+
+                <!-- AI Intelligence -->
+                <VBox fx:id="resultContainer"
+                      spacing="6"
+                      style="-fx-padding: 8;"
+                      styleClass="modern-card"
+                      minWidth="550">
+
+                    <HBox alignment="CENTER_LEFT" spacing="8">
+                        <Label style="-fx-text-fill: #22c55e;
+                                      -fx-font-weight: 800;
+                                      -fx-font-size: 8;"
+                               text="🧬 AI INTELLIGENCE DATA"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+
+                        <Button fx:id="btnTikTokDiscovery"
+                                onAction="#onTikTokDiscovery"
+                                style="-fx-font-size: 8;
+                                       -fx-padding: 3 8;
+                                       -fx-text-fill: #ff0050;
+                                       -fx-border-color: #ff0050;
+                                       -fx-border-radius: 20;
+                                       -fx-background-color: transparent;"
+                                styleClass="button-capsule-glass"
+                                text="🚀 TIKTOK"/>
+                    </HBox>
+
+                    <TextArea fx:id="analysisResult"
+                              editable="false"
+                              prefRowCount="6"
+                              style="-fx-font-family: 'Inter', sans-serif;
+                                     -fx-font-size: 11;
+                                     -fx-text-fill: white;"
+                              styleClass="modern-input"
+                              wrapText="true"/>
+                </VBox>
+
+            </HBox>
+
+        </VBox>
+    </content>
+
+</ScrollPane>

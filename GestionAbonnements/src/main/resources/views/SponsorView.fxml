@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.gestion.controllers.SponsorViewController"
+      styleClass="content-card"
+      spacing="0">
+
+    <HBox styleClass="section-header" alignment="CENTER_LEFT" spacing="15">
+        <padding>
+            <Insets top="10" right="15" bottom="10" left="15"/>
+        </padding>
+        <Button text="↩" onAction="#onRetour" styleClass="button-capsule-glass" style="-fx-font-size: 16; -fx-padding: 4 12;"/>
+        <Label text="📋 Gestion des Sponsors" styleClass="section-title"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label text="Espace Administrateur" style="-fx-text-fill: white; -fx-font-size: 12px;"/>
+    </HBox>
+
+    <VBox spacing="12" VBox.vgrow="ALWAYS">
+        <padding>
+            <Insets top="15" right="15" bottom="15" left="15"/>
+        </padding>
+
+        <!-- Barre: + NEW, SYNC, Filtres, Recherche, count, RESET -->
+        <HBox spacing="12" alignment="CENTER_LEFT">
+            <Button text="+ Nouveau" onAction="#ouvrirFormulaireAjout" styleClass="btn-new"/>
+            <Button text="SYNC" onAction="#actualiser" styleClass="btn-sync"/>
+            <Label text="Filtres:" style="-fx-text-fill: #ecf0f1; -fx-font-weight: bold;"/>
+            <ComboBox fx:id="cboFiltreStatut" styleClass="combo-box" prefWidth="100"/>
+            <ComboBox fx:id="cboTri" styleClass="combo-box" prefWidth="130"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <TextField fx:id="txtRecherche" promptText="Rechercher un sponsor..." styleClass="search-field" prefWidth="220"/>
+            <Label fx:id="lblCount" text="0 sponsors" styleClass="lbl-count"/>
+            <Button text="RESET" onAction="#reinitialiserFiltres" styleClass="btn-reset"/>
+        </HBox>
+
+        <!-- Zone principale: liste à gauche, détail à droite -->
+        <HBox spacing="15" HBox.hgrow="ALWAYS">
+            <!-- Liste des sponsors (gauche) -->
+            <VBox HBox.hgrow="ALWAYS" maxWidth="400" minWidth="280">
+                <Label text="Sponsors disponibles" style="-fx-font-weight: bold; -fx-font-size: 13px; -fx-padding: 0 0 5 0; -fx-text-fill: #ecf0f1;"/>
+                <ListView fx:id="listSponsors" VBox.vgrow="ALWAYS" styleClass="list-sponsors-compact"/>
+            </VBox>
+
+            <!-- Détail du sponsor sélectionné (droite) -->
+            <VBox styleClass="detail-panel" HBox.hgrow="ALWAYS" minWidth="350">
+                <Label text="DÉTAILS DU SPONSOR" style="-fx-font-weight: bold; -fx-font-size: 13px; -fx-text-fill: #3498db; -fx-padding: 0 0 10 0;"/>
+                <StackPane VBox.vgrow="ALWAYS">
+                    <!-- Placeholder quand rien sélectionné -->
+                    <Label fx:id="lblPlaceholder" text="Sélectionnez un sponsor dans la liste" style="-fx-text-fill: #95a5a6; -fx-font-size: 14px;" StackPane.alignment="CENTER"/>
+                    <!-- Contenu détail -->
+                    <VBox fx:id="boxDetail" visible="false" spacing="16">
+                        <ImageView fx:id="imgDetailLogo" fitHeight="140" fitWidth="140" preserveRatio="true"/>
+                        <Label fx:id="lblDetailNom" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                        <Label fx:id="lblDetailTel" style="-fx-font-size: 13px;"/>
+                        <Label fx:id="lblDetailEmail" style="-fx-font-size: 13px;"/>
+                        <Label fx:id="lblDetailStatut" style="-fx-font-size: 13px;"/>
+                        <Region VBox.vgrow="ALWAYS"/>
+                        <HBox spacing="10">
+                            <Button text="Edit" onAction="#ouvrirFormulaireModification" styleClass="btn-edit"/>
+                            <Button text="Drop" onAction="#supprimerSponsor" styleClass="btn-drop"/>
+                        </HBox>
+                    </VBox>
+                </StackPane>
+            </VBox>
+        </HBox>
+    </VBox>
+
+</VBox>

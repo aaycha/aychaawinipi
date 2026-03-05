@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.ImageView?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.gestion.controllers.MainController"
+            stylesheets="@/styles/main.css"
+            prefWidth="1200" prefHeight="750" maxWidth="Infinity" maxHeight="Infinity">
+
+    <!-- LEFT: Sidebar avec logo et navigation -->
+    <left>
+        <VBox styleClass="main-header" spacing="20" alignment="TOP_CENTER" style="-fx-pref-width: 250; -fx-padding: 30 15;">
+            <ImageView fx:id="logoView" fitWidth="80" fitHeight="80" preserveRatio="true"/>
+            <Label text="LAMMA Voyage" styleClass="brand-title" style="-fx-padding: 0 0 20 0;"/>
+            
+            <!-- Boutons de navigation -->
+            <Button text="📊 Dashboard" fx:id="btnEquipements" styleClass="nav-btn active" maxWidth="Infinity" alignment="CENTER_LEFT" onAction="#showEquipements"/>
+            <Button text="🛒 Boutique" fx:id="btnBoutique" styleClass="nav-btn" maxWidth="Infinity" alignment="CENTER_LEFT" onAction="#showBoutique"/>
+            <Button text="💬 Messagerie" fx:id="btnMessagerie" styleClass="nav-btn" maxWidth="Infinity" alignment="CENTER_LEFT" onAction="#showMessagerie"/>
+            
+            <Region VBox.vgrow="ALWAYS"/>
+            <Label text="Espace Administrateur" fx:id="adminLabel" styleClass="admin-label"/>
+        </VBox>
+    </left>
+
+    <!-- RIGHT/CENTER: Header des controles et Contenu dynamique -->
+    <center>
+        <BorderPane>
+            <!-- Header pour les contrôles de fenêtre -->
+            <top>
+                <HBox spacing="10" alignment="CENTER_RIGHT" style="-fx-background-color: #f5f7fa; -fx-padding: 10 20;">
+                    <Button text="−" fx:id="btnMinimize" styleClass="window-btn" style="-fx-text-fill: #1e3a5f;" onAction="#minimizeWindow"/>
+                    <Button text="☐" fx:id="btnMaximize" styleClass="window-btn" style="-fx-text-fill: #1e3a5f;" onAction="#toggleMaximize"/>
+                    <Button text="✕" fx:id="btnQuitter" styleClass="window-btn window-btn-close" style="-fx-text-fill: #1e3a5f;" onAction="#quitter"/>
+                </HBox>
+            </top>
+            <!-- Contenu dynamique -->
+            <center>
+                <StackPane fx:id="contentPane" styleClass="content-pane">
+                    <!-- Les vues seront chargées dynamiquement ici -->
+                </StackPane>
+            </center>
+        </BorderPane>
+    </center>
+
+</BorderPane>

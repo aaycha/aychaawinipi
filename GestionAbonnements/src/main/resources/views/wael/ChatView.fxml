@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.gestion.controllers.ChatController"
+            stylesheets="@/styles/main.css, @/styles/modern-module.css"
+            prefWidth="1200" prefHeight="750" maxWidth="Infinity" maxHeight="Infinity">
+
+    <!-- LEFT: Liste des groupes -->
+    <left>
+        <VBox styleClass="chat-sidebar chat-sidebar-admin" prefWidth="380">
+            <!-- Header sidebar -->
+            <HBox styleClass="sidebar-header" spacing="15" alignment="CENTER_LEFT">
+                <Label text="💬 Messagerie" styleClass="sidebar-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="+" fx:id="btnNewGroup" styleClass="btn-new-group" onAction="#onNewGroup" style="-fx-text-fill:#ffffff; -fx-background-color:#10b981; -fx-effect: dropshadow(gaussian, rgba(16,185,129,0.3), 8, 0,0,2);"/>
+            </HBox>
+
+            <!-- Recherche -->
+            <HBox styleClass="search-container" spacing="10">
+                <TextField fx:id="searchField" promptText="🔍 Rechercher un groupe..." styleClass="search-input"/>
+            </HBox>
+
+            <!-- Liste des groupes -->
+            <ListView fx:id="groupsList" styleClass="groups-list" VBox.vgrow="ALWAYS"/>
+        </VBox>
+    </left>
+
+    <!-- CENTER: Zone de chat -->
+    <center>
+        <VBox styleClass="chat-container chat-container-admin">
+            <!-- Header du chat -->
+            <HBox styleClass="chat-header chat-header-admin" spacing="15" alignment="CENTER_LEFT">
+                <VBox spacing="2">
+                    <Label fx:id="activeGroupName" text="Sélectionnez un groupe" styleClass="chat-group-name"/>
+                    <Label fx:id="groupInfo" text="En ligne" styleClass="chat-group-status"/>
+                </VBox>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="⋮" fx:id="btnMenu" styleClass="btn-menu" onAction="#onMenu" style="-fx-text-fill:#1e1b4b; -fx-background-color:transparent; -fx-font-size:18;"/>
+            </HBox>
+
+            <!-- Zone des messages -->
+            <ScrollPane fx:id="messagesScroll" fitToWidth="true" styleClass="messages-scroll" VBox.vgrow="ALWAYS">
+                <VBox fx:id="messagesBox" spacing="8" styleClass="messages-box">
+                    <padding>
+                        <Insets top="15.0" right="15.0" bottom="15.0" left="15.0"/>
+                    </padding>
+                </VBox>
+            </ScrollPane>
+
+            <!-- Zone de saisie -->
+            <HBox styleClass="input-container input-container-admin" spacing="10" alignment="CENTER_LEFT">
+                <Button text="📎" fx:id="btnAttach" styleClass="admin-btn-glass" onAction="#onAttach" style="-fx-padding: 8 12; -fx-text-fill:#0b7285; -fx-background-color:#f5f7ff; -fx-border-color:#d1d5f0;"/>
+                <Button text="🎤" fx:id="btnVocal" styleClass="admin-btn-glass" onAction="#onVocal" style="-fx-padding: 8 12; -fx-text-fill:#8b5cf6; -fx-background-color:#f5f7ff; -fx-border-color:#d1d5f0;">
+                    <tooltip><Tooltip text="Envoyer un message vocal"/></tooltip>
+                </Button>
+                <Button text="🎁" fx:id="btnGif" styleClass="admin-btn-glass" onAction="#onGif" style="-fx-padding: 8 12; -fx-text-fill:#f59e0b; -fx-background-color:#f5f7ff; -fx-border-color:#d1d5f0;">
+                    <tooltip><Tooltip text="Sélectionner un GIF"/></tooltip>
+                </Button>
+                <Button text="📍" fx:id="btnLocation" styleClass="admin-btn-glass" onAction="#onLocation" style="-fx-padding: 8 12; -fx-text-fill:#ef4444; -fx-background-color:#f5f7ff; -fx-border-color:#d1d5f0;" visible="false" managed="false"/>
+                <Button text="📊" fx:id="btnPoll" styleClass="admin-btn-glass" onAction="#onPoll" style="-fx-padding: 8 12; -fx-text-fill:#4f46e5; -fx-background-color:#f5f7ff; -fx-border-color:#d1d5f0;">
+                    <tooltip><Tooltip text="Créer un sondage"/></tooltip>
+                </Button>
+                <TextField fx:id="messageField" promptText="Tapez votre message..." styleClass="message-input modern-input" HBox.hgrow="ALWAYS"/>
+                <Button text="📤" fx:id="btnSend" styleClass="btn-send admin-btn-primary" onAction="#onSend" style="-fx-font-weight:bold; -fx-background-color:linear-gradient(to bottom right,#10b981,#06b6d4); -fx-text-fill:#ffffff;"/>
+            </HBox>
+        </VBox>
+    </center>
+
+</BorderPane>

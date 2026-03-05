@@ -107,6 +107,11 @@ public class UserService implements IService<User> {
         return users;
     }
 
+    @Override
+    public User getOneById(int id) throws SQLException {
+        return null;
+    }
+
     // ------------------ LOGIN / VERIFY PASSWORD ------------------
     public User login(String email, String plainPassword) throws SQLException {
 

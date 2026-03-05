@@ -222,6 +222,13 @@ public class EvenementViewController {
         }
     }
 
+    @FXML
+    public void onListClick(javafx.scene.input.MouseEvent event) {
+        if (event.getClickCount() == 2 && selectedEvent != null) {
+            onModifier();
+        }
+    }
+
     private void openForm(Evenement e) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/evenement/evenement-form.fxml"));

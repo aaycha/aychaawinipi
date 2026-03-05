@@ -11,8 +11,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.layout.Priority;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
@@ -23,6 +23,7 @@ import javafx.geometry.Pos;
 import java.io.File;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 /**
  * Vue simplifiée "Mes participations" pour l'espace utilisateur.
@@ -31,7 +32,7 @@ import java.time.format.DateTimeFormatter;
 public class MesParticipationsController {
 
     @FXML
-    private ListView<Participation> listView;
+    private FlowPane flowEvents;
     @FXML
     private Label statusLabel;
     @FXML
@@ -45,53 +46,52 @@ public class MesParticipationsController {
 
     @FXML
     public void initialize() {
-        setupListView();
         onActualiser();
     }
 
-    private void setupListView() {
-        listView.setCellFactory(param -> new ListCell<Participation>() {
-            @Override
-            protected void updateItem(Participation item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                    setGraphic(null);
-                    setStyle("-fx-background-color: transparent;");
-                } else {
-                    setGraphic(createCard(item));
-                    setStyle("-fx-background-color: transparent; -fx-padding: 5 10 5 10;");
-                }
-            }
-        });
-    }
-
     private javafx.scene.Node createCard(Participation item) {
-        // Main Card Container
-        HBox card = new HBox(15);
+        // Main Card Container - Grid Style
+        VBox card = new VBox(15);
         card.getStyleClass().add("modern-card");
-        card.setAlignment(Pos.CENTER_LEFT);
+        card.setAlignment(Pos.TOP_CENTER);
+        card.setPadding(new javafx.geometry.Insets(20));
+        card.setPrefWidth(260); // Fixed width for grid
+        card.setMinWidth(260);
+        card.setMaxWidth(260);
+        card.setMinHeight(320);
+        card.setStyle(
+                "-fx-background-color: rgba(255,255,255,0.05); -fx-background-radius: 15; -fx-border-color: rgba(255,255,255,0.1); -fx-border-radius: 15;");
 
-        // Icon
+        // Icon - Scout Box Style
         StackPane iconPane = new StackPane();
-        Circle bg = new Circle(20, Color.web("#e7f1ff"));
+        iconPane.setPrefSize(44, 44);
+        iconPane.setStyle(
+                "-fx-background-color: rgba(255,255,255,0.05); -fx-background-radius: 10; -fx-border-color: rgba(255,255,255,0.1); -fx-border-radius: 10;");
         Text icon = new Text(getItemIcon(item.getType()));
         icon.setFont(Font.font("Segoe UI Emoji", 20));
-        iconPane.getChildren().addAll(bg, icon);
+        icon.setFill(Color.WHITE);
+        iconPane.getChildren().addAll(icon);
 
         // Content
-        VBox content = new VBox(5);
+        VBox content = new VBox(8);
         HBox.setHgrow(content, Priority.ALWAYS);
 
-        HBox header = new HBox(10);
+        HBox header = new HBox(12);
         header.setAlignment(Pos.CENTER_LEFT);
-        Label title = new Label("Participation #" + item.getId());
-        title.getStyleClass().add("card-title");
+        Label title = new Label("Mission #" + item.getId());
+        title.setStyle("-fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: 800;");
 
-        Label statusBadge = new Label(item.getStatut() != null ? item.getStatut().name() : "N/A");
+        Label statusBadge = new Label(item.getStatut() != null ? item.getStatut().getLabel().toUpperCase() : "INCONNU");
         statusBadge.getStyleClass().add("status-badge");
-        if (item.getStatut() != null) {
-            statusBadge.getStyleClass().add(item.getStatut().name());
+        if (item.getStatut() == Participation.StatutParticipation.CONFIRME) {
+            statusBadge.setStyle(
+                    "-fx-background-color: #22c55e; -fx-text-fill: white; -fx-padding: 3 10; -fx-background-radius: 10; -fx-font-weight: bold; -fx-font-size: 9;");
+        } else if (item.getStatut() == Participation.StatutParticipation.EN_ATTENTE) {
+            statusBadge.setStyle(
+                    "-fx-background-color: #3b82f6; -fx-text-fill: white; -fx-padding: 3 10; -fx-background-radius: 10; -fx-font-weight: bold; -fx-font-size: 9;");
+        } else {
+            statusBadge.setStyle(
+                    "-fx-background-color: #64748b; -fx-text-fill: white; -fx-padding: 3 10; -fx-background-radius: 10; -fx-font-weight: bold; -fx-font-size: 9;");
         }
 
         Region spacer = new Region();
@@ -100,39 +100,46 @@ public class MesParticipationsController {
         header.getChildren().addAll(title, spacer, statusBadge);
 
         GridPane details = new GridPane();
-        details.setHgap(20);
-        details.setVgap(5);
+        details.setHgap(30);
+        details.setVgap(6);
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-        String dateStr = item.getDateInscription() != null ? item.getDateInscription().format(formatter) : "N/A";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm", Locale.FRENCH);
+        String dateStr = item.getDateInscription() != null ? item.getDateInscription().format(formatter)
+                : "Non programmée";
 
-        details.add(createDetailLabel("📅 Date:", dateStr), 0, 0);
-        details.add(createDetailLabel("🎟️ Event:", "#" + item.getEvenementId()), 1, 0);
-        details.add(createDetailLabel("👥 Groupe:", item.getTotalParticipants() + " pers."), 0, 1);
-        details.add(createDetailLabel("📄 Plan:",
-                item.getTypeAbonnementChoisi() != null ? item.getTypeAbonnementChoisi() : "Standard"), 1, 1);
+        details.add(createDetailLabel("📅", "Date", dateStr), 0, 0);
+        details.add(createDetailLabel("⛰️", "Evenement", "EXP-" + item.getEvenementId()), 1, 0);
+        details.add(createDetailLabel("👥", "Escouade", item.getTotalParticipants() + " Explorateurs"), 0, 1);
+        details.add(createDetailLabel("🍱", "Ravitaillement",
+                item.getMealOption() != null ? item.getMealOption().getLabel() : "Standard"), 1, 1);
 
         content.getChildren().addAll(header, details);
 
-        // Right side: Price + Badge button
-        VBox rightSide = new VBox(8);
+        // Right side: Price + Actions
+        VBox rightSide = new VBox(10);
         rightSide.setAlignment(Pos.CENTER_RIGHT);
         String priceStr = String.format("%.2f €", item.getMontantCalcule() != null ? item.getMontantCalcule() : 0.0);
         Label price = new Label(priceStr);
-        price.getStyleClass().add("card-price");
+        price.setStyle("-fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: 800;");
 
-        Button badgeBtn = new Button("📥 Badge");
+        Button badgeBtn = new Button("📥 Badge PDF");
         boolean isConfirmed = item.getStatut() == Participation.StatutParticipation.CONFIRME;
         badgeBtn.setDisable(!isConfirmed);
-        badgeBtn.setTooltip(new Tooltip(isConfirmed ? "Télécharger le badge" : "Attente d'approbation admin"));
-        badgeBtn.setStyle("-fx-background-color: " + (isConfirmed ? "rgba(99,102,241,0.85)" : "rgba(148,163,184,0.4)")
-                + "; -fx-text-fill: white;"
-                + " -fx-font-size: 11; -fx-font-weight: bold; -fx-padding: 6 14;"
-                + " -fx-background-radius: 20; -fx-cursor: " + (isConfirmed ? "hand" : "default") + ";");
+        badgeBtn.setStyle(isConfirmed
+                ? "-fx-background-color: #6366f1; -fx-text-fill: white; -fx-font-size: 10px; -fx-font-weight: bold; -fx-padding: 5 12; -fx-background-radius: 8; -fx-cursor: hand;"
+                : "-fx-background-color: rgba(148,163,184,0.1); -fx-text-fill: #94a3b8; -fx-font-size: 10px; -fx-font-weight: bold; -fx-padding: 5 12; -fx-background-radius: 8;");
         badgeBtn.setOnAction(e -> downloadBadgeForParticipation(item));
+
         rightSide.getChildren().addAll(price, badgeBtn);
 
         card.getChildren().addAll(iconPane, content, rightSide);
+
+        // Add hover effect
+        card.setOnMouseEntered(e -> card.setStyle(
+                "-fx-background-color: rgba(255,255,255,0.08); -fx-background-radius: 15; -fx-border-color: rgba(34, 197, 94, 0.3); -fx-border-radius: 15; -fx-translate-y: -5;"));
+        card.setOnMouseExited(e -> card.setStyle(
+                "-fx-background-color: rgba(255,255,255,0.05); -fx-background-radius: 15; -fx-border-color: rgba(255,255,255,0.1); -fx-border-radius: 15; -fx-translate-y: 0;"));
+
         return card;
     }
 
@@ -151,25 +158,28 @@ public class MesParticipationsController {
         }
     }
 
-    private HBox createDetailLabel(String labelText, String valueText) {
-        HBox box = new HBox(5);
+    private HBox createDetailLabel(String icon, String labelText, String valueText) {
+        HBox box = new HBox(8);
         box.setAlignment(Pos.CENTER_LEFT);
-        Label label = new Label(labelText);
-        label.getStyleClass().add("card-label");
+
+        Label lblIcon = new Label(icon);
+        lblIcon.setStyle("-fx-font-size: 12px;");
+
+        VBox texts = new VBox(0);
+        Label label = new Label(labelText.toUpperCase());
+        label.setStyle("-fx-text-fill: #64748b; -fx-font-size: 8px; -fx-font-weight: bold;");
+
         Label value = new Label(valueText);
-        label.getStyleClass().add("card-value");
-        box.getChildren().addAll(label, value);
+        value.setStyle("-fx-text-fill: #94a3b8; -fx-font-size: 11px; -fx-font-weight: 500;");
+
+        texts.getChildren().addAll(label, value);
+        box.getChildren().addAll(lblIcon, texts);
         return box;
     }
 
     @FXML
     private void onListClick(javafx.scene.input.MouseEvent event) {
-        if (event.getClickCount() == 2) {
-            Participation selection = listView.getSelectionModel().getSelectedItem();
-            if (selection != null) {
-                // Future: open details
-            }
-        }
+        // Obsolete for grid view
     }
 
     @FXML
@@ -177,7 +187,24 @@ public class MesParticipationsController {
         Platform.runLater(() -> {
             try {
                 var participations = participationService.findByUserId(currentUserId);
-                listView.getItems().setAll(participations);
+                flowEvents.getChildren().clear();
+
+                if (participations.isEmpty()) {
+                    VBox emptyState = new VBox(15);
+                    emptyState.setAlignment(Pos.CENTER);
+                    emptyState.setPadding(new javafx.geometry.Insets(60));
+                    Label l1 = new Label("⛰️ AUCUNE EXPÉDITION");
+                    l1.setStyle("-fx-font-size: 18; -fx-text-fill: #64748b; -fx-font-weight: 800;");
+                    Label l2 = new Label("Rejoignez une expédition pour commencer votre aventure.");
+                    l2.setStyle("-fx-text-fill: #64748b; -fx-font-size: 13; -fx-text-alignment: center;");
+                    emptyState.getChildren().addAll(l1, l2);
+                    flowEvents.getChildren().add(emptyState);
+                } else {
+                    for (Participation p : participations) {
+                        flowEvents.getChildren().add(createCard(p));
+                    }
+                }
+
                 if (statusLabel != null) {
                     statusLabel.setText(participations.isEmpty()
                             ? "Aucune participation trouvée"
@@ -325,16 +352,9 @@ public class MesParticipationsController {
      */
     @FXML
     public void onTelechargerBadge() {
-        Participation selected = listView.getSelectionModel().getSelectedItem();
-        if (selected == null) {
-            Alert info = new Alert(Alert.AlertType.INFORMATION);
-            info.setTitle("Sélection requise");
-            info.setHeaderText(null);
-            info.setContentText("Veuillez d'abord sélectionner une participation dans la liste.");
-            info.showAndWait();
-            return;
-        }
-        downloadBadgeForParticipation(selected);
+        // Selection is now handled visually or via specific card buttons
+        showInfo("💡 Astuce",
+                "Veuillez cliquer sur le bouton '📥 Badge PDF' directement sur la carte de votre expédition confirmée.");
     }
 
     /**
@@ -356,7 +376,7 @@ public class MesParticipationsController {
         chooser.getExtensionFilters().add(
                 new FileChooser.ExtensionFilter("Fichiers PDF", "*.pdf"));
 
-        Stage stage = (Stage) listView.getScene().getWindow();
+        Stage stage = (Stage) flowEvents.getScene().getWindow();
         File dest = chooser.showSaveDialog(stage);
         if (dest == null)
             return; // annulé

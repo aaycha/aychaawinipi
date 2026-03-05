@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.image.*?>
+<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+
+<ScrollPane xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.gestion.controllers.AjouterSponsorController"
+            fitToWidth="true" fitToHeight="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
+            styleClass="modern-scroll-pane">
+    <stylesheets>
+        <URL value="@../styles/nature-mood.css" />
+        <URL value="@../styles/card-view.css" />
+    </stylesheets>
+    
+    <StackPane style="-fx-background-color: transparent; -fx-padding: 30;">
+        <VBox spacing="15" styleClass="glass-panel" prefWidth="800" maxWidth="850" alignment="TOP_CENTER" style="-fx-padding: 25;">
+            
+            <!-- Header Section -->
+            <HBox alignment="CENTER_LEFT" spacing="12">
+                <StackPane style="-fx-background-color: rgba(249, 115, 22, 0.15); -fx-background-radius: 12; -fx-padding: 10;">
+                    <Label text="🤝" style="-fx-font-size: 22;"/>
+                </StackPane>
+                <VBox spacing="2">
+                    <Label fx:id="lblTitle" text="Enregistrement Sponsor"
+                           style="-fx-font-size: 18px; -fx-font-weight: 800; -fx-text-fill: white;"/>
+                    <Label text="Établissez un nouveau partenariat officiel pour nos expéditions" style="-fx-font-size: 11px; -fx-text-fill: #94a3b8;"/>
+                </VBox>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label text="PARTENAIRE ÉLITE" style="-fx-background-color: rgba(249, 115, 22, 0.1); -fx-text-fill: #F97316; -fx-font-size: 10; -fx-font-weight: 900; -fx-padding: 5 12; -fx-background-radius: 15;"/>
+            </HBox>
+
+            <Separator style="-fx-opacity: 0.1;"/>
+
+            <!-- Logistics Section -->
+            <VBox spacing="15" styleClass="modern-card" style="-fx-padding: 20;">
+                <Label text="📍 LOGISTIQUE PARTENAIRE" style="-fx-font-weight: 900; -fx-text-fill: #3b82f6; -fx-font-size: 11; -fx-letter-spacing: 1px;"/>
+                
+                <GridPane hgap="15" vgap="12">
+                    <columnConstraints>
+                        <ColumnConstraints minWidth="130" prefWidth="140"/>
+                        <ColumnConstraints hgrow="ALWAYS"/>
+                    </columnConstraints>
+
+                    <Label text="Nom de l'entreprise:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 11;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                    <TextField fx:id="txtNom" promptText="Nom du sponsor..." styleClass="modern-input" style="-fx-font-size: 12;" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                    <Label text="Contact Email:" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 11;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                    <TextField fx:id="txtEmail" promptText="contact@sponsor.com" styleClass="modern-input" style="-fx-font-size: 12;" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                    <Label text="Téléphone (+216):" style="-fx-text-fill: #94a3b8; -fx-font-weight: 700; -fx-font-size: 11;" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                    <TextField fx:id="txtTelephone" promptText="+216 12 345 678" styleClass="modern-input" style="-fx-font-size: 12;" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                </GridPane>
+            </VBox>
+
+            <!-- Identity & Branding Section -->
+            <VBox spacing="15" styleClass="modern-card" style="-fx-padding: 20;">
+                <Label text="🎨 IDENTITÉ VISUELLE" style="-fx-font-weight: 900; -fx-text-fill: #22c55e; -fx-font-size: 11; -fx-letter-spacing: 1px;"/>
+                
+                <HBox spacing="20" alignment="CENTER_LEFT">
+                    <VBox alignment="CENTER" spacing="10" style="-fx-background-color: rgba(255,255,255,0.05); -fx-background-radius: 15; -fx-padding: 10; -fx-min-width: 120; -fx-min-height: 120; -fx-border-color: rgba(255,255,255,0.1); -fx-border-radius: 15;">
+                        <ImageView fx:id="imgSponsorLogo" fitHeight="100" fitWidth="100" preserveRatio="true">
+                            <Image url="@../images/lamma-logo.png" />
+                        </ImageView>
+                    </VBox>
+                    <VBox spacing="10" HBox.hgrow="ALWAYS">
+                        <Label text="Logo Officiel" style="-fx-text-fill: white; -fx-font-weight: 700; -fx-font-size: 12;"/>
+                        <HBox spacing="10">
+                            <TextField fx:id="txtLogoPath" editable="false" promptText="Aucune image sélectionnée" styleClass="modern-input" HBox.hgrow="ALWAYS" style="-fx-font-size: 12;"/>
+                            <Button text="Parcourir" onAction="#onParcourirLogo" styleClass="button-capsule-glass" style="-fx-padding: 8 15; -fx-font-size: 11;"/>
+                        </HBox>
+                        <Label text="Format recommandé: PNG ou JPG, carré" style="-fx-text-fill: #64748b; -fx-font-size: 10px;"/>
+                    </VBox>
+                </HBox>
+            </VBox>
+
+            <!-- Options Section -->
+            <VBox spacing="15" styleClass="modern-card" style="-fx-padding: 20;">
+                <Label text="⚙️ CONFIGURATION" style="-fx-font-weight: 900; -fx-text-fill: #F97316; -fx-font-size: 11; -fx-letter-spacing: 1px;"/>
+                
+                <HBox spacing="20" alignment="CENTER_LEFT">
+                    <CheckBox fx:id="chkStatut" text="Sponsor Actif" selected="true" style="-fx-text-fill: white; -fx-font-weight: 700; -fx-font-size: 12;"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Label fx:id="lblMessage" text="" style="-fx-font-size: 12;"/>
+                </HBox>
+            </VBox>
+
+            <!-- Actions Section -->
+            <HBox spacing="15" alignment="CENTER_RIGHT" style="-fx-padding: 10 0 0 0;">
+                <Button text="Abandonner" onAction="#onRetour" styleClass="button-capsule-glass" style="-fx-padding: 12 25; -fx-font-size: 12;"/>
+                <Button fx:id="btnSubmit" text="CONFIRMER" onAction="#onEnregistrer" 
+                        styleClass="button-capsule" style="-fx-padding: 12 40; -fx-font-size: 12;"/>
+            </HBox>
+
+        </VBox>
+    </StackPane>
+</ScrollPane>

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+
+<StackPane prefHeight="650.0" prefWidth="900.0"
+           xmlns="http://javafx.com/javafx/21"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.gestion.controllers.ModifierEvenementController"
+           styleClass="app-root">
+
+    <ImageView fx:id="bgImage" fitHeight="650.0" fitWidth="900.0" preserveRatio="false" />
+    <Pane styleClass="bg-overlay" mouseTransparent="true" />
+
+    <BorderPane>
+        <padding>
+            <Insets top="26" right="26" bottom="26" left="26"/>
+        </padding>
+
+        <top>
+            <HBox alignment="CENTER_LEFT" spacing="16" styleClass="header-card">
+                <Button text="↩" onAction="#onAnnuler" styleClass="btn-icon-minimal"/>
+                <VBox spacing="3">
+                    <Label text="Modifier Événement" styleClass="title"/>
+                    <Label fx:id="lblMsg" text="" styleClass="subtitle"/>
+                </VBox>
+                <Pane HBox.hgrow="ALWAYS"/>
+            </HBox>
+        </top>
+
+        <center>
+            <ScrollPane fitToWidth="true" styleClass="glass-scroll">
+                <content>
+                    <VBox spacing="18" styleClass="panel">
+                        <padding>
+                            <Insets top="22" right="22" bottom="22" left="22"/>
+                        </padding>
+
+                        <GridPane hgap="14" vgap="14">
+                            <columnConstraints>
+                                <ColumnConstraints minWidth="120"/>
+                                <ColumnConstraints hgrow="ALWAYS"/>
+                            </columnConstraints>
+
+                            <Label text="Titre:" styleClass="chip" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                            <TextField fx:id="txtTitre" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                            <Label text="Type:" styleClass="chip" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                            <TextField fx:id="txtType" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                            <Label text="Lieu:" styleClass="chip" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                            <TextField fx:id="txtLieu" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                            <Label text="Début:" styleClass="chip" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                            <HBox spacing="10" GridPane.rowIndex="3" GridPane.columnIndex="1">
+                                <DatePicker fx:id="dpDebut" HBox.hgrow="ALWAYS"/>
+                                <Label fx:id="lblHeureDebut" styleClass="chip"/>
+                                <Button text="🕐" onAction="#onChoisirHeureDebut" styleClass="btn-secondary"/>
+                            </HBox>
+
+                            <Label fx:id="lblDateFin" text="Fin:" styleClass="chip" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                            <HBox fx:id="boxDateFin" spacing="10" GridPane.rowIndex="4" GridPane.columnIndex="1">
+                                <DatePicker fx:id="dpFin" HBox.hgrow="ALWAYS"/>
+                                <Label fx:id="lblHeureFin" styleClass="chip"/>
+                                <Button text="🕐" onAction="#onChoisirHeureFin" styleClass="btn-secondary"/>
+                            </HBox>
+
+                            <Label text="Description:" styleClass="chip" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+                            <TextArea fx:id="txtDescription" prefRowCount="5" wrapText="true"
+                                      GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+                        </GridPane>
+
+                        <VBox fx:id="boxEquipment" spacing="8" visible="true" managed="true">
+                            <Label styleClass="card-title" text="Équipements / À prévoir" />
+                            <HBox spacing="8" alignment="CENTER_LEFT">
+                                <TextField fx:id="txtEquipment" promptText="Ex: Tente, Sac de couchage..." prefWidth="280"/>
+                                <Button text="+ Ajouter" styleClass="btn-secondary" onAction="#onAddEquipment"/>
+                            </HBox>
+                            <FlowPane fx:id="flowEquipmentSuggestions" hgap="8" vgap="8" prefWrapLength="500"/>
+                            <Label styleClass="chip" text="Sélectionnés :"/>
+                            <FlowPane fx:id="flowEquipmentSelected" hgap="8" vgap="8" prefWrapLength="500"/>
+                        </VBox>
+
+                        <Separator opacity="0.35"/>
+
+                        <HBox alignment="CENTER_RIGHT" spacing="12">
+                            <Button text="Annuler" onAction="#onAnnuler" styleClass="btn-secondary"/>
+                            <Button text="Enregistrer" onAction="#onEnregistrer" styleClass="btn-primary"/>
+                        </HBox>
+                    </VBox>
+                </content>
+            </ScrollPane>
+        </center>
+
+    </BorderPane>
+</StackPane>

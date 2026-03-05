@@ -23,19 +23,18 @@ import java.util.stream.Collectors;
 public class ParticipationServiceImpl implements ParticipationService {
 
     private static final Logger logger = LoggerFactory.getLogger(ParticipationServiceImpl.class);
-    private final MyConnection dbConnection;
     private final AbonnementService abonnementService;
     private final NotificationService notificationService = new NotificationService();
     private final UserService userService = new UserService();
+    private final SmsService smsService = new SmsService();
 
     public ParticipationServiceImpl() {
-        this.dbConnection = MyConnection.getInstance();
         this.abonnementService = new com.gestion.services.AbonnementServiceImpl();
         ensureTableMigration();
     }
 
     private void ensureTableMigration() {
-        try (Connection conn = dbConnection.getConnection();
+        try (Connection conn = MyConnection.getConnectionStatic();
                 Statement st = conn.createStatement()) {
             // Check if restaurant_id exists
             try {
@@ -185,7 +184,7 @@ public class ParticipationServiceImpl implements ParticipationService {
         String sqlWithAb = "INSERT INTO participations (user_id, evenement_id, date_inscription, type, statut, hebergement_nuits, contexte_social, badge_associe, nb_adultes, nb_enfants, nb_chiens, total_participants, type_abonnement, montant_calcule, devise, commentaire, besoins_speciaux, abonnement_id, restaurant_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         String sqlWithoutAb = "INSERT INTO participations (user_id, evenement_id, date_inscription, type, statut, hebergement_nuits, contexte_social, badge_associe, nb_adultes, nb_enfants, nb_chiens, total_participants, type_abonnement, montant_calcule, devise, commentaire, besoins_speciaux, restaurant_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try (Connection conn = dbConnection.getConnection()) {
+        try (Connection conn = MyConnection.getConnectionStatic()) {
             if (conn == null) {
                 logger.error("Connexion à la base de données indisponible pour create");
                 throw new RuntimeException("Connexion à la base de données indisponible.");
@@ -323,7 +322,7 @@ public class ParticipationServiceImpl implements ParticipationService {
     @Override
     public Optional<Participation> findById(Long id) {
         String sql = "SELECT * FROM participations WHERE id = ?";
-        try (Connection conn = dbConnection.getConnection()) {
+        try (Connection conn = MyConnection.getConnectionStatic()) {
             if (conn == null) {
                 logger.error("Connexion à la base de données indisponible pour findById");
                 return Optional.empty();
@@ -345,7 +344,7 @@ public class ParticipationServiceImpl implements ParticipationService {
     public List<Participation> findAll() {
         List<Participation> list = new ArrayList<>();
         String sql = "SELECT * FROM participations ORDER BY date_inscription DESC";
-        try (Connection conn = dbConnection.getConnection()) {
+        try (Connection conn = MyConnection.getConnectionStatic()) {
             if (conn == null) {
                 logger.error("Connexion à la base de données indisponible pour findAll");
                 return list;
@@ -374,7 +373,7 @@ public class ParticipationServiceImpl implements ParticipationService {
     @Override
     public boolean delete(Long id) {
         String sql = "DELETE FROM participations WHERE id = ?";
-        try (Connection conn = dbConnection.getConnection()) {
+        try (Connection conn = MyConnection.getConnectionStatic()) {
             if (conn == null) {
                 logger.error("Connexion à la base de données indisponible pour delete");
                 return false;
@@ -397,7 +396,7 @@ public class ParticipationServiceImpl implements ParticipationService {
         String sqlWithAb = "UPDATE participations SET statut=?, hebergement_nuits=?, contexte_social=?, badge_associe=?, nb_adultes=?, nb_enfants=?, nb_chiens=?, total_participants=?, type_abonnement=?, montant_calcule=?, devise=?, commentaire=?, besoins_speciaux=?, abonnement_id=?, restaurant_id=? WHERE id=?";
         String sqlWithoutAb = "UPDATE participations SET statut=?, hebergement_nuits=?, contexte_social=?, badge_associe=?, nb_adultes=?, nb_enfants=?, nb_chiens=?, total_participants=?, type_abonnement=?, montant_calcule=?, devise=?, commentaire=?, besoins_speciaux=?, restaurant_id=? WHERE id=?";
 
-        try (Connection conn = dbConnection.getConnection()) {
+        try (Connection conn = MyConnection.getConnectionStatic()) {
             if (conn == null) {
                 logger.error("Connexion à la base de données indisponible pour update");
                 throw new RuntimeException("Connexion à la base de données indisponible.");
@@ -464,7 +463,7 @@ public class ParticipationServiceImpl implements ParticipationService {
     @Override
     public boolean isAlreadyParticipating(Long userId, Long evenementId) {
         String sql = "SELECT 1 FROM participations WHERE user_id = ? AND evenement_id = ? LIMIT 1";
-        try (Connection c = dbConnection.getConnection()) {
+        try (Connection c = MyConnection.getConnectionStatic()) {
             if (c == null) {
                 logger.error("Connexion à la base de données indisponible pour isAlreadyParticipating");
                 return false;
@@ -551,15 +550,20 @@ public class ParticipationServiceImpl implements ParticipationService {
             Participation updated = update(p);
             if (updated != null) {
                 try {
-                    // Send Notification
-                    notificationService.create(new com.gestion.entities.Notification(
-                            p.getUserId(),
-                            "Participation Confirmée",
-                            "Votre participation à l'événement a été approuvée par l'administrateur.",
-                            com.gestion.entities.Notification.NotificationType.SUCCESS));
+                    // Send SMS Notification
+                    com.gestion.entities.User user = userService.getUserById(p.getUserId().intValue());
+                    if (user != null && user.getPhone() != null && !user.getPhone().isEmpty()) {
+                        String smsMessage = "LAMA EXPEDITION : Votre participation #" + p.getId()
+                                + " a été APPROUVÉE ! Vous pouvez maintenant télécharger votre badge sur votre espace.";
+                        boolean smsSent = smsService.sendSMS(user.getPhone(), smsMessage);
+                        if (smsSent) {
+                            logger.info("SMS de confirmation envoyé au " + user.getPhone());
+                        } else {
+                            logger.warn("Échec de l'envoi du SMS au " + user.getPhone());
+                        }
+                    }
 
                     // Award Loyalty Points
-                    com.gestion.entities.User user = userService.getUserById(p.getUserId().intValue());
                     if (user != null) {
                         user.setLoyaltyPoints(user.getLoyaltyPoints() + p.getPointsEarned());
                         userService.modifier(user);

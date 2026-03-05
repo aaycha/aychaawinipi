@@ -1,0 +1,633 @@
+﻿[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------------< com.gestion:gestion-abonnements >-------------------
+[INFO] Building Gestion des Abonnements et Participations 1.0.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[WARNING] 6 problems were encountered while building the effective model for org.openjfx:javafx-controls:jar:17.0.2 during dependency collection step for project (use -X to see details)
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ gestion-abonnements ---
+[INFO] Copying 114 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ gestion-abonnements ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 210 source files with javac [debug release 11] to target\classes
+[INFO] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/RepasDetailleServiceImpl.java: Some input files use or override a deprecated API.
+[INFO] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/RepasDetailleServiceImpl.java: Recompile with -Xlint:deprecation for details.
+[INFO] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/tools/SignatureService.java: Some input files use unchecked or unsafe operations.
+[INFO] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/tools/SignatureService.java: Recompile with -Xlint:unchecked for details.
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/EquipementVueService.java:[4,13] cannot find symbol
+  symbol:   class MyDataBase
+  location: package utils
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/EquipementVueService.java:[14,19] cannot find symbol
+  symbol:   class EquipementService
+  location: class Services.EquipementVueService
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/BannedWordsService.java:[3,13] cannot find symbol
+  symbol:   class MyDataBase
+  location: package utils
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[3,16] cannot find symbol
+  symbol:   class Equipement
+  location: package entities
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[4,16] cannot find symbol
+  symbol:   class EquipementAttribut
+  location: package entities
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[5,16] cannot find symbol
+  symbol:   class EquipementAttributService
+  location: package Services
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[6,16] cannot find symbol
+  symbol:   class EquipementService
+  location: package Services
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[44,13] cannot find symbol
+  symbol:   class Equipement
+  location: class controllers.EquipementFormController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[45,13] cannot find symbol
+  symbol:   class EquipementService
+  location: class controllers.EquipementFormController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[46,13] cannot find symbol
+  symbol:   class EquipementAttributService
+  location: class controllers.EquipementFormController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[85,31] cannot find symbol
+  symbol:   class Equipement
+  location: class controllers.EquipementFormController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[274,49] cannot find symbol
+  symbol:   class Equipement
+  location: class controllers.EquipementFormController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[3,16] cannot find symbol
+  symbol:   class Equipement
+  location: package entities
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[4,16] cannot find symbol
+  symbol:   class GroupeChat
+  location: package entities
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[6,16] cannot find symbol
+  symbol:   class EquipementService
+  location: package Services
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[7,16] cannot find symbol
+  symbol:   class GroupeChatService
+  location: package Services
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[8,16] cannot find symbol
+  symbol:   class MessageChatService
+  location: package Services
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[24,16] cannot find symbol
+  symbol:   class StatistiqueService
+  location: package Services
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[40,28] cannot find symbol
+  symbol:   class Equipement
+  location: class controllers.EquipementListeController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[48,28] cannot find symbol
+  symbol:   class GroupeChat
+  location: class controllers.EquipementListeController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[53,13] cannot find symbol
+  symbol:   class EquipementService
+  location: class controllers.EquipementListeController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[54,13] cannot find symbol
+  symbol:   class GroupeChatService
+  location: class controllers.EquipementListeController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[55,13] cannot find symbol
+  symbol:   class MessageChatService
+  location: class controllers.EquipementListeController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[56,13] cannot find symbol
+  symbol:   class StatistiqueService
+  location: class controllers.EquipementListeController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[58,28] cannot find symbol
+  symbol:   class Equipement
+  location: class controllers.EquipementListeController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[366,37] cannot find symbol
+  symbol:   class GroupeChat
+  location: class controllers.EquipementListeController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[449,35] cannot find symbol
+  symbol:   class Equipement
+  location: class controllers.EquipementListeController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementStoreController.java:[3,16] cannot find symbol
+  symbol:   class Equipement
+  location: package entities
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementStoreController.java:[4,16] cannot find symbol
+  symbol:   class EquipementService
+  location: package Services
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementStoreController.java:[6,13] cannot find symbol
+  symbol:   class ClientIdUtil
+  location: package utils
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementStoreController.java:[7,13] cannot find symbol
+  symbol:   class UserSession
+  location: package utils
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementStoreController.java:[49,13] cannot find symbol
+  symbol:   class EquipementService
+  location: class controllers.EquipementStoreController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementStoreController.java:[490,29] cannot find symbol
+  symbol:   class Equipement
+  location: class controllers.EquipementStoreController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementStoreController.java:[527,39] cannot find symbol
+  symbol:   class Equipement
+  location: class controllers.EquipementStoreController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementStoreController.java:[545,40] cannot find symbol
+  symbol:   class Equipement
+  location: class controllers.EquipementStoreController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementStoreController.java:[553,34] cannot find symbol
+  symbol:   class Equipement
+  location: class controllers.EquipementStoreController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/ChatController.java:[3,16] cannot find symbol
+  symbol:   class GroupeChat
+  location: package entities
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/ChatController.java:[6,16] cannot find symbol
+  symbol:   class GroupeChatService
+  location: package Services
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/ChatController.java:[7,16] cannot find symbol
+  symbol:   class MessageChatService
+  location: package Services
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/ChatController.java:[8,16] cannot find symbol
+  symbol:   class UtilisateurService
+  location: package Services
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/ChatController.java:[9,16] cannot find symbol
+  symbol:   class Utilisateur
+  location: package entities
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/ChatController.java:[10,13] cannot find symbol
+  symbol:   class Session
+  location: package utils
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/ChatController.java:[57,28] cannot find symbol
+  symbol:   class GroupeChat
+  location: class controllers.ChatController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/ChatController.java:[71,13] cannot find symbol
+  symbol:   class GroupeChatService
+  location: class controllers.ChatController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/ChatController.java:[72,13] cannot find symbol
+  symbol:   class MessageChatService
+  location: class controllers.ChatController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/ChatController.java:[74,21] cannot find symbol
+  symbol:   class OptionSondageService
+  location: package Services
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/ChatController.java:[75,21] cannot find symbol
+  symbol:   class MessageReactionService
+  location: package Services
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/ChatController.java:[76,13] cannot find symbol
+  symbol:   class UtilisateurService
+  location: class controllers.ChatController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/ChatController.java:[81,28] cannot find symbol
+  symbol:   class GroupeChat
+  location: class controllers.ChatController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/ChatController.java:[82,13] cannot find symbol
+  symbol:   class GroupeChat
+  location: class controllers.ChatController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/ChatController.java:[240,35] cannot find symbol
+  symbol:   class GroupeChat
+  location: class controllers.ChatController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/EquipementVueService.java:[17,15] cannot find symbol
+  symbol:   variable MyDataBase
+  location: class Services.EquipementVueService
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/EquipementVueService.java:[18,33] cannot find symbol
+  symbol:   class EquipementService
+  location: class Services.EquipementVueService
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/BannedWordsService.java:[21,15] cannot find symbol
+  symbol:   variable MyDataBase
+  location: class Services.BannedWordsService
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[52,23] cannot find symbol
+  symbol:   class EquipementService
+  location: class controllers.EquipementFormController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[53,31] cannot find symbol
+  symbol:   class EquipementAttributService
+  location: class controllers.EquipementFormController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[109,22] cannot find symbol
+  symbol:   class EquipementAttribut
+  location: class controllers.EquipementFormController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[110,22] cannot find symbol
+  symbol:   class EquipementAttribut
+  location: class controllers.EquipementFormController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[120,22] cannot find symbol
+  symbol:   class EquipementAttribut
+  location: class controllers.EquipementFormController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[121,22] cannot find symbol
+  symbol:   class EquipementAttribut
+  location: class controllers.EquipementFormController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[128,22] cannot find symbol
+  symbol:   class EquipementAttribut
+  location: class controllers.EquipementFormController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[129,22] cannot find symbol
+  symbol:   class EquipementAttribut
+  location: class controllers.EquipementFormController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[160,17] cannot find symbol
+  symbol:   class Equipement
+  location: class controllers.EquipementFormController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[160,42] cannot find symbol
+  symbol:   class Equipement
+  location: class controllers.EquipementFormController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[253,45] cannot find symbol
+  symbol:   class EquipementAttribut
+  location: class controllers.EquipementFormController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[255,45] cannot find symbol
+  symbol:   class EquipementAttribut
+  location: class controllers.EquipementFormController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[257,45] cannot find symbol
+  symbol:   class EquipementAttribut
+  location: class controllers.EquipementFormController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[259,45] cannot find symbol
+  symbol:   class EquipementAttribut
+  location: class controllers.EquipementFormController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[263,45] cannot find symbol
+  symbol:   class EquipementAttribut
+  location: class controllers.EquipementFormController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[265,45] cannot find symbol
+  symbol:   class EquipementAttribut
+  location: class controllers.EquipementFormController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[267,45] cannot find symbol
+  symbol:   class EquipementAttribut
+  location: class controllers.EquipementFormController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[270,41] cannot find symbol
+  symbol:   class EquipementAttribut
+  location: class controllers.EquipementFormController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[62,23] cannot find symbol
+  symbol:   class EquipementService
+  location: class controllers.EquipementListeController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[63,29] cannot find symbol
+  symbol:   class GroupeChatService
+  location: class controllers.EquipementListeController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[64,30] cannot find symbol
+  symbol:   class MessageChatService
+  location: class controllers.EquipementListeController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[65,34] cannot find symbol
+  symbol:   class StatistiqueService
+  location: class controllers.EquipementListeController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[71,39] cannot find symbol
+  symbol: class Equipement
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[106,43] cannot find symbol
+  symbol: class GroupeChat
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[147,9] cannot find symbol
+  symbol:   class Equipement
+  location: class controllers.EquipementListeController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[154,9] cannot find symbol
+  symbol:   class Equipement
+  location: class controllers.EquipementListeController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[169,9] cannot find symbol
+  symbol:   class Equipement
+  location: class controllers.EquipementListeController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[250,14] cannot find symbol
+  symbol:   class Equipement
+  location: class controllers.EquipementListeController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[271,18] cannot find symbol
+  symbol:   class GroupeChat
+  location: class controllers.EquipementListeController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[327,13] cannot find symbol
+  symbol:   class GroupeChat
+  location: class controllers.EquipementListeController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[331,13] cannot find symbol
+  symbol:   class GroupeChat
+  location: class controllers.EquipementListeController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[367,16] cannot find symbol
+  symbol:   class GroupeChat
+  location: class controllers.EquipementListeController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[390,13] cannot find symbol
+  symbol:   class GroupeChat
+  location: class controllers.EquipementListeController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[390,38] cannot find symbol
+  symbol:   class GroupeChat
+  location: class controllers.EquipementListeController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[434,14] cannot find symbol
+  symbol:   class Equipement
+  location: class controllers.EquipementListeController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementStoreController.java:[74,23] cannot find symbol
+  symbol:   class EquipementService
+  location: class controllers.EquipementStoreController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementStoreController.java:[77,22] cannot find symbol
+  symbol:   variable UserSession
+  location: class controllers.EquipementStoreController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementStoreController.java:[86,25] cannot find symbol
+  symbol:   variable UserSession
+  location: class controllers.EquipementStoreController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementStoreController.java:[108,14] cannot find symbol
+  symbol:   class Equipement
+  location: class controllers.EquipementStoreController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementStoreController.java:[112,22] cannot find symbol
+  symbol:   variable Equipement
+  location: class controllers.EquipementStoreController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementStoreController.java:[139,14] cannot find symbol
+  symbol:   class Equipement
+  location: class controllers.EquipementStoreController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementStoreController.java:[151,14] cannot find symbol
+  symbol:   class Equipement
+  location: class controllers.EquipementStoreController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementStoreController.java:[555,25] cannot find symbol
+  symbol:   variable UserSession
+  location: class controllers.EquipementStoreController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/ChatController.java:[89,29] cannot find symbol
+  symbol:   class GroupeChatService
+  location: class controllers.ChatController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/ChatController.java:[90,30] cannot find symbol
+  symbol:   class MessageChatService
+  location: class controllers.ChatController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/ChatController.java:[92,44] cannot find symbol
+  symbol:   class OptionSondageService
+  location: package Services
+[INFO] 100 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  3.642 s
+[INFO] Finished at: 2026-03-05T01:01:38+01:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.11.0:compile (default-compile) on project gestion-abonnements: Compilation failure: Compilation failure: 
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/EquipementVueService.java:[4,13] cannot find symbol
+[ERROR]   symbol:   class MyDataBase
+[ERROR]   location: package utils
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/EquipementVueService.java:[14,19] cannot find symbol
+[ERROR]   symbol:   class EquipementService
+[ERROR]   location: class Services.EquipementVueService
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/BannedWordsService.java:[3,13] cannot find symbol
+[ERROR]   symbol:   class MyDataBase
+[ERROR]   location: package utils
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[3,16] cannot find symbol
+[ERROR]   symbol:   class Equipement
+[ERROR]   location: package entities
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[4,16] cannot find symbol
+[ERROR]   symbol:   class EquipementAttribut
+[ERROR]   location: package entities
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[5,16] cannot find symbol
+[ERROR]   symbol:   class EquipementAttributService
+[ERROR]   location: package Services
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[6,16] cannot find symbol
+[ERROR]   symbol:   class EquipementService
+[ERROR]   location: package Services
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[44,13] cannot find symbol
+[ERROR]   symbol:   class Equipement
+[ERROR]   location: class controllers.EquipementFormController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[45,13] cannot find symbol
+[ERROR]   symbol:   class EquipementService
+[ERROR]   location: class controllers.EquipementFormController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[46,13] cannot find symbol
+[ERROR]   symbol:   class EquipementAttributService
+[ERROR]   location: class controllers.EquipementFormController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[85,31] cannot find symbol
+[ERROR]   symbol:   class Equipement
+[ERROR]   location: class controllers.EquipementFormController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[274,49] cannot find symbol
+[ERROR]   symbol:   class Equipement
+[ERROR]   location: class controllers.EquipementFormController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[3,16] cannot find symbol
+[ERROR]   symbol:   class Equipement
+[ERROR]   location: package entities
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[4,16] cannot find symbol
+[ERROR]   symbol:   class GroupeChat
+[ERROR]   location: package entities
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[6,16] cannot find symbol
+[ERROR]   symbol:   class EquipementService
+[ERROR]   location: package Services
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[7,16] cannot find symbol
+[ERROR]   symbol:   class GroupeChatService
+[ERROR]   location: package Services
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[8,16] cannot find symbol
+[ERROR]   symbol:   class MessageChatService
+[ERROR]   location: package Services
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[24,16] cannot find symbol
+[ERROR]   symbol:   class StatistiqueService
+[ERROR]   location: package Services
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[40,28] cannot find symbol
+[ERROR]   symbol:   class Equipement
+[ERROR]   location: class controllers.EquipementListeController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[48,28] cannot find symbol
+[ERROR]   symbol:   class GroupeChat
+[ERROR]   location: class controllers.EquipementListeController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[53,13] cannot find symbol
+[ERROR]   symbol:   class EquipementService
+[ERROR]   location: class controllers.EquipementListeController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[54,13] cannot find symbol
+[ERROR]   symbol:   class GroupeChatService
+[ERROR]   location: class controllers.EquipementListeController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[55,13] cannot find symbol
+[ERROR]   symbol:   class MessageChatService
+[ERROR]   location: class controllers.EquipementListeController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[56,13] cannot find symbol
+[ERROR]   symbol:   class StatistiqueService
+[ERROR]   location: class controllers.EquipementListeController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[58,28] cannot find symbol
+[ERROR]   symbol:   class Equipement
+[ERROR]   location: class controllers.EquipementListeController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[366,37] cannot find symbol
+[ERROR]   symbol:   class GroupeChat
+[ERROR]   location: class controllers.EquipementListeController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[449,35] cannot find symbol
+[ERROR]   symbol:   class Equipement
+[ERROR]   location: class controllers.EquipementListeController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementStoreController.java:[3,16] cannot find symbol
+[ERROR]   symbol:   class Equipement
+[ERROR]   location: package entities
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementStoreController.java:[4,16] cannot find symbol
+[ERROR]   symbol:   class EquipementService
+[ERROR]   location: package Services
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementStoreController.java:[6,13] cannot find symbol
+[ERROR]   symbol:   class ClientIdUtil
+[ERROR]   location: package utils
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementStoreController.java:[7,13] cannot find symbol
+[ERROR]   symbol:   class UserSession
+[ERROR]   location: package utils
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementStoreController.java:[49,13] cannot find symbol
+[ERROR]   symbol:   class EquipementService
+[ERROR]   location: class controllers.EquipementStoreController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementStoreController.java:[490,29] cannot find symbol
+[ERROR]   symbol:   class Equipement
+[ERROR]   location: class controllers.EquipementStoreController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementStoreController.java:[527,39] cannot find symbol
+[ERROR]   symbol:   class Equipement
+[ERROR]   location: class controllers.EquipementStoreController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementStoreController.java:[545,40] cannot find symbol
+[ERROR]   symbol:   class Equipement
+[ERROR]   location: class controllers.EquipementStoreController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementStoreController.java:[553,34] cannot find symbol
+[ERROR]   symbol:   class Equipement
+[ERROR]   location: class controllers.EquipementStoreController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/ChatController.java:[3,16] cannot find symbol
+[ERROR]   symbol:   class GroupeChat
+[ERROR]   location: package entities
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/ChatController.java:[6,16] cannot find symbol
+[ERROR]   symbol:   class GroupeChatService
+[ERROR]   location: package Services
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/ChatController.java:[7,16] cannot find symbol
+[ERROR]   symbol:   class MessageChatService
+[ERROR]   location: package Services
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/ChatController.java:[8,16] cannot find symbol
+[ERROR]   symbol:   class UtilisateurService
+[ERROR]   location: package Services
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/ChatController.java:[9,16] cannot find symbol
+[ERROR]   symbol:   class Utilisateur
+[ERROR]   location: package entities
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/ChatController.java:[10,13] cannot find symbol
+[ERROR]   symbol:   class Session
+[ERROR]   location: package utils
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/ChatController.java:[57,28] cannot find symbol
+[ERROR]   symbol:   class GroupeChat
+[ERROR]   location: class controllers.ChatController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/ChatController.java:[71,13] cannot find symbol
+[ERROR]   symbol:   class GroupeChatService
+[ERROR]   location: class controllers.ChatController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/ChatController.java:[72,13] cannot find symbol
+[ERROR]   symbol:   class MessageChatService
+[ERROR]   location: class controllers.ChatController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/ChatController.java:[74,21] cannot find symbol
+[ERROR]   symbol:   class OptionSondageService
+[ERROR]   location: package Services
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/ChatController.java:[75,21] cannot find symbol
+[ERROR]   symbol:   class MessageReactionService
+[ERROR]   location: package Services
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/ChatController.java:[76,13] cannot find symbol
+[ERROR]   symbol:   class UtilisateurService
+[ERROR]   location: class controllers.ChatController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/ChatController.java:[81,28] cannot find symbol
+[ERROR]   symbol:   class GroupeChat
+[ERROR]   location: class controllers.ChatController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/ChatController.java:[82,13] cannot find symbol
+[ERROR]   symbol:   class GroupeChat
+[ERROR]   location: class controllers.ChatController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/ChatController.java:[240,35] cannot find symbol
+[ERROR]   symbol:   class GroupeChat
+[ERROR]   location: class controllers.ChatController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/EquipementVueService.java:[17,15] cannot find symbol
+[ERROR]   symbol:   variable MyDataBase
+[ERROR]   location: class Services.EquipementVueService
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/EquipementVueService.java:[18,33] cannot find symbol
+[ERROR]   symbol:   class EquipementService
+[ERROR]   location: class Services.EquipementVueService
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/services/BannedWordsService.java:[21,15] cannot find symbol
+[ERROR]   symbol:   variable MyDataBase
+[ERROR]   location: class Services.BannedWordsService
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[52,23] cannot find symbol
+[ERROR]   symbol:   class EquipementService
+[ERROR]   location: class controllers.EquipementFormController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[53,31] cannot find symbol
+[ERROR]   symbol:   class EquipementAttributService
+[ERROR]   location: class controllers.EquipementFormController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[109,22] cannot find symbol
+[ERROR]   symbol:   class EquipementAttribut
+[ERROR]   location: class controllers.EquipementFormController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[110,22] cannot find symbol
+[ERROR]   symbol:   class EquipementAttribut
+[ERROR]   location: class controllers.EquipementFormController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[120,22] cannot find symbol
+[ERROR]   symbol:   class EquipementAttribut
+[ERROR]   location: class controllers.EquipementFormController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[121,22] cannot find symbol
+[ERROR]   symbol:   class EquipementAttribut
+[ERROR]   location: class controllers.EquipementFormController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[128,22] cannot find symbol
+[ERROR]   symbol:   class EquipementAttribut
+[ERROR]   location: class controllers.EquipementFormController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[129,22] cannot find symbol
+[ERROR]   symbol:   class EquipementAttribut
+[ERROR]   location: class controllers.EquipementFormController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[160,17] cannot find symbol
+[ERROR]   symbol:   class Equipement
+[ERROR]   location: class controllers.EquipementFormController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[160,42] cannot find symbol
+[ERROR]   symbol:   class Equipement
+[ERROR]   location: class controllers.EquipementFormController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[253,45] cannot find symbol
+[ERROR]   symbol:   class EquipementAttribut
+[ERROR]   location: class controllers.EquipementFormController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[255,45] cannot find symbol
+[ERROR]   symbol:   class EquipementAttribut
+[ERROR]   location: class controllers.EquipementFormController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[257,45] cannot find symbol
+[ERROR]   symbol:   class EquipementAttribut
+[ERROR]   location: class controllers.EquipementFormController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[259,45] cannot find symbol
+[ERROR]   symbol:   class EquipementAttribut
+[ERROR]   location: class controllers.EquipementFormController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[263,45] cannot find symbol
+[ERROR]   symbol:   class EquipementAttribut
+[ERROR]   location: class controllers.EquipementFormController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[265,45] cannot find symbol
+[ERROR]   symbol:   class EquipementAttribut
+[ERROR]   location: class controllers.EquipementFormController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[267,45] cannot find symbol
+[ERROR]   symbol:   class EquipementAttribut
+[ERROR]   location: class controllers.EquipementFormController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementFormController.java:[270,41] cannot find symbol
+[ERROR]   symbol:   class EquipementAttribut
+[ERROR]   location: class controllers.EquipementFormController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[62,23] cannot find symbol
+[ERROR]   symbol:   class EquipementService
+[ERROR]   location: class controllers.EquipementListeController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[63,29] cannot find symbol
+[ERROR]   symbol:   class GroupeChatService
+[ERROR]   location: class controllers.EquipementListeController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[64,30] cannot find symbol
+[ERROR]   symbol:   class MessageChatService
+[ERROR]   location: class controllers.EquipementListeController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[65,34] cannot find symbol
+[ERROR]   symbol:   class StatistiqueService
+[ERROR]   location: class controllers.EquipementListeController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[71,39] cannot find symbol
+[ERROR]   symbol: class Equipement
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[106,43] cannot find symbol
+[ERROR]   symbol: class GroupeChat
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[147,9] cannot find symbol
+[ERROR]   symbol:   class Equipement
+[ERROR]   location: class controllers.EquipementListeController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[154,9] cannot find symbol
+[ERROR]   symbol:   class Equipement
+[ERROR]   location: class controllers.EquipementListeController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[169,9] cannot find symbol
+[ERROR]   symbol:   class Equipement
+[ERROR]   location: class controllers.EquipementListeController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[250,14] cannot find symbol
+[ERROR]   symbol:   class Equipement
+[ERROR]   location: class controllers.EquipementListeController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[271,18] cannot find symbol
+[ERROR]   symbol:   class GroupeChat
+[ERROR]   location: class controllers.EquipementListeController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[327,13] cannot find symbol
+[ERROR]   symbol:   class GroupeChat
+[ERROR]   location: class controllers.EquipementListeController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[331,13] cannot find symbol
+[ERROR]   symbol:   class GroupeChat
+[ERROR]   location: class controllers.EquipementListeController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[367,16] cannot find symbol
+[ERROR]   symbol:   class GroupeChat
+[ERROR]   location: class controllers.EquipementListeController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[390,13] cannot find symbol
+[ERROR]   symbol:   class GroupeChat
+[ERROR]   location: class controllers.EquipementListeController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[390,38] cannot find symbol
+[ERROR]   symbol:   class GroupeChat
+[ERROR]   location: class controllers.EquipementListeController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementListeController.java:[434,14] cannot find symbol
+[ERROR]   symbol:   class Equipement
+[ERROR]   location: class controllers.EquipementListeController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementStoreController.java:[74,23] cannot find symbol
+[ERROR]   symbol:   class EquipementService
+[ERROR]   location: class controllers.EquipementStoreController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementStoreController.java:[77,22] cannot find symbol
+[ERROR]   symbol:   variable UserSession
+[ERROR]   location: class controllers.EquipementStoreController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementStoreController.java:[86,25] cannot find symbol
+[ERROR]   symbol:   variable UserSession
+[ERROR]   location: class controllers.EquipementStoreController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementStoreController.java:[108,14] cannot find symbol
+[ERROR]   symbol:   class Equipement
+[ERROR]   location: class controllers.EquipementStoreController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementStoreController.java:[112,22] cannot find symbol
+[ERROR]   symbol:   variable Equipement
+[ERROR]   location: class controllers.EquipementStoreController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementStoreController.java:[139,14] cannot find symbol
+[ERROR]   symbol:   class Equipement
+[ERROR]   location: class controllers.EquipementStoreController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementStoreController.java:[151,14] cannot find symbol
+[ERROR]   symbol:   class Equipement
+[ERROR]   location: class controllers.EquipementStoreController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/EquipementStoreController.java:[555,25] cannot find symbol
+[ERROR]   symbol:   variable UserSession
+[ERROR]   location: class controllers.EquipementStoreController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/ChatController.java:[89,29] cannot find symbol
+[ERROR]   symbol:   class GroupeChatService
+[ERROR]   location: class controllers.ChatController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/ChatController.java:[90,30] cannot find symbol
+[ERROR]   symbol:   class MessageChatService
+[ERROR]   location: class controllers.ChatController
+[ERROR] /C:/Users/USER/Videos/hedhiheyaaychamaaya/aychaawinipi/GestionAbonnements/src/main/java/com/gestion/controllers/ChatController.java:[92,44] cannot find symbol
+[ERROR]   symbol:   class OptionSondageService
+[ERROR]   location: package Services
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

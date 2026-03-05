@@ -3,6 +3,7 @@ package com.gestion.ui.restaurant;
 import com.gestion.controllers.RestaurantController;
 import com.gestion.entities.Restaurant;
 import com.gestion.entities.ValidationResult;
+import com.gestion.services.GeminiVisionService;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -55,9 +56,12 @@ public class RestaurantFormController implements Initializable {
     private VBox errorContainer;
     @FXML
     private Label globalErrorMessage;
+    @FXML
+    private Button btnGenerateAI;
+
+    private final GeminiVisionService geminiService = new GeminiVisionService();
 
     private RestaurantController controller = new RestaurantController();
-    private RestaurantListeController listeController;
     private Restaurant restaurant;
     private boolean isEditMode = false;
 
@@ -105,10 +109,6 @@ public class RestaurantFormController implements Initializable {
         } else {
             formTitle.setText("Nouveau Restaurant");
         }
-    }
-
-    public void setListeController(RestaurantListeController listeController) {
-        this.listeController = listeController;
     }
 
     /**
@@ -181,6 +181,73 @@ public class RestaurantFormController implements Initializable {
     @FXML
     private void onAnnuler() {
         closeForm();
+    }
+
+    @FXML
+    private void onBrowseImage() {
+        javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
+        fileChooser.getExtensionFilters()
+                .add(new javafx.stage.FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg", "*.gif"));
+        java.io.File file = fileChooser.showOpenDialog(btnGenerateAI.getScene().getWindow());
+        if (file != null) {
+            inputImageUrl.setText(file.getAbsolutePath());
+        }
+    }
+
+    @FXML
+    private void onGenerateAI() {
+        String input = inputImageUrl.getText();
+        if (input == null || input.trim().isEmpty()) {
+            showError("Veuillez d'abord saisir une URL d'image ou sélectionner un fichier local.");
+            return;
+        }
+
+        btnGenerateAI.setDisable(true);
+        btnGenerateAI.setText("✨ ANALYSE EN COURS...");
+
+        new Thread(() -> {
+            try {
+                javafx.application.Platform.runLater(() -> btnGenerateAI.setText("🛰️ GEMINI VISION..."));
+
+                String deepPrompt = "Agis en tant qu'expert critique culinaire international et stratège marketing. " +
+                        "Analyse cette image avec une profondeur maximale (Deep Vision). " +
+                        "Génère une description de restaurant prestigieuse, captivante et haut de gamme. " +
+                        "Inclus des détails sur l'atmosphère, le style culinaire possible et l'expérience client. " +
+                        "Rédige en Français élégant (4-5 phrases).";
+
+                // Uses the API key from afilnet.properties (loaded by GeminiVisionService)
+                String description = geminiService.analyzeImage(input, deepPrompt);
+
+                if (description != null
+                        && !description.startsWith("Error:")
+                        && !description.startsWith("Fatal Route Error:")
+                        && !description.contains("Universal AI Blockade")
+                        && !description.contains("API key")) {
+                    javafx.application.Platform.runLater(() -> {
+                        inputDescription.setText(description);
+                        finalizeAI();
+                    });
+                } else {
+                    final String errorMsg = description;
+                    javafx.application.Platform.runLater(() -> {
+                        showError("Échec de l'analyse IA.\n" + errorMsg
+                                + "\n\nVérifiez votre clé API Gemini dans afilnet.properties.");
+                        finalizeAI();
+                    });
+                }
+
+            } catch (Exception e) {
+                javafx.application.Platform.runLater(() -> {
+                    showError("Erreur IA: " + e.getMessage());
+                    finalizeAI();
+                });
+            }
+        }).start();
+    }
+
+    private void finalizeAI() {
+        btnGenerateAI.setDisable(false);
+        btnGenerateAI.setText("✨ AUTO-DESCRIBE");
     }
 
     private void displayValidationErrors(ValidationResult validation) {

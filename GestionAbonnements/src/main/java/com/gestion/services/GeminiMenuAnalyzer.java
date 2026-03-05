@@ -2,59 +2,97 @@ package com.gestion.services;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.File;
-import java.time.LocalDate;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.util.Base64;
 import java.util.Random;
+import java.util.ArrayList;
+import java.util.List;
 
-/**
- * SOLUTION RADICALE V2 : Analyseur de Menu Ultra-Robuste.
- * - Utilise Gemini 1.5 Flash (v1beta stable).
- * - Parsing ultra-tolérant (cherche le premier { et dernier }).
- * - Fallback SOLIDE : Si l'IA échoue ou renvoie du vide, génère un vrai menu.
- */
 public class GeminiMenuAnalyzer {
+        private static String API_KEY = "";
+        private static String DISCOVERED_MODEL = null;
+        private static String DISCOVERED_VERSION = null;
 
-        private static String GEMINI_KEY = "";
-        private static final String API_URL_BASE = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=";
-
-        private static final String PROMPT = "Act as a professional chef, nutritionist, and restaurant marketing expert. "
+        private static final String PROMPT = "Act as a professional chef. Analyze this food image and return ONLY a JSON object with: "
                         +
-                        "Analyze this food image and return ONLY a JSON object with: " +
                         "\"nom\" (Creative French Name), \"description\" (Appetizing French marketing description), " +
-                        "\"prixEstime\" (number), \"tags\" (comma separated). " +
-                        "IMPORTANT: Always provide a creative name in French even if the image is not clear.";
+                        "\"prixEstime\" (number), \"tags\" (comma separated).";
 
         private final ObjectMapper mapper = new ObjectMapper();
         private final HttpClient http = HttpClient.newBuilder()
-                        .connectTimeout(Duration.ofSeconds(15)).build();
+                        .followRedirects(HttpClient.Redirect.ALWAYS)
+                        .connectTimeout(Duration.ofSeconds(20))
+                        .build();
 
         public GeminiMenuAnalyzer() {
                 loadConfig();
         }
 
         private void loadConfig() {
-                try (java.io.InputStream input = getClass().getClassLoader()
-                                .getResourceAsStream("afilnet.properties")) {
+                try (InputStream input = getClass().getClassLoader().getResourceAsStream("afilnet.properties")) {
                         if (input != null) {
                                 java.util.Properties props = new java.util.Properties();
                                 props.load(input);
-                                GEMINI_KEY = props.getProperty("gemini.api_key", "");
+                                API_KEY = props.getProperty("gemini.api_key", "");
                         }
                 } catch (Exception e) {
                         System.err.println("Gemini Config Error: " + e.getMessage());
                 }
         }
 
-        private String getApiUrl() {
-                return API_URL_BASE + GEMINI_KEY;
+        private synchronized void discoverBestModel() {
+                if (DISCOVERED_MODEL != null)
+                        return;
+                String[] versions = { "v1", "v1beta" };
+                for (String v : versions) {
+                        try {
+                                String url = "https://generativelanguage.googleapis.com/" + v + "/models?key="
+                                                + API_KEY;
+                                HttpRequest req = HttpRequest.newBuilder().uri(URI.create(url)).GET().build();
+                                HttpResponse<String> resp = http.send(req, HttpResponse.BodyHandlers.ofString());
+                                if (resp.statusCode() == 200) {
+                                        JsonNode root = mapper.readTree(resp.body());
+                                        JsonNode models = root.get("models");
+                                        if (models != null && models.isArray()) {
+                                                List<String> candidates = new ArrayList<>();
+                                                for (JsonNode m : models) {
+                                                        JsonNode methods = m.get("supportedGenerationMethods");
+                                                        if (methods != null && methods.isArray()) {
+                                                                for (JsonNode meth : methods) {
+                                                                        if (meth.asText().equals("generateContent"))
+                                                                                candidates.add(m.get("name").asText());
+                                                                }
+                                                        }
+                                                }
+                                                String selected = null;
+                                                for (String c : candidates) {
+                                                        if (c.contains("1.5-flash")) {
+                                                                selected = c;
+                                                                break;
+                                                        }
+                                                }
+                                                if (selected == null && !candidates.isEmpty())
+                                                        selected = candidates.get(0);
+                                                if (selected != null) {
+                                                        DISCOVERED_MODEL = selected;
+                                                        DISCOVERED_VERSION = v;
+                                                        return;
+                                                }
+                                        }
+                                }
+                        } catch (Exception e) {
+                        }
+                }
         }
 
         public static class MenuAnalysisResult {
@@ -71,199 +109,122 @@ public class GeminiMenuAnalyzer {
 
         public MenuAnalysisResult analyze(File imageFile) {
                 try {
+                        discoverBestModel();
+                        if (DISCOVERED_MODEL == null)
+                                return solveRadically(imageFile);
+
                         byte[] bytes = Files.readAllBytes(imageFile.toPath());
                         String b64 = Base64.getEncoder().encodeToString(bytes);
                         String mime = imageFile.getName().toLowerCase().endsWith(".png") ? "image/png" : "image/jpeg";
 
-                        String body = "{\"contents\":[{\"parts\":[{\"text\":\"" + PROMPT
-                                        + "\"},{\"inline_data\":{\"mime_type\":\"" + mime + "\",\"data\":\"" + b64
-                                        + "\"}}]}]}";
+                        ObjectNode root = mapper.createObjectNode();
+                        ArrayNode contents = root.putArray("contents");
+                        ObjectNode contentObj = contents.addObject();
+                        ArrayNode parts = contentObj.putArray("parts");
+                        parts.addObject().put("text", PROMPT);
+                        ObjectNode inlineData = parts.addObject().putObject("inline_data");
+                        inlineData.put("mime_type", mime);
+                        inlineData.put("data", b64);
+
+                        String apiUrl = String.format(
+                                        "https://generativelanguage.googleapis.com/%s/%s:generateContent?key=%s",
+                                        DISCOVERED_VERSION, DISCOVERED_MODEL, API_KEY);
 
                         HttpRequest req = HttpRequest.newBuilder()
-                                        .uri(URI.create(getApiUrl()))
+                                        .uri(URI.create(apiUrl))
                                         .header("Content-Type", "application/json")
-                                        .POST(HttpRequest.BodyPublishers.ofString(body))
+                                        .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(root)))
                                         .build();
 
                         HttpResponse<String> resp = http.send(req, HttpResponse.BodyHandlers.ofString());
 
                         if (resp.statusCode() == 200) {
-                                JsonNode root = mapper.readTree(resp.body());
-                                String text = root.at("/candidates/0/content/parts/0/text").asText();
-                                if (text != null && !text.isBlank()) {
+                                JsonNode resJson = mapper.readTree(resp.body());
+                                String text = resJson.at("/candidates/0/content/parts/0/text").asText();
+                                if (text != null && !text.isBlank())
                                         return parseSafe(text);
-                                }
                         }
                 } catch (Exception e) {
-                        System.err.println("AI Error: " + e.getMessage());
+                        System.err.println("Menu AI Error: " + e.getMessage());
                 }
-
-                // FALLBACK RADICAL : Toujours renvoyer quelque chose de beau
                 return solveRadically(imageFile);
         }
 
         private MenuAnalysisResult parseSafe(String text) {
                 try {
-                        // Nettoyage radical du JSON (chercher entre les premières et dernières
-                        // accolades)
                         int start = text.indexOf('{');
                         int end = text.lastIndexOf('}');
                         if (start >= 0 && end > start) {
-                                String jsonStr = text.substring(start, end + 1);
-                                JsonNode res = mapper.readTree(jsonStr);
-
-                                String nom = res.path("nom").asText("Plat Spécial");
-                                String desc = res.path("description")
-                                                .asText("Un plat délicieux préparé par notre chef.");
-                                double prix = res.path("prixEstime").asDouble(15.0);
-                                String tags = res.path("tags").asText("nouveauté");
-
-                                // Sécurité : Si le nom est vide, on force un défaut
-                                if (nom.isBlank())
-                                        nom = "Menu du Jour";
-
-                                return new MenuAnalysisResult(nom, desc, prix, tags);
+                                JsonNode res = mapper.readTree(text.substring(start, end + 1));
+                                return new MenuAnalysisResult(
+                                                res.path("nom").asText("Plat Spécial"),
+                                                res.path("description")
+                                                                .asText("Un plat délicieux préparé par notre chef."),
+                                                res.path("prixEstime").asDouble(15.0),
+                                                res.path("tags").asText("nouveauté"));
                         }
                 } catch (Exception e) {
-                        System.err.println("Parse error: " + e.getMessage());
                 }
-                return null; // Forcera le fallback dans analyze()
+                return null;
         }
 
         private MenuAnalysisResult solveRadically(File f) {
                 String name = f.getName().toLowerCase();
                 Random r = new Random(f.length());
-
-                String nom = "Menu du Jour Créatif";
-                String desc = "Une sélection gourmande élaborée à partir d'ingrédients frais et de saison. " +
-                                "Notre chef a conçu ce plat pour offrir un équilibre parfait entre saveur et nutrition.";
+                String nom = "Menu du Jour Créatif", desc = "Sélection gourmande artisanale.", tags = "Fait maison";
                 double prix = 14.50 + r.nextInt(10);
-                String tags = "Fait maison, Saison";
-
                 if (name.contains("pizza")) {
-                        nom = "Pizza Royale au Feu de Bois";
-                        desc = "Pâte artisanale croustillante, sauce tomate San Marzano, mozzarella fondante et basilic frais.";
+                        nom = "Pizza Royale";
+                        desc = "Pâte artisanale, sauce tomate, mozzarella.";
                         prix = 12.00;
                 } else if (name.contains("burger")) {
-                        nom = "L'Artisan Burger Gourmet";
-                        desc = "Steak haché de bœuf, cheddar affiné, oignons caramélisés et pain brioché toasté.";
+                        nom = "Burger Gourmet";
+                        desc = "Bœuf, cheddar, oignons caramélisés.";
                         prix = 15.50;
-                } else if (name.contains("salad") || name.contains("salade")) {
-                        nom = "Salade Fraîcheur du Marché";
-                        desc = "Mélange de jeunes pousses, légumes croquants et sauce vinaigrette aux fines herbes.";
-                        prix = 11.00;
                 }
-
                 return new MenuAnalysisResult(nom, desc, prix, tags);
         }
 
         public String generateMenuDescription(java.util.List<String> dishNames) {
-                if (dishNames == null || dishNames.isEmpty()) {
-                        return "Une sélection gourmande de nos meilleurs plats.";
-                }
-
-                String dishesStr = String.join(", ", dishNames);
-                String promptV2 = "Act as a Michelin-star chef. Create a SHORT, appetizing, and poetic French description for a menu composed of: "
-                                + dishesStr + ". " +
-                                "Return ONLY the description text (max 250 characters). No JSON, no quotes.";
-
-                try {
-                        String body = "{\"contents\":[{\"parts\":[{\"text\":\"" + promptV2 + "\"}]}]}";
-
-                        HttpRequest req = HttpRequest.newBuilder()
-                                        .uri(URI.create(getApiUrl()))
-                                        .header("Content-Type", "application/json")
-                                        .POST(HttpRequest.BodyPublishers.ofString(body))
-                                        .build();
-
-                        HttpResponse<String> resp = http.send(req, HttpResponse.BodyHandlers.ofString());
-
-                        if (resp.statusCode() == 200) {
-                                JsonNode root = mapper.readTree(resp.body());
-                                String text = root.at("/candidates/0/content/parts/0/text").asText();
-                                if (text != null && !text.isBlank()) {
-                                        return text.trim();
-                                }
-                        }
-                } catch (Exception e) {
-                        System.err.println("AI Description Error: " + e.getMessage());
-                }
-
-                return "Une alliance raffinée de saveurs : " + dishesStr + ".";
+                if (dishNames == null || dishNames.isEmpty())
+                        return "Sélection de nos meilleurs plats.";
+                return callTextOnly("Act as a chef. Create a SHORT poetic French description for a menu of: "
+                                + String.join(", ", dishNames));
         }
 
-        public String generateMenuName(java.util.List<String> dishNames, int varietySeed) {
-                if (dishNames == null || dishNames.isEmpty()) {
+        public String generateMenuName(java.util.List<String> dishNames, int seed) {
+                if (dishNames == null || dishNames.isEmpty())
                         return "Menu Gourmand";
-                }
-
-                String dishesStr = String.join(", ", dishNames);
-                String varietyInstruction = varietySeed > 0
-                                ? "Try a DIFFERENT creative angle than before (Version #" + varietySeed + "). "
-                                : "";
-                String promptV3 = "Act as a Michelin-star chef and marketing expert. Suggest a UNIQUE, SHORT (max 3-4 words), appetizing, and creative French name for a menu composed of: "
-                                + dishesStr + ". " +
-                                varietyInstruction +
-                                "Return ONLY the name text. No quotes, no preamble. Make it different and sophisticated.";
-
-                try {
-                        String body = "{\"contents\":[{\"parts\":[{\"text\":\"" + promptV3 + "\"}]}]}";
-
-                        HttpRequest req = HttpRequest.newBuilder()
-                                        .uri(URI.create(getApiUrl()))
-                                        .header("Content-Type", "application/json")
-                                        .POST(HttpRequest.BodyPublishers.ofString(body))
-                                        .build();
-
-                        HttpResponse<String> resp = http.send(req, HttpResponse.BodyHandlers.ofString());
-
-                        if (resp.statusCode() == 200) {
-                                JsonNode root = mapper.readTree(resp.body());
-                                String text = root.at("/candidates/0/content/parts/0/text").asText();
-                                if (text != null && !text.isBlank()) {
-                                        return text.trim();
-                                }
-                        }
-                } catch (Exception e) {
-                        System.err.println("AI Name Error: " + e.getMessage());
-                }
-
-                return "Signature du Chef";
+                return callTextOnly(
+                                "Suggest a UNIQUE creative 3-word French name for: " + String.join(", ", dishNames));
         }
 
-        public String generateMenuDates(java.util.List<String> dishNames, int varietySeed) {
-                if (dishNames == null || dishNames.isEmpty()) {
-                        return LocalDate.now().toString() + "|" + LocalDate.now().plusDays(7).toString();
-                }
+        public String generateMenuDates(java.util.List<String> dishNames, int seed) {
+                LocalDate start = LocalDate.now().plusDays(seed % 14);
+                return start.toString() + "|" + start.plusDays(7).toString();
+        }
 
-                String dishesStr = String.join(", ", dishNames);
-                // Vary the start date based on seed
-                LocalDate startDate = LocalDate.now().plusDays(varietySeed % 14);
-                String promptV4 = "Based on these dishes: " + dishesStr
-                                + ", suggest a logical 7-day validity period starting from " + startDate
-                                + ". " +
-                                "Return format: YYYY-MM-DD|YYYY-MM-DD. ONLY the dates, no text.";
-
+        private String callTextOnly(String prompt) {
                 try {
-                        String body = "{\"contents\":[{\"parts\":[{\"text\":\"" + promptV4 + "\"}]}]}";
-                        HttpRequest req = HttpRequest.newBuilder()
-                                        .uri(URI.create(getApiUrl()))
+                        discoverBestModel();
+                        if (DISCOVERED_MODEL == null)
+                                return "Gourmandise du Chef";
+                        ObjectNode root = mapper.createObjectNode();
+                        root.putArray("contents").addObject().putArray("parts").addObject().put("text", prompt);
+                        String apiUrl = String.format(
+                                        "https://generativelanguage.googleapis.com/%s/%s:generateContent?key=%s",
+                                        DISCOVERED_VERSION, DISCOVERED_MODEL, API_KEY);
+                        HttpRequest req = HttpRequest.newBuilder().uri(URI.create(apiUrl))
                                         .header("Content-Type", "application/json")
-                                        .POST(HttpRequest.BodyPublishers.ofString(body))
+                                        .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(root)))
                                         .build();
-
                         HttpResponse<String> resp = http.send(req, HttpResponse.BodyHandlers.ofString());
                         if (resp.statusCode() == 200) {
-                                JsonNode root = mapper.readTree(resp.body());
-                                String text = root.at("/candidates/0/content/parts/0/text").asText();
-                                if (text != null && text.contains("|")) {
-                                        return text.trim();
-                                }
+                                return mapper.readTree(resp.body()).at("/candidates/0/content/parts/0/text").asText()
+                                                .trim();
                         }
                 } catch (Exception e) {
-                        System.err.println("AI Date Error: " + e.getMessage());
                 }
-
-                return LocalDate.now().toString() + "|" + LocalDate.now().plusDays(7).toString();
+                return "Signature du Chef";
         }
 }

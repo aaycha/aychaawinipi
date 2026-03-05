@@ -34,21 +34,21 @@
             <!-- Background Image -->
             <ImageView fitHeight="900" fitWidth="1600" preserveRatio="false">
                 <image>
-                    <Image url="@roaming_revolution-camping-6626537_1920.jpg" />
+                    <Image url="/usersaif/roaming_revolution-camping-6626537_1920.jpg" />
                 </image>
             </ImageView>
-            
+
             <!-- Dark/Green Overlay for mood -->
             <StackPane style="-fx-background-color: rgba(10, 15, 13, 0.75);" />
 
             <!-- Main Scrollable Content -->
-            <ScrollPane fitToWidth="true" hbarPolicy="AS_NEEDED" styleClass="modern-scroll">
+            <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="modern-scroll" style="-fx-background-color: transparent;">
                 <content>
-                    <VBox alignment="CENTER" spacing="20" style="-fx-padding: 30 0 30 0;">
-                        
+                    <VBox alignment="CENTER" spacing="20" style="-fx-padding: 30 0 30 0; -fx-background-color: transparent;">
+
                         <!-- Hero Section -->
                         <VBox alignment="CENTER" spacing="10">
-                             <ImageView fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+                            <ImageView fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
                                 <image>
                                     <Image url="@logo.png" />
                                 </image>
@@ -62,7 +62,7 @@
 
                         <!-- Login Card -->
                         <VBox maxWidth="400" spacing="15" styleClass="glass-panel" style="-fx-padding: 25;">
-                            
+
                             <VBox spacing="5">
                                 <Label styleClass="text-hero" text="Welcome back" style="-fx-font-size: 22;"/>
                                 <Label styleClass="text-muted" text="Enter your trail credentials below" style="-fx-font-size: 13;"/>
@@ -85,7 +85,7 @@
                                     <Label style="-fx-text-fill: white; -fx-font-weight: 700; -fx-font-size: 11;" text="EMAIL ADDRESS" />
                                     <TextField fx:id="emailField" promptText="explorer@hiking.com" styleClass="modern-input" prefHeight="40"/>
                                 </VBox>
-                                
+
                                 <VBox spacing="5">
                                     <Label style="-fx-text-fill: white; -fx-font-weight: 700; -fx-font-size: 11;" text="PASSWORD" />
                                     <HBox spacing="8" alignment="CENTER_LEFT">

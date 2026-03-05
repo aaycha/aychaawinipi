@@ -22,6 +22,11 @@ import com.gestion.services.IngredientServiceImpl;
 import com.gestion.services.EvenementService;
 import com.gestion.services.ParticipationServiceImpl;
 import com.gestion.entities.Ingredient;
+import com.gestion.entities.Evenement;
+import com.gestion.entities.Abonnement;
+import com.gestion.entities.Restaurant;
+import com.gestion.entities.Menu;
+import com.gestion.entities.RepasDetaille;
 
 public class ChatbotController implements Initializable {
 
@@ -135,7 +140,7 @@ public class ChatbotController implements Initializable {
             BigDecimal revenue = BigDecimal.ZERO;
             try {
                 revenue = new com.gestion.services.AbonnementServiceImpl().findAll().stream()
-                        .map(com.gestion.entities.Abonnement::getPrix)
+                        .map(Abonnement::getPrix)
                         .filter(Objects::nonNull)
                         .reduce(BigDecimal.ZERO, BigDecimal::add);
             } catch (Exception ignored) {
@@ -215,17 +220,17 @@ public class ChatbotController implements Initializable {
 
             java.time.LocalDate today = java.time.LocalDate.now();
 
-            List<com.gestion.entities.Restaurant> restaurants = restService.findActifs();
-            List<com.gestion.entities.Menu> allMenus = menuService.findAll();
-            List<com.gestion.entities.RepasDetaille> allDishes = dishService.findAll();
+            List<Restaurant> restaurants = restService.findActifs();
+            List<Menu> allMenus = menuService.findAll();
+            List<RepasDetaille> allDishes = dishService.findAll();
 
             if (restaurants.isEmpty()) {
                 return "Aucun restaurant actif pour le moment. V\u00e9rifiez plus tard ! \uD83C\uDFD5\uFE0F";
             }
 
             // Check if user asked about a specific restaurant
-            com.gestion.entities.Restaurant targetRestaurant = null;
-            for (com.gestion.entities.Restaurant r : restaurants) {
+            Restaurant targetRestaurant = null;
+            for (Restaurant r : restaurants) {
                 if (lower.contains(r.getNom().toLowerCase())) {
                     targetRestaurant = r;
                     break;
@@ -241,7 +246,7 @@ public class ChatbotController implements Initializable {
             } else {
                 // Show all restaurants and their menus
                 sb.append("\uD83C\uDF72 Voici les restaurants disponibles et leurs menus du jour :\n\n");
-                for (com.gestion.entities.Restaurant r : restaurants) {
+                for (Restaurant r : restaurants) {
                     sb.append("\uD83C\uDFD5\uFE0F ").append(r.getNom()).append(" :\n");
                     appendRestaurantMenus(sb, r, allMenus, allDishes, today);
                     sb.append("\n");
@@ -262,11 +267,11 @@ public class ChatbotController implements Initializable {
         }
     }
 
-    private void appendRestaurantMenus(StringBuilder sb, com.gestion.entities.Restaurant restaurant,
-            List<com.gestion.entities.Menu> allMenus, List<com.gestion.entities.RepasDetaille> allDishes,
+    private void appendRestaurantMenus(StringBuilder sb, Restaurant restaurant,
+            List<Menu> allMenus, List<RepasDetaille> allDishes,
             java.time.LocalDate today) {
 
-        List<com.gestion.entities.Menu> dailyMenus = allMenus.stream()
+        List<Menu> dailyMenus = allMenus.stream()
                 .filter(m -> m.getRestaurantId().equals(restaurant.getId()) && m.isActif())
                 .filter(m -> !today.isBefore(m.getDateDebut()) && !today.isAfter(m.getDateFin()))
                 .collect(Collectors.toList());
@@ -281,18 +286,18 @@ public class ChatbotController implements Initializable {
         if (dailyMenus.isEmpty()) {
             sb.append("  Pas de menu disponible actuellement.\n");
         } else {
-            for (com.gestion.entities.Menu m : dailyMenus) {
+            for (Menu m : dailyMenus) {
                 sb.append("  \uD83D\uDCCB ").append(m.getNom());
                 if (m.getDescription() != null && !m.getDescription().isEmpty()) {
                     sb.append(" - ").append(m.getDescription());
                 }
                 sb.append("\n");
 
-                List<com.gestion.entities.RepasDetaille> menuDishes = allDishes.stream()
+                List<RepasDetaille> menuDishes = allDishes.stream()
                         .filter(d -> m.getDishesIds().contains(d.getId()))
                         .collect(Collectors.toList());
 
-                for (com.gestion.entities.RepasDetaille d : menuDishes) {
+                for (RepasDetaille d : menuDishes) {
                     sb.append("    \u2022 ").append(d.getNom());
                     String allergens = d.getAllergenesAsString();
                     if (allergens != null && !allergens.isEmpty() && !allergens.equals("Aucun")) {
@@ -307,7 +312,7 @@ public class ChatbotController implements Initializable {
     private String buildAllergyResponse(String lower) {
         try {
             com.gestion.interfaces.RepasDetailleService dishService = new com.gestion.services.RepasDetailleServiceImpl();
-            List<com.gestion.entities.RepasDetaille> allDishes = dishService.findAll();
+            List<RepasDetaille> allDishes = dishService.findAll();
 
             if (allDishes.isEmpty()) {
                 return "Aucun plat n'est disponible actuellement pour v\u00e9rifier les allerg\u00e8nes. \u26A0\uFE0F";
@@ -340,10 +345,10 @@ public class ChatbotController implements Initializable {
             sb.append("\u26A0\uFE0F Analyse des allerg\u00e8nes pour : ").append(String.join(", ", userAllergens))
                     .append("\n\n");
 
-            List<com.gestion.entities.RepasDetaille> safeDishes = new ArrayList<>();
-            List<com.gestion.entities.RepasDetaille> dangerousDishes = new ArrayList<>();
+            List<RepasDetaille> safeDishes = new ArrayList<>();
+            List<RepasDetaille> dangerousDishes = new ArrayList<>();
 
-            for (com.gestion.entities.RepasDetaille d : allDishes) {
+            for (RepasDetaille d : allDishes) {
                 String allergens = d.getAllergenesAsString().toLowerCase();
                 boolean dangerous = false;
                 for (String ua : userAllergens) {
@@ -361,7 +366,7 @@ public class ChatbotController implements Initializable {
 
             if (!dangerousDishes.isEmpty()) {
                 sb.append("\u274C Plats \u00e0 \u00e9viter :\n");
-                for (com.gestion.entities.RepasDetaille d : dangerousDishes) {
+                for (RepasDetaille d : dangerousDishes) {
                     sb.append("  \u2022 ").append(d.getNom()).append(" (").append(d.getAllergenesAsString())
                             .append(")\n");
                 }
@@ -370,7 +375,7 @@ public class ChatbotController implements Initializable {
 
             if (!safeDishes.isEmpty()) {
                 sb.append("\u2705 Plats s\u00fbrs pour vous :\n");
-                for (com.gestion.entities.RepasDetaille d : safeDishes) {
+                for (RepasDetaille d : safeDishes) {
                     sb.append("  \u2022 ").append(d.getNom()).append("\n");
                 }
             }
@@ -407,14 +412,14 @@ public class ChatbotController implements Initializable {
         try {
             EvenementService eventService = new EvenementService();
             ParticipationServiceImpl partService = new ParticipationServiceImpl();
-            List<com.gestion.entities.Evenement> events = eventService.findAll();
+            List<Evenement> events = eventService.getAll();
 
             if (events.isEmpty()) {
                 return "Aucun \u00e9v\u00e9nement actif pour le moment. Restez \u00e0 l'\u00e9coute ! \uD83C\uDFD4\uFE0F";
             }
 
             StringBuilder sb = new StringBuilder("\uD83C\uDFD4\uFE0F \u00c9v\u00e9nements actifs :\n\n");
-            for (com.gestion.entities.Evenement e : events) {
+            for (Evenement e : events) {
                 long count = partService.findAll().stream()
                         .filter(p -> p.getEvenementId() != null && p.getEvenementId().intValue() == e.getIdEvent())
                         .count();

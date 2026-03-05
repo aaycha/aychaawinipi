@@ -20,7 +20,10 @@ import java.util.Map;
 public class Abonnement {
     private Long id;
     private Long userId;
+    private String userName; // UI Display only
     private Long evenementId; // Facultatif, utilisé si type == EVENEMENT_PASS
+    private String nom; // Nom de l'abonnement (ex: Abonnement Lune)
+    private String restrictionType; // Type d'événement restreint (ex: SOIREE)
     private TypeAbonnement type;
     @JsonFormat(pattern = "yyyy-MM-dd")
     @JsonSerialize(using = LocalDateSerializer.class)
@@ -138,6 +141,30 @@ public class Abonnement {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getNom() {
+        return nom;
+    }
+
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
+
+    public String getRestrictionType() {
+        return restrictionType;
+    }
+
+    public void setRestrictionType(String restrictionType) {
+        this.restrictionType = restrictionType;
     }
 
     public Long getEvenementId() {

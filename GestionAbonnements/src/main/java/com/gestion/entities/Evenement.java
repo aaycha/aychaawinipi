@@ -3,46 +3,127 @@ package com.gestion.entities;
 import java.time.LocalDateTime;
 
 public class Evenement {
-    private int idEvent;
+
+    private int idEvent;              // id_event
     private String titre;
     private String description;
-    private String type; // SOIREE, RANDONNEE, CAMPING, SEJOUR
-    private LocalDateTime dateDebut;
-    private LocalDateTime dateFin; // peut être null
+    private String type;
+    private LocalDateTime dateDebut;  // date_debut
+    private LocalDateTime dateFin;    // date_fin (nullable)
     private String lieu;
+    private String image;
+    private String spotifyUrl;        // spotify_url
+    private int nbVues;               // nombre de vues (affichages détails)
 
     public Evenement() {}
 
-    public Evenement(String titre, String description, String type,
-                     LocalDateTime dateDebut, LocalDateTime dateFin, String lieu) {
+    public Evenement(String titre,
+                     String description,
+                     String type,
+                     LocalDateTime dateDebut,
+                     LocalDateTime dateFin,
+                     String lieu,
+                     String image,
+                     String spotifyUrl) {
+
         this.titre = titre;
         this.description = description;
         this.type = type;
         this.dateDebut = dateDebut;
         this.dateFin = dateFin;
         this.lieu = lieu;
+        this.image = image;
+        this.spotifyUrl = spotifyUrl;
     }
 
-    public int getIdEvent() { return idEvent; }
-    public void setIdEvent(int idEvent) { this.idEvent = idEvent; }
+    // =========================
+    // GETTERS & SETTERS
+    // =========================
 
-    public String getTitre() { return titre; }
-    public void setTitre(String titre) { this.titre = titre; }
+    public int getIdEvent() {
+        return idEvent;
+    }
 
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+    public void setIdEvent(int idEvent) {
+        this.idEvent = idEvent;
+    }
 
-    public String getType() { return type; }
-    public void setType(String type) { this.type = type; }
+    public String getTitre() {
+        return titre;
+    }
 
-    public LocalDateTime getDateDebut() { return dateDebut; }
-    public void setDateDebut(LocalDateTime dateDebut) { this.dateDebut = dateDebut; }
+    public void setTitre(String titre) {
+        this.titre = titre;
+    }
 
-    public LocalDateTime getDateFin() { return dateFin; }
-    public void setDateFin(LocalDateTime dateFin) { this.dateFin = dateFin; }
+    public String getDescription() {
+        return description;
+    }
 
-    public String getLieu() { return lieu; }
-    public void setLieu(String lieu) { this.lieu = lieu; }
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public LocalDateTime getDateDebut() {
+        return dateDebut;
+    }
+
+    public void setDateDebut(LocalDateTime dateDebut) {
+        this.dateDebut = dateDebut;
+    }
+
+    public LocalDateTime getDateFin() {
+        return dateFin;
+    }
+
+    public void setDateFin(LocalDateTime dateFin) {
+        this.dateFin = dateFin;
+    }
+
+    public String getLieu() {
+        return lieu;
+    }
+
+    public void setLieu(String lieu) {
+        this.lieu = lieu;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    // ✅ NEW
+    public String getSpotifyUrl() {
+        return spotifyUrl;
+    }
+
+    public void setSpotifyUrl(String spotifyUrl) {
+        this.spotifyUrl = spotifyUrl;
+    }
+
+    public int getNbVues() {
+        return nbVues;
+    }
+
+    public void setNbVues(int nbVues) {
+        this.nbVues = nbVues;
+    }
+
+    // =========================
+    // toString
+    // =========================
 
     @Override
     public String toString() {
@@ -53,6 +134,9 @@ public class Evenement {
                 ", dateDebut=" + dateDebut +
                 ", dateFin=" + dateFin +
                 ", lieu='" + lieu + '\'' +
+                ", image='" + image + '\'' +
+                ", spotifyUrl='" + spotifyUrl + '\'' +
+                ", nbVues=" + nbVues +
                 '}';
     }
 }

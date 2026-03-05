@@ -12,8 +12,8 @@ public class EvenementDAO {
     // ===================== CREATE =====================
     public int add(Evenement e) throws SQLException {
         String sql = "INSERT INTO evenement " +
-                "(titre, description, type, date_debut, date_fin, lieu) " +
-                "VALUES (?, ?, ?, ?, ?, ?)";
+                "(titre, description, type, date_debut, date_fin, lieu, image, spotify_url) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try {
             Connection cn = MyConnection.getInstance().getConnection();
@@ -34,6 +34,8 @@ public class EvenementDAO {
                 }
 
                 ps.setString(6, e.getLieu());
+                ps.setString(7, e.getImage());
+                ps.setString(8, e.getSpotifyUrl());
 
                 ps.executeUpdate();
 
@@ -100,7 +102,7 @@ public class EvenementDAO {
     // ===================== UPDATE =====================
     public boolean update(Evenement e) throws SQLException {
         String sql = "UPDATE evenement SET " +
-                "titre=?, description=?, type=?, date_debut=?, date_fin=?, lieu=? " +
+                "titre=?, description=?, type=?, date_debut=?, date_fin=?, lieu=?, image=?, spotify_url=? " +
                 "WHERE id_event=?";
 
         try {
@@ -121,7 +123,9 @@ public class EvenementDAO {
                 }
 
                 ps.setString(6, e.getLieu());
-                ps.setInt(7, e.getIdEvent());
+                ps.setString(7, e.getImage());
+                ps.setString(8, e.getSpotifyUrl());
+                ps.setInt(9, e.getIdEvent());
 
                 return ps.executeUpdate() > 0;
             }
@@ -163,6 +167,8 @@ public class EvenementDAO {
         e.setDateFin(tf != null ? tf.toLocalDateTime() : null);
 
         e.setLieu(rs.getString("lieu"));
+        e.setImage(rs.getString("image"));
+        e.setSpotifyUrl(rs.getString("spotify_url"));
         return e;
     }
 }

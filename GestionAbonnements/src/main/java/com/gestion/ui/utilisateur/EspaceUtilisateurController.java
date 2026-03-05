@@ -7,7 +7,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 
 import com.gestion.tools.Session;
@@ -22,7 +22,7 @@ import java.util.List;
 public class EspaceUtilisateurController {
 
     @FXML
-    private FlowPane cardsContainer;
+    private TilePane cardsContainer;
     @FXML
     private Label sectionLabel;
     @FXML
@@ -35,31 +35,17 @@ public class EspaceUtilisateurController {
     private final com.gestion.services.WeatherService weatherService = com.gestion.services.WeatherService
             .getInstance();
 
-    private static byte[] readImageBytes(String imagePath) {
-        try {
-            return java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(imagePath));
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
     private static class UserSection {
-        private final String id;
         private final String titre;
         private final String description;
         private final String fxmlPath;
         private final String icon;
 
         public UserSection(String id, String titre, String description, String fxmlPath, String icon) {
-            this.id = id;
             this.titre = titre;
             this.description = description;
             this.fxmlPath = fxmlPath;
             this.icon = icon;
-        }
-
-        public String id() {
-            return id;
         }
 
         public String titre() {
@@ -95,6 +81,9 @@ public class EspaceUtilisateurController {
             new UserSection("menu", "Menus d'Expédition",
                     "Consulter les menus complets du camp de base",
                     "/views/menu/menu-liste.fxml", "📜"),
+            new UserSection("evenements", "Liste des Événements",
+                    "Découvrir les treks, soirées et séjours nature à venir",
+                    "/Feryel/ListeEvenements.fxml", "🎪"),
             new UserSection("map", "Carte Interactive",
                     "Explorer les refuges et restaurants sur la carte",
                     "/views/map/map-view.fxml", "🗺️"),
@@ -106,7 +95,22 @@ public class EspaceUtilisateurController {
                     "/views/utilisateur/checkout-modal.fxml", "🛒"),
             new UserSection("chatbot", "LAMA AI Assistant",
                     "Posez vos questions sur les menus, ingrédients ou événements",
-                    "/views/chatbot/chatbot-modal.fxml", "🤖"));
+                    "/views/chatbot/chatbot-modal.fxml", "🤖"),
+            new UserSection("communaute", "Communauté LAMMA",
+                    "Partagez vos aventures et échangez avec les autres explorateurs",
+                    "/views/reddit.fxml", "💬"),
+            new UserSection("visualscout", "Visual Scout satellite",
+                    "Analysez les environs et les refuges grâce à l'IA satellite",
+                    "/views/utilisateur/visual-scout.fxml", "🛰️"),
+            new UserSection("tiktok", "TikTok Video Intel",
+                    "Découvrez les retours viraux sur vos destinations d'aventure",
+                    "/views/utilisateur/tiktok-search.fxml", "🎵"),
+            new UserSection("boutique", "Boutique LAMA",
+                    "Gérez vos équipements de trekking (Achat/Location)",
+                    "/views/wael/EquipementStoreView.fxml", "🛒"),
+            new UserSection("messagerie", "Messagerie Chat",
+                    "Échangez en temps réel avec la communauté LAMMA",
+                    "/views/wael/ChatView.fxml", "💬"));
 
     @FXML
     public void initialize() {
@@ -155,10 +159,10 @@ public class EspaceUtilisateurController {
         VBox card = new VBox(12);
         card.getStyleClass().add("voyage-card");
         card.setAlignment(Pos.TOP_LEFT);
-        card.setPadding(new Insets(24));
+        card.setPadding(new Insets(20));
         card.setPrefWidth(280);
-        card.setMinHeight(140);
-        card.setMaxWidth(320);
+        card.setMinHeight(180);
+        card.setMaxWidth(300);
 
         card.setOnMouseEntered(e -> card.setCursor(Cursor.HAND));
         card.setOnMouseClicked(e -> chargerSection(section));
@@ -202,6 +206,28 @@ public class EspaceUtilisateurController {
         }
         if (sectionLabel != null) {
             sectionLabel.setText("Sélectionnez une section ci-dessous");
+        }
+    }
+
+    @FXML
+    void onCommunityNavigation() {
+        if (sectionLabel != null) {
+            sectionLabel.setText("Section : Communauté LAMMA");
+        }
+        MainController main = MainController.getInstance();
+        if (main != null) {
+            main.loadUserSection("/views/reddit.fxml", "Communauté LAMMA");
+        }
+    }
+
+    @FXML
+    void onTikTokNavigation() {
+        if (sectionLabel != null) {
+            sectionLabel.setText("Section : TikTok Expedition Intel");
+        }
+        MainController main = MainController.getInstance();
+        if (main != null) {
+            main.loadUserSection("/views/utilisateur/tiktok-search.fxml", "TikTok Expedition Intel");
         }
     }
 }
